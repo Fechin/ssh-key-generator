@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Primary Meta Tags -->
+    <title>SSH Key Generator Online - Free Secure Key Generation</title>
+    <meta name="title" content="SSH Key Generator Online - Free Secure Key Generation" />
+    <meta name="description" content="Generate SSH keys securely in your browser. Support Ed25519, RSA. Works with GitHub, GitLab, Bitbucket. 100% client-side, no data sent to servers." />
+    <meta name="author" content="SSH Key Generator" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://sshkeygenerator.com/" />
+
+    <!-- Language alternates -->
+    <link rel="alternate" hreflang="en" href="https://sshkeygenerator.com/" />
+    <link rel="alternate" hreflang="zh-Hans" href="https://sshkeygenerator.com/zh-Hans/" />
+    <link rel="alternate" hreflang="x-default" href="https://sshkeygenerator.com/" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://sshkeygenerator.com/" />
+    <meta property="og:title" content="SSH Key Generator Online - Free Secure Key Generation" />
+    <meta property="og:description" content="Generate SSH keys securely in your browser. Support Ed25519, RSA. Works with GitHub, GitLab, Bitbucket. 100% client-side, no data sent to servers." />
+    <meta property="og:image" content="https://sshkeygenerator.com/og-image.png" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://sshkeygenerator.com/" />
+    <meta property="twitter:title" content="SSH Key Generator Online - Free Secure Key Generation" />
+    <meta property="twitter:description" content="Generate SSH keys securely in your browser. Support Ed25519, RSA. Works with GitHub, GitLab, Bitbucket. 100% client-side, no data sent to servers." />
+    <meta property="twitter:image" content="https://sshkeygenerator.com/og-image.png" />
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#0F172A" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+    <!-- Theme flash prevention - must be before any CSS -->
+    <script>
+      (function() {
+        var theme = localStorage.getItem('ssh-key-generator-theme') || 'system';
+        var resolved = theme;
+        if (theme === 'system') {
+          resolved = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        if (resolved === 'dark') {
+          document.documentElement.classList.add('dark');
+        }
+        document.documentElement.style.colorScheme = resolved;
+        var metaTheme = document.querySelector('meta[name="theme-color"]');
+        if (metaTheme) {
+          metaTheme.setAttribute('content', resolved === 'dark' ? 'hsl(224 0% 4%)' : 'hsl(0 0% 100%)');
+        }
+      })();
+    </script>
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WDT5Z7444Q"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-WDT5Z7444Q');
+    </script>
+
+    <!-- Additional Meta Tags for PWA/Mobile -->
+    <meta name="application-name" content="SSH Key Generator" />
+    <meta name="apple-mobile-web-app-title" content="SSH Key Generator" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <!-- Schema.org structured data - SoftwareApplication -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "SSH Key Generator",
+        "description": "Generate SSH keys securely in your browser. Support Ed25519, RSA. 100% client-side.",
+        "url": "https://sshkeygenerator.com",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Web Browser",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "featureList": [
+          "Ed25519 key generation",
+          "RSA 2048/4096-bit key generation",
+          "100% client-side processing",
+          "OpenSSH format output",
+          "SHA256 fingerprint calculation",
+          "Works with GitHub, GitLab, Bitbucket"
+        ],
+        "screenshot": "https://sshkeygenerator.com/og-image.png",
+        "softwareVersion": "1.0.0",
+        "author": {
+          "@type": "Organization",
+          "name": "SSH Key Generator"
+        }
+      }
+    </script>
+
+    <!-- Schema.org - FAQPage for Rich Results -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Is it safe to generate SSH keys online?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, this SSH key generator is 100% safe because all key generation happens entirely in your browser using the Web Crypto API. Your private keys never leave your device and are never transmitted to any server. The source code is open source and auditable on GitHub."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is the difference between Ed25519 and RSA?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Ed25519 is a modern elliptic curve algorithm that offers better security with smaller key sizes (256-bit vs 2048-4096-bit RSA). Ed25519 keys are faster to generate and use, and are recommended for most new SSH setups. RSA is older but has wider compatibility with legacy systems."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How do I add my SSH key to GitHub?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "1) Generate your SSH key using this tool, 2) Copy the public key, 3) Go to GitHub Settings > SSH and GPG keys, 4) Click 'New SSH key', 5) Paste your public key and give it a title, 6) Click 'Add SSH key'. Test with: ssh -T git@github.com"
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What key size should I use for RSA?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "For RSA keys, 4096-bit is recommended for maximum security. 2048-bit is the minimum acceptable size and offers adequate security for most purposes. Keys smaller than 2048-bit are considered insecure and should not be used."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I use this SSH key generator offline?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes! This is a Progressive Web App (PWA) that works offline. After your first visit, you can install it as an app on your device and generate SSH keys without an internet connection. All cryptographic operations run locally in your browser."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Should I use a passphrase for my SSH key?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, using a passphrase is highly recommended. A passphrase adds an extra layer of security - even if someone gains access to your private key file, they cannot use it without the passphrase. Use a strong, memorable passphrase for important keys."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I use the same SSH key for multiple servers?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, you can use the same SSH public key on multiple servers. However, for better security practices, consider using different keys for different purposes (e.g., work vs personal, production vs development). This limits exposure if one key is compromised."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is an SSH key fingerprint?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "An SSH key fingerprint is a short, unique identifier derived from your public key using a hash function (SHA256 or MD5). It's used to verify key authenticity when connecting to servers. The fingerprint helps you confirm you're connecting to the correct server."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is the best SSH key algorithm in 2025?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Ed25519 is the recommended algorithm in 2025 for most use cases. It provides excellent security with a 256-bit key size, fast performance, and is supported by all modern SSH implementations. Only use RSA if you need compatibility with legacy systems."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is the authorized_keys file?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The authorized_keys file (located at ~/.ssh/authorized_keys on Linux/macOS servers) contains a list of public keys that are allowed to connect to that account. Each line is one public key. Add your public key to this file to enable passwordless SSH login."
+            }
+          }
+        ]
+      }
+    </script>
+
+    <!-- Schema.org - HowTo for Rich Results -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "HowTo",
+        "name": "How to Generate SSH Keys Online",
+        "description": "Generate secure SSH keys in your browser using this free, client-side SSH key generator that supports Ed25519 and RSA algorithms.",
+        "image": "https://sshkeygenerator.com/og-image.png",
+        "totalTime": "PT1M",
+        "tool": [
+          {
+            "@type": "HowToTool",
+            "name": "Web browser (Chrome, Firefox, Safari, Edge)"
+          }
+        ],
+        "step": [
+          {
+            "@type": "HowToStep",
+            "position": 1,
+            "name": "Select Algorithm",
+            "text": "Choose your preferred SSH key algorithm. Ed25519 is recommended for modern systems. RSA (4096-bit) is available for legacy compatibility.",
+            "url": "https://sshkeygenerator.com/#step1"
+          },
+          {
+            "@type": "HowToStep",
+            "position": 2,
+            "name": "Add Comment",
+            "text": "Enter an optional comment to identify your key, typically your email address (e.g., user@example.com). This helps identify the key on servers.",
+            "url": "https://sshkeygenerator.com/#step2"
+          },
+          {
+            "@type": "HowToStep",
+            "position": 3,
+            "name": "Generate Keys",
+            "text": "Click the Generate button. Your SSH key pair will be created instantly in your browser. No data is sent to any server.",
+            "url": "https://sshkeygenerator.com/#step3"
+          },
+          {
+            "@type": "HowToStep",
+            "position": 4,
+            "name": "Save Your Keys",
+            "text": "Download both keys: the public key (.pub) to add to servers, and the private key to keep secure on your device. Never share your private key.",
+            "url": "https://sshkeygenerator.com/#step4"
+          },
+          {
+            "@type": "HowToStep",
+            "position": 5,
+            "name": "Add to Server",
+            "text": "Copy your public key and add it to the authorized_keys file on your server, or add it to your GitHub/GitLab/Bitbucket account settings.",
+            "url": "https://sshkeygenerator.com/#step5"
+          }
+        ]
+      }
+    </script>
+
+    <!-- Schema.org - Organization -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "SSH Key Generator",
+        "url": "https://sshkeygenerator.com",
+        "logo": "https://sshkeygenerator.com/pwa-512x512.png",
+        "sameAs": [
+          "https://github.com/Fechin/ssh-key-generator"
+        ]
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

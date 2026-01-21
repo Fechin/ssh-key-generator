@@ -1,0 +1,336 @@
+{
+  "header": {
+    "title": "SSH 密钥生成器",
+    "subtitle": "免费且安全",
+    "clientSide": "100% 本地运行",
+    "viewOnGitHub": "在 GitHub 上查看"
+  },
+  "hero": {
+    "title": "在线 SSH 密钥生成器",
+    "subtitle": "使用这个免费的在线 SSH 密钥生成器，在浏览器中安全地生成 SSH 密钥。支持 GitHub、GitLab、Bitbucket 及任何 SSH 服务器。"
+  },
+  "tabs": {
+    "generate": "生成密钥",
+    "generateShort": "生成",
+    "commands": "命令模式",
+    "commandsShort": "命令",
+    "config": "SSH 配置",
+    "configShort": "配置",
+    "guides": "平台指南",
+    "guidesShort": "指南"
+  },
+  "generator": {
+    "title": "在线 SSH 密钥生成器",
+    "description": "使用此免费在线生成器，在浏览器中安全生成 SSH 密钥对。不会向任何服务器发送数据。",
+    "algorithm": "算法",
+    "algorithmTooltip": "大多数情况推荐使用 Ed25519。如需兼容旧系统，请使用 RSA。",
+    "comment": "注释（可选）",
+    "commentTooltip": "用于标识此密钥的注释，通常是您的邮箱地址。",
+    "commentPlaceholder": "user@example.com",
+    "generateButton": "生成密钥对",
+    "generating": "生成中...",
+    "passphrase": "密码短语（可选）",
+    "passphraseTooltip": "密码短语增加额外的安全性。即使有人获取了您的私钥，没有密码短语也无法使用。",
+    "passphrasePlaceholder": "输入用于加密的密码短语",
+    "confirmPassphrase": "确认密码短语",
+    "confirmPassphrasePlaceholder": "再次输入密码短语",
+    "passphrasesMismatch": "密码短语不匹配",
+    "noPassphraseWarning": "未设置密码短语。您的私钥将不会被加密。考虑添加密码短语以增强安全性。",
+    "securityTitle": "100% 本地运行的 SSH 密钥生成器",
+    "securityDesc": "所有密钥生成都在您的浏览器中本地完成。此在线 SSH 密钥生成器永不传输您的私钥。",
+    "noKeysYet": "尚未生成密钥",
+    "noKeysHint": "点击「生成密钥对」创建您的 SSH 密钥"
+  },
+  "algorithms": {
+    "ed25519": "Ed25519（推荐）",
+    "ed25519Desc": "现代、快速、安全。适用于大多数场景。",
+    "rsa4096": "RSA 4096 位",
+    "rsa4096Desc": "与传统系统最大兼容。",
+    "rsa2048": "RSA 2048 位",
+    "rsa2048Desc": "RSA 最低推荐位数，用于兼容性需求。"
+  },
+  "keyDisplay": {
+    "publicKey": "公钥",
+    "publicKeyDesc": "将此添加到远程服务器的 authorized_keys 或 GitHub/GitLab。",
+    "privateKey": "私钥",
+    "privateKeyWarning": "请妥善保管！切勿分享您的私钥。",
+    "fingerprint": "密钥指纹",
+    "copy": "复制",
+    "copied": "已复制！",
+    "download": "下载",
+    "reveal": "显示",
+    "hide": "隐藏",
+    "clickToReveal": "点击显示查看私钥"
+  },
+  "commands": {
+    "title": "SSH 密钥生成命令",
+    "description": "为您的平台生成 ssh-keygen 命令。复制并在终端中运行。",
+    "algorithm": "算法",
+    "comment": "注释",
+    "filename": "文件名（可选）",
+    "quickCommand": "快速命令",
+    "completeSetup": "完整配置",
+    "copyAll": "全部复制"
+  },
+  "sshConfig": {
+    "title": "SSH 配置构建器",
+    "description": "构建您的 ~/.ssh/config 文件。添加主机并下载配置。",
+    "hostAlias": "主机别名",
+    "hostAliasRequired": "主机别名 *",
+    "hostname": "主机名",
+    "hostnameRequired": "主机名 *",
+    "hostnamePlaceholder": "192.168.1.100 或 example.com",
+    "user": "用户",
+    "port": "端口",
+    "identityFile": "密钥文件",
+    "identityFilePlaceholder": "~/.ssh/id_ed25519",
+    "addHost": "添加主机",
+    "configuredHosts": "已配置的主机",
+    "generatedConfig": "生成的配置",
+    "saveToPath": "保存到 ~/.ssh/config",
+    "noHosts": "# 尚未配置主机",
+    "advancedOptions": "高级选项",
+    "proxyJump": "跳板主机",
+    "proxyJumpPlaceholder": "bastion-host",
+    "proxyJumpDesc": "通过跳板机/堡垒机连接到目标主机",
+    "forwardAgent": "转发代理",
+    "forwardAgentDesc": "将 SSH 代理转发到远程主机"
+  },
+  "guides": {
+    "title": "平台设置指南",
+    "description": "在主流 Git 平台上设置 SSH 密钥的分步说明。",
+    "officialDocs": "官方文档",
+    "sshSetup": "{platform} SSH 设置",
+    "github": {
+      "step1Title": "生成 SSH 密钥",
+      "step1Desc": "使用上方的生成器或运行此命令：",
+      "step2Title": "启动 SSH Agent",
+      "step2Desc": "在后台启动 ssh-agent：",
+      "step3Title": "添加密钥到 Agent",
+      "step3Desc": "将 SSH 私钥添加到 agent：",
+      "step4Title": "复制公钥",
+      "step4Desc": "将公钥复制到剪贴板：",
+      "step5Title": "添加到 GitHub",
+      "step5Desc": "进入 GitHub 设置 > SSH 和 GPG 密钥 > 新建 SSH 密钥。粘贴您的公钥。",
+      "step6Title": "测试连接",
+      "step6Desc": "验证您的 SSH 连接："
+    },
+    "gitlab": {
+      "step1Title": "生成 SSH 密钥",
+      "step1Desc": "使用 Ed25519 以获得更好的安全性：",
+      "step2Title": "添加密钥到 Agent",
+      "step2Desc": "将 SSH 密钥添加到 agent：",
+      "step3Title": "复制公钥",
+      "step3Desc": "复制您的公钥：",
+      "step4Title": "添加到 GitLab",
+      "step4Desc": "进入 GitLab 偏好设置 > SSH 密钥。粘贴公钥并设置过期日期。",
+      "step5Title": "测试连接",
+      "step5Desc": "验证您的 SSH 连接："
+    },
+    "bitbucket": {
+      "step1Title": "生成 SSH 密钥",
+      "step1Desc": "创建 Ed25519 SSH 密钥：",
+      "step2Title": "添加密钥到 Agent",
+      "step2Desc": "启动 ssh-agent 并添加密钥：",
+      "step3Title": "复制公钥",
+      "step3Desc": "将公钥复制到剪贴板：",
+      "step4Title": "添加到 Bitbucket",
+      "step4Desc": "进入 Bitbucket 设置 > 个人设置 > SSH 密钥 > 添加密钥。",
+      "step5Title": "测试连接",
+      "step5Desc": "验证您的 SSH 连接："
+    },
+    "aws": {
+      "step1Title": "生成 SSH 密钥",
+      "step1Desc": "为 AWS EC2 创建 Ed25519 SSH 密钥：",
+      "step2Title": "复制公钥",
+      "step2Desc": "显示公钥以便复制：",
+      "step3Title": "导入密钥到 AWS",
+      "step3Desc": "进入 AWS 控制台 > EC2 > 密钥对 > 操作 > 导入密钥对。粘贴您的公钥。",
+      "step4Title": "设置权限",
+      "step4Desc": "确保私钥有正确的权限：",
+      "step5Title": "连接到实例",
+      "step5Desc": "SSH 连接到您的 EC2 实例（替换为您的详细信息）："
+    },
+    "azure": {
+      "step1Title": "生成 SSH 密钥",
+      "step1Desc": "为 Azure 创建 Ed25519 SSH 密钥：",
+      "step2Title": "复制公钥",
+      "step2Desc": "显示您的公钥：",
+      "step3Title": "在创建 VM 时添加",
+      "step3Desc": "创建 VM 时，选择「SSH 公钥」作为身份验证方式并粘贴您的公钥。",
+      "step4Title": "连接到 VM",
+      "step4Desc": "SSH 连接到您的 Azure VM：",
+      "step5Title": "更新现有 VM（可选）",
+      "step5Desc": "使用 Azure CLI 将密钥添加到现有 VM："
+    },
+    "digitalocean": {
+      "step1Title": "生成 SSH 密钥",
+      "step1Desc": "创建 Ed25519 SSH 密钥：",
+      "step2Title": "复制公钥",
+      "step2Desc": "显示公钥以便复制：",
+      "step3Title": "添加到 DigitalOcean",
+      "step3Desc": "进入 DigitalOcean 控制面板 > 设置 > 安全 > SSH 密钥 > 添加 SSH 密钥。",
+      "step4Title": "创建 Droplet",
+      "step4Desc": "创建 Droplet 时，在「身份验证」下选择您的 SSH 密钥。",
+      "step5Title": "连接到 Droplet",
+      "step5Desc": "SSH 连接到您的 Droplet："
+    }
+  },
+  "footer": {
+    "about": "关于此在线 SSH 密钥生成器",
+    "aboutDesc": "本工具是一个免费、开源的在线 SSH 密钥生成器，完全在浏览器中运行。无服务器处理，无数据收集 - 只有安全的密钥生成。",
+    "securityFirst": "安全优先",
+    "security1": "所有密钥生成都在浏览器中完成",
+    "security2": "数据永不发送到任何服务器",
+    "security3": "开源代码，可供审计",
+    "security4": "使用行业标准加密库",
+    "resources": "资源",
+    "sshKeyGuide": "GitHub SSH 文档",
+    "githubSetup": "GitLab SSH 文档",
+    "bestPractices": "SSH 学院",
+    "madeWith": "用",
+    "forDevelopers": "为全球开发者制作",
+    "copyright": "© {year} SSH Key Generator。基于 MIT 许可证开源。"
+  },
+  "seo": {
+    "whatIs": {
+      "title": "什么是在线 SSH 密钥生成器？",
+      "desc": "本在线 SSH 密钥生成器可以在您的浏览器中安全地创建加密密钥对。SSH 密钥由公钥（与服务器共享）和私钥（保密）组成。与密码不同，在线生成的 SSH 密钥几乎不可能被暴力破解。"
+    },
+    "whyUse": {
+      "title": "为什么使用此在线 SSH 密钥生成器？",
+      "secure": {
+        "title": "安全的在线生成",
+        "desc": "所有加密操作都在浏览器中进行。此在线 SSH 密钥生成器确保您的私钥永远不会离开您的设备。"
+      },
+      "modern": {
+        "title": "现代算法",
+        "desc": "生成 Ed25519 密钥（推荐）或高达 4096 位强度的 RSA 密钥。"
+      },
+      "easy": {
+        "title": "简单易用",
+        "desc": "简洁界面，支持复制/下载。无需安装，即开即用。"
+      },
+      "free": {
+        "title": "免费开源",
+        "desc": "无需注册、无追踪、完全免费。MIT 许可，社区验证。"
+      }
+    },
+    "howTo": {
+      "title": "如何在线生成 SSH 密钥",
+      "step1": "选择算法：选择 Ed25519（推荐）或 RSA",
+      "step2": "添加注释：可选标识，如您的邮箱",
+      "step3": "生成：点击按钮创建密钥对",
+      "step4": "保存密钥：下载或复制您的公钥和私钥",
+      "step5": "添加到服务器：将公钥复制到 ~/.ssh/authorized_keys 或 Git 服务提供商"
+    },
+    "comparison": {
+      "title": "Ed25519 vs RSA：如何选择？",
+      "intro": "了解这两种流行的 SSH 密钥算法之间的差异，有助于您为安全需求做出正确的选择。",
+      "feature": "特性",
+      "algorithmType": "算法类型",
+      "keySize": "密钥长度",
+      "signatureSize": "签名大小",
+      "security": "安全级别",
+      "performance": "性能",
+      "compatibility": "兼容性",
+      "quantumResistance": "抗量子能力",
+      "bestFor": "最适合",
+      "recommendation": "推荐",
+      "ed25519AlgoType": "椭圆曲线 (Curve25519)",
+      "rsaAlgoType": "整数分解",
+      "ed25519KeySize": "256 位（紧凑）",
+      "rsaKeySize": "2048-4096 位（较大）",
+      "ed25519SigSize": "64 字节",
+      "rsaSigSize": "256-512 字节",
+      "ed25519Security": "约 128 位等效",
+      "rsaSecurity": "约 112-128 位 (4096)",
+      "ed25519Performance": "非常快（快 10 倍）",
+      "rsaPerformance": "生成较慢",
+      "ed25519Compat": "OpenSSH 6.5+ (2014)",
+      "rsaCompat": "通用（所有系统）",
+      "ed25519Quantum": "非抗量子",
+      "rsaQuantum": "非抗量子",
+      "ed25519BestFor": "GitHub、GitLab、现代服务器",
+      "rsaBestFor": "传统系统、旧硬件",
+      "ed25519Rec": "大多数用户的最佳选择",
+      "rsaRec": "用于传统系统支持"
+    },
+    "useCases": {
+      "title": "常见 SSH 密钥使用场景",
+      "git": {
+        "title": "Git 托管",
+        "desc": "从 GitHub、GitLab、Bitbucket 安全地推送和拉取代码，无需输入密码。"
+      },
+      "server": {
+        "title": "服务器访问",
+        "desc": "SSH 连接到 Linux/Unix 服务器、云实例（AWS、GCP、Azure）和 VPS 提供商。"
+      },
+      "automation": {
+        "title": "CI/CD 自动化",
+        "desc": "使自动化部署、脚本和 DevOps 流水线能够访问远程资源。"
+      },
+      "tunnels": {
+        "title": "安全隧道",
+        "desc": "为数据库访问、端口转发和安全通信创建加密隧道。"
+      }
+    },
+    "faq": {
+      "title": "常见问题",
+      "subtitle": "查找关于 SSH 密钥和本工具的常见问题解答。",
+      "safe": {
+        "question": "在线生成 SSH 密钥安全吗？",
+        "answer": "是的，本工具是 100% 安全的，因为所有密钥生成完全在您的浏览器中使用 Web Crypto API 进行。您的私钥永远不会离开您的设备，也不会传输到任何服务器。源代码在 GitHub 上开源，可供审计。"
+      },
+      "ed25519VsRsa": {
+        "question": "Ed25519 和 RSA 有什么区别？",
+        "answer": "Ed25519 是一种现代椭圆曲线算法，以更小的密钥长度（256位 vs RSA的2048-4096位）提供更好的安全性。Ed25519 密钥生成和使用更快，推荐用于大多数新的 SSH 设置。RSA 较老但与传统系统兼容性更广。"
+      },
+      "github": {
+        "question": "如何将 SSH 密钥添加到 GitHub？",
+        "answer": "1) 使用本工具生成 SSH 密钥，2) 复制公钥，3) 进入 GitHub 设置 > SSH 和 GPG 密钥，4) 点击「新建 SSH 密钥」，5) 粘贴公钥并命名，6) 点击「添加 SSH 密钥」。使用以下命令测试：ssh -T git@github.com"
+      },
+      "rsaKeySize": {
+        "question": "RSA 应该使用多大的密钥长度？",
+        "answer": "对于 RSA 密钥，推荐使用 4096 位以获得最高安全性。2048 位是最低可接受的长度，对于大多数用途提供足够的安全性。小于 2048 位的密钥被认为是不安全的，不应使用。"
+      },
+      "offline": {
+        "question": "这个 SSH 密钥生成器可以离线使用吗？",
+        "answer": "可以！本工具是一个渐进式 Web 应用（PWA），支持离线使用。首次访问后，您可以将其安装为设备上的应用，无需网络连接即可生成 SSH 密钥。所有加密操作都在浏览器本地运行。"
+      },
+      "passphrase": {
+        "question": "SSH 密钥应该使用密码短语吗？",
+        "answer": "是的，强烈建议使用密码短语。密码短语增加了额外的安全层——即使有人获取了您的私钥文件，没有密码短语也无法使用。对重要的密钥使用强壮且易记的密码短语。"
+      },
+      "multipleServers": {
+        "question": "同一个 SSH 密钥可以用于多个服务器吗？",
+        "answer": "可以，您可以在多个服务器上使用同一个 SSH 公钥。但是，为了更好的安全实践，考虑为不同目的使用不同的密钥（例如，工作与个人、生产与开发）。这样可以在一个密钥被泄露时限制影响范围。"
+      },
+      "fingerprint": {
+        "question": "什么是 SSH 密钥指纹？",
+        "answer": "SSH 密钥指纹是使用哈希函数（SHA256 或 MD5）从公钥派生的短的唯一标识符。它用于在连接服务器时验证密钥的真实性。指纹帮助您确认您正在连接到正确的服务器。"
+      },
+      "bestAlgorithm": {
+        "question": "2025 年最好的 SSH 密钥算法是什么？",
+        "answer": "Ed25519 是 2025 年大多数用例推荐的算法。它以 256 位密钥长度提供出色的安全性、快速的性能，并被所有现代 SSH 实现支持。只有在需要与传统系统兼容时才使用 RSA。"
+      },
+      "authorizedKeys": {
+        "question": "authorized_keys 文件是什么？",
+        "answer": "authorized_keys 文件（位于 Linux/macOS 服务器的 ~/.ssh/authorized_keys）包含允许连接到该账户的公钥列表。每行是一个公钥。将您的公钥添加到此文件即可启用无密码 SSH 登录。"
+      },
+      "bestOnlineGenerator": {
+        "question": "最好的在线 SSH 密钥生成器是什么？",
+        "answer": "本工具是最好的免费在线 SSH 密钥生成器之一，因为它 100% 在浏览器中运行，支持现代 Ed25519 和 RSA 算法，可作为 PWA 离线工作，并且永不向任何服务器发送您的私钥。"
+      },
+      "permissions": {
+        "question": "SSH 私钥应该有什么权限？",
+        "answer": "SSH 私钥应该有受限的权限。在 Linux/macOS 上，使用 'chmod 600 ~/.ssh/id_ed25519'（所有者读写）或 'chmod 400'（只读）。如果权限过于宽松，SSH 将拒绝使用该密钥。.ssh 目录应该是 700 权限。"
+      }
+    }
+  },
+  "theme": {
+    "light": "浅色",
+    "dark": "深色",
+    "system": "跟随系统"
+  }
+}

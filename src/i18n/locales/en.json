@@ -1,0 +1,336 @@
+{
+  "header": {
+    "title": "SSH Key Generator",
+    "subtitle": "Free & Secure",
+    "clientSide": "100% Client-Side",
+    "viewOnGitHub": "View on GitHub"
+  },
+  "hero": {
+    "title": "SSH Key Generator Online",
+    "subtitle": "Generate secure SSH keys instantly in your browser with this free online SSH key generator. Works with GitHub, GitLab, Bitbucket, and any SSH server."
+  },
+  "tabs": {
+    "generate": "Generate Keys",
+    "generateShort": "Generate",
+    "commands": "Command Mode",
+    "commandsShort": "Commands",
+    "config": "SSH Config",
+    "configShort": "Config",
+    "guides": "Platform Guides",
+    "guidesShort": "Guides"
+  },
+  "generator": {
+    "title": "Online SSH Key Generator",
+    "description": "Generate a new SSH key pair securely in your browser using this free online generator. No data is sent to any server.",
+    "algorithm": "Algorithm",
+    "algorithmTooltip": "Ed25519 is recommended for most cases. Use RSA if you need compatibility with older systems.",
+    "comment": "Comment (optional)",
+    "commentTooltip": "A comment to help identify this key. Usually your email address.",
+    "commentPlaceholder": "user@example.com",
+    "generateButton": "Generate Key Pair",
+    "generating": "Generating...",
+    "passphrase": "Passphrase (optional)",
+    "passphraseTooltip": "A passphrase adds extra security. Even if someone gets your private key, they can't use it without the passphrase.",
+    "passphrasePlaceholder": "Enter passphrase for encryption",
+    "confirmPassphrase": "Confirm Passphrase",
+    "confirmPassphrasePlaceholder": "Re-enter passphrase",
+    "passphrasesMismatch": "Passphrases do not match",
+    "noPassphraseWarning": "No passphrase set. Your private key will be unencrypted. Consider adding a passphrase for extra security.",
+    "securityTitle": "100% Client-Side SSH Key Generator",
+    "securityDesc": "All key generation happens locally in your browser. This online SSH key generator never transmits your private keys.",
+    "noKeysYet": "No keys generated yet",
+    "noKeysHint": "Click \"Generate Key Pair\" to create your SSH keys"
+  },
+  "algorithms": {
+    "ed25519": "Ed25519 (Recommended)",
+    "ed25519Desc": "Modern, fast, secure. Best for most use cases.",
+    "rsa4096": "RSA 4096-bit",
+    "rsa4096Desc": "Maximum compatibility with legacy systems.",
+    "rsa2048": "RSA 2048-bit",
+    "rsa2048Desc": "Minimum recommended RSA size for compatibility."
+  },
+  "keyDisplay": {
+    "publicKey": "Public Key",
+    "publicKeyDesc": "Add this to authorized_keys on remote servers or to GitHub/GitLab.",
+    "privateKey": "Private Key",
+    "privateKeyWarning": "Keep this secret! Never share your private key.",
+    "fingerprint": "Key Fingerprint",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "download": "Download",
+    "reveal": "Reveal",
+    "hide": "Hide",
+    "clickToReveal": "Click Reveal to view private key"
+  },
+  "commands": {
+    "title": "SSH Key Generation Commands",
+    "description": "Generate ssh-keygen commands for your preferred platform. Copy and run these in your terminal.",
+    "algorithm": "Algorithm",
+    "comment": "Comment",
+    "filename": "Filename (optional)",
+    "quickCommand": "Quick Command",
+    "completeSetup": "Complete Setup",
+    "copyAll": "Copy All"
+  },
+  "sshConfig": {
+    "title": "SSH Config Builder",
+    "description": "Build your ~/.ssh/config file. Add hosts and download the config.",
+    "hostAlias": "Host Alias",
+    "hostAliasRequired": "Host Alias *",
+    "hostname": "HostName",
+    "hostnameRequired": "HostName *",
+    "hostnamePlaceholder": "192.168.1.100 or example.com",
+    "user": "User",
+    "port": "Port",
+    "identityFile": "IdentityFile",
+    "identityFilePlaceholder": "~/.ssh/id_ed25519",
+    "addHost": "Add Host",
+    "configuredHosts": "Configured Hosts",
+    "generatedConfig": "Generated Config",
+    "saveToPath": "Save this to ~/.ssh/config",
+    "noHosts": "# No hosts configured yet",
+    "advancedOptions": "Advanced Options",
+    "proxyJump": "ProxyJump",
+    "proxyJumpPlaceholder": "bastion-host",
+    "proxyJumpDesc": "Jump through a bastion/jump host to reach the target",
+    "forwardAgent": "Forward Agent",
+    "forwardAgentDesc": "Forward your SSH agent to the remote host"
+  },
+  "guides": {
+    "title": "Platform Setup Guides",
+    "description": "Step-by-step instructions for setting up SSH keys on popular Git platforms.",
+    "officialDocs": "Official Docs",
+    "sshSetup": "{platform} SSH Setup",
+    "github": {
+      "step1Title": "Generate SSH Key",
+      "step1Desc": "Use the generator above or run this command:",
+      "step2Title": "Start SSH Agent",
+      "step2Desc": "Start the ssh-agent in the background:",
+      "step3Title": "Add Key to Agent",
+      "step3Desc": "Add your SSH private key to the agent:",
+      "step4Title": "Copy Public Key",
+      "step4Desc": "Copy your public key to clipboard:",
+      "step5Title": "Add to GitHub",
+      "step5Desc": "Go to GitHub Settings > SSH and GPG keys > New SSH key. Paste your public key.",
+      "step6Title": "Test Connection",
+      "step6Desc": "Verify your SSH connection:"
+    },
+    "gitlab": {
+      "step1Title": "Generate SSH Key",
+      "step1Desc": "Use Ed25519 for better security:",
+      "step2Title": "Add Key to Agent",
+      "step2Desc": "Add your SSH key to the agent:",
+      "step3Title": "Copy Public Key",
+      "step3Desc": "Copy your public key:",
+      "step4Title": "Add to GitLab",
+      "step4Desc": "Go to GitLab Preferences > SSH Keys. Paste your public key and set an expiry date.",
+      "step5Title": "Test Connection",
+      "step5Desc": "Verify your SSH connection:"
+    },
+    "bitbucket": {
+      "step1Title": "Generate SSH Key",
+      "step1Desc": "Create an Ed25519 SSH key:",
+      "step2Title": "Add Key to Agent",
+      "step2Desc": "Start ssh-agent and add your key:",
+      "step3Title": "Copy Public Key",
+      "step3Desc": "Copy your public key to clipboard:",
+      "step4Title": "Add to Bitbucket",
+      "step4Desc": "Go to Bitbucket Settings > Personal settings > SSH keys > Add key.",
+      "step5Title": "Test Connection",
+      "step5Desc": "Verify your SSH connection:"
+    },
+    "aws": {
+      "step1Title": "Generate SSH Key",
+      "step1Desc": "Create an Ed25519 SSH key for AWS EC2:",
+      "step2Title": "Copy Public Key",
+      "step2Desc": "Display your public key to copy it:",
+      "step3Title": "Import Key to AWS",
+      "step3Desc": "Go to AWS Console > EC2 > Key Pairs > Actions > Import Key Pair. Paste your public key.",
+      "step4Title": "Set Permissions",
+      "step4Desc": "Ensure your private key has proper permissions:",
+      "step5Title": "Connect to Instance",
+      "step5Desc": "SSH into your EC2 instance (replace with your details):"
+    },
+    "azure": {
+      "step1Title": "Generate SSH Key",
+      "step1Desc": "Create an Ed25519 SSH key for Azure:",
+      "step2Title": "Copy Public Key",
+      "step2Desc": "Display your public key:",
+      "step3Title": "Add During VM Creation",
+      "step3Desc": "When creating a VM, select 'SSH public key' for authentication and paste your public key.",
+      "step4Title": "Connect to VM",
+      "step4Desc": "SSH into your Azure VM:",
+      "step5Title": "Update Existing VM (Optional)",
+      "step5Desc": "Add key to existing VM using Azure CLI:"
+    },
+    "digitalocean": {
+      "step1Title": "Generate SSH Key",
+      "step1Desc": "Create an Ed25519 SSH key:",
+      "step2Title": "Copy Public Key",
+      "step2Desc": "Display your public key to copy it:",
+      "step3Title": "Add to DigitalOcean",
+      "step3Desc": "Go to DigitalOcean Control Panel > Settings > Security > SSH Keys > Add SSH Key.",
+      "step4Title": "Create Droplet",
+      "step4Desc": "When creating a Droplet, select your SSH key under 'Authentication'.",
+      "step5Title": "Connect to Droplet",
+      "step5Desc": "SSH into your Droplet:"
+    }
+  },
+  "footer": {
+    "about": "About This Online SSH Key Generator",
+    "aboutDesc": "This is a free, open-source online SSH key generator that runs entirely in your browser. No server-side processing, no data collection - just secure key generation.",
+    "securityFirst": "Security First",
+    "security1": "All key generation happens in your browser",
+    "security2": "No data is ever sent to any server",
+    "security3": "Open source and auditable code",
+    "security4": "Uses industry-standard cryptographic libraries",
+    "resources": "Resources",
+    "sshKeyGuide": "GitHub SSH Docs",
+    "githubSetup": "GitLab SSH Docs",
+    "bestPractices": "SSH Academy",
+    "madeWith": "Made with",
+    "forDevelopers": "for developers worldwide",
+    "copyright": "© {year} SSH Key Generator. Open source under MIT License."
+  },
+  "seo": {
+    "whatIs": {
+      "title": "What is an Online SSH Key Generator?",
+      "desc": "An online SSH key generator like this tool creates cryptographic key pairs securely in your browser. SSH keys consist of a public key (shared with servers) and a private key (kept secret). Unlike passwords, SSH keys generated online are virtually impossible to crack through brute force."
+    },
+    "whyUse": {
+      "title": "Why Use This Online SSH Key Generator?",
+      "secure": {
+        "title": "Secure Online Generation",
+        "desc": "All cryptographic operations happen in your browser. This SSH key generator online ensures your private keys never leave your device."
+      },
+      "modern": {
+        "title": "Modern Algorithms",
+        "desc": "Generate Ed25519 keys (recommended) or RSA keys with up to 4096-bit strength."
+      },
+      "easy": {
+        "title": "Easy to Use",
+        "desc": "Simple interface with copy/download buttons. Works instantly without installation."
+      },
+      "free": {
+        "title": "Free & Open Source",
+        "desc": "No registration, no tracking, no cost. MIT licensed and community verified."
+      }
+    },
+    "howTo": {
+      "title": "How to Generate SSH Key Online",
+      "step1": "Select Algorithm: Choose Ed25519 (recommended) or RSA",
+      "step2": "Add Comment: Optional identifier like your email",
+      "step3": "Generate: Click the button to create your key pair",
+      "step4": "Save Keys: Download or copy your public and private keys",
+      "step5": "Add to Server: Copy public key to ~/.ssh/authorized_keys or your Git provider"
+    },
+    "comparison": {
+      "title": "Ed25519 vs RSA: Which Should You Choose?",
+      "intro": "Understanding the differences between these two popular SSH key algorithms helps you make the right choice for your security needs.",
+      "feature": "Feature",
+      "algorithmType": "Algorithm Type",
+      "keySize": "Key Size",
+      "signatureSize": "Signature Size",
+      "security": "Security Level",
+      "performance": "Performance",
+      "compatibility": "Compatibility",
+      "quantumResistance": "Quantum Resistance",
+      "bestFor": "Best For",
+      "recommendation": "Recommendation",
+      "ed25519AlgoType": "Elliptic Curve (Curve25519)",
+      "rsaAlgoType": "Integer Factorization",
+      "ed25519KeySize": "256 bits (compact)",
+      "rsaKeySize": "2048-4096 bits (larger)",
+      "ed25519SigSize": "64 bytes",
+      "rsaSigSize": "256-512 bytes",
+      "ed25519Security": "~128-bit equivalent",
+      "rsaSecurity": "~112-128-bit (4096)",
+      "ed25519Performance": "Very Fast (10x faster)",
+      "rsaPerformance": "Slower generation",
+      "ed25519Compat": "OpenSSH 6.5+ (2014)",
+      "rsaCompat": "Universal (all systems)",
+      "ed25519Quantum": "Not quantum-safe",
+      "rsaQuantum": "Not quantum-safe",
+      "ed25519BestFor": "GitHub, GitLab, modern servers",
+      "rsaBestFor": "Legacy systems, older hardware",
+      "ed25519Rec": "Best choice for most users",
+      "rsaRec": "Use for legacy system support"
+    },
+    "useCases": {
+      "title": "Common SSH Key Use Cases",
+      "git": {
+        "title": "Git Hosting",
+        "desc": "Push and pull code securely from GitHub, GitLab, Bitbucket without entering passwords."
+      },
+      "server": {
+        "title": "Server Access",
+        "desc": "SSH into Linux/Unix servers, cloud instances (AWS, GCP, Azure), and VPS providers."
+      },
+      "automation": {
+        "title": "CI/CD Automation",
+        "desc": "Enable automated deployments, scripts, and DevOps pipelines to access remote resources."
+      },
+      "tunnels": {
+        "title": "Secure Tunnels",
+        "desc": "Create encrypted tunnels for database access, port forwarding, and secure communication."
+      }
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "subtitle": "Find answers to common questions about SSH keys and this tool.",
+      "safe": {
+        "question": "Is it safe to generate SSH keys online?",
+        "answer": "Yes, this tool is 100% safe because all key generation happens entirely in your browser using the Web Crypto API. Your private keys never leave your device and are never transmitted to any server. The source code is open source and auditable on GitHub."
+      },
+      "ed25519VsRsa": {
+        "question": "What is the difference between Ed25519 and RSA?",
+        "answer": "Ed25519 is a modern elliptic curve algorithm that offers better security with smaller key sizes (256-bit vs 2048-4096-bit RSA). Ed25519 keys are faster to generate and use, and are recommended for most new SSH setups. RSA is older but has wider compatibility with legacy systems."
+      },
+      "github": {
+        "question": "How do I add my SSH key to GitHub?",
+        "answer": "1) Generate your SSH key using this tool, 2) Copy the public key, 3) Go to GitHub Settings > SSH and GPG keys, 4) Click 'New SSH key', 5) Paste your public key and give it a title, 6) Click 'Add SSH key'. Test with: ssh -T git@github.com"
+      },
+      "rsaKeySize": {
+        "question": "What key size should I use for RSA?",
+        "answer": "For RSA keys, 4096-bit is recommended for maximum security. 2048-bit is the minimum acceptable size and offers adequate security for most purposes. Keys smaller than 2048-bit are considered insecure and should not be used."
+      },
+      "offline": {
+        "question": "Can I use this SSH key generator offline?",
+        "answer": "Yes! This SSH key generator is a Progressive Web App (PWA) that works offline. After your first visit, you can install it as an app on your device and generate SSH keys without an internet connection. All cryptographic operations run locally in your browser."
+      },
+      "passphrase": {
+        "question": "Should I use a passphrase for my SSH key?",
+        "answer": "Yes, using a passphrase is highly recommended. A passphrase adds an extra layer of security - even if someone gains access to your private key file, they cannot use it without the passphrase. Use a strong, memorable passphrase for important keys."
+      },
+      "multipleServers": {
+        "question": "Can I use the same SSH key for multiple servers?",
+        "answer": "Yes, you can use the same SSH public key on multiple servers. However, for better security practices, consider using different keys for different purposes (e.g., work vs personal, production vs development). This limits exposure if one key is compromised."
+      },
+      "fingerprint": {
+        "question": "What is an SSH key fingerprint?",
+        "answer": "An SSH key fingerprint is a short, unique identifier derived from your public key using a hash function (SHA256 or MD5). It's used to verify key authenticity when connecting to servers. The fingerprint helps you confirm you're connecting to the correct server."
+      },
+      "bestAlgorithm": {
+        "question": "What is the best SSH key algorithm in 2025?",
+        "answer": "Ed25519 is the recommended algorithm in 2025 for most use cases. It provides excellent security with a 256-bit key size, fast performance, and is supported by all modern SSH implementations. Only use RSA if you need compatibility with legacy systems."
+      },
+      "authorizedKeys": {
+        "question": "What is the authorized_keys file?",
+        "answer": "The authorized_keys file (located at ~/.ssh/authorized_keys on Linux/macOS servers) contains a list of public keys that are allowed to connect to that account. Each line is one public key. Add your public key to this file to enable passwordless SSH login."
+      },
+      "bestOnlineGenerator": {
+        "question": "What is the best SSH key generator online?",
+        "answer": "This SSH key generator is one of the best free online options because it runs 100% in your browser, supports modern Ed25519 and RSA algorithms, works offline as a PWA, and never sends your private keys to any server."
+      },
+      "permissions": {
+        "question": "What permissions should my SSH private key have?",
+        "answer": "Your SSH private key should have restricted permissions. On Linux/macOS, use 'chmod 600 ~/.ssh/id_ed25519' (owner read/write) or 'chmod 400' (owner read-only). SSH will refuse to use a key with permissive permissions. The .ssh directory should be 700."
+      }
+    }
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  }
+}
