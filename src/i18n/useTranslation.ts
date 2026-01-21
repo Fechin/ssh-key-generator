@@ -1,13 +1,35 @@
 import { useLanguageStore, type Language } from './languageStore'
 import en from './locales/en.json'
 import zh from './locales/zh.json'
+import zhHant from './locales/zh-Hant.json'
+import ja from './locales/ja.json'
+import ko from './locales/ko.json'
+import es from './locales/es.json'
+import pt from './locales/pt.json'
+import fr from './locales/fr.json'
+import de from './locales/de.json'
+import ru from './locales/ru.json'
+import it from './locales/it.json'
+import nl from './locales/nl.json'
+import pl from './locales/pl.json'
 
 type TranslationValue = string | { [key: string]: TranslationValue }
 type Translations = { [key: string]: TranslationValue }
 
 const translations: Record<Language, Translations> = {
   en,
-  zh
+  zh,
+  'zh-Hant': zhHant,
+  ja,
+  ko,
+  es,
+  pt,
+  fr,
+  de,
+  ru,
+  it,
+  nl,
+  pl
 }
 
 function getNestedValue(obj: Translations, path: string): string {

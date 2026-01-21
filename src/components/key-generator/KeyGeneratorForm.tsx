@@ -72,10 +72,10 @@ export function KeyGeneratorForm({ onGenerated }: KeyGeneratorFormProps) {
   return (
     <div>
       <div className="mb-4">
-        <h3 className="flex items-center gap-2 text-base font-semibold">
+        <h2 className="flex items-center gap-2 text-base font-semibold">
           <Key className="h-4 w-4" />
           {t('generator.title')}
-        </h3>
+        </h2>
         <p className="text-xs text-muted-foreground mt-1">
           {t('generator.description')}
         </p>
@@ -164,7 +164,7 @@ export function KeyGeneratorForm({ onGenerated }: KeyGeneratorFormProps) {
             <button
               type="button"
               onClick={() => setShowPassphrase(!showPassphrase)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground min-w-11 min-h-11 flex items-center justify-center"
               aria-label={showPassphrase ? 'Hide passphrase' : 'Show passphrase'}
             >
               {showPassphrase ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}

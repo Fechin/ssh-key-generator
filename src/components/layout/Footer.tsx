@@ -34,13 +34,13 @@ export function Footer() {
           {/* Resources */}
           <div className="space-y-2">
             <h3 className="font-semibold text-sm">{t('footer.resources')}</h3>
-            <ul className="text-xs text-muted-foreground space-y-0.5">
+            <ul className="text-sm text-muted-foreground space-y-1">
               <li>
                 <a
                   href="https://docs.github.com/en/authentication/connecting-to-github-with-ssh"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-primary transition-colors"
+                  className="hover:text-primary transition-colors inline-block py-1.5"
                 >
                   {t('footer.sshKeyGuide')}
                 </a>
@@ -50,7 +50,7 @@ export function Footer() {
                   href="https://docs.gitlab.com/ee/user/ssh.html"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-primary transition-colors"
+                  className="hover:text-primary transition-colors inline-block py-1.5"
                 >
                   {t('footer.githubSetup')}
                 </a>
@@ -60,7 +60,7 @@ export function Footer() {
                   href="https://www.ssh.com/academy/ssh"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-primary transition-colors"
+                  className="hover:text-primary transition-colors inline-block py-1.5"
                 >
                   {t('footer.bestPractices')}
                 </a>

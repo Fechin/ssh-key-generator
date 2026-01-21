@@ -4,6 +4,8 @@ A free, open-source SSH key generator that runs entirely in your browser. Genera
 
 **Live Demo:** [https://sshkeygenerator.com](https://sshkeygenerator.com)
 
+![SSH Key Generator](public/og.webp)
+
 ## Features
 
 ### Key Generation

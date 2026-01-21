@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
 import { Key, Terminal, Settings, BookOpen } from 'lucide-react'
 import { Toaster } from 'sonner'
 import { Header } from '@/components/layout/Header'
@@ -12,8 +12,9 @@ import { CommandGenerator } from '@/components/command-mode/CommandGenerator'
 import { SSHConfigBuilder } from '@/components/ssh-config/SSHConfigBuilder'
 import { PlatformGuides } from '@/components/platform-guides/PlatformGuides'
 import { SEOContent } from '@/components/seo/SEOContent'
+import { NotFound } from '@/components/pages/NotFound'
 import { useTranslation } from '@/i18n'
-import { useLanguageStore, syncLanguageFromPath } from '@/i18n/languageStore'
+import { useLanguageStore, syncLanguageFromPath, type Language } from '@/i18n/languageStore'
 import { useThemeStore } from '@/store/themeStore'
 import type { KeyPair } from '@/types/keys'
 
@@ -118,18 +119,32 @@ function MainContent() {
 }
 
 // Update canonical URL based on current language
-function updateCanonical(lang: 'en' | 'zh') {
+function updateCanonical(lang: Language) {
   const canonical = document.querySelector('link[rel="canonical"]')
   const baseUrl = 'https://sshkeygenerator.com'
-  const url = lang === 'zh' ? `${baseUrl}/zh-Hans/` : `${baseUrl}/`
+  const paths: Record<Language, string> = {
+    'en': '/',
+    'zh': '/zh-Hans/',
+    'zh-Hant': '/zh-Hant/',
+    'ja': '/ja/',
+    'ko': '/ko/',
+    'es': '/es/',
+    'pt': '/pt/',
+    'fr': '/fr/',
+    'de': '/de/',
+    'ru': '/ru/',
+    'it': '/it/',
+    'nl': '/nl/',
+    'pl': '/pl/'
+  }
 
   if (canonical) {
-    canonical.setAttribute('href', url)
+    canonical.setAttribute('href', baseUrl + paths[lang])
   }
 }
 
 // Language route wrapper that syncs language from URL
-function LanguageRoute({ lang }: { lang: 'en' | 'zh' }) {
+function LanguageRoute({ lang }: { lang: Language }) {
   const { setLanguage } = useLanguageStore()
 
   useEffect(() => {
@@ -150,15 +165,59 @@ function App() {
 
   return (
     <Routes>
-      {/* Chinese route */}
+      {/* Chinese Simplified route */}
       <Route path="/zh-Hans/*" element={<LanguageRoute lang="zh" />} />
       <Route path="/zh-Hans" element={<LanguageRoute lang="zh" />} />
+
+      {/* Chinese Traditional route */}
+      <Route path="/zh-Hant/*" element={<LanguageRoute lang="zh-Hant" />} />
+      <Route path="/zh-Hant" element={<LanguageRoute lang="zh-Hant" />} />
+
+      {/* Japanese route */}
+      <Route path="/ja/*" element={<LanguageRoute lang="ja" />} />
+      <Route path="/ja" element={<LanguageRoute lang="ja" />} />
+
+      {/* Korean route */}
+      <Route path="/ko/*" element={<LanguageRoute lang="ko" />} />
+      <Route path="/ko" element={<LanguageRoute lang="ko" />} />
+
+      {/* Spanish route */}
+      <Route path="/es/*" element={<LanguageRoute lang="es" />} />
+      <Route path="/es" element={<LanguageRoute lang="es" />} />
+
+      {/* Portuguese route */}
+      <Route path="/pt/*" element={<LanguageRoute lang="pt" />} />
+      <Route path="/pt" element={<LanguageRoute lang="pt" />} />
+
+      {/* French route */}
+      <Route path="/fr/*" element={<LanguageRoute lang="fr" />} />
+      <Route path="/fr" element={<LanguageRoute lang="fr" />} />
+
+      {/* German route */}
+      <Route path="/de/*" element={<LanguageRoute lang="de" />} />
+      <Route path="/de" element={<LanguageRoute lang="de" />} />
+
+      {/* Russian route */}
+      <Route path="/ru/*" element={<LanguageRoute lang="ru" />} />
+      <Route path="/ru" element={<LanguageRoute lang="ru" />} />
+
+      {/* Italian route */}
+      <Route path="/it/*" element={<LanguageRoute lang="it" />} />
+      <Route path="/it" element={<LanguageRoute lang="it" />} />
+
+      {/* Dutch route */}
+      <Route path="/nl/*" element={<LanguageRoute lang="nl" />} />
+      <Route path="/nl" element={<LanguageRoute lang="nl" />} />
+
+      {/* Polish route */}
+      <Route path="/pl/*" element={<LanguageRoute lang="pl" />} />
+      <Route path="/pl" element={<LanguageRoute lang="pl" />} />
 
       {/* English route (default) */}
       <Route path="/" element={<LanguageRoute lang="en" />} />
 
-      {/* Redirect any unknown paths to root */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      {/* 404 Not Found for any unknown paths */}
+      <Route path="*" element={<NotFound />} />
     </Routes>
   )
 }

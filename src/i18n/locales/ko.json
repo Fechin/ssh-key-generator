@@ -1,0 +1,342 @@
+{
+  "header": {
+    "title": "SSH 키 생성기",
+    "subtitle": "무료 & 안전",
+    "clientSide": "100% 클라이언트 사이드",
+    "viewOnGitHub": "GitHub에서 보기"
+  },
+  "hero": {
+    "title": "온라인 SSH 키 생성기",
+    "subtitle": "이 무료 온라인 SSH 키 생성기를 사용하여 브라우저에서 안전하게 SSH 키를 생성하세요. GitHub, GitLab, Bitbucket 및 모든 SSH 서버와 호환됩니다."
+  },
+  "tabs": {
+    "generate": "키 생성",
+    "generateShort": "생성",
+    "commands": "명령어 모드",
+    "commandsShort": "명령어",
+    "config": "SSH 설정",
+    "configShort": "설정",
+    "guides": "플랫폼 가이드",
+    "guidesShort": "가이드"
+  },
+  "generator": {
+    "title": "온라인 SSH 키 생성기",
+    "description": "이 무료 온라인 생성기를 사용하여 브라우저에서 안전하게 SSH 키 쌍을 생성하세요. 어떤 서버로도 데이터가 전송되지 않습니다.",
+    "algorithm": "알고리즘",
+    "algorithmTooltip": "대부분의 경우 Ed25519를 권장합니다. 레거시 시스템과의 호환성이 필요하면 RSA를 사용하세요.",
+    "comment": "코멘트 (선택사항)",
+    "commentTooltip": "이 키를 식별하기 위한 코멘트입니다. 보통 이메일 주소를 사용합니다.",
+    "commentPlaceholder": "user@example.com",
+    "generateButton": "키 쌍 생성",
+    "generating": "생성 중...",
+    "passphrase": "암호문 (선택사항)",
+    "passphraseTooltip": "암호문은 추가 보안을 제공합니다. 누군가 개인 키를 얻더라도 암호문 없이는 사용할 수 없습니다.",
+    "passphrasePlaceholder": "암호화를 위한 암호문 입력",
+    "confirmPassphrase": "암호문 확인",
+    "confirmPassphrasePlaceholder": "암호문 재입력",
+    "passphrasesMismatch": "암호문이 일치하지 않습니다",
+    "noPassphraseWarning": "암호문이 설정되지 않았습니다. 개인 키가 암호화되지 않습니다. 보안 강화를 위해 암호문 추가를 고려하세요.",
+    "securityTitle": "100% 클라이언트 사이드 SSH 키 생성기",
+    "securityDesc": "모든 키 생성은 브라우저에서 로컬로 수행됩니다. 이 온라인 SSH 키 생성기는 개인 키를 전송하지 않습니다.",
+    "noKeysYet": "아직 키가 생성되지 않았습니다",
+    "noKeysHint": "\"키 쌍 생성\"을 클릭하여 SSH 키를 만드세요"
+  },
+  "algorithms": {
+    "ed25519": "Ed25519 (권장)",
+    "ed25519Desc": "현대적이고 빠르며 안전합니다. 대부분의 사용 사례에 최적입니다.",
+    "rsa4096": "RSA 4096비트",
+    "rsa4096Desc": "레거시 시스템과의 최대 호환성.",
+    "rsa2048": "RSA 2048비트",
+    "rsa2048Desc": "호환성을 위한 최소 권장 RSA 크기."
+  },
+  "keyDisplay": {
+    "publicKey": "공개 키",
+    "publicKeyDesc": "원격 서버의 authorized_keys 또는 GitHub/GitLab에 추가하세요.",
+    "privateKey": "개인 키",
+    "privateKeyWarning": "비밀로 유지하세요! 개인 키를 절대 공유하지 마세요.",
+    "fingerprint": "키 지문",
+    "copy": "복사",
+    "copied": "복사됨!",
+    "download": "다운로드",
+    "reveal": "표시",
+    "hide": "숨김",
+    "clickToReveal": "클릭하여 개인 키 보기"
+  },
+  "commands": {
+    "title": "SSH 키 생성 명령어",
+    "description": "선호하는 플랫폼용 ssh-keygen 명령어를 생성합니다. 복사하여 터미널에서 실행하세요.",
+    "algorithm": "알고리즘",
+    "comment": "코멘트",
+    "filename": "파일명 (선택사항)",
+    "quickCommand": "빠른 명령어",
+    "completeSetup": "전체 설정",
+    "copyAll": "전체 복사"
+  },
+  "sshConfig": {
+    "title": "SSH 설정 빌더",
+    "description": "~/.ssh/config 파일을 구축하세요. 호스트를 추가하고 설정을 다운로드하세요.",
+    "hostAlias": "호스트 별칭",
+    "hostAliasRequired": "호스트 별칭 *",
+    "hostname": "호스트명",
+    "hostnameRequired": "호스트명 *",
+    "hostnamePlaceholder": "192.168.1.100 또는 example.com",
+    "user": "사용자",
+    "port": "포트",
+    "identityFile": "키 파일",
+    "identityFilePlaceholder": "~/.ssh/id_ed25519",
+    "addHost": "호스트 추가",
+    "configuredHosts": "구성된 호스트",
+    "generatedConfig": "생성된 설정",
+    "saveToPath": "~/.ssh/config에 저장",
+    "noHosts": "# 아직 호스트가 구성되지 않았습니다",
+    "advancedOptions": "고급 옵션",
+    "proxyJump": "프록시 점프",
+    "proxyJumpPlaceholder": "bastion-host",
+    "proxyJumpDesc": "배스천/점프 호스트를 통해 대상에 연결",
+    "forwardAgent": "에이전트 전달",
+    "forwardAgentDesc": "SSH 에이전트를 원격 호스트로 전달"
+  },
+  "guides": {
+    "title": "플랫폼 설정 가이드",
+    "description": "인기 있는 Git 플랫폼에서 SSH 키를 설정하는 단계별 안내입니다.",
+    "officialDocs": "공식 문서",
+    "sshSetup": "{platform} SSH 설정",
+    "github": {
+      "step1Title": "SSH 키 생성",
+      "step1Desc": "위의 생성기를 사용하거나 다음 명령어를 실행하세요:",
+      "step2Title": "SSH 에이전트 시작",
+      "step2Desc": "백그라운드에서 ssh-agent 시작:",
+      "step3Title": "에이전트에 키 추가",
+      "step3Desc": "SSH 개인 키를 에이전트에 추가:",
+      "step4Title": "공개 키 복사",
+      "step4Desc": "공개 키를 클립보드에 복사:",
+      "step5Title": "GitHub에 추가",
+      "step5Desc": "GitHub 설정 > SSH 및 GPG 키 > 새 SSH 키로 이동하여 공개 키를 붙여넣으세요.",
+      "step6Title": "연결 테스트",
+      "step6Desc": "SSH 연결 확인:"
+    },
+    "gitlab": {
+      "step1Title": "SSH 키 생성",
+      "step1Desc": "보안 향상을 위해 Ed25519 사용:",
+      "step2Title": "에이전트에 키 추가",
+      "step2Desc": "SSH 키를 에이전트에 추가:",
+      "step3Title": "공개 키 복사",
+      "step3Desc": "공개 키 복사:",
+      "step4Title": "GitLab에 추가",
+      "step4Desc": "GitLab 환경설정 > SSH 키로 이동하여 공개 키를 붙여넣고 만료일을 설정하세요.",
+      "step5Title": "연결 테스트",
+      "step5Desc": "SSH 연결 확인:"
+    },
+    "bitbucket": {
+      "step1Title": "SSH 키 생성",
+      "step1Desc": "Ed25519 SSH 키 생성:",
+      "step2Title": "에이전트에 키 추가",
+      "step2Desc": "ssh-agent를 시작하고 키 추가:",
+      "step3Title": "공개 키 복사",
+      "step3Desc": "공개 키를 클립보드에 복사:",
+      "step4Title": "Bitbucket에 추가",
+      "step4Desc": "Bitbucket 설정 > 개인 설정 > SSH 키 > 키 추가로 이동.",
+      "step5Title": "연결 테스트",
+      "step5Desc": "SSH 연결 확인:"
+    },
+    "aws": {
+      "step1Title": "SSH 키 생성",
+      "step1Desc": "AWS EC2용 Ed25519 SSH 키 생성:",
+      "step2Title": "공개 키 복사",
+      "step2Desc": "공개 키 표시 및 복사:",
+      "step3Title": "AWS에 키 가져오기",
+      "step3Desc": "AWS 콘솔 > EC2 > 키 페어 > 작업 > 키 페어 가져오기로 이동하여 공개 키를 붙여넣으세요.",
+      "step4Title": "권한 설정",
+      "step4Desc": "개인 키에 적절한 권한 설정:",
+      "step5Title": "인스턴스에 연결",
+      "step5Desc": "EC2 인스턴스에 SSH 연결 (세부 정보를 교체하세요):"
+    },
+    "azure": {
+      "step1Title": "SSH 키 생성",
+      "step1Desc": "Azure용 Ed25519 SSH 키 생성:",
+      "step2Title": "공개 키 복사",
+      "step2Desc": "공개 키 표시:",
+      "step3Title": "VM 생성 시 추가",
+      "step3Desc": "VM 생성 시 인증 방법으로 'SSH 공개 키'를 선택하고 공개 키를 붙여넣으세요.",
+      "step4Title": "VM에 연결",
+      "step4Desc": "Azure VM에 SSH 연결:",
+      "step5Title": "기존 VM 업데이트 (선택사항)",
+      "step5Desc": "Azure CLI를 사용하여 기존 VM에 키 추가:"
+    },
+    "digitalocean": {
+      "step1Title": "SSH 키 생성",
+      "step1Desc": "Ed25519 SSH 키 생성:",
+      "step2Title": "공개 키 복사",
+      "step2Desc": "공개 키 표시 및 복사:",
+      "step3Title": "DigitalOcean에 추가",
+      "step3Desc": "DigitalOcean 제어판 > 설정 > 보안 > SSH 키 > SSH 키 추가로 이동.",
+      "step4Title": "Droplet 생성",
+      "step4Desc": "Droplet 생성 시 '인증'에서 SSH 키를 선택.",
+      "step5Title": "Droplet에 연결",
+      "step5Desc": "Droplet에 SSH 연결:"
+    }
+  },
+  "footer": {
+    "about": "이 온라인 SSH 키 생성기에 대하여",
+    "aboutDesc": "이것은 완전히 브라우저에서 실행되는 무료 오픈 소스 온라인 SSH 키 생성기입니다. 서버 처리 없음, 데이터 수집 없음 - 안전한 키 생성만.",
+    "securityFirst": "보안 최우선",
+    "security1": "모든 키 생성은 브라우저에서 수행됩니다",
+    "security2": "데이터는 어떤 서버로도 전송되지 않습니다",
+    "security3": "오픈 소스로 감사 가능한 코드",
+    "security4": "업계 표준 암호화 라이브러리 사용",
+    "resources": "리소스",
+    "sshKeyGuide": "GitHub SSH 문서",
+    "githubSetup": "GitLab SSH 문서",
+    "bestPractices": "SSH 아카데미",
+    "madeWith": "",
+    "forDevelopers": "로 전 세계 개발자를 위해 제작",
+    "copyright": "© {year} SSH Key Generator. MIT 라이선스 오픈 소스."
+  },
+  "seo": {
+    "whatIs": {
+      "title": "온라인 SSH 키 생성기란?",
+      "desc": "이 온라인 SSH 키 생성기는 브라우저에서 안전하게 암호화 키 쌍을 생성합니다. SSH 키는 공개 키(서버와 공유)와 개인 키(비밀 유지)로 구성됩니다. 비밀번호와 달리 온라인에서 생성된 SSH 키는 무차별 대입 공격으로 거의 해독 불가능합니다."
+    },
+    "whyUse": {
+      "title": "왜 이 온라인 SSH 키 생성기를 사용해야 할까요?",
+      "secure": {
+        "title": "안전한 온라인 생성",
+        "desc": "모든 암호화 작업이 브라우저에서 수행됩니다. 이 SSH 키 생성기는 개인 키가 기기를 떠나지 않도록 보장합니다."
+      },
+      "modern": {
+        "title": "현대적인 알고리즘",
+        "desc": "Ed25519 키(권장) 또는 최대 4096비트 강도의 RSA 키 생성."
+      },
+      "easy": {
+        "title": "사용하기 쉬움",
+        "desc": "복사/다운로드 버튼이 있는 간단한 인터페이스. 설치 없이 즉시 작동."
+      },
+      "free": {
+        "title": "무료 & 오픈 소스",
+        "desc": "등록 불필요, 추적 없음, 비용 없음. MIT 라이선스로 커뮤니티 검증됨."
+      }
+    },
+    "howTo": {
+      "title": "온라인으로 SSH 키 생성하는 방법",
+      "step1": "알고리즘 선택: Ed25519(권장) 또는 RSA 선택",
+      "step2": "코멘트 추가: 이메일 같은 선택적 식별자",
+      "step3": "생성: 버튼을 클릭하여 키 쌍 생성",
+      "step4": "키 저장: 공개 키와 개인 키 다운로드 또는 복사",
+      "step5": "서버에 추가: 공개 키를 ~/.ssh/authorized_keys 또는 Git 제공자에 복사"
+    },
+    "comparison": {
+      "title": "Ed25519 vs RSA: 어떤 것을 선택해야 할까요?",
+      "intro": "이 두 가지 인기 있는 SSH 키 알고리즘의 차이점을 이해하면 보안 요구에 맞는 올바른 선택을 할 수 있습니다.",
+      "feature": "기능",
+      "algorithmType": "알고리즘 유형",
+      "keySize": "키 크기",
+      "signatureSize": "서명 크기",
+      "security": "보안 수준",
+      "performance": "성능",
+      "compatibility": "호환성",
+      "quantumResistance": "양자 저항성",
+      "bestFor": "최적 용도",
+      "recommendation": "권장",
+      "ed25519AlgoType": "타원 곡선 (Curve25519)",
+      "rsaAlgoType": "정수 인수분해",
+      "ed25519KeySize": "256비트 (컴팩트)",
+      "rsaKeySize": "2048-4096비트 (큼)",
+      "ed25519SigSize": "64바이트",
+      "rsaSigSize": "256-512바이트",
+      "ed25519Security": "약 128비트 상당",
+      "rsaSecurity": "약 112-128비트 (4096)",
+      "ed25519Performance": "매우 빠름 (10배 빠름)",
+      "rsaPerformance": "생성이 느림",
+      "ed25519Compat": "OpenSSH 6.5+ (2014)",
+      "rsaCompat": "범용 (모든 시스템)",
+      "ed25519Quantum": "양자 저항성 없음",
+      "rsaQuantum": "양자 저항성 없음",
+      "ed25519BestFor": "GitHub, GitLab, 현대 서버",
+      "rsaBestFor": "레거시 시스템, 구형 하드웨어",
+      "ed25519Rec": "대부분의 사용자에게 최적",
+      "rsaRec": "레거시 시스템 지원용"
+    },
+    "useCases": {
+      "title": "일반적인 SSH 키 사용 사례",
+      "git": {
+        "title": "Git 호스팅",
+        "desc": "비밀번호 입력 없이 GitHub, GitLab, Bitbucket에서 안전하게 코드 푸시 및 풀."
+      },
+      "server": {
+        "title": "서버 액세스",
+        "desc": "Linux/Unix 서버, 클라우드 인스턴스(AWS, GCP, Azure), VPS 제공자에 SSH 연결."
+      },
+      "automation": {
+        "title": "CI/CD 자동화",
+        "desc": "자동 배포, 스크립트, DevOps 파이프라인이 원격 리소스에 접근 가능."
+      },
+      "tunnels": {
+        "title": "보안 터널",
+        "desc": "데이터베이스 액세스, 포트 포워딩, 보안 통신을 위한 암호화 터널 생성."
+      }
+    },
+    "faq": {
+      "title": "자주 묻는 질문",
+      "subtitle": "SSH 키와 이 도구에 대한 일반적인 질문의 답변을 찾아보세요.",
+      "safe": {
+        "question": "온라인으로 SSH 키를 생성하는 것이 안전한가요?",
+        "answer": "네, 이 도구는 100% 안전합니다. 모든 키 생성은 Web Crypto API를 사용하여 브라우저에서 완전히 수행됩니다. 개인 키는 기기를 떠나지 않으며 어떤 서버로도 전송되지 않습니다. 소스 코드는 GitHub에서 오픈 소스로 감사 가능합니다."
+      },
+      "ed25519VsRsa": {
+        "question": "Ed25519와 RSA의 차이점은 무엇인가요?",
+        "answer": "Ed25519는 더 작은 키 크기(256비트 vs RSA의 2048-4096비트)로 더 나은 보안을 제공하는 현대적인 타원 곡선 알고리즘입니다. Ed25519 키는 생성 및 사용이 빠르며 대부분의 새로운 SSH 설정에 권장됩니다. RSA는 오래되었지만 레거시 시스템과의 호환성이 더 넓습니다."
+      },
+      "github": {
+        "question": "GitHub에 SSH 키를 추가하는 방법은?",
+        "answer": "1) 이 도구로 SSH 키 생성, 2) 공개 키 복사, 3) GitHub 설정 > SSH 및 GPG 키로 이동, 4) '새 SSH 키' 클릭, 5) 공개 키를 붙여넣고 제목 지정, 6) 'SSH 키 추가' 클릭. 테스트: ssh -T git@github.com"
+      },
+      "rsaKeySize": {
+        "question": "RSA에는 어떤 키 크기를 사용해야 하나요?",
+        "answer": "RSA 키의 경우 최대 보안을 위해 4096비트를 권장합니다. 2048비트는 최소 허용 크기이며 대부분의 목적에 적합한 보안을 제공합니다. 2048비트 미만의 키는 안전하지 않은 것으로 간주되며 사용해서는 안 됩니다."
+      },
+      "offline": {
+        "question": "이 SSH 키 생성기를 오프라인으로 사용할 수 있나요?",
+        "answer": "네! 이것은 오프라인으로 작동하는 프로그레시브 웹 앱(PWA)입니다. 첫 방문 후 기기에 앱으로 설치하고 인터넷 연결 없이 SSH 키를 생성할 수 있습니다. 모든 암호화 작업은 브라우저에서 로컬로 실행됩니다."
+      },
+      "passphrase": {
+        "question": "SSH 키에 암호문을 사용해야 하나요?",
+        "answer": "네, 암호문 사용을 강력히 권장합니다. 암호문은 추가 보안 계층을 추가합니다 - 누군가 개인 키 파일에 접근하더라도 암호문 없이는 사용할 수 없습니다. 중요한 키에는 강력하고 기억하기 쉬운 암호문을 사용하세요."
+      },
+      "multipleServers": {
+        "question": "같은 SSH 키를 여러 서버에서 사용할 수 있나요?",
+        "answer": "네, 같은 SSH 공개 키를 여러 서버에서 사용할 수 있습니다. 하지만 더 나은 보안 관행을 위해 다른 목적(업무 vs 개인, 프로덕션 vs 개발 등)에는 다른 키를 사용하는 것을 고려하세요. 이렇게 하면 하나의 키가 손상되었을 때 노출을 제한할 수 있습니다."
+      },
+      "fingerprint": {
+        "question": "SSH 키 지문이란 무엇인가요?",
+        "answer": "SSH 키 지문은 해시 함수(SHA256 또는 MD5)를 사용하여 공개 키에서 파생된 짧고 고유한 식별자입니다. 서버에 연결할 때 키의 진위를 확인하는 데 사용됩니다. 지문은 올바른 서버에 연결하고 있는지 확인하는 데 도움이 됩니다."
+      },
+      "bestAlgorithm": {
+        "question": "2025년에 가장 좋은 SSH 키 알고리즘은?",
+        "answer": "Ed25519는 2025년 대부분의 사용 사례에 권장되는 알고리즘입니다. 256비트 키 크기로 뛰어난 보안, 빠른 성능을 제공하며 모든 현대 SSH 구현에서 지원됩니다. 레거시 시스템과의 호환성이 필요한 경우에만 RSA를 사용하세요."
+      },
+      "authorizedKeys": {
+        "question": "authorized_keys 파일이란 무엇인가요?",
+        "answer": "authorized_keys 파일(Linux/macOS 서버의 ~/.ssh/authorized_keys에 위치)은 해당 계정에 연결이 허용된 공개 키 목록을 포함합니다. 각 줄이 하나의 공개 키입니다. 이 파일에 공개 키를 추가하면 비밀번호 없이 SSH 로그인이 가능합니다."
+      },
+      "bestOnlineGenerator": {
+        "question": "가장 좋은 온라인 SSH 키 생성기는?",
+        "answer": "이 SSH 키 생성기는 100% 브라우저에서 실행되고, 현대적인 Ed25519 및 RSA 알고리즘을 지원하며, PWA로 오프라인 작동하고, 개인 키를 어떤 서버로도 보내지 않기 때문에 최고의 무료 온라인 옵션 중 하나입니다."
+      },
+      "permissions": {
+        "question": "SSH 개인 키에 어떤 권한이 필요한가요?",
+        "answer": "SSH 개인 키에는 제한된 권한이 필요합니다. Linux/macOS에서 'chmod 600 ~/.ssh/id_ed25519'(소유자 읽기/쓰기) 또는 'chmod 400'(소유자 읽기 전용)을 사용하세요. 권한이 너무 느슨하면 SSH는 키 사용을 거부합니다. .ssh 디렉토리는 700이어야 합니다."
+      }
+    }
+  },
+  "theme": {
+    "light": "라이트",
+    "dark": "다크",
+    "system": "시스템"
+  },
+  "notFound": {
+    "title": "페이지를 찾을 수 없습니다",
+    "code": "404",
+    "description": "찾고 계신 페이지가 존재하지 않거나 이동되었습니다.",
+    "backHome": "홈으로 돌아가기"
+  }
+}

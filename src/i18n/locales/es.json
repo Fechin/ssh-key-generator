@@ -1,0 +1,342 @@
+{
+  "header": {
+    "title": "Generador de Claves SSH",
+    "subtitle": "Gratis y Seguro",
+    "clientSide": "100% del Lado del Cliente",
+    "viewOnGitHub": "Ver en GitHub"
+  },
+  "hero": {
+    "title": "Generador de Claves SSH en Línea",
+    "subtitle": "Genera claves SSH de forma segura en tu navegador con este generador de claves SSH en línea gratuito. Funciona con GitHub, GitLab, Bitbucket y cualquier servidor SSH."
+  },
+  "tabs": {
+    "generate": "Generar Claves",
+    "generateShort": "Generar",
+    "commands": "Modo Comando",
+    "commandsShort": "Comandos",
+    "config": "Config SSH",
+    "configShort": "Config",
+    "guides": "Guías de Plataforma",
+    "guidesShort": "Guías"
+  },
+  "generator": {
+    "title": "Generador de Claves SSH en Línea",
+    "description": "Genera un nuevo par de claves SSH de forma segura en tu navegador usando este generador gratuito. No se envían datos a ningún servidor.",
+    "algorithm": "Algoritmo",
+    "algorithmTooltip": "Se recomienda Ed25519 para la mayoría de los casos. Usa RSA si necesitas compatibilidad con sistemas antiguos.",
+    "comment": "Comentario (opcional)",
+    "commentTooltip": "Un comentario para identificar esta clave. Normalmente tu dirección de correo electrónico.",
+    "commentPlaceholder": "usuario@ejemplo.com",
+    "generateButton": "Generar Par de Claves",
+    "generating": "Generando...",
+    "passphrase": "Frase de contraseña (opcional)",
+    "passphraseTooltip": "Una frase de contraseña añade seguridad extra. Aunque alguien obtenga tu clave privada, no podrá usarla sin la frase de contraseña.",
+    "passphrasePlaceholder": "Introduce la frase de contraseña para cifrado",
+    "confirmPassphrase": "Confirmar Frase de contraseña",
+    "confirmPassphrasePlaceholder": "Vuelve a introducir la frase de contraseña",
+    "passphrasesMismatch": "Las frases de contraseña no coinciden",
+    "noPassphraseWarning": "No se ha establecido frase de contraseña. Tu clave privada no estará cifrada. Considera añadir una frase de contraseña para mayor seguridad.",
+    "securityTitle": "Generador de Claves SSH 100% del Lado del Cliente",
+    "securityDesc": "Toda la generación de claves ocurre localmente en tu navegador. Este generador SSH en línea nunca transmite tus claves privadas.",
+    "noKeysYet": "Aún no se han generado claves",
+    "noKeysHint": "Haz clic en \"Generar Par de Claves\" para crear tus claves SSH"
+  },
+  "algorithms": {
+    "ed25519": "Ed25519 (Recomendado)",
+    "ed25519Desc": "Moderno, rápido, seguro. El mejor para la mayoría de los casos.",
+    "rsa4096": "RSA 4096 bits",
+    "rsa4096Desc": "Máxima compatibilidad con sistemas antiguos.",
+    "rsa2048": "RSA 2048 bits",
+    "rsa2048Desc": "Tamaño RSA mínimo recomendado para compatibilidad."
+  },
+  "keyDisplay": {
+    "publicKey": "Clave Pública",
+    "publicKeyDesc": "Añade esto a authorized_keys en servidores remotos o a GitHub/GitLab.",
+    "privateKey": "Clave Privada",
+    "privateKeyWarning": "¡Mantenla en secreto! Nunca compartas tu clave privada.",
+    "fingerprint": "Huella Digital de la Clave",
+    "copy": "Copiar",
+    "copied": "¡Copiado!",
+    "download": "Descargar",
+    "reveal": "Mostrar",
+    "hide": "Ocultar",
+    "clickToReveal": "Haz clic en Mostrar para ver la clave privada"
+  },
+  "commands": {
+    "title": "Comandos de Generación de Claves SSH",
+    "description": "Genera comandos ssh-keygen para tu plataforma preferida. Cópialos y ejecútalos en tu terminal.",
+    "algorithm": "Algoritmo",
+    "comment": "Comentario",
+    "filename": "Nombre de archivo (opcional)",
+    "quickCommand": "Comando Rápido",
+    "completeSetup": "Configuración Completa",
+    "copyAll": "Copiar Todo"
+  },
+  "sshConfig": {
+    "title": "Constructor de Configuración SSH",
+    "description": "Construye tu archivo ~/.ssh/config. Añade hosts y descarga la configuración.",
+    "hostAlias": "Alias del Host",
+    "hostAliasRequired": "Alias del Host *",
+    "hostname": "Nombre del Host",
+    "hostnameRequired": "Nombre del Host *",
+    "hostnamePlaceholder": "192.168.1.100 o ejemplo.com",
+    "user": "Usuario",
+    "port": "Puerto",
+    "identityFile": "Archivo de Identidad",
+    "identityFilePlaceholder": "~/.ssh/id_ed25519",
+    "addHost": "Añadir Host",
+    "configuredHosts": "Hosts Configurados",
+    "generatedConfig": "Configuración Generada",
+    "saveToPath": "Guardar en ~/.ssh/config",
+    "noHosts": "# Aún no hay hosts configurados",
+    "advancedOptions": "Opciones Avanzadas",
+    "proxyJump": "ProxyJump",
+    "proxyJumpPlaceholder": "servidor-bastion",
+    "proxyJumpDesc": "Salta a través de un servidor bastión/jump para llegar al destino",
+    "forwardAgent": "Reenviar Agente",
+    "forwardAgentDesc": "Reenvía tu agente SSH al host remoto"
+  },
+  "guides": {
+    "title": "Guías de Configuración de Plataformas",
+    "description": "Instrucciones paso a paso para configurar claves SSH en plataformas Git populares.",
+    "officialDocs": "Docs Oficiales",
+    "sshSetup": "Configuración SSH de {platform}",
+    "github": {
+      "step1Title": "Generar Clave SSH",
+      "step1Desc": "Usa el generador de arriba o ejecuta este comando:",
+      "step2Title": "Iniciar el Agente SSH",
+      "step2Desc": "Inicia el ssh-agent en segundo plano:",
+      "step3Title": "Añadir Clave al Agente",
+      "step3Desc": "Añade tu clave privada SSH al agente:",
+      "step4Title": "Copiar Clave Pública",
+      "step4Desc": "Copia tu clave pública al portapapeles:",
+      "step5Title": "Añadir a GitHub",
+      "step5Desc": "Ve a Configuración de GitHub > Claves SSH y GPG > Nueva clave SSH. Pega tu clave pública.",
+      "step6Title": "Probar Conexión",
+      "step6Desc": "Verifica tu conexión SSH:"
+    },
+    "gitlab": {
+      "step1Title": "Generar Clave SSH",
+      "step1Desc": "Usa Ed25519 para mejor seguridad:",
+      "step2Title": "Añadir Clave al Agente",
+      "step2Desc": "Añade tu clave SSH al agente:",
+      "step3Title": "Copiar Clave Pública",
+      "step3Desc": "Copia tu clave pública:",
+      "step4Title": "Añadir a GitLab",
+      "step4Desc": "Ve a Preferencias de GitLab > Claves SSH. Pega tu clave pública y establece una fecha de caducidad.",
+      "step5Title": "Probar Conexión",
+      "step5Desc": "Verifica tu conexión SSH:"
+    },
+    "bitbucket": {
+      "step1Title": "Generar Clave SSH",
+      "step1Desc": "Crea una clave SSH Ed25519:",
+      "step2Title": "Añadir Clave al Agente",
+      "step2Desc": "Inicia ssh-agent y añade tu clave:",
+      "step3Title": "Copiar Clave Pública",
+      "step3Desc": "Copia tu clave pública al portapapeles:",
+      "step4Title": "Añadir a Bitbucket",
+      "step4Desc": "Ve a Configuración de Bitbucket > Configuración personal > Claves SSH > Añadir clave.",
+      "step5Title": "Probar Conexión",
+      "step5Desc": "Verifica tu conexión SSH:"
+    },
+    "aws": {
+      "step1Title": "Generar Clave SSH",
+      "step1Desc": "Crea una clave SSH Ed25519 para AWS EC2:",
+      "step2Title": "Copiar Clave Pública",
+      "step2Desc": "Muestra tu clave pública para copiarla:",
+      "step3Title": "Importar Clave a AWS",
+      "step3Desc": "Ve a Consola AWS > EC2 > Pares de claves > Acciones > Importar par de claves. Pega tu clave pública.",
+      "step4Title": "Establecer Permisos",
+      "step4Desc": "Asegúrate de que tu clave privada tenga los permisos correctos:",
+      "step5Title": "Conectar a la Instancia",
+      "step5Desc": "Conéctate por SSH a tu instancia EC2 (reemplaza con tus datos):"
+    },
+    "azure": {
+      "step1Title": "Generar Clave SSH",
+      "step1Desc": "Crea una clave SSH Ed25519 para Azure:",
+      "step2Title": "Copiar Clave Pública",
+      "step2Desc": "Muestra tu clave pública:",
+      "step3Title": "Añadir Durante la Creación de VM",
+      "step3Desc": "Al crear una VM, selecciona 'Clave pública SSH' para autenticación y pega tu clave pública.",
+      "step4Title": "Conectar a la VM",
+      "step4Desc": "Conéctate por SSH a tu VM de Azure:",
+      "step5Title": "Actualizar VM Existente (Opcional)",
+      "step5Desc": "Añade la clave a una VM existente usando Azure CLI:"
+    },
+    "digitalocean": {
+      "step1Title": "Generar Clave SSH",
+      "step1Desc": "Crea una clave SSH Ed25519:",
+      "step2Title": "Copiar Clave Pública",
+      "step2Desc": "Muestra tu clave pública para copiarla:",
+      "step3Title": "Añadir a DigitalOcean",
+      "step3Desc": "Ve a Panel de Control de DigitalOcean > Configuración > Seguridad > Claves SSH > Añadir Clave SSH.",
+      "step4Title": "Crear Droplet",
+      "step4Desc": "Al crear un Droplet, selecciona tu clave SSH en 'Autenticación'.",
+      "step5Title": "Conectar al Droplet",
+      "step5Desc": "Conéctate por SSH a tu Droplet:"
+    }
+  },
+  "footer": {
+    "about": "Acerca de Este Generador de Claves SSH en Línea",
+    "aboutDesc": "Esta es una herramienta gratuita y de código abierto que genera claves SSH completamente en tu navegador. Sin procesamiento del servidor, sin recolección de datos - solo generación segura de claves.",
+    "securityFirst": "Seguridad Primero",
+    "security1": "Toda la generación de claves ocurre en tu navegador",
+    "security2": "Ningún dato se envía a ningún servidor",
+    "security3": "Código abierto y auditable",
+    "security4": "Usa bibliotecas criptográficas estándar de la industria",
+    "resources": "Recursos",
+    "sshKeyGuide": "Docs SSH de GitHub",
+    "githubSetup": "Docs SSH de GitLab",
+    "bestPractices": "Academia SSH",
+    "madeWith": "Hecho con",
+    "forDevelopers": "para desarrolladores de todo el mundo",
+    "copyright": "© {year} SSH Key Generator. Código abierto bajo Licencia MIT."
+  },
+  "seo": {
+    "whatIs": {
+      "title": "¿Qué es un Generador de Claves SSH en Línea?",
+      "desc": "Un generador de claves SSH en línea como esta herramienta crea pares de claves criptográficas de forma segura en tu navegador. Las claves SSH consisten en una clave pública (compartida con servidores) y una clave privada (mantenida en secreto). A diferencia de las contraseñas, las claves SSH generadas en línea son prácticamente imposibles de descifrar por fuerza bruta."
+    },
+    "whyUse": {
+      "title": "¿Por Qué Usar Este Generador de Claves SSH en Línea?",
+      "secure": {
+        "title": "Generación Segura en Línea",
+        "desc": "Todas las operaciones criptográficas ocurren en tu navegador. Este generador de claves SSH en línea asegura que tus claves privadas nunca abandonen tu dispositivo."
+      },
+      "modern": {
+        "title": "Algoritmos Modernos",
+        "desc": "Genera claves Ed25519 (recomendado) o claves RSA de hasta 4096 bits."
+      },
+      "easy": {
+        "title": "Fácil de Usar",
+        "desc": "Interfaz simple con botones de copiar/descargar. Funciona instantáneamente sin instalación."
+      },
+      "free": {
+        "title": "Gratis y de Código Abierto",
+        "desc": "Sin registro, sin seguimiento, sin costo. Licencia MIT y verificado por la comunidad."
+      }
+    },
+    "howTo": {
+      "title": "Cómo Generar Claves SSH en Línea",
+      "step1": "Selecciona el Algoritmo: Elige Ed25519 (recomendado) o RSA",
+      "step2": "Añade Comentario: Identificador opcional como tu correo electrónico",
+      "step3": "Genera: Haz clic en el botón para crear tu par de claves",
+      "step4": "Guarda las Claves: Descarga o copia tus claves pública y privada",
+      "step5": "Añade al Servidor: Copia la clave pública a ~/.ssh/authorized_keys o a tu proveedor Git"
+    },
+    "comparison": {
+      "title": "Ed25519 vs RSA: ¿Cuál Deberías Elegir?",
+      "intro": "Entender las diferencias entre estos dos algoritmos populares de claves SSH te ayuda a tomar la decisión correcta para tus necesidades de seguridad.",
+      "feature": "Característica",
+      "algorithmType": "Tipo de Algoritmo",
+      "keySize": "Tamaño de Clave",
+      "signatureSize": "Tamaño de Firma",
+      "security": "Nivel de Seguridad",
+      "performance": "Rendimiento",
+      "compatibility": "Compatibilidad",
+      "quantumResistance": "Resistencia Cuántica",
+      "bestFor": "Mejor Para",
+      "recommendation": "Recomendación",
+      "ed25519AlgoType": "Curva Elíptica (Curve25519)",
+      "rsaAlgoType": "Factorización de Enteros",
+      "ed25519KeySize": "256 bits (compacto)",
+      "rsaKeySize": "2048-4096 bits (más grande)",
+      "ed25519SigSize": "64 bytes",
+      "rsaSigSize": "256-512 bytes",
+      "ed25519Security": "Equivalente a ~128 bits",
+      "rsaSecurity": "~112-128 bits (4096)",
+      "ed25519Performance": "Muy Rápido (10x más rápido)",
+      "rsaPerformance": "Generación más lenta",
+      "ed25519Compat": "OpenSSH 6.5+ (2014)",
+      "rsaCompat": "Universal (todos los sistemas)",
+      "ed25519Quantum": "No resistente a cuántica",
+      "rsaQuantum": "No resistente a cuántica",
+      "ed25519BestFor": "GitHub, GitLab, servidores modernos",
+      "rsaBestFor": "Sistemas antiguos, hardware legacy",
+      "ed25519Rec": "Mejor opción para la mayoría",
+      "rsaRec": "Usar para soporte legacy"
+    },
+    "useCases": {
+      "title": "Casos de Uso Comunes de Claves SSH",
+      "git": {
+        "title": "Alojamiento Git",
+        "desc": "Haz push y pull de código de forma segura desde GitHub, GitLab, Bitbucket sin introducir contraseñas."
+      },
+      "server": {
+        "title": "Acceso a Servidores",
+        "desc": "Conéctate por SSH a servidores Linux/Unix, instancias en la nube (AWS, GCP, Azure) y proveedores VPS."
+      },
+      "automation": {
+        "title": "Automatización CI/CD",
+        "desc": "Habilita despliegues automatizados, scripts y pipelines DevOps para acceder a recursos remotos."
+      },
+      "tunnels": {
+        "title": "Túneles Seguros",
+        "desc": "Crea túneles cifrados para acceso a bases de datos, reenvío de puertos y comunicación segura."
+      }
+    },
+    "faq": {
+      "title": "Preguntas Frecuentes",
+      "subtitle": "Encuentra respuestas a preguntas comunes sobre claves SSH y esta herramienta.",
+      "safe": {
+        "question": "¿Es seguro generar claves SSH en línea?",
+        "answer": "Sí, esta herramienta es 100% segura porque toda la generación de claves ocurre completamente en tu navegador usando la API Web Crypto. Tus claves privadas nunca abandonan tu dispositivo y nunca se transmiten a ningún servidor. El código fuente es de código abierto y auditable en GitHub."
+      },
+      "ed25519VsRsa": {
+        "question": "¿Cuál es la diferencia entre Ed25519 y RSA?",
+        "answer": "Ed25519 es un algoritmo moderno de curva elíptica que ofrece mejor seguridad con tamaños de clave más pequeños (256 bits vs 2048-4096 bits de RSA). Las claves Ed25519 son más rápidas de generar y usar, y se recomiendan para la mayoría de las nuevas configuraciones SSH. RSA es más antiguo pero tiene mayor compatibilidad con sistemas legacy."
+      },
+      "github": {
+        "question": "¿Cómo añado mi clave SSH a GitHub?",
+        "answer": "1) Genera tu clave SSH con esta herramienta, 2) Copia la clave pública, 3) Ve a Configuración de GitHub > Claves SSH y GPG, 4) Haz clic en 'Nueva clave SSH', 5) Pega tu clave pública y dale un título, 6) Haz clic en 'Añadir clave SSH'. Prueba con: ssh -T git@github.com"
+      },
+      "rsaKeySize": {
+        "question": "¿Qué tamaño de clave debería usar para RSA?",
+        "answer": "Para claves RSA, se recomiendan 4096 bits para máxima seguridad. 2048 bits es el tamaño mínimo aceptable y ofrece seguridad adecuada para la mayoría de propósitos. Las claves menores de 2048 bits se consideran inseguras y no deberían usarse."
+      },
+      "offline": {
+        "question": "¿Puedo usar este generador de claves SSH sin conexión?",
+        "answer": "¡Sí! Este generador de claves SSH es una Aplicación Web Progresiva (PWA) que funciona sin conexión. Después de tu primera visita, puedes instalarlo como una aplicación en tu dispositivo y generar claves SSH sin conexión a internet. Todas las operaciones criptográficas se ejecutan localmente en tu navegador."
+      },
+      "passphrase": {
+        "question": "¿Debería usar una frase de contraseña para mi clave SSH?",
+        "answer": "Sí, se recomienda encarecidamente usar una frase de contraseña. Una frase de contraseña añade una capa extra de seguridad - incluso si alguien obtiene acceso a tu archivo de clave privada, no puede usarlo sin la frase de contraseña. Usa una frase de contraseña fuerte y memorable para las claves importantes."
+      },
+      "multipleServers": {
+        "question": "¿Puedo usar la misma clave SSH para múltiples servidores?",
+        "answer": "Sí, puedes usar la misma clave pública SSH en múltiples servidores. Sin embargo, para mejores prácticas de seguridad, considera usar diferentes claves para diferentes propósitos (ej., trabajo vs personal, producción vs desarrollo). Esto limita la exposición si una clave se ve comprometida."
+      },
+      "fingerprint": {
+        "question": "¿Qué es una huella digital de clave SSH?",
+        "answer": "Una huella digital de clave SSH es un identificador corto y único derivado de tu clave pública usando una función hash (SHA256 o MD5). Se usa para verificar la autenticidad de la clave al conectarse a servidores. La huella digital te ayuda a confirmar que te estás conectando al servidor correcto."
+      },
+      "bestAlgorithm": {
+        "question": "¿Cuál es el mejor algoritmo de clave SSH en 2025?",
+        "answer": "Ed25519 es el algoritmo recomendado en 2025 para la mayoría de los casos de uso. Proporciona excelente seguridad con un tamaño de clave de 256 bits, rendimiento rápido, y es compatible con todas las implementaciones SSH modernas. Solo usa RSA si necesitas compatibilidad con sistemas legacy."
+      },
+      "authorizedKeys": {
+        "question": "¿Qué es el archivo authorized_keys?",
+        "answer": "El archivo authorized_keys (ubicado en ~/.ssh/authorized_keys en servidores Linux/macOS) contiene una lista de claves públicas que pueden conectarse a esa cuenta. Cada línea es una clave pública. Añade tu clave pública a este archivo para habilitar el inicio de sesión SSH sin contraseña."
+      },
+      "bestOnlineGenerator": {
+        "question": "¿Cuál es el mejor generador de claves SSH en línea?",
+        "answer": "Este generador de claves SSH es una de las mejores opciones gratuitas en línea porque se ejecuta 100% en tu navegador, soporta algoritmos modernos Ed25519 y RSA, funciona sin conexión como PWA, y nunca envía tus claves privadas a ningún servidor."
+      },
+      "permissions": {
+        "question": "¿Qué permisos debería tener mi clave privada SSH?",
+        "answer": "Tu clave privada SSH debería tener permisos restringidos. En Linux/macOS, usa 'chmod 600 ~/.ssh/id_ed25519' (lectura/escritura del propietario) o 'chmod 400' (solo lectura del propietario). SSH rechazará usar una clave con permisos permisivos. El directorio .ssh debería ser 700."
+      }
+    }
+  },
+  "theme": {
+    "light": "Claro",
+    "dark": "Oscuro",
+    "system": "Sistema"
+  },
+  "notFound": {
+    "title": "Página No Encontrada",
+    "code": "404",
+    "description": "La página que buscas no existe o ha sido movida.",
+    "backHome": "Volver al Inicio"
+  }
+}

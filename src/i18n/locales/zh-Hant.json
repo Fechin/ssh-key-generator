@@ -1,0 +1,342 @@
+{
+  "header": {
+    "title": "SSH 金鑰產生器",
+    "subtitle": "免費且安全",
+    "clientSide": "100% 本機執行",
+    "viewOnGitHub": "在 GitHub 上檢視"
+  },
+  "hero": {
+    "title": "線上 SSH 金鑰產生器",
+    "subtitle": "使用這個免費的線上 SSH 金鑰產生器，在瀏覽器中安全地產生 SSH 金鑰。支援 GitHub、GitLab、Bitbucket 及任何 SSH 伺服器。"
+  },
+  "tabs": {
+    "generate": "產生金鑰",
+    "generateShort": "產生",
+    "commands": "命令模式",
+    "commandsShort": "命令",
+    "config": "SSH 設定",
+    "configShort": "設定",
+    "guides": "平台指南",
+    "guidesShort": "指南"
+  },
+  "generator": {
+    "title": "線上 SSH 金鑰產生器",
+    "description": "使用此免費線上產生器，在瀏覽器中安全產生 SSH 金鑰對。不會向任何伺服器傳送資料。",
+    "algorithm": "演算法",
+    "algorithmTooltip": "大多數情況推薦使用 Ed25519。如需相容舊系統，請使用 RSA。",
+    "comment": "註解（選填）",
+    "commentTooltip": "用於識別此金鑰的註解，通常是您的電子郵件地址。",
+    "commentPlaceholder": "user@example.com",
+    "generateButton": "產生金鑰對",
+    "generating": "產生中...",
+    "passphrase": "密碼短語（選填）",
+    "passphraseTooltip": "密碼短語增加額外的安全性。即使有人取得了您的私鑰，沒有密碼短語也無法使用。",
+    "passphrasePlaceholder": "輸入用於加密的密碼短語",
+    "confirmPassphrase": "確認密碼短語",
+    "confirmPassphrasePlaceholder": "再次輸入密碼短語",
+    "passphrasesMismatch": "密碼短語不符",
+    "noPassphraseWarning": "未設定密碼短語。您的私鑰將不會被加密。建議添加密碼短語以增強安全性。",
+    "securityTitle": "100% 本機執行的 SSH 金鑰產生器",
+    "securityDesc": "所有金鑰產生都在您的瀏覽器中本機完成。此線上 SSH 金鑰產生器永不傳輸您的私鑰。",
+    "noKeysYet": "尚未產生金鑰",
+    "noKeysHint": "點擊「產生金鑰對」建立您的 SSH 金鑰"
+  },
+  "algorithms": {
+    "ed25519": "Ed25519（推薦）",
+    "ed25519Desc": "現代、快速、安全。適用於大多數場景。",
+    "rsa4096": "RSA 4096 位元",
+    "rsa4096Desc": "與傳統系統最大相容。",
+    "rsa2048": "RSA 2048 位元",
+    "rsa2048Desc": "RSA 最低推薦位數，用於相容性需求。"
+  },
+  "keyDisplay": {
+    "publicKey": "公鑰",
+    "publicKeyDesc": "將此添加到遠端伺服器的 authorized_keys 或 GitHub/GitLab。",
+    "privateKey": "私鑰",
+    "privateKeyWarning": "請妥善保管！切勿分享您的私鑰。",
+    "fingerprint": "金鑰指紋",
+    "copy": "複製",
+    "copied": "已複製！",
+    "download": "下載",
+    "reveal": "顯示",
+    "hide": "隱藏",
+    "clickToReveal": "點擊顯示檢視私鑰"
+  },
+  "commands": {
+    "title": "SSH 金鑰產生命令",
+    "description": "為您的平台產生 ssh-keygen 命令。複製並在終端機中執行。",
+    "algorithm": "演算法",
+    "comment": "註解",
+    "filename": "檔案名稱（選填）",
+    "quickCommand": "快速命令",
+    "completeSetup": "完整設定",
+    "copyAll": "全部複製"
+  },
+  "sshConfig": {
+    "title": "SSH 設定建構器",
+    "description": "建構您的 ~/.ssh/config 檔案。新增主機並下載設定。",
+    "hostAlias": "主機別名",
+    "hostAliasRequired": "主機別名 *",
+    "hostname": "主機名稱",
+    "hostnameRequired": "主機名稱 *",
+    "hostnamePlaceholder": "192.168.1.100 或 example.com",
+    "user": "使用者",
+    "port": "連接埠",
+    "identityFile": "金鑰檔案",
+    "identityFilePlaceholder": "~/.ssh/id_ed25519",
+    "addHost": "新增主機",
+    "configuredHosts": "已設定的主機",
+    "generatedConfig": "產生的設定",
+    "saveToPath": "儲存到 ~/.ssh/config",
+    "noHosts": "# 尚未設定主機",
+    "advancedOptions": "進階選項",
+    "proxyJump": "跳板主機",
+    "proxyJumpPlaceholder": "bastion-host",
+    "proxyJumpDesc": "透過跳板機/堡壘機連線到目標主機",
+    "forwardAgent": "轉發代理",
+    "forwardAgentDesc": "將 SSH 代理轉發到遠端主機"
+  },
+  "guides": {
+    "title": "平台設定指南",
+    "description": "在主流 Git 平台上設定 SSH 金鑰的步驟說明。",
+    "officialDocs": "官方文件",
+    "sshSetup": "{platform} SSH 設定",
+    "github": {
+      "step1Title": "產生 SSH 金鑰",
+      "step1Desc": "使用上方的產生器或執行此命令：",
+      "step2Title": "啟動 SSH Agent",
+      "step2Desc": "在背景啟動 ssh-agent：",
+      "step3Title": "新增金鑰到 Agent",
+      "step3Desc": "將 SSH 私鑰新增到 agent：",
+      "step4Title": "複製公鑰",
+      "step4Desc": "將公鑰複製到剪貼簿：",
+      "step5Title": "新增到 GitHub",
+      "step5Desc": "前往 GitHub 設定 > SSH 和 GPG 金鑰 > 新增 SSH 金鑰。貼上您的公鑰。",
+      "step6Title": "測試連線",
+      "step6Desc": "驗證您的 SSH 連線："
+    },
+    "gitlab": {
+      "step1Title": "產生 SSH 金鑰",
+      "step1Desc": "使用 Ed25519 以獲得更好的安全性：",
+      "step2Title": "新增金鑰到 Agent",
+      "step2Desc": "將 SSH 金鑰新增到 agent：",
+      "step3Title": "複製公鑰",
+      "step3Desc": "複製您的公鑰：",
+      "step4Title": "新增到 GitLab",
+      "step4Desc": "前往 GitLab 偏好設定 > SSH 金鑰。貼上公鑰並設定到期日期。",
+      "step5Title": "測試連線",
+      "step5Desc": "驗證您的 SSH 連線："
+    },
+    "bitbucket": {
+      "step1Title": "產生 SSH 金鑰",
+      "step1Desc": "建立 Ed25519 SSH 金鑰：",
+      "step2Title": "新增金鑰到 Agent",
+      "step2Desc": "啟動 ssh-agent 並新增金鑰：",
+      "step3Title": "複製公鑰",
+      "step3Desc": "將公鑰複製到剪貼簿：",
+      "step4Title": "新增到 Bitbucket",
+      "step4Desc": "前往 Bitbucket 設定 > 個人設定 > SSH 金鑰 > 新增金鑰。",
+      "step5Title": "測試連線",
+      "step5Desc": "驗證您的 SSH 連線："
+    },
+    "aws": {
+      "step1Title": "產生 SSH 金鑰",
+      "step1Desc": "為 AWS EC2 建立 Ed25519 SSH 金鑰：",
+      "step2Title": "複製公鑰",
+      "step2Desc": "顯示公鑰以便複製：",
+      "step3Title": "匯入金鑰到 AWS",
+      "step3Desc": "前往 AWS 主控台 > EC2 > 金鑰對 > 動作 > 匯入金鑰對。貼上您的公鑰。",
+      "step4Title": "設定權限",
+      "step4Desc": "確保私鑰有正確的權限：",
+      "step5Title": "連線到執行個體",
+      "step5Desc": "SSH 連線到您的 EC2 執行個體（請替換為您的詳細資訊）："
+    },
+    "azure": {
+      "step1Title": "產生 SSH 金鑰",
+      "step1Desc": "為 Azure 建立 Ed25519 SSH 金鑰：",
+      "step2Title": "複製公鑰",
+      "step2Desc": "顯示您的公鑰：",
+      "step3Title": "在建立 VM 時新增",
+      "step3Desc": "建立 VM 時，選擇「SSH 公鑰」作為驗證方式並貼上您的公鑰。",
+      "step4Title": "連線到 VM",
+      "step4Desc": "SSH 連線到您的 Azure VM：",
+      "step5Title": "更新現有 VM（選填）",
+      "step5Desc": "使用 Azure CLI 將金鑰新增到現有 VM："
+    },
+    "digitalocean": {
+      "step1Title": "產生 SSH 金鑰",
+      "step1Desc": "建立 Ed25519 SSH 金鑰：",
+      "step2Title": "複製公鑰",
+      "step2Desc": "顯示公鑰以便複製：",
+      "step3Title": "新增到 DigitalOcean",
+      "step3Desc": "前往 DigitalOcean 控制面板 > 設定 > 安全 > SSH 金鑰 > 新增 SSH 金鑰。",
+      "step4Title": "建立 Droplet",
+      "step4Desc": "建立 Droplet 時，在「驗證」下選擇您的 SSH 金鑰。",
+      "step5Title": "連線到 Droplet",
+      "step5Desc": "SSH 連線到您的 Droplet："
+    }
+  },
+  "footer": {
+    "about": "關於此線上 SSH 金鑰產生器",
+    "aboutDesc": "本工具是一個免費、開源的線上 SSH 金鑰產生器，完全在瀏覽器中執行。無伺服器處理，無資料收集 - 只有安全的金鑰產生。",
+    "securityFirst": "安全優先",
+    "security1": "所有金鑰產生都在瀏覽器中完成",
+    "security2": "資料永不傳送到任何伺服器",
+    "security3": "開源程式碼，可供稽核",
+    "security4": "使用業界標準加密函式庫",
+    "resources": "資源",
+    "sshKeyGuide": "GitHub SSH 文件",
+    "githubSetup": "GitLab SSH 文件",
+    "bestPractices": "SSH 學院",
+    "madeWith": "用",
+    "forDevelopers": "為全球開發者製作",
+    "copyright": "© {year} SSH Key Generator。基於 MIT 授權開源。"
+  },
+  "seo": {
+    "whatIs": {
+      "title": "什麼是線上 SSH 金鑰產生器？",
+      "desc": "本線上 SSH 金鑰產生器可以在您的瀏覽器中安全地建立加密金鑰對。SSH 金鑰由公鑰（與伺服器共享）和私鑰（保密）組成。與密碼不同，線上產生的 SSH 金鑰幾乎不可能被暴力破解。"
+    },
+    "whyUse": {
+      "title": "為什麼使用此線上 SSH 金鑰產生器？",
+      "secure": {
+        "title": "安全的線上產生",
+        "desc": "所有加密操作都在瀏覽器中進行。此線上 SSH 金鑰產生器確保您的私鑰永遠不會離開您的裝置。"
+      },
+      "modern": {
+        "title": "現代演算法",
+        "desc": "產生 Ed25519 金鑰（推薦）或高達 4096 位元強度的 RSA 金鑰。"
+      },
+      "easy": {
+        "title": "簡單易用",
+        "desc": "簡潔介面，支援複製/下載。無需安裝，即開即用。"
+      },
+      "free": {
+        "title": "免費開源",
+        "desc": "無需註冊、無追蹤、完全免費。MIT 授權，社群驗證。"
+      }
+    },
+    "howTo": {
+      "title": "如何線上產生 SSH 金鑰",
+      "step1": "選擇演算法：選擇 Ed25519（推薦）或 RSA",
+      "step2": "新增註解：選填識別資訊，如您的電子郵件",
+      "step3": "產生：點擊按鈕建立金鑰對",
+      "step4": "儲存金鑰：下載或複製您的公鑰和私鑰",
+      "step5": "新增到伺服器：將公鑰複製到 ~/.ssh/authorized_keys 或 Git 服務提供商"
+    },
+    "comparison": {
+      "title": "Ed25519 vs RSA：如何選擇？",
+      "intro": "瞭解這兩種流行的 SSH 金鑰演算法之間的差異，有助於您為安全需求做出正確的選擇。",
+      "feature": "特性",
+      "algorithmType": "演算法類型",
+      "keySize": "金鑰長度",
+      "signatureSize": "簽章大小",
+      "security": "安全級別",
+      "performance": "效能",
+      "compatibility": "相容性",
+      "quantumResistance": "抗量子能力",
+      "bestFor": "最適合",
+      "recommendation": "推薦",
+      "ed25519AlgoType": "橢圓曲線 (Curve25519)",
+      "rsaAlgoType": "整數分解",
+      "ed25519KeySize": "256 位元（精簡）",
+      "rsaKeySize": "2048-4096 位元（較大）",
+      "ed25519SigSize": "64 位元組",
+      "rsaSigSize": "256-512 位元組",
+      "ed25519Security": "約 128 位元等效",
+      "rsaSecurity": "約 112-128 位元 (4096)",
+      "ed25519Performance": "非常快（快 10 倍）",
+      "rsaPerformance": "產生較慢",
+      "ed25519Compat": "OpenSSH 6.5+ (2014)",
+      "rsaCompat": "通用（所有系統）",
+      "ed25519Quantum": "非抗量子",
+      "rsaQuantum": "非抗量子",
+      "ed25519BestFor": "GitHub、GitLab、現代伺服器",
+      "rsaBestFor": "傳統系統、舊硬體",
+      "ed25519Rec": "大多數使用者的最佳選擇",
+      "rsaRec": "用於傳統系統支援"
+    },
+    "useCases": {
+      "title": "常見 SSH 金鑰使用場景",
+      "git": {
+        "title": "Git 託管",
+        "desc": "從 GitHub、GitLab、Bitbucket 安全地推送和拉取程式碼，無需輸入密碼。"
+      },
+      "server": {
+        "title": "伺服器存取",
+        "desc": "SSH 連線到 Linux/Unix 伺服器、雲端執行個體（AWS、GCP、Azure）和 VPS 供應商。"
+      },
+      "automation": {
+        "title": "CI/CD 自動化",
+        "desc": "使自動化部署、腳本和 DevOps 流程能夠存取遠端資源。"
+      },
+      "tunnels": {
+        "title": "安全通道",
+        "desc": "為資料庫存取、連接埠轉發和安全通訊建立加密通道。"
+      }
+    },
+    "faq": {
+      "title": "常見問題",
+      "subtitle": "查詢關於 SSH 金鑰和本工具的常見問題解答。",
+      "safe": {
+        "question": "線上產生 SSH 金鑰安全嗎？",
+        "answer": "是的，本工具是 100% 安全的，因為所有金鑰產生完全在您的瀏覽器中使用 Web Crypto API 進行。您的私鑰永遠不會離開您的裝置，也不會傳輸到任何伺服器。原始碼在 GitHub 上開源，可供稽核。"
+      },
+      "ed25519VsRsa": {
+        "question": "Ed25519 和 RSA 有什麼區別？",
+        "answer": "Ed25519 是一種現代橢圓曲線演算法，以更小的金鑰長度（256位元 vs RSA的2048-4096位元）提供更好的安全性。Ed25519 金鑰產生和使用更快，推薦用於大多數新的 SSH 設定。RSA 較老但與傳統系統相容性更廣。"
+      },
+      "github": {
+        "question": "如何將 SSH 金鑰新增到 GitHub？",
+        "answer": "1) 使用本工具產生 SSH 金鑰，2) 複製公鑰，3) 前往 GitHub 設定 > SSH 和 GPG 金鑰，4) 點擊「新增 SSH 金鑰」，5) 貼上公鑰並命名，6) 點擊「新增 SSH 金鑰」。使用以下命令測試：ssh -T git@github.com"
+      },
+      "rsaKeySize": {
+        "question": "RSA 應該使用多大的金鑰長度？",
+        "answer": "對於 RSA 金鑰，推薦使用 4096 位元以獲得最高安全性。2048 位元是最低可接受的長度，對於大多數用途提供足夠的安全性。小於 2048 位元的金鑰被認為是不安全的，不應使用。"
+      },
+      "offline": {
+        "question": "這個 SSH 金鑰產生器可以離線使用嗎？",
+        "answer": "可以！本工具是一個漸進式 Web 應用程式（PWA），支援離線使用。首次訪問後，您可以將其安裝為裝置上的應用程式，無需網路連線即可產生 SSH 金鑰。所有加密操作都在瀏覽器本機執行。"
+      },
+      "passphrase": {
+        "question": "SSH 金鑰應該使用密碼短語嗎？",
+        "answer": "是的，強烈建議使用密碼短語。密碼短語增加了額外的安全層——即使有人取得了您的私鑰檔案，沒有密碼短語也無法使用。對重要的金鑰使用強壯且易記的密碼短語。"
+      },
+      "multipleServers": {
+        "question": "同一個 SSH 金鑰可以用於多個伺服器嗎？",
+        "answer": "可以，您可以在多個伺服器上使用同一個 SSH 公鑰。但是，為了更好的安全實踐，考慮為不同目的使用不同的金鑰（例如，工作與個人、正式與開發）。這樣可以在一個金鑰被洩露時限制影響範圍。"
+      },
+      "fingerprint": {
+        "question": "什麼是 SSH 金鑰指紋？",
+        "answer": "SSH 金鑰指紋是使用雜湊函數（SHA256 或 MD5）從公鑰衍生的短的唯一識別碼。它用於在連線伺服器時驗證金鑰的真實性。指紋幫助您確認您正在連線到正確的伺服器。"
+      },
+      "bestAlgorithm": {
+        "question": "2025 年最好的 SSH 金鑰演算法是什麼？",
+        "answer": "Ed25519 是 2025 年大多數用例推薦的演算法。它以 256 位元金鑰長度提供出色的安全性、快速的效能，並被所有現代 SSH 實作支援。只有在需要與傳統系統相容時才使用 RSA。"
+      },
+      "authorizedKeys": {
+        "question": "authorized_keys 檔案是什麼？",
+        "answer": "authorized_keys 檔案（位於 Linux/macOS 伺服器的 ~/.ssh/authorized_keys）包含允許連線到該帳戶的公鑰清單。每行是一個公鑰。將您的公鑰新增到此檔案即可啟用無密碼 SSH 登入。"
+      },
+      "bestOnlineGenerator": {
+        "question": "最好的線上 SSH 金鑰產生器是什麼？",
+        "answer": "本工具是最好的免費線上 SSH 金鑰產生器之一，因為它 100% 在瀏覽器中執行，支援現代 Ed25519 和 RSA 演算法，可作為 PWA 離線運作，並且永不向任何伺服器傳送您的私鑰。"
+      },
+      "permissions": {
+        "question": "SSH 私鑰應該有什麼權限？",
+        "answer": "SSH 私鑰應該有受限的權限。在 Linux/macOS 上，使用 'chmod 600 ~/.ssh/id_ed25519'（擁有者讀寫）或 'chmod 400'（唯讀）。如果權限過於寬鬆，SSH 將拒絕使用該金鑰。.ssh 目錄應該是 700 權限。"
+      }
+    }
+  },
+  "theme": {
+    "light": "淺色",
+    "dark": "深色",
+    "system": "跟隨系統"
+  },
+  "notFound": {
+    "title": "頁面未找到",
+    "code": "404",
+    "description": "您查找的頁面不存在或已被移動。",
+    "backHome": "返回首頁"
+  }
+}

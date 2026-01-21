@@ -66,10 +66,10 @@ export function SSHConfigBuilder() {
       {/* Add Host Form Section */}
       <div>
         <div className="mb-4">
-          <h3 className="flex items-center gap-2 text-base font-semibold">
+          <h2 className="flex items-center gap-2 text-base font-semibold">
             <Settings className="h-4 w-4" />
             {t('sshConfig.title')}
-          </h3>
+          </h2>
           <p className="text-xs text-muted-foreground mt-1">
             {t('sshConfig.description')}
           </p>

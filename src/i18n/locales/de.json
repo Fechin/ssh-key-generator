@@ -1,0 +1,342 @@
+{
+  "header": {
+    "title": "SSH-Schlüsselgenerator",
+    "subtitle": "Kostenlos & Sicher",
+    "clientSide": "100% Clientseitig",
+    "viewOnGitHub": "Auf GitHub ansehen"
+  },
+  "hero": {
+    "title": "Online SSH-Schlüsselgenerator",
+    "subtitle": "Generieren Sie SSH-Schlüssel sicher in Ihrem Browser mit diesem kostenlosen Online-SSH-Schlüsselgenerator. Funktioniert mit GitHub, GitLab, Bitbucket und jedem SSH-Server."
+  },
+  "tabs": {
+    "generate": "Schlüssel generieren",
+    "generateShort": "Generieren",
+    "commands": "Befehlsmodus",
+    "commandsShort": "Befehle",
+    "config": "SSH-Konfig",
+    "configShort": "Konfig",
+    "guides": "Plattform-Anleitungen",
+    "guidesShort": "Anleitungen"
+  },
+  "generator": {
+    "title": "Online SSH-Schlüsselgenerator",
+    "description": "Generieren Sie ein neues SSH-Schlüsselpaar sicher in Ihrem Browser mit diesem kostenlosen Generator. Keine Daten werden an Server gesendet.",
+    "algorithm": "Algorithmus",
+    "algorithmTooltip": "Ed25519 wird für die meisten Fälle empfohlen. Verwenden Sie RSA, wenn Sie Kompatibilität mit älteren Systemen benötigen.",
+    "comment": "Kommentar (optional)",
+    "commentTooltip": "Ein Kommentar zur Identifizierung dieses Schlüssels. Normalerweise Ihre E-Mail-Adresse.",
+    "commentPlaceholder": "benutzer@beispiel.de",
+    "generateButton": "Schlüsselpaar generieren",
+    "generating": "Wird generiert...",
+    "passphrase": "Passphrase (optional)",
+    "passphraseTooltip": "Eine Passphrase bietet zusätzliche Sicherheit. Selbst wenn jemand Ihren privaten Schlüssel erhält, kann er ihn ohne die Passphrase nicht verwenden.",
+    "passphrasePlaceholder": "Passphrase für Verschlüsselung eingeben",
+    "confirmPassphrase": "Passphrase bestätigen",
+    "confirmPassphrasePlaceholder": "Passphrase erneut eingeben",
+    "passphrasesMismatch": "Passphrasen stimmen nicht überein",
+    "noPassphraseWarning": "Keine Passphrase festgelegt. Ihr privater Schlüssel wird nicht verschlüsselt. Erwägen Sie das Hinzufügen einer Passphrase für mehr Sicherheit.",
+    "securityTitle": "100% Clientseitiger SSH-Schlüsselgenerator",
+    "securityDesc": "Die gesamte Schlüsselgenerierung erfolgt lokal in Ihrem Browser. Dieser Online-SSH-Schlüsselgenerator überträgt niemals Ihre privaten Schlüssel.",
+    "noKeysYet": "Noch keine Schlüssel generiert",
+    "noKeysHint": "Klicken Sie auf \"Schlüsselpaar generieren\" um Ihre SSH-Schlüssel zu erstellen"
+  },
+  "algorithms": {
+    "ed25519": "Ed25519 (Empfohlen)",
+    "ed25519Desc": "Modern, schnell, sicher. Am besten für die meisten Anwendungsfälle.",
+    "rsa4096": "RSA 4096-Bit",
+    "rsa4096Desc": "Maximale Kompatibilität mit Legacy-Systemen.",
+    "rsa2048": "RSA 2048-Bit",
+    "rsa2048Desc": "Minimal empfohlene RSA-Größe für Kompatibilität."
+  },
+  "keyDisplay": {
+    "publicKey": "Öffentlicher Schlüssel",
+    "publicKeyDesc": "Fügen Sie dies zu authorized_keys auf Remote-Servern oder zu GitHub/GitLab hinzu.",
+    "privateKey": "Privater Schlüssel",
+    "privateKeyWarning": "Geheim halten! Teilen Sie niemals Ihren privaten Schlüssel.",
+    "fingerprint": "Schlüssel-Fingerabdruck",
+    "copy": "Kopieren",
+    "copied": "Kopiert!",
+    "download": "Herunterladen",
+    "reveal": "Anzeigen",
+    "hide": "Verbergen",
+    "clickToReveal": "Klicken Sie auf Anzeigen, um den privaten Schlüssel zu sehen"
+  },
+  "commands": {
+    "title": "SSH-Schlüsselgenerierungsbefehle",
+    "description": "Generieren Sie ssh-keygen-Befehle für Ihre bevorzugte Plattform. Kopieren und führen Sie diese in Ihrem Terminal aus.",
+    "algorithm": "Algorithmus",
+    "comment": "Kommentar",
+    "filename": "Dateiname (optional)",
+    "quickCommand": "Schnellbefehl",
+    "completeSetup": "Vollständige Einrichtung",
+    "copyAll": "Alles kopieren"
+  },
+  "sshConfig": {
+    "title": "SSH-Konfig-Builder",
+    "description": "Erstellen Sie Ihre ~/.ssh/config-Datei. Fügen Sie Hosts hinzu und laden Sie die Konfiguration herunter.",
+    "hostAlias": "Host-Alias",
+    "hostAliasRequired": "Host-Alias *",
+    "hostname": "Hostname",
+    "hostnameRequired": "Hostname *",
+    "hostnamePlaceholder": "192.168.1.100 oder beispiel.de",
+    "user": "Benutzer",
+    "port": "Port",
+    "identityFile": "Identitätsdatei",
+    "identityFilePlaceholder": "~/.ssh/id_ed25519",
+    "addHost": "Host hinzufügen",
+    "configuredHosts": "Konfigurierte Hosts",
+    "generatedConfig": "Generierte Konfiguration",
+    "saveToPath": "Speichern unter ~/.ssh/config",
+    "noHosts": "# Noch keine Hosts konfiguriert",
+    "advancedOptions": "Erweiterte Optionen",
+    "proxyJump": "ProxyJump",
+    "proxyJumpPlaceholder": "bastion-server",
+    "proxyJumpDesc": "Springen Sie über einen Bastion-/Jump-Server zum Ziel",
+    "forwardAgent": "Agent weiterleiten",
+    "forwardAgentDesc": "Leiten Sie Ihren SSH-Agenten an den Remote-Host weiter"
+  },
+  "guides": {
+    "title": "Plattform-Einrichtungsanleitungen",
+    "description": "Schritt-für-Schritt-Anleitungen zur Einrichtung von SSH-Schlüsseln auf beliebten Git-Plattformen.",
+    "officialDocs": "Offizielle Docs",
+    "sshSetup": "{platform} SSH-Einrichtung",
+    "github": {
+      "step1Title": "SSH-Schlüssel generieren",
+      "step1Desc": "Verwenden Sie den Generator oben oder führen Sie diesen Befehl aus:",
+      "step2Title": "SSH-Agent starten",
+      "step2Desc": "Starten Sie den ssh-agent im Hintergrund:",
+      "step3Title": "Schlüssel zum Agent hinzufügen",
+      "step3Desc": "Fügen Sie Ihren privaten SSH-Schlüssel zum Agent hinzu:",
+      "step4Title": "Öffentlichen Schlüssel kopieren",
+      "step4Desc": "Kopieren Sie Ihren öffentlichen Schlüssel in die Zwischenablage:",
+      "step5Title": "Zu GitHub hinzufügen",
+      "step5Desc": "Gehen Sie zu GitHub-Einstellungen > SSH- und GPG-Schlüssel > Neuer SSH-Schlüssel. Fügen Sie Ihren öffentlichen Schlüssel ein.",
+      "step6Title": "Verbindung testen",
+      "step6Desc": "Überprüfen Sie Ihre SSH-Verbindung:"
+    },
+    "gitlab": {
+      "step1Title": "SSH-Schlüssel generieren",
+      "step1Desc": "Verwenden Sie Ed25519 für bessere Sicherheit:",
+      "step2Title": "Schlüssel zum Agent hinzufügen",
+      "step2Desc": "Fügen Sie Ihren SSH-Schlüssel zum Agent hinzu:",
+      "step3Title": "Öffentlichen Schlüssel kopieren",
+      "step3Desc": "Kopieren Sie Ihren öffentlichen Schlüssel:",
+      "step4Title": "Zu GitLab hinzufügen",
+      "step4Desc": "Gehen Sie zu GitLab-Einstellungen > SSH-Schlüssel. Fügen Sie Ihren öffentlichen Schlüssel ein und legen Sie ein Ablaufdatum fest.",
+      "step5Title": "Verbindung testen",
+      "step5Desc": "Überprüfen Sie Ihre SSH-Verbindung:"
+    },
+    "bitbucket": {
+      "step1Title": "SSH-Schlüssel generieren",
+      "step1Desc": "Erstellen Sie einen Ed25519-SSH-Schlüssel:",
+      "step2Title": "Schlüssel zum Agent hinzufügen",
+      "step2Desc": "Starten Sie ssh-agent und fügen Sie Ihren Schlüssel hinzu:",
+      "step3Title": "Öffentlichen Schlüssel kopieren",
+      "step3Desc": "Kopieren Sie Ihren öffentlichen Schlüssel in die Zwischenablage:",
+      "step4Title": "Zu Bitbucket hinzufügen",
+      "step4Desc": "Gehen Sie zu Bitbucket-Einstellungen > Persönliche Einstellungen > SSH-Schlüssel > Schlüssel hinzufügen.",
+      "step5Title": "Verbindung testen",
+      "step5Desc": "Überprüfen Sie Ihre SSH-Verbindung:"
+    },
+    "aws": {
+      "step1Title": "SSH-Schlüssel generieren",
+      "step1Desc": "Erstellen Sie einen Ed25519-SSH-Schlüssel für AWS EC2:",
+      "step2Title": "Öffentlichen Schlüssel kopieren",
+      "step2Desc": "Zeigen Sie Ihren öffentlichen Schlüssel zum Kopieren an:",
+      "step3Title": "Schlüssel in AWS importieren",
+      "step3Desc": "Gehen Sie zu AWS-Konsole > EC2 > Schlüsselpaare > Aktionen > Schlüsselpaar importieren. Fügen Sie Ihren öffentlichen Schlüssel ein.",
+      "step4Title": "Berechtigungen setzen",
+      "step4Desc": "Stellen Sie sicher, dass Ihr privater Schlüssel die richtigen Berechtigungen hat:",
+      "step5Title": "Mit Instanz verbinden",
+      "step5Desc": "Verbinden Sie sich per SSH mit Ihrer EC2-Instanz (ersetzen Sie mit Ihren Details):"
+    },
+    "azure": {
+      "step1Title": "SSH-Schlüssel generieren",
+      "step1Desc": "Erstellen Sie einen Ed25519-SSH-Schlüssel für Azure:",
+      "step2Title": "Öffentlichen Schlüssel kopieren",
+      "step2Desc": "Zeigen Sie Ihren öffentlichen Schlüssel an:",
+      "step3Title": "Bei VM-Erstellung hinzufügen",
+      "step3Desc": "Wählen Sie bei der VM-Erstellung 'SSH-Öffentlicher Schlüssel' zur Authentifizierung und fügen Sie Ihren öffentlichen Schlüssel ein.",
+      "step4Title": "Mit VM verbinden",
+      "step4Desc": "Verbinden Sie sich per SSH mit Ihrer Azure-VM:",
+      "step5Title": "Bestehende VM aktualisieren (Optional)",
+      "step5Desc": "Fügen Sie den Schlüssel einer bestehenden VM mit Azure CLI hinzu:"
+    },
+    "digitalocean": {
+      "step1Title": "SSH-Schlüssel generieren",
+      "step1Desc": "Erstellen Sie einen Ed25519-SSH-Schlüssel:",
+      "step2Title": "Öffentlichen Schlüssel kopieren",
+      "step2Desc": "Zeigen Sie Ihren öffentlichen Schlüssel zum Kopieren an:",
+      "step3Title": "Zu DigitalOcean hinzufügen",
+      "step3Desc": "Gehen Sie zu DigitalOcean-Kontrollpanel > Einstellungen > Sicherheit > SSH-Schlüssel > SSH-Schlüssel hinzufügen.",
+      "step4Title": "Droplet erstellen",
+      "step4Desc": "Wählen Sie bei der Droplet-Erstellung Ihren SSH-Schlüssel unter 'Authentifizierung'.",
+      "step5Title": "Mit Droplet verbinden",
+      "step5Desc": "Verbinden Sie sich per SSH mit Ihrem Droplet:"
+    }
+  },
+  "footer": {
+    "about": "Über diesen Online SSH-Schlüsselgenerator",
+    "aboutDesc": "Dies ist ein kostenloses, quelloffenes Tool, das SSH-Schlüssel vollständig in Ihrem Browser generiert. Keine Serververarbeitung, keine Datenerfassung - nur sichere Schlüsselgenerierung.",
+    "securityFirst": "Sicherheit zuerst",
+    "security1": "Die gesamte Schlüsselgenerierung erfolgt in Ihrem Browser",
+    "security2": "Keine Daten werden an Server gesendet",
+    "security3": "Quelloffen und prüfbar",
+    "security4": "Verwendet branchenübliche kryptografische Bibliotheken",
+    "resources": "Ressourcen",
+    "sshKeyGuide": "GitHub SSH-Docs",
+    "githubSetup": "GitLab SSH-Docs",
+    "bestPractices": "SSH-Akademie",
+    "madeWith": "Erstellt mit",
+    "forDevelopers": "für Entwickler weltweit",
+    "copyright": "© {year} SSH Key Generator. Open Source unter MIT-Lizenz."
+  },
+  "seo": {
+    "whatIs": {
+      "title": "Was ist ein Online SSH-Schlüsselgenerator?",
+      "desc": "Ein Online-SSH-Schlüsselgenerator wie dieses Tool erstellt kryptografische Schlüsselpaare sicher in Ihrem Browser. SSH-Schlüssel bestehen aus einem öffentlichen Schlüssel (mit Servern geteilt) und einem privaten Schlüssel (geheim gehalten). Anders als Passwörter sind online generierte SSH-Schlüssel praktisch unmöglich durch Brute-Force zu knacken."
+    },
+    "whyUse": {
+      "title": "Warum diesen Online SSH-Schlüsselgenerator verwenden?",
+      "secure": {
+        "title": "Sichere Online-Generierung",
+        "desc": "Alle kryptografischen Operationen finden in Ihrem Browser statt. Dieser Online-SSH-Schlüsselgenerator stellt sicher, dass Ihre privaten Schlüssel niemals Ihr Gerät verlassen."
+      },
+      "modern": {
+        "title": "Moderne Algorithmen",
+        "desc": "Generieren Sie Ed25519-Schlüssel (empfohlen) oder RSA-Schlüssel mit bis zu 4096-Bit-Stärke."
+      },
+      "easy": {
+        "title": "Einfach zu bedienen",
+        "desc": "Einfache Oberfläche mit Kopieren/Download-Buttons. Funktioniert sofort ohne Installation."
+      },
+      "free": {
+        "title": "Kostenlos & Open Source",
+        "desc": "Keine Registrierung, kein Tracking, keine Kosten. MIT-lizenziert und von der Community verifiziert."
+      }
+    },
+    "howTo": {
+      "title": "So generieren Sie SSH-Schlüssel online",
+      "step1": "Algorithmus wählen: Wählen Sie Ed25519 (empfohlen) oder RSA",
+      "step2": "Kommentar hinzufügen: Optionale Kennung wie Ihre E-Mail",
+      "step3": "Generieren: Klicken Sie auf den Button, um Ihr Schlüsselpaar zu erstellen",
+      "step4": "Schlüssel speichern: Laden Sie Ihre öffentlichen und privaten Schlüssel herunter oder kopieren Sie sie",
+      "step5": "Zum Server hinzufügen: Kopieren Sie den öffentlichen Schlüssel nach ~/.ssh/authorized_keys oder zu Ihrem Git-Anbieter"
+    },
+    "comparison": {
+      "title": "Ed25519 vs RSA: Welchen sollten Sie wählen?",
+      "intro": "Das Verständnis der Unterschiede zwischen diesen beiden beliebten SSH-Schlüsselalgorithmen hilft Ihnen, die richtige Wahl für Ihre Sicherheitsanforderungen zu treffen.",
+      "feature": "Merkmal",
+      "algorithmType": "Algorithmustyp",
+      "keySize": "Schlüsselgröße",
+      "signatureSize": "Signaturgröße",
+      "security": "Sicherheitsstufe",
+      "performance": "Leistung",
+      "compatibility": "Kompatibilität",
+      "quantumResistance": "Quantenresistenz",
+      "bestFor": "Am besten für",
+      "recommendation": "Empfehlung",
+      "ed25519AlgoType": "Elliptische Kurve (Curve25519)",
+      "rsaAlgoType": "Ganzzahlfaktorisierung",
+      "ed25519KeySize": "256 Bit (kompakt)",
+      "rsaKeySize": "2048-4096 Bit (größer)",
+      "ed25519SigSize": "64 Bytes",
+      "rsaSigSize": "256-512 Bytes",
+      "ed25519Security": "~128-Bit-Äquivalent",
+      "rsaSecurity": "~112-128 Bit (4096)",
+      "ed25519Performance": "Sehr schnell (10x schneller)",
+      "rsaPerformance": "Langsamere Generierung",
+      "ed25519Compat": "OpenSSH 6.5+ (2014)",
+      "rsaCompat": "Universal (alle Systeme)",
+      "ed25519Quantum": "Nicht quantensicher",
+      "rsaQuantum": "Nicht quantensicher",
+      "ed25519BestFor": "GitHub, GitLab, moderne Server",
+      "rsaBestFor": "Legacy-Systeme, ältere Hardware",
+      "ed25519Rec": "Beste Wahl für die meisten",
+      "rsaRec": "Für Legacy-System-Support verwenden"
+    },
+    "useCases": {
+      "title": "Häufige SSH-Schlüssel-Anwendungsfälle",
+      "git": {
+        "title": "Git-Hosting",
+        "desc": "Pushen und pullen Sie Code sicher von GitHub, GitLab, Bitbucket ohne Passworteingabe."
+      },
+      "server": {
+        "title": "Serverzugriff",
+        "desc": "Verbinden Sie sich per SSH mit Linux/Unix-Servern, Cloud-Instanzen (AWS, GCP, Azure) und VPS-Anbietern."
+      },
+      "automation": {
+        "title": "CI/CD-Automatisierung",
+        "desc": "Ermöglichen Sie automatisierte Deployments, Skripte und DevOps-Pipelines den Zugriff auf Remote-Ressourcen."
+      },
+      "tunnels": {
+        "title": "Sichere Tunnel",
+        "desc": "Erstellen Sie verschlüsselte Tunnel für Datenbankzugriff, Port-Weiterleitung und sichere Kommunikation."
+      }
+    },
+    "faq": {
+      "title": "Häufig gestellte Fragen",
+      "subtitle": "Finden Sie Antworten auf häufige Fragen zu SSH-Schlüsseln und diesem Tool.",
+      "safe": {
+        "question": "Ist es sicher, SSH-Schlüssel online zu generieren?",
+        "answer": "Ja, dieses Tool ist 100% sicher, da die gesamte Schlüsselgenerierung vollständig in Ihrem Browser über die Web Crypto API erfolgt. Ihre privaten Schlüssel verlassen niemals Ihr Gerät und werden niemals an einen Server übertragen. Der Quellcode ist Open Source und auf GitHub prüfbar."
+      },
+      "ed25519VsRsa": {
+        "question": "Was ist der Unterschied zwischen Ed25519 und RSA?",
+        "answer": "Ed25519 ist ein moderner Algorithmus für elliptische Kurven, der bessere Sicherheit bei kleineren Schlüsselgrößen bietet (256 Bit vs. 2048-4096 Bit bei RSA). Ed25519-Schlüssel sind schneller zu generieren und zu verwenden und werden für die meisten neuen SSH-Setups empfohlen. RSA ist älter, hat aber eine breitere Kompatibilität mit Legacy-Systemen."
+      },
+      "github": {
+        "question": "Wie füge ich meinen SSH-Schlüssel zu GitHub hinzu?",
+        "answer": "1) Generieren Sie Ihren SSH-Schlüssel mit diesem Tool, 2) Kopieren Sie den öffentlichen Schlüssel, 3) Gehen Sie zu GitHub-Einstellungen > SSH- und GPG-Schlüssel, 4) Klicken Sie auf 'Neuer SSH-Schlüssel', 5) Fügen Sie Ihren öffentlichen Schlüssel ein und geben Sie ihm einen Titel, 6) Klicken Sie auf 'SSH-Schlüssel hinzufügen'. Testen Sie mit: ssh -T git@github.com"
+      },
+      "rsaKeySize": {
+        "question": "Welche Schlüsselgröße sollte ich für RSA verwenden?",
+        "answer": "Für RSA-Schlüssel werden 4096 Bit für maximale Sicherheit empfohlen. 2048 Bit ist die minimale akzeptable Größe und bietet für die meisten Zwecke ausreichende Sicherheit. Schlüssel kleiner als 2048 Bit gelten als unsicher und sollten nicht verwendet werden."
+      },
+      "offline": {
+        "question": "Kann ich diesen SSH-Schlüsselgenerator offline verwenden?",
+        "answer": "Ja! Dieser SSH-Schlüsselgenerator ist eine Progressive Web App (PWA), die offline funktioniert. Nach Ihrem ersten Besuch können Sie sie als App auf Ihrem Gerät installieren und SSH-Schlüssel ohne Internetverbindung generieren. Alle kryptografischen Operationen laufen lokal in Ihrem Browser."
+      },
+      "passphrase": {
+        "question": "Sollte ich eine Passphrase für meinen SSH-Schlüssel verwenden?",
+        "answer": "Ja, die Verwendung einer Passphrase wird dringend empfohlen. Eine Passphrase fügt eine zusätzliche Sicherheitsebene hinzu - selbst wenn jemand Zugriff auf Ihre private Schlüsseldatei erhält, kann er sie ohne die Passphrase nicht verwenden. Verwenden Sie eine starke, einprägsame Passphrase für wichtige Schlüssel."
+      },
+      "multipleServers": {
+        "question": "Kann ich denselben SSH-Schlüssel für mehrere Server verwenden?",
+        "answer": "Ja, Sie können denselben öffentlichen SSH-Schlüssel auf mehreren Servern verwenden. Für bessere Sicherheitspraktiken sollten Sie jedoch erwägen, verschiedene Schlüssel für verschiedene Zwecke zu verwenden (z.B. Arbeit vs. privat, Produktion vs. Entwicklung). Dies begrenzt die Exposition, wenn ein Schlüssel kompromittiert wird."
+      },
+      "fingerprint": {
+        "question": "Was ist ein SSH-Schlüssel-Fingerabdruck?",
+        "answer": "Ein SSH-Schlüssel-Fingerabdruck ist eine kurze, eindeutige Kennung, die aus Ihrem öffentlichen Schlüssel mittels einer Hash-Funktion (SHA256 oder MD5) abgeleitet wird. Er wird verwendet, um die Authentizität des Schlüssels beim Verbinden mit Servern zu überprüfen. Der Fingerabdruck hilft Ihnen zu bestätigen, dass Sie sich mit dem richtigen Server verbinden."
+      },
+      "bestAlgorithm": {
+        "question": "Was ist der beste SSH-Schlüssel-Algorithmus in 2025?",
+        "answer": "Ed25519 ist der empfohlene Algorithmus für 2025 für die meisten Anwendungsfälle. Er bietet ausgezeichnete Sicherheit mit einer Schlüsselgröße von 256 Bit, schnelle Leistung und wird von allen modernen SSH-Implementierungen unterstützt. Verwenden Sie RSA nur, wenn Sie Kompatibilität mit Legacy-Systemen benötigen."
+      },
+      "authorizedKeys": {
+        "question": "Was ist die authorized_keys-Datei?",
+        "answer": "Die authorized_keys-Datei (unter ~/.ssh/authorized_keys auf Linux/macOS-Servern) enthält eine Liste öffentlicher Schlüssel, die sich mit diesem Konto verbinden dürfen. Jede Zeile ist ein öffentlicher Schlüssel. Fügen Sie Ihren öffentlichen Schlüssel dieser Datei hinzu, um passwortlose SSH-Anmeldung zu ermöglichen."
+      },
+      "bestOnlineGenerator": {
+        "question": "Was ist der beste Online SSH-Schlüsselgenerator?",
+        "answer": "Dieser SSH-Schlüsselgenerator ist eine der besten kostenlosen Online-Optionen, da er 100% in Ihrem Browser läuft, moderne Ed25519- und RSA-Algorithmen unterstützt, als PWA offline funktioniert und niemals Ihre privaten Schlüssel an einen Server sendet."
+      },
+      "permissions": {
+        "question": "Welche Berechtigungen sollte mein privater SSH-Schlüssel haben?",
+        "answer": "Ihr privater SSH-Schlüssel sollte eingeschränkte Berechtigungen haben. Unter Linux/macOS verwenden Sie 'chmod 600 ~/.ssh/id_ed25519' (Eigentümer lesen/schreiben) oder 'chmod 400' (Eigentümer nur lesen). SSH wird einen Schlüssel mit zu freizügigen Berechtigungen ablehnen. Das .ssh-Verzeichnis sollte 700 sein."
+      }
+    }
+  },
+  "theme": {
+    "light": "Hell",
+    "dark": "Dunkel",
+    "system": "System"
+  },
+  "notFound": {
+    "title": "Seite Nicht Gefunden",
+    "code": "404",
+    "description": "Die gesuchte Seite existiert nicht oder wurde verschoben.",
+    "backHome": "Zurück zur Startseite"
+  }
+}

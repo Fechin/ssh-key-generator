@@ -223,7 +223,7 @@ export function PlatformGuides() {
   return (
     <div>
       <div className="mb-4">
-        <h3 className="text-base font-semibold">{t('guides.title')}</h3>
+        <h2 className="text-base font-semibold">{t('guides.title')}</h2>
         <p className="text-xs text-muted-foreground mt-1">
           {t('guides.description')}
         </p>

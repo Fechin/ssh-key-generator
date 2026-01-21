@@ -1,0 +1,342 @@
+{
+  "header": {
+    "title": "SSH鍵ジェネレーター",
+    "subtitle": "無料で安全",
+    "clientSide": "100%クライアントサイド",
+    "viewOnGitHub": "GitHubで見る"
+  },
+  "hero": {
+    "title": "オンラインSSH鍵ジェネレーター",
+    "subtitle": "この無料のオンラインSSH鍵ジェネレーターを使用して、ブラウザで安全にSSH鍵を生成します。GitHub、GitLab、Bitbucket、および任意のSSHサーバーで動作します。"
+  },
+  "tabs": {
+    "generate": "鍵を生成",
+    "generateShort": "生成",
+    "commands": "コマンドモード",
+    "commandsShort": "コマンド",
+    "config": "SSH設定",
+    "configShort": "設定",
+    "guides": "プラットフォームガイド",
+    "guidesShort": "ガイド"
+  },
+  "generator": {
+    "title": "オンラインSSH鍵ジェネレーター",
+    "description": "この無料のオンラインジェネレーターを使用して、ブラウザで安全にSSH鍵ペアを生成します。データはサーバーに送信されません。",
+    "algorithm": "アルゴリズム",
+    "algorithmTooltip": "ほとんどの場合、Ed25519を推奨します。レガシーシステムとの互換性が必要な場合はRSAを使用してください。",
+    "comment": "コメント（任意）",
+    "commentTooltip": "この鍵を識別するためのコメント。通常はメールアドレスです。",
+    "commentPlaceholder": "user@example.com",
+    "generateButton": "鍵ペアを生成",
+    "generating": "生成中...",
+    "passphrase": "パスフレーズ（任意）",
+    "passphraseTooltip": "パスフレーズは追加のセキュリティを提供します。誰かが秘密鍵を入手しても、パスフレーズなしでは使用できません。",
+    "passphrasePlaceholder": "暗号化用のパスフレーズを入力",
+    "confirmPassphrase": "パスフレーズの確認",
+    "confirmPassphrasePlaceholder": "パスフレーズを再入力",
+    "passphrasesMismatch": "パスフレーズが一致しません",
+    "noPassphraseWarning": "パスフレーズが設定されていません。秘密鍵は暗号化されません。セキュリティを強化するためにパスフレーズを追加することを検討してください。",
+    "securityTitle": "100%クライアントサイドのSSH鍵ジェネレーター",
+    "securityDesc": "すべての鍵生成はブラウザでローカルに行われます。このオンラインSSH鍵ジェネレーターは秘密鍵を送信しません。",
+    "noKeysYet": "まだ鍵が生成されていません",
+    "noKeysHint": "「鍵ペアを生成」をクリックしてSSH鍵を作成してください"
+  },
+  "algorithms": {
+    "ed25519": "Ed25519（推奨）",
+    "ed25519Desc": "モダン、高速、安全。ほとんどのユースケースに最適。",
+    "rsa4096": "RSA 4096ビット",
+    "rsa4096Desc": "レガシーシステムとの最大互換性。",
+    "rsa2048": "RSA 2048ビット",
+    "rsa2048Desc": "互換性のための最小推奨RSAサイズ。"
+  },
+  "keyDisplay": {
+    "publicKey": "公開鍵",
+    "publicKeyDesc": "これをリモートサーバーのauthorized_keysまたはGitHub/GitLabに追加します。",
+    "privateKey": "秘密鍵",
+    "privateKeyWarning": "秘密にしてください！秘密鍵を共有しないでください。",
+    "fingerprint": "鍵のフィンガープリント",
+    "copy": "コピー",
+    "copied": "コピーしました！",
+    "download": "ダウンロード",
+    "reveal": "表示",
+    "hide": "非表示",
+    "clickToReveal": "クリックして秘密鍵を表示"
+  },
+  "commands": {
+    "title": "SSH鍵生成コマンド",
+    "description": "お好みのプラットフォーム用のssh-keygenコマンドを生成します。コピーしてターミナルで実行してください。",
+    "algorithm": "アルゴリズム",
+    "comment": "コメント",
+    "filename": "ファイル名（任意）",
+    "quickCommand": "クイックコマンド",
+    "completeSetup": "完全なセットアップ",
+    "copyAll": "すべてコピー"
+  },
+  "sshConfig": {
+    "title": "SSH設定ビルダー",
+    "description": "~/.ssh/configファイルを構築します。ホストを追加して設定をダウンロードします。",
+    "hostAlias": "ホストエイリアス",
+    "hostAliasRequired": "ホストエイリアス *",
+    "hostname": "ホスト名",
+    "hostnameRequired": "ホスト名 *",
+    "hostnamePlaceholder": "192.168.1.100 または example.com",
+    "user": "ユーザー",
+    "port": "ポート",
+    "identityFile": "秘密鍵ファイル",
+    "identityFilePlaceholder": "~/.ssh/id_ed25519",
+    "addHost": "ホストを追加",
+    "configuredHosts": "設定済みホスト",
+    "generatedConfig": "生成された設定",
+    "saveToPath": "~/.ssh/configに保存",
+    "noHosts": "# まだホストが設定されていません",
+    "advancedOptions": "詳細オプション",
+    "proxyJump": "プロキシジャンプ",
+    "proxyJumpPlaceholder": "bastion-host",
+    "proxyJumpDesc": "踏み台/ジャンプホストを経由してターゲットに接続",
+    "forwardAgent": "エージェント転送",
+    "forwardAgentDesc": "SSHエージェントをリモートホストに転送"
+  },
+  "guides": {
+    "title": "プラットフォームセットアップガイド",
+    "description": "人気のGitプラットフォームでSSH鍵を設定するためのステップバイステップの説明。",
+    "officialDocs": "公式ドキュメント",
+    "sshSetup": "{platform} SSH設定",
+    "github": {
+      "step1Title": "SSH鍵を生成",
+      "step1Desc": "上のジェネレーターを使用するか、このコマンドを実行します：",
+      "step2Title": "SSHエージェントを起動",
+      "step2Desc": "バックグラウンドでssh-agentを起動：",
+      "step3Title": "エージェントに鍵を追加",
+      "step3Desc": "SSH秘密鍵をエージェントに追加：",
+      "step4Title": "公開鍵をコピー",
+      "step4Desc": "公開鍵をクリップボードにコピー：",
+      "step5Title": "GitHubに追加",
+      "step5Desc": "GitHub設定 > SSHとGPG鍵 > 新しいSSH鍵に移動し、公開鍵を貼り付けます。",
+      "step6Title": "接続をテスト",
+      "step6Desc": "SSH接続を確認："
+    },
+    "gitlab": {
+      "step1Title": "SSH鍵を生成",
+      "step1Desc": "セキュリティ向上のためEd25519を使用：",
+      "step2Title": "エージェントに鍵を追加",
+      "step2Desc": "SSH鍵をエージェントに追加：",
+      "step3Title": "公開鍵をコピー",
+      "step3Desc": "公開鍵をコピー：",
+      "step4Title": "GitLabに追加",
+      "step4Desc": "GitLab設定 > SSH鍵に移動し、公開鍵を貼り付けて有効期限を設定します。",
+      "step5Title": "接続をテスト",
+      "step5Desc": "SSH接続を確認："
+    },
+    "bitbucket": {
+      "step1Title": "SSH鍵を生成",
+      "step1Desc": "Ed25519 SSH鍵を作成：",
+      "step2Title": "エージェントに鍵を追加",
+      "step2Desc": "ssh-agentを起動して鍵を追加：",
+      "step3Title": "公開鍵をコピー",
+      "step3Desc": "公開鍵をクリップボードにコピー：",
+      "step4Title": "Bitbucketに追加",
+      "step4Desc": "Bitbucket設定 > 個人設定 > SSH鍵 > 鍵を追加に移動。",
+      "step5Title": "接続をテスト",
+      "step5Desc": "SSH接続を確認："
+    },
+    "aws": {
+      "step1Title": "SSH鍵を生成",
+      "step1Desc": "AWS EC2用のEd25519 SSH鍵を作成：",
+      "step2Title": "公開鍵をコピー",
+      "step2Desc": "公開鍵を表示してコピー：",
+      "step3Title": "AWSに鍵をインポート",
+      "step3Desc": "AWSコンソール > EC2 > キーペア > アクション > キーペアのインポートに移動し、公開鍵を貼り付けます。",
+      "step4Title": "権限を設定",
+      "step4Desc": "秘密鍵に適切な権限を設定：",
+      "step5Title": "インスタンスに接続",
+      "step5Desc": "EC2インスタンスにSSH接続（詳細は置き換えてください）："
+    },
+    "azure": {
+      "step1Title": "SSH鍵を生成",
+      "step1Desc": "Azure用のEd25519 SSH鍵を作成：",
+      "step2Title": "公開鍵をコピー",
+      "step2Desc": "公開鍵を表示：",
+      "step3Title": "VM作成時に追加",
+      "step3Desc": "VM作成時に認証方法として「SSH公開鍵」を選択し、公開鍵を貼り付けます。",
+      "step4Title": "VMに接続",
+      "step4Desc": "Azure VMにSSH接続：",
+      "step5Title": "既存のVMを更新（任意）",
+      "step5Desc": "Azure CLIを使用して既存のVMに鍵を追加："
+    },
+    "digitalocean": {
+      "step1Title": "SSH鍵を生成",
+      "step1Desc": "Ed25519 SSH鍵を作成：",
+      "step2Title": "公開鍵をコピー",
+      "step2Desc": "公開鍵を表示してコピー：",
+      "step3Title": "DigitalOceanに追加",
+      "step3Desc": "DigitalOceanコントロールパネル > 設定 > セキュリティ > SSH鍵 > SSH鍵を追加に移動。",
+      "step4Title": "Dropletを作成",
+      "step4Desc": "Droplet作成時に「認証」でSSH鍵を選択。",
+      "step5Title": "Dropletに接続",
+      "step5Desc": "DropletにSSH接続："
+    }
+  },
+  "footer": {
+    "about": "このオンラインSSH鍵ジェネレーターについて",
+    "aboutDesc": "これは無料でオープンソースのオンラインSSH鍵ジェネレーターで、完全にブラウザで動作します。サーバー処理なし、データ収集なし - 安全な鍵生成のみ。",
+    "securityFirst": "セキュリティファースト",
+    "security1": "すべての鍵生成はブラウザで行われます",
+    "security2": "データはサーバーに送信されません",
+    "security3": "オープンソースで監査可能なコード",
+    "security4": "業界標準の暗号化ライブラリを使用",
+    "resources": "リソース",
+    "sshKeyGuide": "GitHub SSHドキュメント",
+    "githubSetup": "GitLab SSHドキュメント",
+    "bestPractices": "SSHアカデミー",
+    "madeWith": "",
+    "forDevelopers": "で世界中の開発者のために作成",
+    "copyright": "© {year} SSH Key Generator。MITライセンスのオープンソース。"
+  },
+  "seo": {
+    "whatIs": {
+      "title": "オンラインSSH鍵ジェネレーターとは？",
+      "desc": "このオンラインSSH鍵ジェネレーターは、ブラウザで安全に暗号化キーペアを作成します。SSH鍵は公開鍵（サーバーと共有）と秘密鍵（秘密に保持）で構成されます。パスワードとは異なり、オンラインで生成されたSSH鍵はブルートフォース攻撃でほぼ解読不可能です。"
+    },
+    "whyUse": {
+      "title": "なぜこのオンラインSSH鍵ジェネレーターを使用するのか？",
+      "secure": {
+        "title": "安全なオンライン生成",
+        "desc": "すべての暗号化操作はブラウザで行われます。このSSH鍵ジェネレーターは秘密鍵がデバイスから離れることはありません。"
+      },
+      "modern": {
+        "title": "モダンなアルゴリズム",
+        "desc": "Ed25519鍵（推奨）または最大4096ビットのRSA鍵を生成。"
+      },
+      "easy": {
+        "title": "使いやすい",
+        "desc": "コピー/ダウンロードボタン付きのシンプルなインターフェース。インストール不要で即座に動作。"
+      },
+      "free": {
+        "title": "無料でオープンソース",
+        "desc": "登録不要、トラッキングなし、費用なし。MITライセンスでコミュニティ検証済み。"
+      }
+    },
+    "howTo": {
+      "title": "オンラインでSSH鍵を生成する方法",
+      "step1": "アルゴリズムを選択：Ed25519（推奨）またはRSAを選択",
+      "step2": "コメントを追加：メールアドレスなどの任意の識別子",
+      "step3": "生成：ボタンをクリックして鍵ペアを作成",
+      "step4": "鍵を保存：公開鍵と秘密鍵をダウンロードまたはコピー",
+      "step5": "サーバーに追加：公開鍵を~/.ssh/authorized_keysまたはGitプロバイダーにコピー"
+    },
+    "comparison": {
+      "title": "Ed25519 vs RSA：どちらを選ぶべき？",
+      "intro": "これら2つの人気のあるSSH鍵アルゴリズムの違いを理解することで、セキュリティニーズに適した選択ができます。",
+      "feature": "機能",
+      "algorithmType": "アルゴリズムタイプ",
+      "keySize": "鍵サイズ",
+      "signatureSize": "署名サイズ",
+      "security": "セキュリティレベル",
+      "performance": "パフォーマンス",
+      "compatibility": "互換性",
+      "quantumResistance": "耐量子性",
+      "bestFor": "最適な用途",
+      "recommendation": "推奨",
+      "ed25519AlgoType": "楕円曲線 (Curve25519)",
+      "rsaAlgoType": "整数因数分解",
+      "ed25519KeySize": "256ビット（コンパクト）",
+      "rsaKeySize": "2048-4096ビット（大きい）",
+      "ed25519SigSize": "64バイト",
+      "rsaSigSize": "256-512バイト",
+      "ed25519Security": "約128ビット相当",
+      "rsaSecurity": "約112-128ビット (4096)",
+      "ed25519Performance": "非常に高速（10倍速い）",
+      "rsaPerformance": "生成が遅い",
+      "ed25519Compat": "OpenSSH 6.5+ (2014)",
+      "rsaCompat": "ユニバーサル（全システム）",
+      "ed25519Quantum": "耐量子性なし",
+      "rsaQuantum": "耐量子性なし",
+      "ed25519BestFor": "GitHub、GitLab、モダンサーバー",
+      "rsaBestFor": "レガシーシステム、古いハードウェア",
+      "ed25519Rec": "ほとんどのユーザーに最適",
+      "rsaRec": "レガシーシステムサポート用"
+    },
+    "useCases": {
+      "title": "一般的なSSH鍵の使用例",
+      "git": {
+        "title": "Gitホスティング",
+        "desc": "GitHub、GitLab、Bitbucketからパスワードなしで安全にコードをプッシュ・プル。"
+      },
+      "server": {
+        "title": "サーバーアクセス",
+        "desc": "Linux/Unixサーバー、クラウドインスタンス（AWS、GCP、Azure）、VPSプロバイダーにSSH接続。"
+      },
+      "automation": {
+        "title": "CI/CD自動化",
+        "desc": "自動デプロイ、スクリプト、DevOpsパイプラインがリモートリソースにアクセス可能に。"
+      },
+      "tunnels": {
+        "title": "セキュアトンネル",
+        "desc": "データベースアクセス、ポート転送、セキュア通信のための暗号化トンネルを作成。"
+      }
+    },
+    "faq": {
+      "title": "よくある質問",
+      "subtitle": "SSH鍵とこのツールに関するよくある質問の回答を見つけてください。",
+      "safe": {
+        "question": "オンラインでSSH鍵を生成しても安全ですか？",
+        "answer": "はい、このツールは100%安全です。すべての鍵生成はWeb Crypto APIを使用してブラウザで完全に行われます。秘密鍵はデバイスから離れることはなく、サーバーに送信されることもありません。ソースコードはGitHubでオープンソースとして監査可能です。"
+      },
+      "ed25519VsRsa": {
+        "question": "Ed25519とRSAの違いは何ですか？",
+        "answer": "Ed25519はモダンな楕円曲線アルゴリズムで、より小さな鍵サイズ（256ビット vs RSAの2048-4096ビット）でより良いセキュリティを提供します。Ed25519鍵は生成と使用が速く、ほとんどの新しいSSHセットアップに推奨されます。RSAは古いですが、レガシーシステムとの互換性が広いです。"
+      },
+      "github": {
+        "question": "GitHubにSSH鍵を追加する方法は？",
+        "answer": "1) このツールでSSH鍵を生成、2) 公開鍵をコピー、3) GitHub設定 > SSHとGPG鍵に移動、4) 「新しいSSH鍵」をクリック、5) 公開鍵を貼り付けてタイトルを付ける、6) 「SSH鍵を追加」をクリック。テスト: ssh -T git@github.com"
+      },
+      "rsaKeySize": {
+        "question": "RSAにはどの鍵サイズを使用すべきですか？",
+        "answer": "RSA鍵には、最大のセキュリティのために4096ビットを推奨します。2048ビットは最小許容サイズで、ほとんどの目的に十分なセキュリティを提供します。2048ビット未満の鍵は安全でないと見なされ、使用すべきではありません。"
+      },
+      "offline": {
+        "question": "このSSH鍵ジェネレーターはオフラインで使用できますか？",
+        "answer": "はい！これはオフラインで動作するプログレッシブWebアプリ（PWA）です。最初の訪問後、デバイスにアプリとしてインストールし、インターネット接続なしでSSH鍵を生成できます。すべての暗号化操作はブラウザでローカルに実行されます。"
+      },
+      "passphrase": {
+        "question": "SSH鍵にパスフレーズを使用すべきですか？",
+        "answer": "はい、パスフレーズの使用を強く推奨します。パスフレーズは追加のセキュリティ層を追加します - 誰かが秘密鍵ファイルにアクセスしても、パスフレーズなしでは使用できません。重要な鍵には強力で覚えやすいパスフレーズを使用してください。"
+      },
+      "multipleServers": {
+        "question": "同じSSH鍵を複数のサーバーで使用できますか？",
+        "answer": "はい、同じSSH公開鍵を複数のサーバーで使用できます。ただし、セキュリティのベストプラクティスとして、異なる目的（仕事と個人、本番と開発など）には異なる鍵を使用することを検討してください。これにより、1つの鍵が侵害された場合の影響を限定できます。"
+      },
+      "fingerprint": {
+        "question": "SSH鍵のフィンガープリントとは何ですか？",
+        "answer": "SSH鍵フィンガープリントは、ハッシュ関数（SHA256またはMD5）を使用して公開鍵から導出された短い一意の識別子です。サーバーに接続する際に鍵の真正性を確認するために使用されます。フィンガープリントは正しいサーバーに接続していることを確認するのに役立ちます。"
+      },
+      "bestAlgorithm": {
+        "question": "2025年に最適なSSH鍵アルゴリズムは？",
+        "answer": "Ed25519は2025年のほとんどのユースケースで推奨されるアルゴリズムです。256ビットの鍵サイズで優れたセキュリティ、高速なパフォーマンスを提供し、すべてのモダンなSSH実装でサポートされています。レガシーシステムとの互換性が必要な場合のみRSAを使用してください。"
+      },
+      "authorizedKeys": {
+        "question": "authorized_keysファイルとは何ですか？",
+        "answer": "authorized_keysファイル（Linux/macOSサーバーの~/.ssh/authorized_keysに位置）には、そのアカウントへの接続を許可された公開鍵のリストが含まれています。各行が1つの公開鍵です。このファイルに公開鍵を追加すると、パスワードなしのSSHログインが可能になります。"
+      },
+      "bestOnlineGenerator": {
+        "question": "最高のオンラインSSH鍵ジェネレーターは？",
+        "answer": "このSSH鍵ジェネレーターは、100%ブラウザで動作し、モダンなEd25519とRSAアルゴリズムをサポートし、PWAとしてオフラインで動作し、秘密鍵をサーバーに送信しないため、最高の無料オンラインオプションの1つです。"
+      },
+      "permissions": {
+        "question": "SSH秘密鍵にはどのような権限が必要ですか？",
+        "answer": "SSH秘密鍵には制限された権限が必要です。Linux/macOSでは、'chmod 600 ~/.ssh/id_ed25519'（所有者の読み書き）または'chmod 400'（所有者の読み取り専用）を使用してください。権限が緩すぎる場合、SSHは鍵の使用を拒否します。.sshディレクトリは700である必要があります。"
+      }
+    }
+  },
+  "theme": {
+    "light": "ライト",
+    "dark": "ダーク",
+    "system": "システム"
+  },
+  "notFound": {
+    "title": "ページが見つかりません",
+    "code": "404",
+    "description": "お探しのページは存在しないか、移動されました。",
+    "backHome": "ホームに戻る"
+  }
+}

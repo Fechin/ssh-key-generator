@@ -1,0 +1,342 @@
+{
+  "header": {
+    "title": "SSH-sleutelgenerator",
+    "subtitle": "Gratis & Veilig",
+    "clientSide": "100% Client-Side",
+    "viewOnGitHub": "Bekijk op GitHub"
+  },
+  "hero": {
+    "title": "Online SSH-sleutelgenerator",
+    "subtitle": "Genereer veilige SSH-sleutels direct in je browser met deze gratis online SSH-sleutelgenerator. Werkt met GitHub, GitLab, Bitbucket en elke SSH-server."
+  },
+  "tabs": {
+    "generate": "Sleutels Genereren",
+    "generateShort": "Genereren",
+    "commands": "Commandomodus",
+    "commandsShort": "Commando's",
+    "config": "SSH Config",
+    "configShort": "Config",
+    "guides": "Platformgidsen",
+    "guidesShort": "Gidsen"
+  },
+  "generator": {
+    "title": "Online SSH-sleutelgenerator",
+    "description": "Genereer veilig een nieuw SSH-sleutelpaar in je browser met deze gratis online generator. Er worden geen gegevens naar een server verzonden.",
+    "algorithm": "Algoritme",
+    "algorithmTooltip": "Ed25519 wordt aanbevolen voor de meeste gevallen. Gebruik RSA als je compatibiliteit met oudere systemen nodig hebt.",
+    "comment": "Opmerking (optioneel)",
+    "commentTooltip": "Een opmerking om deze sleutel te identificeren. Meestal je e-mailadres.",
+    "commentPlaceholder": "gebruiker@voorbeeld.nl",
+    "generateButton": "Sleutelpaar Genereren",
+    "generating": "Genereren...",
+    "passphrase": "Wachtwoordzin (optioneel)",
+    "passphraseTooltip": "Een wachtwoordzin voegt extra beveiliging toe. Zelfs als iemand je privésleutel krijgt, kunnen ze deze niet gebruiken zonder de wachtwoordzin.",
+    "passphrasePlaceholder": "Voer wachtwoordzin in voor versleuteling",
+    "confirmPassphrase": "Bevestig Wachtwoordzin",
+    "confirmPassphrasePlaceholder": "Voer wachtwoordzin opnieuw in",
+    "passphrasesMismatch": "Wachtwoordzinnen komen niet overeen",
+    "noPassphraseWarning": "Geen wachtwoordzin ingesteld. Je privésleutel wordt niet versleuteld. Overweeg een wachtwoordzin toe te voegen voor extra beveiliging.",
+    "securityTitle": "100% Client-Side SSH-sleutelgenerator",
+    "securityDesc": "Alle sleutelgeneratie gebeurt lokaal in je browser. Deze online SSH-sleutelgenerator verzendt nooit je privésleutels.",
+    "noKeysYet": "Nog geen sleutels gegenereerd",
+    "noKeysHint": "Klik op \"Sleutelpaar Genereren\" om je SSH-sleutels te maken"
+  },
+  "algorithms": {
+    "ed25519": "Ed25519 (Aanbevolen)",
+    "ed25519Desc": "Modern, snel, veilig. Het beste voor de meeste toepassingen.",
+    "rsa4096": "RSA 4096-bit",
+    "rsa4096Desc": "Maximale compatibiliteit met legacy systemen.",
+    "rsa2048": "RSA 2048-bit",
+    "rsa2048Desc": "Minimaal aanbevolen RSA-formaat voor compatibiliteit."
+  },
+  "keyDisplay": {
+    "publicKey": "Publieke Sleutel",
+    "publicKeyDesc": "Voeg deze toe aan authorized_keys op externe servers of aan GitHub/GitLab.",
+    "privateKey": "Privésleutel",
+    "privateKeyWarning": "Houd dit geheim! Deel nooit je privésleutel.",
+    "fingerprint": "Sleutelvingerafdruk",
+    "copy": "Kopiëren",
+    "copied": "Gekopieerd!",
+    "download": "Downloaden",
+    "reveal": "Tonen",
+    "hide": "Verbergen",
+    "clickToReveal": "Klik op Tonen om privésleutel te bekijken"
+  },
+  "commands": {
+    "title": "SSH-sleutelgeneratie Commando's",
+    "description": "Genereer ssh-keygen commando's voor je voorkeursplatform. Kopieer en voer deze uit in je terminal.",
+    "algorithm": "Algoritme",
+    "comment": "Opmerking",
+    "filename": "Bestandsnaam (optioneel)",
+    "quickCommand": "Snel Commando",
+    "completeSetup": "Volledige Setup",
+    "copyAll": "Alles Kopiëren"
+  },
+  "sshConfig": {
+    "title": "SSH Config Builder",
+    "description": "Bouw je ~/.ssh/config bestand. Voeg hosts toe en download de configuratie.",
+    "hostAlias": "Host Alias",
+    "hostAliasRequired": "Host Alias *",
+    "hostname": "HostName",
+    "hostnameRequired": "HostName *",
+    "hostnamePlaceholder": "192.168.1.100 of voorbeeld.nl",
+    "user": "Gebruiker",
+    "port": "Poort",
+    "identityFile": "IdentityFile",
+    "identityFilePlaceholder": "~/.ssh/id_ed25519",
+    "addHost": "Host Toevoegen",
+    "configuredHosts": "Geconfigureerde Hosts",
+    "generatedConfig": "Gegenereerde Config",
+    "saveToPath": "Sla dit op in ~/.ssh/config",
+    "noHosts": "# Nog geen hosts geconfigureerd",
+    "advancedOptions": "Geavanceerde Opties",
+    "proxyJump": "ProxyJump",
+    "proxyJumpPlaceholder": "bastion-host",
+    "proxyJumpDesc": "Spring via een bastion/jump host naar het doel",
+    "forwardAgent": "Forward Agent",
+    "forwardAgentDesc": "Stuur je SSH-agent door naar de externe host"
+  },
+  "guides": {
+    "title": "Platform Setup Gidsen",
+    "description": "Stap-voor-stap instructies voor het instellen van SSH-sleutels op populaire Git-platforms.",
+    "officialDocs": "Officiële Documentatie",
+    "sshSetup": "{platform} SSH Setup",
+    "github": {
+      "step1Title": "Genereer SSH-sleutel",
+      "step1Desc": "Gebruik de generator hierboven of voer dit commando uit:",
+      "step2Title": "Start SSH Agent",
+      "step2Desc": "Start de ssh-agent op de achtergrond:",
+      "step3Title": "Voeg Sleutel toe aan Agent",
+      "step3Desc": "Voeg je SSH privésleutel toe aan de agent:",
+      "step4Title": "Kopieer Publieke Sleutel",
+      "step4Desc": "Kopieer je publieke sleutel naar klembord:",
+      "step5Title": "Voeg toe aan GitHub",
+      "step5Desc": "Ga naar GitHub Instellingen > SSH en GPG sleutels > Nieuwe SSH sleutel. Plak je publieke sleutel.",
+      "step6Title": "Test Verbinding",
+      "step6Desc": "Verifieer je SSH-verbinding:"
+    },
+    "gitlab": {
+      "step1Title": "Genereer SSH-sleutel",
+      "step1Desc": "Gebruik Ed25519 voor betere beveiliging:",
+      "step2Title": "Voeg Sleutel toe aan Agent",
+      "step2Desc": "Voeg je SSH-sleutel toe aan de agent:",
+      "step3Title": "Kopieer Publieke Sleutel",
+      "step3Desc": "Kopieer je publieke sleutel:",
+      "step4Title": "Voeg toe aan GitLab",
+      "step4Desc": "Ga naar GitLab Voorkeuren > SSH Sleutels. Plak je publieke sleutel en stel een vervaldatum in.",
+      "step5Title": "Test Verbinding",
+      "step5Desc": "Verifieer je SSH-verbinding:"
+    },
+    "bitbucket": {
+      "step1Title": "Genereer SSH-sleutel",
+      "step1Desc": "Maak een Ed25519 SSH-sleutel:",
+      "step2Title": "Voeg Sleutel toe aan Agent",
+      "step2Desc": "Start ssh-agent en voeg je sleutel toe:",
+      "step3Title": "Kopieer Publieke Sleutel",
+      "step3Desc": "Kopieer je publieke sleutel naar klembord:",
+      "step4Title": "Voeg toe aan Bitbucket",
+      "step4Desc": "Ga naar Bitbucket Instellingen > Persoonlijke instellingen > SSH sleutels > Sleutel toevoegen.",
+      "step5Title": "Test Verbinding",
+      "step5Desc": "Verifieer je SSH-verbinding:"
+    },
+    "aws": {
+      "step1Title": "Genereer SSH-sleutel",
+      "step1Desc": "Maak een Ed25519 SSH-sleutel voor AWS EC2:",
+      "step2Title": "Kopieer Publieke Sleutel",
+      "step2Desc": "Toon je publieke sleutel om te kopiëren:",
+      "step3Title": "Importeer Sleutel naar AWS",
+      "step3Desc": "Ga naar AWS Console > EC2 > Sleutelparen > Acties > Sleutelpaar importeren. Plak je publieke sleutel.",
+      "step4Title": "Stel Machtigingen in",
+      "step4Desc": "Zorg ervoor dat je privésleutel de juiste machtigingen heeft:",
+      "step5Title": "Verbind met Instance",
+      "step5Desc": "SSH naar je EC2-instance (vervang met je gegevens):"
+    },
+    "azure": {
+      "step1Title": "Genereer SSH-sleutel",
+      "step1Desc": "Maak een Ed25519 SSH-sleutel voor Azure:",
+      "step2Title": "Kopieer Publieke Sleutel",
+      "step2Desc": "Toon je publieke sleutel:",
+      "step3Title": "Voeg toe tijdens VM-creatie",
+      "step3Desc": "Selecteer bij het maken van een VM 'SSH publieke sleutel' voor authenticatie en plak je publieke sleutel.",
+      "step4Title": "Verbind met VM",
+      "step4Desc": "SSH naar je Azure VM:",
+      "step5Title": "Update Bestaande VM (Optioneel)",
+      "step5Desc": "Voeg sleutel toe aan bestaande VM met Azure CLI:"
+    },
+    "digitalocean": {
+      "step1Title": "Genereer SSH-sleutel",
+      "step1Desc": "Maak een Ed25519 SSH-sleutel:",
+      "step2Title": "Kopieer Publieke Sleutel",
+      "step2Desc": "Toon je publieke sleutel om te kopiëren:",
+      "step3Title": "Voeg toe aan DigitalOcean",
+      "step3Desc": "Ga naar DigitalOcean Configuratiescherm > Instellingen > Beveiliging > SSH Sleutels > SSH Sleutel toevoegen.",
+      "step4Title": "Maak Droplet",
+      "step4Desc": "Selecteer bij het maken van een Droplet je SSH-sleutel onder 'Authenticatie'.",
+      "step5Title": "Verbind met Droplet",
+      "step5Desc": "SSH naar je Droplet:"
+    }
+  },
+  "footer": {
+    "about": "Over Deze Online SSH-sleutelgenerator",
+    "aboutDesc": "Dit is een gratis, open-source online SSH-sleutelgenerator die volledig in je browser draait. Geen server-side verwerking, geen gegevensverzameling - alleen veilige sleutelgeneratie.",
+    "securityFirst": "Veiligheid Voorop",
+    "security1": "Alle sleutelgeneratie gebeurt in je browser",
+    "security2": "Er worden nooit gegevens naar een server verzonden",
+    "security3": "Open source en controleerbare code",
+    "security4": "Gebruikt industriestandaard cryptografische bibliotheken",
+    "resources": "Bronnen",
+    "sshKeyGuide": "GitHub SSH Documentatie",
+    "githubSetup": "GitLab SSH Documentatie",
+    "bestPractices": "SSH Academy",
+    "madeWith": "Gemaakt met",
+    "forDevelopers": "voor ontwikkelaars wereldwijd",
+    "copyright": "© {year} SSH Key Generator. Open source onder MIT-licentie."
+  },
+  "seo": {
+    "whatIs": {
+      "title": "Wat is een Online SSH-sleutelgenerator?",
+      "desc": "Een online SSH-sleutelgenerator zoals deze tool maakt cryptografische sleutelparen veilig in je browser. SSH-sleutels bestaan uit een publieke sleutel (gedeeld met servers) en een privésleutel (geheim gehouden). In tegenstelling tot wachtwoorden zijn online gegenereerde SSH-sleutels vrijwel onmogelijk te kraken via brute force."
+    },
+    "whyUse": {
+      "title": "Waarom Deze Online SSH-sleutelgenerator Gebruiken?",
+      "secure": {
+        "title": "Veilige Online Generatie",
+        "desc": "Alle cryptografische operaties gebeuren in je browser. Deze online SSH-sleutelgenerator zorgt ervoor dat je privésleutels nooit je apparaat verlaten."
+      },
+      "modern": {
+        "title": "Moderne Algoritmen",
+        "desc": "Genereer Ed25519-sleutels (aanbevolen) of RSA-sleutels tot 4096-bit sterkte."
+      },
+      "easy": {
+        "title": "Eenvoudig te Gebruiken",
+        "desc": "Eenvoudige interface met kopieer/download knoppen. Werkt direct zonder installatie."
+      },
+      "free": {
+        "title": "Gratis & Open Source",
+        "desc": "Geen registratie, geen tracking, geen kosten. MIT-licentie en door de community geverifieerd."
+      }
+    },
+    "howTo": {
+      "title": "Hoe SSH-sleutels Online te Genereren",
+      "step1": "Selecteer Algoritme: Kies Ed25519 (aanbevolen) of RSA",
+      "step2": "Voeg Opmerking toe: Optionele identifier zoals je e-mail",
+      "step3": "Genereer: Klik op de knop om je sleutelpaar te maken",
+      "step4": "Sla Sleutels op: Download of kopieer je publieke en privésleutels",
+      "step5": "Voeg toe aan Server: Kopieer publieke sleutel naar ~/.ssh/authorized_keys of je Git-provider"
+    },
+    "comparison": {
+      "title": "Ed25519 vs RSA: Welke Moet Je Kiezen?",
+      "intro": "Het begrijpen van de verschillen tussen deze twee populaire SSH-sleutelalgoritmen helpt je de juiste keuze te maken voor je beveiligingsbehoeften.",
+      "feature": "Kenmerk",
+      "algorithmType": "Algoritmetype",
+      "keySize": "Sleutelgrootte",
+      "signatureSize": "Handtekeninggrootte",
+      "security": "Beveiligingsniveau",
+      "performance": "Prestaties",
+      "compatibility": "Compatibiliteit",
+      "quantumResistance": "Kwantumbestendigheid",
+      "bestFor": "Beste Voor",
+      "recommendation": "Aanbeveling",
+      "ed25519AlgoType": "Elliptische Curve (Curve25519)",
+      "rsaAlgoType": "Gehele Getallen Factorisatie",
+      "ed25519KeySize": "256 bits (compact)",
+      "rsaKeySize": "2048-4096 bits (groter)",
+      "ed25519SigSize": "64 bytes",
+      "rsaSigSize": "256-512 bytes",
+      "ed25519Security": "~128-bit equivalent",
+      "rsaSecurity": "~112-128-bit (4096)",
+      "ed25519Performance": "Zeer Snel (10x sneller)",
+      "rsaPerformance": "Tragere generatie",
+      "ed25519Compat": "OpenSSH 6.5+ (2014)",
+      "rsaCompat": "Universeel (alle systemen)",
+      "ed25519Quantum": "Niet kwantumveilig",
+      "rsaQuantum": "Niet kwantumveilig",
+      "ed25519BestFor": "GitHub, GitLab, moderne servers",
+      "rsaBestFor": "Legacy systemen, oudere hardware",
+      "ed25519Rec": "Beste keuze voor de meeste gebruikers",
+      "rsaRec": "Gebruik voor legacy systeemondersteuning"
+    },
+    "useCases": {
+      "title": "Veelvoorkomende SSH-sleutel Toepassingen",
+      "git": {
+        "title": "Git Hosting",
+        "desc": "Push en pull code veilig van GitHub, GitLab, Bitbucket zonder wachtwoorden in te voeren."
+      },
+      "server": {
+        "title": "Server Toegang",
+        "desc": "SSH naar Linux/Unix servers, cloud instances (AWS, GCP, Azure) en VPS-providers."
+      },
+      "automation": {
+        "title": "CI/CD Automatisering",
+        "desc": "Maak geautomatiseerde deployments, scripts en DevOps-pipelines mogelijk om externe bronnen te benaderen."
+      },
+      "tunnels": {
+        "title": "Veilige Tunnels",
+        "desc": "Maak versleutelde tunnels voor databasetoegang, port forwarding en veilige communicatie."
+      }
+    },
+    "faq": {
+      "title": "Veelgestelde Vragen",
+      "subtitle": "Vind antwoorden op veelgestelde vragen over SSH-sleutels en deze tool.",
+      "safe": {
+        "question": "Is het veilig om SSH-sleutels online te genereren?",
+        "answer": "Ja, deze tool is 100% veilig omdat alle sleutelgeneratie volledig in je browser gebeurt met de Web Crypto API. Je privésleutels verlaten nooit je apparaat en worden nooit naar een server verzonden. De broncode is open source en controleerbaar op GitHub."
+      },
+      "ed25519VsRsa": {
+        "question": "Wat is het verschil tussen Ed25519 en RSA?",
+        "answer": "Ed25519 is een modern elliptische curve-algoritme dat betere beveiliging biedt met kleinere sleutelgroottes (256-bit vs 2048-4096-bit RSA). Ed25519-sleutels zijn sneller te genereren en gebruiken, en worden aanbevolen voor de meeste nieuwe SSH-setups. RSA is ouder maar heeft bredere compatibiliteit met legacy systemen."
+      },
+      "github": {
+        "question": "Hoe voeg ik mijn SSH-sleutel toe aan GitHub?",
+        "answer": "1) Genereer je SSH-sleutel met deze tool, 2) Kopieer de publieke sleutel, 3) Ga naar GitHub Instellingen > SSH en GPG sleutels, 4) Klik op 'Nieuwe SSH sleutel', 5) Plak je publieke sleutel en geef het een titel, 6) Klik op 'SSH sleutel toevoegen'. Test met: ssh -T git@github.com"
+      },
+      "rsaKeySize": {
+        "question": "Welke sleutelgrootte moet ik gebruiken voor RSA?",
+        "answer": "Voor RSA-sleutels wordt 4096-bit aanbevolen voor maximale beveiliging. 2048-bit is de minimaal acceptabele grootte en biedt adequate beveiliging voor de meeste doeleinden. Sleutels kleiner dan 2048-bit worden als onveilig beschouwd en mogen niet worden gebruikt."
+      },
+      "offline": {
+        "question": "Kan ik deze SSH-sleutelgenerator offline gebruiken?",
+        "answer": "Ja! Deze SSH-sleutelgenerator is een Progressive Web App (PWA) die offline werkt. Na je eerste bezoek kun je het installeren als een app op je apparaat en SSH-sleutels genereren zonder internetverbinding. Alle cryptografische operaties draaien lokaal in je browser."
+      },
+      "passphrase": {
+        "question": "Moet ik een wachtwoordzin gebruiken voor mijn SSH-sleutel?",
+        "answer": "Ja, het gebruik van een wachtwoordzin wordt sterk aanbevolen. Een wachtwoordzin voegt een extra beveiligingslaag toe - zelfs als iemand toegang krijgt tot je privésleutelbestand, kunnen ze het niet gebruiken zonder de wachtwoordzin. Gebruik een sterke, memorabele wachtwoordzin voor belangrijke sleutels."
+      },
+      "multipleServers": {
+        "question": "Kan ik dezelfde SSH-sleutel gebruiken voor meerdere servers?",
+        "answer": "Ja, je kunt dezelfde SSH publieke sleutel op meerdere servers gebruiken. Voor betere beveiligingspraktijken kun je overwegen verschillende sleutels te gebruiken voor verschillende doeleinden (bijv. werk vs persoonlijk, productie vs ontwikkeling). Dit beperkt de blootstelling als één sleutel wordt gecompromitteerd."
+      },
+      "fingerprint": {
+        "question": "Wat is een SSH-sleutelvingerafdruk?",
+        "answer": "Een SSH-sleutelvingerafdruk is een korte, unieke identifier afgeleid van je publieke sleutel met een hashfunctie (SHA256 of MD5). Het wordt gebruikt om de authenticiteit van de sleutel te verifiëren bij het verbinden met servers. De vingerafdruk helpt je bevestigen dat je verbindt met de juiste server."
+      },
+      "bestAlgorithm": {
+        "question": "Wat is het beste SSH-sleutelalgoritme in 2025?",
+        "answer": "Ed25519 is het aanbevolen algoritme in 2025 voor de meeste toepassingen. Het biedt uitstekende beveiliging met een 256-bit sleutelgrootte, snelle prestaties, en wordt ondersteund door alle moderne SSH-implementaties. Gebruik alleen RSA als je compatibiliteit met legacy systemen nodig hebt."
+      },
+      "authorizedKeys": {
+        "question": "Wat is het authorized_keys bestand?",
+        "answer": "Het authorized_keys bestand (te vinden op ~/.ssh/authorized_keys op Linux/macOS servers) bevat een lijst van publieke sleutels die mogen verbinden met dat account. Elke regel is één publieke sleutel. Voeg je publieke sleutel toe aan dit bestand om wachtwoordloze SSH-login mogelijk te maken."
+      },
+      "bestOnlineGenerator": {
+        "question": "Wat is de beste online SSH-sleutelgenerator?",
+        "answer": "Deze SSH-sleutelgenerator is een van de beste gratis online opties omdat het 100% in je browser draait, moderne Ed25519 en RSA-algoritmen ondersteunt, offline werkt als PWA, en nooit je privésleutels naar een server stuurt."
+      },
+      "permissions": {
+        "question": "Welke machtigingen moet mijn SSH privésleutel hebben?",
+        "answer": "Je SSH privésleutel moet beperkte machtigingen hebben. Op Linux/macOS, gebruik 'chmod 600 ~/.ssh/id_ed25519' (eigenaar lezen/schrijven) of 'chmod 400' (eigenaar alleen-lezen). SSH weigert een sleutel te gebruiken met te ruime machtigingen. De .ssh directory moet 700 zijn."
+      }
+    }
+  },
+  "theme": {
+    "light": "Licht",
+    "dark": "Donker",
+    "system": "Systeem"
+  },
+  "notFound": {
+    "title": "Pagina Niet Gevonden",
+    "code": "404",
+    "description": "De pagina die je zoekt bestaat niet of is verplaatst.",
+    "backHome": "Terug naar Home"
+  }
+}

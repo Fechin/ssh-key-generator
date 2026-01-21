@@ -11,7 +11,18 @@ import { useLanguageStore } from '@/i18n'
 
 const languages = [
   { code: 'en' as const, label: 'English', flag: '🇺🇸', path: '/' },
-  { code: 'zh' as const, label: '中文', flag: '🇨🇳', path: '/zh-Hans/' },
+  { code: 'zh' as const, label: '简体中文', flag: '🇨🇳', path: '/zh-Hans/' },
+  { code: 'zh-Hant' as const, label: '繁體中文', flag: '🇹🇼', path: '/zh-Hant/' },
+  { code: 'ja' as const, label: '日本語', flag: '🇯🇵', path: '/ja/' },
+  { code: 'ko' as const, label: '한국어', flag: '🇰🇷', path: '/ko/' },
+  { code: 'es' as const, label: 'Español', flag: '🇪🇸', path: '/es/' },
+  { code: 'pt' as const, label: 'Português', flag: '🇧🇷', path: '/pt/' },
+  { code: 'fr' as const, label: 'Français', flag: '🇫🇷', path: '/fr/' },
+  { code: 'de' as const, label: 'Deutsch', flag: '🇩🇪', path: '/de/' },
+  { code: 'ru' as const, label: 'Русский', flag: '🇷🇺', path: '/ru/' },
+  { code: 'it' as const, label: 'Italiano', flag: '🇮🇹', path: '/it/' },
+  { code: 'nl' as const, label: 'Nederlands', flag: '🇳🇱', path: '/nl/' },
+  { code: 'pl' as const, label: 'Polski', flag: '🇵🇱', path: '/pl/' },
 ]
 
 export function LanguageToggle() {
@@ -32,7 +43,7 @@ export function LanguageToggle() {
           <ChevronDown className="h-3 w-3" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end" className="max-h-80 overflow-y-auto">
         {languages.map((lang) => (
           <DropdownMenuItem
             key={lang.code}

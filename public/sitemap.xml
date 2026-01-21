@@ -9,10 +9,21 @@
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://sshkeygenerator.com/"/>
     <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sshkeygenerator.com/zh-Hans/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://sshkeygenerator.com/zh-Hant/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://sshkeygenerator.com/ja/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://sshkeygenerator.com/ko/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sshkeygenerator.com/es/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://sshkeygenerator.com/pt/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://sshkeygenerator.com/fr/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://sshkeygenerator.com/de/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://sshkeygenerator.com/ru/"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://sshkeygenerator.com/it/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://sshkeygenerator.com/nl/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://sshkeygenerator.com/pl/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sshkeygenerator.com/"/>
   </url>
 
-  <!-- Main page - Chinese (Simplified) -->
+  <!-- Chinese Simplified -->
   <url>
     <loc>https://sshkeygenerator.com/zh-Hans/</loc>
     <lastmod>2025-01-21</lastmod>
@@ -20,6 +31,259 @@
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://sshkeygenerator.com/"/>
     <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sshkeygenerator.com/zh-Hans/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://sshkeygenerator.com/zh-Hant/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://sshkeygenerator.com/ja/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://sshkeygenerator.com/ko/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sshkeygenerator.com/es/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://sshkeygenerator.com/pt/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://sshkeygenerator.com/fr/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://sshkeygenerator.com/de/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://sshkeygenerator.com/ru/"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://sshkeygenerator.com/it/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://sshkeygenerator.com/nl/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://sshkeygenerator.com/pl/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sshkeygenerator.com/"/>
+  </url>
+
+  <!-- Chinese Traditional -->
+  <url>
+    <loc>https://sshkeygenerator.com/zh-Hant/</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sshkeygenerator.com/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sshkeygenerator.com/zh-Hans/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://sshkeygenerator.com/zh-Hant/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://sshkeygenerator.com/ja/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://sshkeygenerator.com/ko/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sshkeygenerator.com/es/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://sshkeygenerator.com/pt/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://sshkeygenerator.com/fr/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://sshkeygenerator.com/de/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://sshkeygenerator.com/ru/"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://sshkeygenerator.com/it/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://sshkeygenerator.com/nl/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://sshkeygenerator.com/pl/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sshkeygenerator.com/"/>
+  </url>
+
+  <!-- Japanese -->
+  <url>
+    <loc>https://sshkeygenerator.com/ja/</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sshkeygenerator.com/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sshkeygenerator.com/zh-Hans/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://sshkeygenerator.com/zh-Hant/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://sshkeygenerator.com/ja/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://sshkeygenerator.com/ko/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sshkeygenerator.com/es/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://sshkeygenerator.com/pt/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://sshkeygenerator.com/fr/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://sshkeygenerator.com/de/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://sshkeygenerator.com/ru/"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://sshkeygenerator.com/it/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://sshkeygenerator.com/nl/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://sshkeygenerator.com/pl/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sshkeygenerator.com/"/>
+  </url>
+
+  <!-- Korean -->
+  <url>
+    <loc>https://sshkeygenerator.com/ko/</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sshkeygenerator.com/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sshkeygenerator.com/zh-Hans/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://sshkeygenerator.com/zh-Hant/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://sshkeygenerator.com/ja/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://sshkeygenerator.com/ko/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sshkeygenerator.com/es/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://sshkeygenerator.com/pt/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://sshkeygenerator.com/fr/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://sshkeygenerator.com/de/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://sshkeygenerator.com/ru/"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://sshkeygenerator.com/it/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://sshkeygenerator.com/nl/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://sshkeygenerator.com/pl/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sshkeygenerator.com/"/>
+  </url>
+
+  <!-- Spanish -->
+  <url>
+    <loc>https://sshkeygenerator.com/es/</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sshkeygenerator.com/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sshkeygenerator.com/zh-Hans/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://sshkeygenerator.com/zh-Hant/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://sshkeygenerator.com/ja/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://sshkeygenerator.com/ko/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sshkeygenerator.com/es/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://sshkeygenerator.com/pt/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://sshkeygenerator.com/fr/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://sshkeygenerator.com/de/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://sshkeygenerator.com/ru/"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://sshkeygenerator.com/it/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://sshkeygenerator.com/nl/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://sshkeygenerator.com/pl/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sshkeygenerator.com/"/>
+  </url>
+
+  <!-- Portuguese -->
+  <url>
+    <loc>https://sshkeygenerator.com/pt/</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sshkeygenerator.com/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sshkeygenerator.com/zh-Hans/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://sshkeygenerator.com/zh-Hant/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://sshkeygenerator.com/ja/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://sshkeygenerator.com/ko/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sshkeygenerator.com/es/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://sshkeygenerator.com/pt/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://sshkeygenerator.com/fr/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://sshkeygenerator.com/de/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://sshkeygenerator.com/ru/"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://sshkeygenerator.com/it/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://sshkeygenerator.com/nl/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://sshkeygenerator.com/pl/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sshkeygenerator.com/"/>
+  </url>
+
+  <!-- French -->
+  <url>
+    <loc>https://sshkeygenerator.com/fr/</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sshkeygenerator.com/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sshkeygenerator.com/zh-Hans/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://sshkeygenerator.com/zh-Hant/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://sshkeygenerator.com/ja/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://sshkeygenerator.com/ko/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sshkeygenerator.com/es/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://sshkeygenerator.com/pt/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://sshkeygenerator.com/fr/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://sshkeygenerator.com/de/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://sshkeygenerator.com/ru/"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://sshkeygenerator.com/it/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://sshkeygenerator.com/nl/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://sshkeygenerator.com/pl/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sshkeygenerator.com/"/>
+  </url>
+
+  <!-- German -->
+  <url>
+    <loc>https://sshkeygenerator.com/de/</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sshkeygenerator.com/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sshkeygenerator.com/zh-Hans/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://sshkeygenerator.com/zh-Hant/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://sshkeygenerator.com/ja/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://sshkeygenerator.com/ko/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sshkeygenerator.com/es/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://sshkeygenerator.com/pt/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://sshkeygenerator.com/fr/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://sshkeygenerator.com/de/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://sshkeygenerator.com/ru/"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://sshkeygenerator.com/it/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://sshkeygenerator.com/nl/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://sshkeygenerator.com/pl/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sshkeygenerator.com/"/>
+  </url>
+
+  <!-- Russian -->
+  <url>
+    <loc>https://sshkeygenerator.com/ru/</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sshkeygenerator.com/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sshkeygenerator.com/zh-Hans/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://sshkeygenerator.com/zh-Hant/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://sshkeygenerator.com/ja/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://sshkeygenerator.com/ko/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sshkeygenerator.com/es/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://sshkeygenerator.com/pt/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://sshkeygenerator.com/fr/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://sshkeygenerator.com/de/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://sshkeygenerator.com/ru/"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://sshkeygenerator.com/it/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://sshkeygenerator.com/nl/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://sshkeygenerator.com/pl/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sshkeygenerator.com/"/>
+  </url>
+
+  <!-- Italian -->
+  <url>
+    <loc>https://sshkeygenerator.com/it/</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sshkeygenerator.com/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sshkeygenerator.com/zh-Hans/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://sshkeygenerator.com/zh-Hant/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://sshkeygenerator.com/ja/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://sshkeygenerator.com/ko/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sshkeygenerator.com/es/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://sshkeygenerator.com/pt/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://sshkeygenerator.com/fr/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://sshkeygenerator.com/de/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://sshkeygenerator.com/ru/"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://sshkeygenerator.com/it/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://sshkeygenerator.com/nl/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://sshkeygenerator.com/pl/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sshkeygenerator.com/"/>
+  </url>
+
+  <!-- Dutch -->
+  <url>
+    <loc>https://sshkeygenerator.com/nl/</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sshkeygenerator.com/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sshkeygenerator.com/zh-Hans/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://sshkeygenerator.com/zh-Hant/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://sshkeygenerator.com/ja/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://sshkeygenerator.com/ko/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sshkeygenerator.com/es/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://sshkeygenerator.com/pt/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://sshkeygenerator.com/fr/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://sshkeygenerator.com/de/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://sshkeygenerator.com/ru/"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://sshkeygenerator.com/it/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://sshkeygenerator.com/nl/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://sshkeygenerator.com/pl/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://sshkeygenerator.com/"/>
+  </url>
+
+  <!-- Polish -->
+  <url>
+    <loc>https://sshkeygenerator.com/pl/</loc>
+    <lastmod>2025-01-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sshkeygenerator.com/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://sshkeygenerator.com/zh-Hans/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://sshkeygenerator.com/zh-Hant/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://sshkeygenerator.com/ja/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://sshkeygenerator.com/ko/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://sshkeygenerator.com/es/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://sshkeygenerator.com/pt/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://sshkeygenerator.com/fr/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://sshkeygenerator.com/de/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://sshkeygenerator.com/ru/"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://sshkeygenerator.com/it/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://sshkeygenerator.com/nl/"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://sshkeygenerator.com/pl/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://sshkeygenerator.com/"/>
   </url>
 </urlset>
