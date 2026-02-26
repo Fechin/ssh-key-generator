@@ -1,0 +1,342 @@
+{
+  "header": {
+    "title": "SSH Key Generator",
+    "subtitle": "ฟรีและปลอดภัย",
+    "clientSide": "ทำงานบนเบราว์เซอร์ 100%",
+    "viewOnGitHub": "ดูบน GitHub"
+  },
+  "hero": {
+    "title": "สร้าง SSH Key ออนไลน์",
+    "subtitle": "สร้าง SSH Key ที่ปลอดภัยได้ทันทีบนเบราว์เซอร์ของคุณด้วยเครื่องมือสร้าง SSH Key ออนไลน์ฟรี รองรับ GitHub, GitLab, Bitbucket และ SSH Server ทุกประเภท"
+  },
+  "tabs": {
+    "generate": "สร้าง Key",
+    "generateShort": "สร้าง",
+    "commands": "โหมดคำสั่ง",
+    "commandsShort": "คำสั่ง",
+    "config": "SSH Config",
+    "configShort": "Config",
+    "guides": "คู่มือแพลตฟอร์ม",
+    "guidesShort": "คู่มือ"
+  },
+  "generator": {
+    "title": "เครื่องมือสร้าง SSH Key ออนไลน์",
+    "description": "สร้าง SSH Key Pair ที่ปลอดภัยบนเบราว์เซอร์ของคุณ ไม่มีข้อมูลใดถูกส่งไปยังเซิร์ฟเวอร์",
+    "algorithm": "Algorithm",
+    "algorithmTooltip": "แนะนำให้ใช้ Ed25519 สำหรับกรณีทั่วไป ใช้ RSA หากต้องการความเข้ากันได้กับระบบเก่า",
+    "comment": "Comment (ไม่บังคับ)",
+    "commentTooltip": "ข้อความช่วยระบุตัวตนของ Key นี้ โดยปกติใช้อีเมลของคุณ",
+    "commentPlaceholder": "user@example.com",
+    "generateButton": "สร้าง Key Pair",
+    "generating": "กำลังสร้าง...",
+    "passphrase": "Passphrase (ไม่บังคับ)",
+    "passphraseTooltip": "Passphrase เพิ่มความปลอดภัยอีกชั้น แม้มีคนได้ Private Key ของคุณไป ก็ใช้งานไม่ได้หากไม่มี Passphrase",
+    "passphrasePlaceholder": "ใส่ Passphrase สำหรับเข้ารหัส",
+    "confirmPassphrase": "ยืนยัน Passphrase",
+    "confirmPassphrasePlaceholder": "ใส่ Passphrase อีกครั้ง",
+    "passphrasesMismatch": "Passphrase ไม่ตรงกัน",
+    "noPassphraseWarning": "ไม่ได้ตั้ง Passphrase Private Key ของคุณจะไม่ถูกเข้ารหัส แนะนำให้เพิ่ม Passphrase เพื่อความปลอดภัย",
+    "securityTitle": "SSH Key Generator ทำงานบนเบราว์เซอร์ 100%",
+    "securityDesc": "การสร้าง Key ทั้งหมดเกิดขึ้นบนเบราว์เซอร์ของคุณ เครื่องมือนี้ไม่เคยส่ง Private Key ของคุณออกไป",
+    "noKeysYet": "ยังไม่มี Key ที่สร้าง",
+    "noKeysHint": "คลิก \"สร้าง Key Pair\" เพื่อสร้าง SSH Key ของคุณ"
+  },
+  "algorithms": {
+    "ed25519": "Ed25519 (แนะนำ)",
+    "ed25519Desc": "ทันสมัย รวดเร็ว ปลอดภัย เหมาะสำหรับการใช้งานทั่วไป",
+    "rsa4096": "RSA 4096-bit",
+    "rsa4096Desc": "เข้ากันได้สูงสุดกับระบบเก่า",
+    "rsa2048": "RSA 2048-bit",
+    "rsa2048Desc": "ขนาด RSA ขั้นต่ำที่แนะนำสำหรับความเข้ากันได้"
+  },
+  "keyDisplay": {
+    "publicKey": "Public Key",
+    "publicKeyDesc": "เพิ่มลงใน authorized_keys บนเซิร์ฟเวอร์ หรือบน GitHub/GitLab",
+    "privateKey": "Private Key",
+    "privateKeyWarning": "เก็บรักษาไว้เป็นความลับ! ห้ามแชร์ Private Key ของคุณ",
+    "fingerprint": "Key Fingerprint",
+    "copy": "คัดลอก",
+    "copied": "คัดลอกแล้ว!",
+    "download": "ดาวน์โหลด",
+    "reveal": "แสดง",
+    "hide": "ซ่อน",
+    "clickToReveal": "คลิก แสดง เพื่อดู Private Key"
+  },
+  "commands": {
+    "title": "คำสั่งสร้าง SSH Key",
+    "description": "สร้างคำสั่ง ssh-keygen สำหรับแพลตฟอร์มที่คุณต้องการ คัดลอกและรันใน Terminal ได้เลย",
+    "algorithm": "Algorithm",
+    "comment": "Comment",
+    "filename": "ชื่อไฟล์ (ไม่บังคับ)",
+    "quickCommand": "คำสั่งด่วน",
+    "completeSetup": "ตั้งค่าแบบครบถ้วน",
+    "copyAll": "คัดลอกทั้งหมด"
+  },
+  "sshConfig": {
+    "title": "เครื่องมือสร้าง SSH Config",
+    "description": "สร้างไฟล์ ~/.ssh/config ของคุณ เพิ่ม Host และดาวน์โหลด Config ได้",
+    "hostAlias": "Host Alias",
+    "hostAliasRequired": "Host Alias *",
+    "hostname": "HostName",
+    "hostnameRequired": "HostName *",
+    "hostnamePlaceholder": "192.168.1.100 หรือ example.com",
+    "user": "User",
+    "port": "Port",
+    "identityFile": "IdentityFile",
+    "identityFilePlaceholder": "~/.ssh/id_ed25519",
+    "addHost": "เพิ่ม Host",
+    "configuredHosts": "Host ที่ตั้งค่าแล้ว",
+    "generatedConfig": "Config ที่สร้าง",
+    "saveToPath": "บันทึกไฟล์นี้ไปที่ ~/.ssh/config",
+    "noHosts": "# ยังไม่มี Host ที่ตั้งค่า",
+    "advancedOptions": "ตัวเลือกขั้นสูง",
+    "proxyJump": "ProxyJump",
+    "proxyJumpPlaceholder": "bastion-host",
+    "proxyJumpDesc": "กระโดดผ่าน Bastion/Jump Host เพื่อเข้าถึงเป้าหมาย",
+    "forwardAgent": "Forward Agent",
+    "forwardAgentDesc": "ส่งต่อ SSH Agent ของคุณไปยัง Remote Host"
+  },
+  "guides": {
+    "title": "คู่มือตั้งค่าแพลตฟอร์ม",
+    "description": "คำแนะนำทีละขั้นตอนสำหรับการตั้งค่า SSH Key บนแพลตฟอร์ม Git ยอดนิยม",
+    "officialDocs": "เอกสารทางการ",
+    "sshSetup": "ตั้งค่า SSH สำหรับ {platform}",
+    "github": {
+      "step1Title": "สร้าง SSH Key",
+      "step1Desc": "ใช้เครื่องมือด้านบน หรือรันคำสั่งนี้:",
+      "step2Title": "เริ่ม SSH Agent",
+      "step2Desc": "เริ่ม ssh-agent ทำงานเบื้องหลัง:",
+      "step3Title": "เพิ่ม Key ไปยัง Agent",
+      "step3Desc": "เพิ่ม SSH Private Key ของคุณไปยัง Agent:",
+      "step4Title": "คัดลอก Public Key",
+      "step4Desc": "คัดลอก Public Key ไปยัง Clipboard:",
+      "step5Title": "เพิ่มบน GitHub",
+      "step5Desc": "ไปที่ GitHub Settings > SSH and GPG keys > New SSH key แล้ววาง Public Key ของคุณ",
+      "step6Title": "ทดสอบการเชื่อมต่อ",
+      "step6Desc": "ตรวจสอบการเชื่อมต่อ SSH ของคุณ:"
+    },
+    "gitlab": {
+      "step1Title": "สร้าง SSH Key",
+      "step1Desc": "ใช้ Ed25519 เพื่อความปลอดภัยที่ดีกว่า:",
+      "step2Title": "เพิ่ม Key ไปยัง Agent",
+      "step2Desc": "เพิ่ม SSH Key ของคุณไปยัง Agent:",
+      "step3Title": "คัดลอก Public Key",
+      "step3Desc": "คัดลอก Public Key ของคุณ:",
+      "step4Title": "เพิ่มบน GitLab",
+      "step4Desc": "ไปที่ GitLab Preferences > SSH Keys วาง Public Key และตั้งวันหมดอายุ",
+      "step5Title": "ทดสอบการเชื่อมต่อ",
+      "step5Desc": "ตรวจสอบการเชื่อมต่อ SSH ของคุณ:"
+    },
+    "bitbucket": {
+      "step1Title": "สร้าง SSH Key",
+      "step1Desc": "สร้าง SSH Key แบบ Ed25519:",
+      "step2Title": "เพิ่ม Key ไปยัง Agent",
+      "step2Desc": "เริ่ม ssh-agent และเพิ่ม Key ของคุณ:",
+      "step3Title": "คัดลอก Public Key",
+      "step3Desc": "คัดลอก Public Key ไปยัง Clipboard:",
+      "step4Title": "เพิ่มบน Bitbucket",
+      "step4Desc": "ไปที่ Bitbucket Settings > Personal settings > SSH keys > Add key",
+      "step5Title": "ทดสอบการเชื่อมต่อ",
+      "step5Desc": "ตรวจสอบการเชื่อมต่อ SSH ของคุณ:"
+    },
+    "aws": {
+      "step1Title": "สร้าง SSH Key",
+      "step1Desc": "สร้าง SSH Key แบบ Ed25519 สำหรับ AWS EC2:",
+      "step2Title": "คัดลอก Public Key",
+      "step2Desc": "แสดง Public Key เพื่อคัดลอก:",
+      "step3Title": "Import Key ไปยัง AWS",
+      "step3Desc": "ไปที่ AWS Console > EC2 > Key Pairs > Actions > Import Key Pair แล้ววาง Public Key ของคุณ",
+      "step4Title": "ตั้งค่า Permissions",
+      "step4Desc": "ตรวจสอบว่า Private Key มี Permissions ที่ถูกต้อง:",
+      "step5Title": "เชื่อมต่อไปยัง Instance",
+      "step5Desc": "SSH เข้าสู่ EC2 Instance ของคุณ (แทนที่ด้วยข้อมูลของคุณ):"
+    },
+    "azure": {
+      "step1Title": "สร้าง SSH Key",
+      "step1Desc": "สร้าง SSH Key แบบ Ed25519 สำหรับ Azure:",
+      "step2Title": "คัดลอก Public Key",
+      "step2Desc": "แสดง Public Key ของคุณ:",
+      "step3Title": "เพิ่มตอนสร้าง VM",
+      "step3Desc": "ตอนสร้าง VM เลือก 'SSH public key' สำหรับการยืนยันตัวตน และวาง Public Key ของคุณ",
+      "step4Title": "เชื่อมต่อไปยัง VM",
+      "step4Desc": "SSH เข้าสู่ Azure VM ของคุณ:",
+      "step5Title": "อัปเดต VM ที่มีอยู่ (ไม่บังคับ)",
+      "step5Desc": "เพิ่ม Key ไปยัง VM ที่มีอยู่โดยใช้ Azure CLI:"
+    },
+    "digitalocean": {
+      "step1Title": "สร้าง SSH Key",
+      "step1Desc": "สร้าง SSH Key แบบ Ed25519:",
+      "step2Title": "คัดลอก Public Key",
+      "step2Desc": "แสดง Public Key เพื่อคัดลอก:",
+      "step3Title": "เพิ่มบน DigitalOcean",
+      "step3Desc": "ไปที่ DigitalOcean Control Panel > Settings > Security > SSH Keys > Add SSH Key",
+      "step4Title": "สร้าง Droplet",
+      "step4Desc": "ตอนสร้าง Droplet เลือก SSH Key ของคุณในหัวข้อ 'Authentication'",
+      "step5Title": "เชื่อมต่อไปยัง Droplet",
+      "step5Desc": "SSH เข้าสู่ Droplet ของคุณ:"
+    }
+  },
+  "footer": {
+    "about": "เกี่ยวกับ SSH Key Generator ออนไลน์นี้",
+    "aboutDesc": "นี่คือเครื่องมือสร้าง SSH Key ออนไลน์แบบ Open Source และฟรี ที่ทำงานบนเบราว์เซอร์ของคุณทั้งหมด ไม่มีการประมวลผลบนเซิร์ฟเวอร์ ไม่มีการเก็บข้อมูล มีแค่การสร้าง Key ที่ปลอดภัย",
+    "securityFirst": "ความปลอดภัยมาก่อน",
+    "security1": "การสร้าง Key ทั้งหมดเกิดขึ้นบนเบราว์เซอร์ของคุณ",
+    "security2": "ไม่มีข้อมูลใดถูกส่งไปยังเซิร์ฟเวอร์",
+    "security3": "โค้ด Open Source ตรวจสอบได้",
+    "security4": "ใช้ไลบรารีเข้ารหัสมาตรฐานอุตสาหกรรม",
+    "resources": "แหล่งข้อมูล",
+    "sshKeyGuide": "เอกสาร SSH ของ GitHub",
+    "githubSetup": "เอกสาร SSH ของ GitLab",
+    "bestPractices": "SSH Academy",
+    "madeWith": "สร้างด้วย",
+    "forDevelopers": "สำหรับนักพัฒนาทั่วโลก",
+    "copyright": "© {year} SSH Key Generator. Open Source ภายใต้ MIT License"
+  },
+  "seo": {
+    "whatIs": {
+      "title": "SSH Key Generator ออนไลน์คืออะไร?",
+      "desc": "SSH Key Generator ออนไลน์อย่างเครื่องมือนี้ สร้าง Key Pair แบบเข้ารหัสอย่างปลอดภัยบนเบราว์เซอร์ของคุณ SSH Key ประกอบด้วย Public Key (แชร์กับเซิร์ฟเวอร์) และ Private Key (เก็บเป็นความลับ) ต่างจากรหัสผ่าน SSH Key ที่สร้างออนไลน์แทบจะไม่สามารถถูกถอดรหัสด้วยวิธี Brute Force ได้"
+    },
+    "whyUse": {
+      "title": "ทำไมต้องใช้ SSH Key Generator ออนไลน์นี้?",
+      "secure": {
+        "title": "สร้างออนไลน์อย่างปลอดภัย",
+        "desc": "การเข้ารหัสทั้งหมดเกิดขึ้นบนเบราว์เซอร์ของคุณ SSH Key Generator ออนไลน์นี้รับประกันว่า Private Key ไม่เคยออกจากอุปกรณ์ของคุณ"
+      },
+      "modern": {
+        "title": "Algorithm ทันสมัย",
+        "desc": "สร้าง Key แบบ Ed25519 (แนะนำ) หรือ RSA ที่ความแข็งแกร่งสูงสุด 4096-bit"
+      },
+      "easy": {
+        "title": "ใช้งานง่าย",
+        "desc": "หน้าจอใช้งานง่ายพร้อมปุ่มคัดลอก/ดาวน์โหลด ใช้งานได้ทันทีไม่ต้องติดตั้ง"
+      },
+      "free": {
+        "title": "ฟรีและ Open Source",
+        "desc": "ไม่ต้องลงทะเบียน ไม่มีการติดตาม ไม่มีค่าใช้จ่าย MIT License และผ่านการตรวจสอบจากชุมชน"
+      }
+    },
+    "howTo": {
+      "title": "วิธีสร้าง SSH Key ออนไลน์",
+      "step1": "เลือก Algorithm: เลือก Ed25519 (แนะนำ) หรือ RSA",
+      "step2": "เพิ่ม Comment: ตัวระบุเช่นอีเมลของคุณ (ไม่บังคับ)",
+      "step3": "สร้าง: คลิกปุ่มเพื่อสร้าง Key Pair",
+      "step4": "บันทึก Key: ดาวน์โหลดหรือคัดลอก Public Key และ Private Key",
+      "step5": "เพิ่มบนเซิร์ฟเวอร์: คัดลอก Public Key ไปที่ ~/.ssh/authorized_keys หรือผู้ให้บริการ Git ของคุณ"
+    },
+    "comparison": {
+      "title": "Ed25519 vs RSA: ควรเลือกแบบไหน?",
+      "intro": "การทำความเข้าใจความแตกต่างระหว่าง SSH Key Algorithm ยอดนิยมสองตัวนี้ ช่วยให้คุณเลือกได้ถูกต้องตามความต้องการด้านความปลอดภัย",
+      "feature": "คุณสมบัติ",
+      "algorithmType": "ประเภท Algorithm",
+      "keySize": "ขนาด Key",
+      "signatureSize": "ขนาด Signature",
+      "security": "ระดับความปลอดภัย",
+      "performance": "ประสิทธิภาพ",
+      "compatibility": "ความเข้ากันได้",
+      "quantumResistance": "ความทนทานต่อ Quantum",
+      "bestFor": "เหมาะสำหรับ",
+      "recommendation": "คำแนะนำ",
+      "ed25519AlgoType": "Elliptic Curve (Curve25519)",
+      "rsaAlgoType": "Integer Factorization",
+      "ed25519KeySize": "256 bits (กะทัดรัด)",
+      "rsaKeySize": "2048-4096 bits (ใหญ่กว่า)",
+      "ed25519SigSize": "64 bytes",
+      "rsaSigSize": "256-512 bytes",
+      "ed25519Security": "เทียบเท่า ~128-bit",
+      "rsaSecurity": "~112-128-bit (4096)",
+      "ed25519Performance": "เร็วมาก (เร็วกว่า 10 เท่า)",
+      "rsaPerformance": "สร้างช้ากว่า",
+      "ed25519Compat": "OpenSSH 6.5+ (2014)",
+      "rsaCompat": "รองรับทุกระบบ",
+      "ed25519Quantum": "ไม่ทนทานต่อ Quantum",
+      "rsaQuantum": "ไม่ทนทานต่อ Quantum",
+      "ed25519BestFor": "GitHub, GitLab, เซิร์ฟเวอร์สมัยใหม่",
+      "rsaBestFor": "ระบบเก่า ฮาร์ดแวร์รุ่นเก่า",
+      "ed25519Rec": "ตัวเลือกที่ดีที่สุดสำหรับผู้ใช้ทั่วไป",
+      "rsaRec": "ใช้สำหรับรองรับระบบเก่า"
+    },
+    "useCases": {
+      "title": "กรณีใช้งาน SSH Key ที่พบบ่อย",
+      "git": {
+        "title": "Git Hosting",
+        "desc": "Push และ Pull โค้ดอย่างปลอดภัยจาก GitHub, GitLab, Bitbucket โดยไม่ต้องใส่รหัสผ่าน"
+      },
+      "server": {
+        "title": "การเข้าถึงเซิร์ฟเวอร์",
+        "desc": "SSH เข้าสู่เซิร์ฟเวอร์ Linux/Unix, Cloud Instance (AWS, GCP, Azure) และผู้ให้บริการ VPS"
+      },
+      "automation": {
+        "title": "CI/CD Automation",
+        "desc": "เปิดใช้งานการ Deploy อัตโนมัติ Script และ DevOps Pipeline เพื่อเข้าถึงทรัพยากรระยะไกล"
+      },
+      "tunnels": {
+        "title": "Secure Tunnels",
+        "desc": "สร้างอุโมงค์เข้ารหัสสำหรับการเข้าถึงฐานข้อมูล Port Forwarding และการสื่อสารที่ปลอดภัย"
+      }
+    },
+    "faq": {
+      "title": "คำถามที่พบบ่อย",
+      "subtitle": "ค้นหาคำตอบสำหรับคำถามทั่วไปเกี่ยวกับ SSH Key และเครื่องมือนี้",
+      "safe": {
+        "question": "การสร้าง SSH Key ออนไลน์ปลอดภัยหรือไม่?",
+        "answer": "ใช่ เครื่องมือนี้ปลอดภัย 100% เพราะการสร้าง Key ทั้งหมดเกิดขึ้นบนเบราว์เซอร์ของคุณโดยใช้ Web Crypto API Private Key ของคุณไม่เคยออกจากอุปกรณ์และไม่เคยถูกส่งไปยังเซิร์ฟเวอร์ใดๆ โค้ดเป็น Open Source และตรวจสอบได้บน GitHub"
+      },
+      "ed25519VsRsa": {
+        "question": "Ed25519 และ RSA ต่างกันอย่างไร?",
+        "answer": "Ed25519 เป็น Elliptic Curve Algorithm สมัยใหม่ที่ให้ความปลอดภัยดีกว่าด้วยขนาด Key ที่เล็กกว่า (256-bit เทียบกับ RSA 2048-4096-bit) Ed25519 Key สร้างและใช้งานได้เร็วกว่า และแนะนำสำหรับการตั้งค่า SSH ใหม่ส่วนใหญ่ RSA เก่ากว่าแต่เข้ากันได้กับระบบเก่ามากกว่า"
+      },
+      "github": {
+        "question": "จะเพิ่ม SSH Key บน GitHub ได้อย่างไร?",
+        "answer": "1) สร้าง SSH Key โดยใช้เครื่องมือนี้ 2) คัดลอก Public Key 3) ไปที่ GitHub Settings > SSH and GPG keys 4) คลิก 'New SSH key' 5) วาง Public Key และตั้งชื่อ 6) คลิก 'Add SSH key' ทดสอบด้วย: ssh -T git@github.com"
+      },
+      "rsaKeySize": {
+        "question": "ควรใช้ขนาด Key เท่าไหร่สำหรับ RSA?",
+        "answer": "สำหรับ RSA Key แนะนำ 4096-bit สำหรับความปลอดภัยสูงสุด 2048-bit เป็นขนาดขั้นต่ำที่ยอมรับได้และให้ความปลอดภัยเพียงพอสำหรับการใช้งานทั่วไป Key ที่เล็กกว่า 2048-bit ถือว่าไม่ปลอดภัยและไม่ควรใช้"
+      },
+      "offline": {
+        "question": "ใช้ SSH Key Generator นี้แบบออฟไลน์ได้หรือไม่?",
+        "answer": "ได้! SSH Key Generator นี้เป็น Progressive Web App (PWA) ที่ทำงานแบบออฟไลน์ได้ หลังจากเข้าชมครั้งแรก คุณสามารถติดตั้งเป็นแอปบนอุปกรณ์และสร้าง SSH Key ได้โดยไม่ต้องเชื่อมต่ออินเทอร์เน็ต การเข้ารหัสทั้งหมดทำงานบนเบราว์เซอร์ของคุณ"
+      },
+      "passphrase": {
+        "question": "ควรใช้ Passphrase สำหรับ SSH Key หรือไม่?",
+        "answer": "ใช่ แนะนำอย่างยิ่งให้ใช้ Passphrase เพิ่มความปลอดภัยอีกชั้น แม้มีคนได้ไฟล์ Private Key ของคุณไป ก็ใช้งานไม่ได้หากไม่มี Passphrase ใช้ Passphrase ที่แข็งแกร่งและจำง่ายสำหรับ Key สำคัญ"
+      },
+      "multipleServers": {
+        "question": "ใช้ SSH Key เดียวกันกับหลายเซิร์ฟเวอร์ได้หรือไม่?",
+        "answer": "ได้ คุณสามารถใช้ SSH Public Key เดียวกันบนหลายเซิร์ฟเวอร์ได้ อย่างไรก็ตาม เพื่อความปลอดภัยที่ดีกว่า ควรพิจารณาใช้ Key แยกสำหรับวัตถุประสงค์ที่ต่างกัน (เช่น งานกับส่วนตัว, Production กับ Development) ซึ่งจำกัดความเสียหายหาก Key ใด Key หนึ่งถูกเปิดเผย"
+      },
+      "fingerprint": {
+        "question": "SSH Key Fingerprint คืออะไร?",
+        "answer": "SSH Key Fingerprint คือตัวระบุที่สั้นและไม่ซ้ำกัน ที่ได้จาก Public Key ของคุณโดยใช้ Hash Function (SHA256 หรือ MD5) ใช้เพื่อยืนยันความถูกต้องของ Key เมื่อเชื่อมต่อกับเซิร์ฟเวอร์ Fingerprint ช่วยให้คุณยืนยันได้ว่ากำลังเชื่อมต่อกับเซิร์ฟเวอร์ที่ถูกต้อง"
+      },
+      "bestAlgorithm": {
+        "question": "SSH Key Algorithm ที่ดีที่สุดในปี 2025 คืออะไร?",
+        "answer": "Ed25519 เป็น Algorithm ที่แนะนำในปี 2025 สำหรับการใช้งานส่วนใหญ่ ให้ความปลอดภัยยอดเยี่ยมด้วยขนาด Key 256-bit ประสิทธิภาพรวดเร็ว และรองรับโดย SSH Implementation สมัยใหม่ทั้งหมด ใช้ RSA เฉพาะเมื่อต้องการความเข้ากันได้กับระบบเก่า"
+      },
+      "authorizedKeys": {
+        "question": "ไฟล์ authorized_keys คืออะไร?",
+        "answer": "ไฟล์ authorized_keys (อยู่ที่ ~/.ssh/authorized_keys บนเซิร์ฟเวอร์ Linux/macOS) เก็บรายการ Public Key ที่ได้รับอนุญาตให้เชื่อมต่อกับบัญชีนั้น แต่ละบรรทัดคือ Public Key หนึ่งตัว เพิ่ม Public Key ของคุณลงในไฟล์นี้เพื่อเปิดใช้งานการล็อกอิน SSH โดยไม่ต้องใช้รหัสผ่าน"
+      },
+      "bestOnlineGenerator": {
+        "question": "SSH Key Generator ออนไลน์ที่ดีที่สุดคืออะไร?",
+        "answer": "SSH Key Generator นี้เป็นหนึ่งในตัวเลือกออนไลน์ฟรีที่ดีที่สุด เพราะทำงานบนเบราว์เซอร์ 100% รองรับ Ed25519 และ RSA Algorithm สมัยใหม่ ทำงานแบบออฟไลน์เป็น PWA ได้ และไม่เคยส่ง Private Key ไปยังเซิร์ฟเวอร์ใดๆ"
+      },
+      "permissions": {
+        "question": "SSH Private Key ควรมี Permissions อย่างไร?",
+        "answer": "SSH Private Key ของคุณควรมี Permissions ที่จำกัด บน Linux/macOS ใช้ 'chmod 600 ~/.ssh/id_ed25519' (เจ้าของอ่าน/เขียน) หรือ 'chmod 400' (เจ้าของอ่านอย่างเดียว) SSH จะปฏิเสธการใช้ Key ที่มี Permissions เปิดกว้างเกินไป โฟลเดอร์ .ssh ควรเป็น 700"
+      }
+    }
+  },
+  "theme": {
+    "light": "สว่าง",
+    "dark": "มืด",
+    "system": "ตามระบบ"
+  },
+  "notFound": {
+    "title": "ไม่พบหน้านี้",
+    "code": "404",
+    "description": "หน้าที่คุณกำลังมองหาไม่มีอยู่หรือถูกย้ายแล้ว",
+    "backHome": "กลับหน้าหลัก"
+  }
+}

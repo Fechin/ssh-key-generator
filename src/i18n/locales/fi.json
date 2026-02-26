@@ -1,0 +1,342 @@
+{
+  "header": {
+    "title": "SSH Key Generator",
+    "subtitle": "Ilmainen ja turvallinen",
+    "clientSide": "100 % selaimessa",
+    "viewOnGitHub": "Katso GitHubissa"
+  },
+  "hero": {
+    "title": "SSH Key Generator verkossa",
+    "subtitle": "Luo turvalliset SSH-avaimet välittömästi selaimessasi tällä ilmaisella SSH Key Generator -työkalulla. Toimii GitHubin, GitLabin, Bitbucketin ja kaikkien SSH-palvelimien kanssa."
+  },
+  "tabs": {
+    "generate": "Luo avaimet",
+    "generateShort": "Luo",
+    "commands": "Komentorivi",
+    "commandsShort": "Komennot",
+    "config": "SSH Config",
+    "configShort": "Config",
+    "guides": "Käyttöohjeet",
+    "guidesShort": "Ohjeet"
+  },
+  "generator": {
+    "title": "SSH Key Generator verkossa",
+    "description": "Luo uusi SSH-avainpari turvallisesti selaimessasi tällä ilmaisella työkalulla. Mitään tietoja ei lähetetä palvelimelle.",
+    "algorithm": "Algoritmi",
+    "algorithmTooltip": "Ed25519 sopii useimpiin käyttötarkoituksiin. Käytä RSA:ta, jos tarvitset yhteensopivuutta vanhempien järjestelmien kanssa.",
+    "comment": "Kommentti (valinnainen)",
+    "commentTooltip": "Kommentti auttaa tunnistamaan avaimen. Yleensä sähköpostiosoitteesi.",
+    "commentPlaceholder": "kayttaja@esimerkki.fi",
+    "generateButton": "Luo avainpari",
+    "generating": "Luodaan...",
+    "passphrase": "Salasana (valinnainen)",
+    "passphraseTooltip": "Salasana lisää turvallisuutta. Vaikka joku saisi yksityisen avaimesi, hän ei voi käyttää sitä ilman salasanaa.",
+    "passphrasePlaceholder": "Syötä salasana salausta varten",
+    "confirmPassphrase": "Vahvista salasana",
+    "confirmPassphrasePlaceholder": "Syötä salasana uudelleen",
+    "passphrasesMismatch": "Salasanat eivät täsmää",
+    "noPassphraseWarning": "Salasanaa ei asetettu. Yksityinen avaimesi tallennetaan salaamattomana. Harkitse salasanan lisäämistä.",
+    "securityTitle": "100 % selainpohjainen SSH Key Generator",
+    "securityDesc": "Kaikki avainten luonti tapahtuu paikallisesti selaimessasi. Tämä SSH Key Generator ei koskaan lähetä yksityisiä avaimiasi.",
+    "noKeysYet": "Avaimia ei ole vielä luotu",
+    "noKeysHint": "Napsauta \"Luo avainpari\" luodaksesi SSH-avaimet"
+  },
+  "algorithms": {
+    "ed25519": "Ed25519 (suositeltu)",
+    "ed25519Desc": "Moderni, nopea ja turvallinen. Paras useimpiin käyttötarkoituksiin.",
+    "rsa4096": "RSA 4096-bittinen",
+    "rsa4096Desc": "Maksimaalinen yhteensopivuus vanhojen järjestelmien kanssa.",
+    "rsa2048": "RSA 2048-bittinen",
+    "rsa2048Desc": "RSA:n vähimmäiskoko yhteensopivuutta varten."
+  },
+  "keyDisplay": {
+    "publicKey": "Julkinen avain",
+    "publicKeyDesc": "Lisää tämä authorized_keys-tiedostoon palvelimilla tai GitHubiin/GitLabiin.",
+    "privateKey": "Yksityinen avain",
+    "privateKeyWarning": "Pidä salassa! Älä koskaan jaa yksityistä avaintasi.",
+    "fingerprint": "Avaimen sormenjälki",
+    "copy": "Kopioi",
+    "copied": "Kopioitu!",
+    "download": "Lataa",
+    "reveal": "Näytä",
+    "hide": "Piilota",
+    "clickToReveal": "Napsauta Näytä tarkastellaksesi yksityistä avainta"
+  },
+  "commands": {
+    "title": "SSH-avaimen luontikomennot",
+    "description": "Luo ssh-keygen-komennot haluamallesi alustalle. Kopioi ja suorita ne terminaalissa.",
+    "algorithm": "Algoritmi",
+    "comment": "Kommentti",
+    "filename": "Tiedostonimi (valinnainen)",
+    "quickCommand": "Pikakomento",
+    "completeSetup": "Täydellinen asennus",
+    "copyAll": "Kopioi kaikki"
+  },
+  "sshConfig": {
+    "title": "SSH Config -työkalu",
+    "description": "Rakenna ~/.ssh/config-tiedostosi. Lisää isäntiä ja lataa config.",
+    "hostAlias": "Host-alias",
+    "hostAliasRequired": "Host-alias *",
+    "hostname": "HostName",
+    "hostnameRequired": "HostName *",
+    "hostnamePlaceholder": "192.168.1.100 tai esimerkki.fi",
+    "user": "User",
+    "port": "Port",
+    "identityFile": "IdentityFile",
+    "identityFilePlaceholder": "~/.ssh/id_ed25519",
+    "addHost": "Lisää isäntä",
+    "configuredHosts": "Määritetyt isännät",
+    "generatedConfig": "Luotu Config",
+    "saveToPath": "Tallenna tämä tiedostoon ~/.ssh/config",
+    "noHosts": "# Isäntiä ei ole vielä määritetty",
+    "advancedOptions": "Lisäasetukset",
+    "proxyJump": "ProxyJump",
+    "proxyJumpPlaceholder": "bastion-host",
+    "proxyJumpDesc": "Hyppää bastion-/jump-isännän kautta kohteeseen",
+    "forwardAgent": "Forward Agent",
+    "forwardAgentDesc": "Välitä SSH-agentti etäisännälle"
+  },
+  "guides": {
+    "title": "Alustakohtaiset ohjeet",
+    "description": "Vaiheittaiset ohjeet SSH-avainten käyttöönottoon suosituilla Git-alustoilla.",
+    "officialDocs": "Viralliset ohjeet",
+    "sshSetup": "{platform} SSH-asetukset",
+    "github": {
+      "step1Title": "Luo SSH-avain",
+      "step1Desc": "Käytä yllä olevaa generaattoria tai suorita tämä komento:",
+      "step2Title": "Käynnistä SSH Agent",
+      "step2Desc": "Käynnistä ssh-agent taustalla:",
+      "step3Title": "Lisää avain agentille",
+      "step3Desc": "Lisää yksityinen SSH-avaimesi agentille:",
+      "step4Title": "Kopioi julkinen avain",
+      "step4Desc": "Kopioi julkinen avaimesi leikepöydälle:",
+      "step5Title": "Lisää GitHubiin",
+      "step5Desc": "Siirry kohtaan GitHub Settings > SSH and GPG keys > New SSH key. Liitä julkinen avaimesi.",
+      "step6Title": "Testaa yhteys",
+      "step6Desc": "Varmista SSH-yhteytesi:"
+    },
+    "gitlab": {
+      "step1Title": "Luo SSH-avain",
+      "step1Desc": "Käytä Ed25519:ää parempaan turvallisuuteen:",
+      "step2Title": "Lisää avain agentille",
+      "step2Desc": "Lisää SSH-avaimesi agentille:",
+      "step3Title": "Kopioi julkinen avain",
+      "step3Desc": "Kopioi julkinen avaimesi:",
+      "step4Title": "Lisää GitLabiin",
+      "step4Desc": "Siirry kohtaan GitLab Preferences > SSH Keys. Liitä julkinen avaimesi ja aseta vanhentumispäivä.",
+      "step5Title": "Testaa yhteys",
+      "step5Desc": "Varmista SSH-yhteytesi:"
+    },
+    "bitbucket": {
+      "step1Title": "Luo SSH-avain",
+      "step1Desc": "Luo Ed25519 SSH-avain:",
+      "step2Title": "Lisää avain agentille",
+      "step2Desc": "Käynnistä ssh-agent ja lisää avaimesi:",
+      "step3Title": "Kopioi julkinen avain",
+      "step3Desc": "Kopioi julkinen avaimesi leikepöydälle:",
+      "step4Title": "Lisää Bitbucketiin",
+      "step4Desc": "Siirry kohtaan Bitbucket Settings > Personal settings > SSH keys > Add key.",
+      "step5Title": "Testaa yhteys",
+      "step5Desc": "Varmista SSH-yhteytesi:"
+    },
+    "aws": {
+      "step1Title": "Luo SSH-avain",
+      "step1Desc": "Luo Ed25519 SSH-avain AWS EC2:lle:",
+      "step2Title": "Kopioi julkinen avain",
+      "step2Desc": "Näytä julkinen avaimesi kopiointia varten:",
+      "step3Title": "Tuo avain AWS:ään",
+      "step3Desc": "Siirry kohtaan AWS Console > EC2 > Key Pairs > Actions > Import Key Pair. Liitä julkinen avaimesi.",
+      "step4Title": "Aseta oikeudet",
+      "step4Desc": "Varmista, että yksityisellä avaimellasi on oikeat käyttöoikeudet:",
+      "step5Title": "Yhdistä instanssiin",
+      "step5Desc": "Muodosta SSH-yhteys EC2-instanssiisi (korvaa omat tietosi):"
+    },
+    "azure": {
+      "step1Title": "Luo SSH-avain",
+      "step1Desc": "Luo Ed25519 SSH-avain Azureen:",
+      "step2Title": "Kopioi julkinen avain",
+      "step2Desc": "Näytä julkinen avaimesi:",
+      "step3Title": "Lisää VM:n luonnin yhteydessä",
+      "step3Desc": "VM:ää luodessasi valitse 'SSH public key' todennukseksi ja liitä julkinen avaimesi.",
+      "step4Title": "Yhdistä VM:ään",
+      "step4Desc": "Muodosta SSH-yhteys Azure VM:ääsi:",
+      "step5Title": "Päivitä olemassa oleva VM (valinnainen)",
+      "step5Desc": "Lisää avain olemassa olevaan VM:ään Azure CLI:llä:"
+    },
+    "digitalocean": {
+      "step1Title": "Luo SSH-avain",
+      "step1Desc": "Luo Ed25519 SSH-avain:",
+      "step2Title": "Kopioi julkinen avain",
+      "step2Desc": "Näytä julkinen avaimesi kopiointia varten:",
+      "step3Title": "Lisää DigitalOceaniin",
+      "step3Desc": "Siirry kohtaan DigitalOcean Control Panel > Settings > Security > SSH Keys > Add SSH Key.",
+      "step4Title": "Luo Droplet",
+      "step4Desc": "Dropletia luodessasi valitse SSH-avaimesi kohdasta 'Authentication'.",
+      "step5Title": "Yhdistä Dropletiin",
+      "step5Desc": "Muodosta SSH-yhteys Dropletiisi:"
+    }
+  },
+  "footer": {
+    "about": "Tietoa tästä SSH Key Generator -työkalusta",
+    "aboutDesc": "Tämä on ilmainen, avoimen lähdekoodin SSH Key Generator, joka toimii kokonaan selaimessasi. Ei palvelinpuolen käsittelyä, ei tietojen keräämistä – vain turvallista avainten luontia.",
+    "securityFirst": "Turvallisuus ensin",
+    "security1": "Kaikki avainten luonti tapahtuu selaimessasi",
+    "security2": "Mitään tietoja ei koskaan lähetetä palvelimelle",
+    "security3": "Avoin lähdekoodi ja tarkastettava",
+    "security4": "Käyttää alan standardien mukaisia salauskirjastoja",
+    "resources": "Resurssit",
+    "sshKeyGuide": "GitHub SSH -dokumentaatio",
+    "githubSetup": "GitLab SSH -dokumentaatio",
+    "bestPractices": "SSH Academy",
+    "madeWith": "Tehty",
+    "forDevelopers": "kehittäjille ympäri maailmaa",
+    "copyright": "© {year} SSH Key Generator. Avoin lähdekoodi MIT-lisenssillä."
+  },
+  "seo": {
+    "whatIs": {
+      "title": "Mikä on SSH Key Generator?",
+      "desc": "SSH Key Generator luo salausavainpareja turvallisesti selaimessasi. SSH-avaimet koostuvat julkisesta avaimesta (jaetaan palvelimille) ja yksityisestä avaimesta (pidetään salassa). Toisin kuin salasanat, SSH-avaimia on käytännössä mahdotonta murtaa."
+    },
+    "whyUse": {
+      "title": "Miksi käyttää tätä SSH Key Generator -työkalua?",
+      "secure": {
+        "title": "Turvallinen verkkopohjainen luonti",
+        "desc": "Kaikki salausoperaatiot tapahtuvat selaimessasi. Tämä SSH Key Generator varmistaa, etteivät yksityiset avaimesi koskaan poistu laitteeltasi."
+      },
+      "modern": {
+        "title": "Modernit algoritmit",
+        "desc": "Luo Ed25519-avaimia (suositeltu) tai RSA-avaimia jopa 4096-bittisellä vahvuudella."
+      },
+      "easy": {
+        "title": "Helppokäyttöinen",
+        "desc": "Selkeä käyttöliittymä kopioi/lataa-painikkeilla. Toimii heti ilman asennusta."
+      },
+      "free": {
+        "title": "Ilmainen ja avoin lähdekoodi",
+        "desc": "Ei rekisteröintiä, ei seurantaa, ei kustannuksia. MIT-lisensoitu ja yhteisön varmentama."
+      }
+    },
+    "howTo": {
+      "title": "Kuinka luoda SSH-avain verkossa",
+      "step1": "Valitse algoritmi: Ed25519 (suositeltu) tai RSA",
+      "step2": "Lisää kommentti: Valinnainen tunniste, kuten sähköpostiosoitteesi",
+      "step3": "Luo: Napsauta painiketta luodaksesi avainparin",
+      "step4": "Tallenna avaimet: Lataa tai kopioi julkinen ja yksityinen avaimesi",
+      "step5": "Lisää palvelimelle: Kopioi julkinen avain ~/.ssh/authorized_keys-tiedostoon tai Git-palveluun"
+    },
+    "comparison": {
+      "title": "Ed25519 vai RSA: Kumpi kannattaa valita?",
+      "intro": "Näiden kahden suositun SSH-avainalgoritmin erojen ymmärtäminen auttaa tekemään oikean valinnan.",
+      "feature": "Ominaisuus",
+      "algorithmType": "Algoritmityyppi",
+      "keySize": "Avainkoko",
+      "signatureSize": "Allekirjoituksen koko",
+      "security": "Turvallisuustaso",
+      "performance": "Suorituskyky",
+      "compatibility": "Yhteensopivuus",
+      "quantumResistance": "Kvanttikestävyys",
+      "bestFor": "Paras käyttötarkoitus",
+      "recommendation": "Suositus",
+      "ed25519AlgoType": "Elliptinen käyrä (Curve25519)",
+      "rsaAlgoType": "Kokonaislukujen tekijöihinjako",
+      "ed25519KeySize": "256 bittiä (kompakti)",
+      "rsaKeySize": "2048–4096 bittiä (suurempi)",
+      "ed25519SigSize": "64 tavua",
+      "rsaSigSize": "256–512 tavua",
+      "ed25519Security": "~128-bittinen vastaava",
+      "rsaSecurity": "~112–128-bittinen (4096)",
+      "ed25519Performance": "Erittäin nopea (10x nopeampi)",
+      "rsaPerformance": "Hitaampi luonti",
+      "ed25519Compat": "OpenSSH 6.5+ (2014)",
+      "rsaCompat": "Universaali (kaikki järjestelmät)",
+      "ed25519Quantum": "Ei kvanttiturvallinen",
+      "rsaQuantum": "Ei kvanttiturvallinen",
+      "ed25519BestFor": "GitHub, GitLab, modernit palvelimet",
+      "rsaBestFor": "Vanhat järjestelmät, vanhempi laitteisto",
+      "ed25519Rec": "Paras valinta useimmille käyttäjille",
+      "rsaRec": "Käytä vanhojen järjestelmien tukeen"
+    },
+    "useCases": {
+      "title": "Yleiset SSH-avainten käyttötapaukset",
+      "git": {
+        "title": "Git-palvelut",
+        "desc": "Push- ja pull-operaatiot turvallisesti GitHubiin, GitLabiin ja Bitbucketiin ilman salasanoja."
+      },
+      "server": {
+        "title": "Palvelinyhteydet",
+        "desc": "SSH-yhteys Linux/Unix-palvelimiin, pilvi-instansseihin (AWS, GCP, Azure) ja VPS-palveluihin."
+      },
+      "automation": {
+        "title": "CI/CD-automaatio",
+        "desc": "Automatisoidut deploymentit, skriptit ja DevOps-pipelinet etäresursseihin."
+      },
+      "tunnels": {
+        "title": "Turvalliset tunnelit",
+        "desc": "Salatut tunnelit tietokantayhteyksiin, porttien edelleenohjaukseen ja turvalliseen viestintään."
+      }
+    },
+    "faq": {
+      "title": "Usein kysytyt kysymykset",
+      "subtitle": "Vastauksia yleisiin kysymyksiin SSH-avaimista ja tästä työkalusta.",
+      "safe": {
+        "question": "Onko SSH-avainten luominen verkossa turvallista?",
+        "answer": "Kyllä, tämä työkalu on 100 % turvallinen, koska kaikki avainten luonti tapahtuu kokonaan selaimessasi Web Crypto API:n avulla. Yksityiset avaimesi eivät koskaan poistu laitteeltasi eivätkä siirry mihinkään palvelimelle. Lähdekoodi on avointa ja tarkastettavissa GitHubissa."
+      },
+      "ed25519VsRsa": {
+        "question": "Mikä on Ed25519:n ja RSA:n ero?",
+        "answer": "Ed25519 on moderni elliptisen käyrän algoritmi, joka tarjoaa paremman turvallisuuden pienemmällä avainkoolla (256-bittinen vs. 2048–4096-bittinen RSA). Ed25519-avaimet ovat nopeampia luoda ja käyttää, ja niitä suositellaan useimpiin uusiin SSH-asennuksiin. RSA on vanhempi mutta yhteensopivampi vanhojen järjestelmien kanssa."
+      },
+      "github": {
+        "question": "Kuinka lisään SSH-avaimen GitHubiin?",
+        "answer": "1) Luo SSH-avain tällä työkalulla, 2) Kopioi julkinen avain, 3) Siirry kohtaan GitHub Settings > SSH and GPG keys, 4) Napsauta 'New SSH key', 5) Liitä julkinen avaimesi ja anna sille nimi, 6) Napsauta 'Add SSH key'. Testaa komennolla: ssh -T git@github.com"
+      },
+      "rsaKeySize": {
+        "question": "Mitä avainkokoa RSA:lle pitäisi käyttää?",
+        "answer": "RSA-avaimille 4096-bittinen on suositeltava maksimaalisen turvallisuuden takaamiseksi. 2048-bittinen on vähimmäishyväksyttävä koko ja tarjoaa riittävän turvallisuuden useimpiin käyttötarkoituksiin. Alle 2048-bittisiä avaimia pidetään turvattomina eikä niitä tulisi käyttää."
+      },
+      "offline": {
+        "question": "Voiko tätä SSH Key Generator -työkalua käyttää offline-tilassa?",
+        "answer": "Kyllä! Tämä SSH Key Generator on Progressive Web App (PWA), joka toimii offline-tilassa. Ensimmäisen käynnin jälkeen voit asentaa sen sovelluksena laitteellesi ja luoda SSH-avaimia ilman internet-yhteyttä. Kaikki salausoperaatiot suoritetaan paikallisesti selaimessasi."
+      },
+      "passphrase": {
+        "question": "Pitäisikö SSH-avaimelle käyttää salasanaa?",
+        "answer": "Kyllä, salasanan käyttöä suositellaan vahvasti. Salasana lisää ylimääräisen suojakerroksen – vaikka joku saisi pääsyn yksityiseen avaintiedostoosi, hän ei voi käyttää sitä ilman salasanaa. Käytä vahvaa, muistettavaa salasanaa tärkeille avaimille."
+      },
+      "multipleServers": {
+        "question": "Voiko samaa SSH-avainta käyttää useilla palvelimilla?",
+        "answer": "Kyllä, voit käyttää samaa julkista SSH-avainta useilla palvelimilla. Paremman tietoturvan vuoksi harkitse kuitenkin eri avainten käyttöä eri tarkoituksiin (esim. työ vs. henkilökohtainen, tuotanto vs. kehitys). Tämä rajoittaa vahinkoja, jos yksi avain vaarantuu."
+      },
+      "fingerprint": {
+        "question": "Mikä on SSH-avaimen sormenjälki?",
+        "answer": "SSH-avaimen sormenjälki on lyhyt, yksilöllinen tunniste, joka johdetaan julkisesta avaimestasi hajautusfunktiolla (SHA256 tai MD5). Sitä käytetään avaimen aitouden varmistamiseen palvelimiin yhdistettäessä. Sormenjälki auttaa varmistamaan, että yhdistät oikeaan palvelimeen."
+      },
+      "bestAlgorithm": {
+        "question": "Mikä on paras SSH-avainalgoritmi vuonna 2025?",
+        "answer": "Ed25519 on suositeltu algoritmi vuonna 2025 useimpiin käyttötarkoituksiin. Se tarjoaa erinomaisen turvallisuuden 256-bittisellä avainkoolla, nopean suorituskyvyn ja sitä tukevat kaikki modernit SSH-toteutukset. Käytä RSA:ta vain, jos tarvitset yhteensopivuutta vanhojen järjestelmien kanssa."
+      },
+      "authorizedKeys": {
+        "question": "Mikä on authorized_keys-tiedosto?",
+        "answer": "Authorized_keys-tiedosto (sijaitsee ~/.ssh/authorized_keys Linux/macOS-palvelimilla) sisältää luettelon julkisista avaimista, joilla on lupa yhdistää kyseiseen tiliin. Jokainen rivi on yksi julkinen avain. Lisää julkinen avaimesi tähän tiedostoon ottaaksesi käyttöön salasanattoman SSH-kirjautumisen."
+      },
+      "bestOnlineGenerator": {
+        "question": "Mikä on paras SSH Key Generator verkossa?",
+        "answer": "Tämä SSH Key Generator on yksi parhaista ilmaisista verkkovaihtoehdoista, koska se toimii 100 % selaimessasi, tukee moderneja Ed25519- ja RSA-algoritmeja, toimii offline-tilassa PWA:na eikä koskaan lähetä yksityisiä avaimiasi millekään palvelimelle."
+      },
+      "permissions": {
+        "question": "Mitkä käyttöoikeudet SSH-yksityisellä avaimella pitäisi olla?",
+        "answer": "SSH-yksityisellä avaimellasi pitäisi olla rajoitetut käyttöoikeudet. Linux/macOS-järjestelmissä käytä 'chmod 600 ~/.ssh/id_ed25519' (omistajan luku/kirjoitus) tai 'chmod 400' (vain omistajan luku). SSH kieltäytyy käyttämästä avainta, jolla on liian sallivat oikeudet. .ssh-hakemiston pitäisi olla 700."
+      }
+    }
+  },
+  "theme": {
+    "light": "Vaalea",
+    "dark": "Tumma",
+    "system": "Järjestelmä"
+  },
+  "notFound": {
+    "title": "Sivua ei löydy",
+    "code": "404",
+    "description": "Etsimääsi sivua ei ole olemassa tai se on siirretty.",
+    "backHome": "Takaisin etusivulle"
+  }
+}

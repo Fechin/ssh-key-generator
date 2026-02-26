@@ -143,7 +143,16 @@ function updateCanonical(lang: Language) {
     'hi': '/hi/',
     'vi': '/vi/',
     'tr': '/tr/',
-    'id': '/id/'
+    'id': '/id/',
+    'fi': '/fi/',
+    'uk': '/uk/',
+    'ar': '/ar/',
+    'th': '/th/',
+    'ro': '/ro/',
+    'cs': '/cs/',
+    'bn': '/bn/',
+    'el': '/el/',
+    'hu': '/hu/'
   }
 
   if (canonical) {
@@ -252,6 +261,42 @@ function App() {
       {/* Indonesian route */}
       <Route path="/id/*" element={<LanguageRoute lang="id" />} />
       <Route path="/id" element={<LanguageRoute lang="id" />} />
+
+      {/* Finnish route */}
+      <Route path="/fi/*" element={<LanguageRoute lang="fi" />} />
+      <Route path="/fi" element={<LanguageRoute lang="fi" />} />
+
+      {/* Ukrainian route */}
+      <Route path="/uk/*" element={<LanguageRoute lang="uk" />} />
+      <Route path="/uk" element={<LanguageRoute lang="uk" />} />
+
+      {/* Arabic route */}
+      <Route path="/ar/*" element={<LanguageRoute lang="ar" />} />
+      <Route path="/ar" element={<LanguageRoute lang="ar" />} />
+
+      {/* Thai route */}
+      <Route path="/th/*" element={<LanguageRoute lang="th" />} />
+      <Route path="/th" element={<LanguageRoute lang="th" />} />
+
+      {/* Romanian route */}
+      <Route path="/ro/*" element={<LanguageRoute lang="ro" />} />
+      <Route path="/ro" element={<LanguageRoute lang="ro" />} />
+
+      {/* Czech route */}
+      <Route path="/cs/*" element={<LanguageRoute lang="cs" />} />
+      <Route path="/cs" element={<LanguageRoute lang="cs" />} />
+
+      {/* Bengali route */}
+      <Route path="/bn/*" element={<LanguageRoute lang="bn" />} />
+      <Route path="/bn" element={<LanguageRoute lang="bn" />} />
+
+      {/* Greek route */}
+      <Route path="/el/*" element={<LanguageRoute lang="el" />} />
+      <Route path="/el" element={<LanguageRoute lang="el" />} />
+
+      {/* Hungarian route */}
+      <Route path="/hu/*" element={<LanguageRoute lang="hu" />} />
+      <Route path="/hu" element={<LanguageRoute lang="hu" />} />
 
       {/* English route (default) */}
       <Route path="/" element={<LanguageRoute lang="en" />} />

@@ -1,0 +1,342 @@
+{
+  "header": {
+    "title": "SSH Key Generator",
+    "subtitle": "Ingyenes és biztonságos",
+    "clientSide": "100% kliens oldali",
+    "viewOnGitHub": "Megtekintés GitHubon"
+  },
+  "hero": {
+    "title": "Online SSH Key Generator",
+    "subtitle": "Hozz létre biztonságos SSH kulcsokat azonnal a böngésződben ezzel az ingyenes online SSH kulcsgenerátorral. Működik GitHub, GitLab, Bitbucket és bármely SSH szerver esetén."
+  },
+  "tabs": {
+    "generate": "Kulcsok generálása",
+    "generateShort": "Generálás",
+    "commands": "Parancssoros mód",
+    "commandsShort": "Parancsok",
+    "config": "SSH konfiguráció",
+    "configShort": "Konfig",
+    "guides": "Platform útmutatók",
+    "guidesShort": "Útmutatók"
+  },
+  "generator": {
+    "title": "Online SSH Key Generator",
+    "description": "Generálj új SSH kulcspárt biztonságosan a böngésződben ezzel az ingyenes online eszközzel. Semmilyen adat nem kerül továbbításra szerverekre.",
+    "algorithm": "Algoritmus",
+    "algorithmTooltip": "Az Ed25519 a legtöbb esetben ajánlott. RSA-t használj, ha régebbi rendszerekkel való kompatibilitásra van szükséged.",
+    "comment": "Megjegyzés (opcionális)",
+    "commentTooltip": "Egy megjegyzés a kulcs azonosításához. Általában az e-mail címed.",
+    "commentPlaceholder": "felhasznalo@pelda.hu",
+    "generateButton": "Kulcspár generálása",
+    "generating": "Generálás...",
+    "passphrase": "Jelmondat (opcionális)",
+    "passphraseTooltip": "A jelmondat extra biztonságot nyújt. Még ha valaki megszerzi is a privát kulcsodat, jelmondat nélkül nem tudja használni.",
+    "passphrasePlaceholder": "Add meg a titkosításhoz használt jelmondatot",
+    "confirmPassphrase": "Jelmondat megerősítése",
+    "confirmPassphrasePlaceholder": "Add meg újra a jelmondatot",
+    "passphrasesMismatch": "A jelmondatok nem egyeznek",
+    "noPassphraseWarning": "Nincs jelmondat beállítva. A privát kulcsod titkosítatlan marad. Fontold meg jelmondat hozzáadását a nagyobb biztonság érdekében.",
+    "securityTitle": "100% kliens oldali SSH Key Generator",
+    "securityDesc": "A kulcsgenerálás teljes egészében a böngésződben történik. Ez az online SSH kulcsgenerátor soha nem továbbítja a privát kulcsaidat.",
+    "noKeysYet": "Még nincsenek generált kulcsok",
+    "noKeysHint": "Kattints a „Kulcspár generálása" gombra az SSH kulcsok létrehozásához"
+  },
+  "algorithms": {
+    "ed25519": "Ed25519 (Ajánlott)",
+    "ed25519Desc": "Modern, gyors, biztonságos. A legtöbb felhasználási esethez ideális.",
+    "rsa4096": "RSA 4096-bit",
+    "rsa4096Desc": "Maximális kompatibilitás régebbi rendszerekkel.",
+    "rsa2048": "RSA 2048-bit",
+    "rsa2048Desc": "Minimálisan ajánlott RSA méret kompatibilitáshoz."
+  },
+  "keyDisplay": {
+    "publicKey": "Publikus kulcs",
+    "publicKeyDesc": "Add hozzá az authorized_keys fájlhoz távoli szervereken, vagy a GitHub/GitLab fiókodhoz.",
+    "privateKey": "Privát kulcs",
+    "privateKeyWarning": "Tartsd titokban! Soha ne oszd meg a privát kulcsodat.",
+    "fingerprint": "Kulcs ujjlenyomat",
+    "copy": "Másolás",
+    "copied": "Másolva!",
+    "download": "Letöltés",
+    "reveal": "Megjelenítés",
+    "hide": "Elrejtés",
+    "clickToReveal": "Kattints a Megjelenítés gombra a privát kulcs megtekintéséhez"
+  },
+  "commands": {
+    "title": "SSH kulcsgenerálási parancsok",
+    "description": "Generálj ssh-keygen parancsokat a preferált platformodhoz. Másold ki és futtasd a terminálban.",
+    "algorithm": "Algoritmus",
+    "comment": "Megjegyzés",
+    "filename": "Fájlnév (opcionális)",
+    "quickCommand": "Gyorsparancs",
+    "completeSetup": "Teljes beállítás",
+    "copyAll": "Összes másolása"
+  },
+  "sshConfig": {
+    "title": "SSH Config építő",
+    "description": "Állítsd össze a ~/.ssh/config fájlodat. Adj hozzá hostokat és töltsd le a konfigurációt.",
+    "hostAlias": "Host álnév",
+    "hostAliasRequired": "Host álnév *",
+    "hostname": "Hosztnév",
+    "hostnameRequired": "Hosztnév *",
+    "hostnamePlaceholder": "192.168.1.100 vagy pelda.hu",
+    "user": "Felhasználó",
+    "port": "Port",
+    "identityFile": "IdentityFile",
+    "identityFilePlaceholder": "~/.ssh/id_ed25519",
+    "addHost": "Host hozzáadása",
+    "configuredHosts": "Konfigurált hostok",
+    "generatedConfig": "Generált konfiguráció",
+    "saveToPath": "Mentsd el ide: ~/.ssh/config",
+    "noHosts": "# Még nincsenek konfigurált hostok",
+    "advancedOptions": "Haladó beállítások",
+    "proxyJump": "ProxyJump",
+    "proxyJumpPlaceholder": "bastion-host",
+    "proxyJumpDesc": "Ugrás egy bastion/jump hoston keresztül a célgép eléréséhez",
+    "forwardAgent": "Agent továbbítás",
+    "forwardAgentDesc": "SSH agent továbbítása a távoli hostra"
+  },
+  "guides": {
+    "title": "Platform beállítási útmutatók",
+    "description": "Lépésről lépésre útmutatók SSH kulcsok beállításához népszerű Git platformokon.",
+    "officialDocs": "Hivatalos dokumentáció",
+    "sshSetup": "{platform} SSH beállítás",
+    "github": {
+      "step1Title": "SSH kulcs generálása",
+      "step1Desc": "Használd a fenti generátort vagy futtasd ezt a parancsot:",
+      "step2Title": "SSH Agent indítása",
+      "step2Desc": "Indítsd el az ssh-agentet a háttérben:",
+      "step3Title": "Kulcs hozzáadása az Agenthez",
+      "step3Desc": "Add hozzá az SSH privát kulcsodat az agenthez:",
+      "step4Title": "Publikus kulcs másolása",
+      "step4Desc": "Másold a vágólapra a publikus kulcsodat:",
+      "step5Title": "Hozzáadás a GitHubhoz",
+      "step5Desc": "Menj a GitHub Settings > SSH and GPG keys > New SSH key menüpontra. Illeszd be a publikus kulcsodat.",
+      "step6Title": "Kapcsolat tesztelése",
+      "step6Desc": "Ellenőrizd az SSH kapcsolatot:"
+    },
+    "gitlab": {
+      "step1Title": "SSH kulcs generálása",
+      "step1Desc": "Használj Ed25519-et a jobb biztonság érdekében:",
+      "step2Title": "Kulcs hozzáadása az Agenthez",
+      "step2Desc": "Add hozzá az SSH kulcsodat az agenthez:",
+      "step3Title": "Publikus kulcs másolása",
+      "step3Desc": "Másold ki a publikus kulcsodat:",
+      "step4Title": "Hozzáadás a GitLabhoz",
+      "step4Desc": "Menj a GitLab Preferences > SSH Keys menüpontra. Illeszd be a publikus kulcsodat és állíts be lejárati dátumot.",
+      "step5Title": "Kapcsolat tesztelése",
+      "step5Desc": "Ellenőrizd az SSH kapcsolatot:"
+    },
+    "bitbucket": {
+      "step1Title": "SSH kulcs generálása",
+      "step1Desc": "Hozz létre egy Ed25519 SSH kulcsot:",
+      "step2Title": "Kulcs hozzáadása az Agenthez",
+      "step2Desc": "Indítsd el az ssh-agentet és add hozzá a kulcsodat:",
+      "step3Title": "Publikus kulcs másolása",
+      "step3Desc": "Másold a vágólapra a publikus kulcsodat:",
+      "step4Title": "Hozzáadás a Bitbuckethez",
+      "step4Desc": "Menj a Bitbucket Settings > Personal settings > SSH keys > Add key menüpontra.",
+      "step5Title": "Kapcsolat tesztelése",
+      "step5Desc": "Ellenőrizd az SSH kapcsolatot:"
+    },
+    "aws": {
+      "step1Title": "SSH kulcs generálása",
+      "step1Desc": "Hozz létre egy Ed25519 SSH kulcsot AWS EC2-höz:",
+      "step2Title": "Publikus kulcs másolása",
+      "step2Desc": "Jelenítsd meg a publikus kulcsodat másoláshoz:",
+      "step3Title": "Kulcs importálása AWS-be",
+      "step3Desc": "Menj az AWS Console > EC2 > Key Pairs > Actions > Import Key Pair menüpontra. Illeszd be a publikus kulcsodat.",
+      "step4Title": "Jogosultságok beállítása",
+      "step4Desc": "Győződj meg róla, hogy a privát kulcsod megfelelő jogosultságokkal rendelkezik:",
+      "step5Title": "Kapcsolódás az instance-hez",
+      "step5Desc": "SSH kapcsolódás az EC2 instance-hez (cseréld ki a saját adataiddal):"
+    },
+    "azure": {
+      "step1Title": "SSH kulcs generálása",
+      "step1Desc": "Hozz létre egy Ed25519 SSH kulcsot Azure-hoz:",
+      "step2Title": "Publikus kulcs másolása",
+      "step2Desc": "Jelenítsd meg a publikus kulcsodat:",
+      "step3Title": "Hozzáadás VM létrehozásakor",
+      "step3Desc": "VM létrehozásakor válaszd az 'SSH public key' hitelesítést és illeszd be a publikus kulcsodat.",
+      "step4Title": "Kapcsolódás a VM-hez",
+      "step4Desc": "SSH kapcsolódás az Azure VM-hez:",
+      "step5Title": "Meglévő VM frissítése (opcionális)",
+      "step5Desc": "Kulcs hozzáadása meglévő VM-hez Azure CLI használatával:"
+    },
+    "digitalocean": {
+      "step1Title": "SSH kulcs generálása",
+      "step1Desc": "Hozz létre egy Ed25519 SSH kulcsot:",
+      "step2Title": "Publikus kulcs másolása",
+      "step2Desc": "Jelenítsd meg a publikus kulcsodat másoláshoz:",
+      "step3Title": "Hozzáadás a DigitalOceanhez",
+      "step3Desc": "Menj a DigitalOcean Control Panel > Settings > Security > SSH Keys > Add SSH Key menüpontra.",
+      "step4Title": "Droplet létrehozása",
+      "step4Desc": "Droplet létrehozásakor válaszd ki az SSH kulcsodat az 'Authentication' alatt.",
+      "step5Title": "Kapcsolódás a Droplethez",
+      "step5Desc": "SSH kapcsolódás a Droplethez:"
+    }
+  },
+  "footer": {
+    "about": "Az online SSH Key Generatorról",
+    "aboutDesc": "Ez egy ingyenes, nyílt forráskódú online SSH kulcsgenerátor, amely teljes egészében a böngésződben fut. Nincs szerver oldali feldolgozás, nincs adatgyűjtés – csak biztonságos kulcsgenerálás.",
+    "securityFirst": "Biztonság az első",
+    "security1": "A kulcsgenerálás teljes egészében a böngésződben történik",
+    "security2": "Semmilyen adat nem kerül továbbításra szerverekre",
+    "security3": "Nyílt forráskódú, ellenőrizhető kód",
+    "security4": "Iparági szabvány kriptográfiai könyvtárakat használ",
+    "resources": "Források",
+    "sshKeyGuide": "GitHub SSH dokumentáció",
+    "githubSetup": "GitLab SSH dokumentáció",
+    "bestPractices": "SSH Academy",
+    "madeWith": "Készült",
+    "forDevelopers": "fejlesztőknek világszerte",
+    "copyright": "© {year} SSH Key Generator. Nyílt forráskód MIT licenc alatt."
+  },
+  "seo": {
+    "whatIs": {
+      "title": "Mi az az online SSH Key Generator?",
+      "desc": "Egy online SSH kulcsgenerátor, mint ez az eszköz, kriptográfiai kulcspárokat hoz létre biztonságosan a böngésződben. Az SSH kulcsok egy publikus kulcsból (amit megosztasz a szerverekkel) és egy privát kulcsból (amit titokban tartasz) állnak. A jelszavakkal ellentétben az online generált SSH kulcsokat gyakorlatilag lehetetlen feltörni brute force módszerekkel."
+    },
+    "whyUse": {
+      "title": "Miért használd ezt az online SSH Key Generatort?",
+      "secure": {
+        "title": "Biztonságos online generálás",
+        "desc": "Minden kriptográfiai művelet a böngésződben történik. Ez az online SSH kulcsgenerátor garantálja, hogy a privát kulcsaid soha nem hagyják el az eszközödet."
+      },
+      "modern": {
+        "title": "Modern algoritmusok",
+        "desc": "Generálj Ed25519 kulcsokat (ajánlott) vagy RSA kulcsokat akár 4096-bites erősséggel."
+      },
+      "easy": {
+        "title": "Könnyen használható",
+        "desc": "Egyszerű felület másolás/letöltés gombokkal. Azonnal működik telepítés nélkül."
+      },
+      "free": {
+        "title": "Ingyenes és nyílt forráskódú",
+        "desc": "Nincs regisztráció, nincs követés, nincs költség. MIT licenc alatt, közösség által ellenőrizve."
+      }
+    },
+    "howTo": {
+      "title": "Hogyan generálj SSH kulcsot online",
+      "step1": "Válassz algoritmust: Válaszd az Ed25519-et (ajánlott) vagy az RSA-t",
+      "step2": "Adj hozzá megjegyzést: Opcionális azonosító, például az e-mail címed",
+      "step3": "Generálj: Kattints a gombra a kulcspár létrehozásához",
+      "step4": "Mentsd a kulcsokat: Töltsd le vagy másold ki a publikus és privát kulcsokat",
+      "step5": "Add hozzá a szerverhez: Másold a publikus kulcsot a ~/.ssh/authorized_keys fájlba vagy a Git szolgáltatódhoz"
+    },
+    "comparison": {
+      "title": "Ed25519 vs RSA: Melyiket válaszd?",
+      "intro": "A két népszerű SSH kulcs algoritmus közötti különbségek megértése segít a megfelelő választásban biztonsági igényeid alapján.",
+      "feature": "Jellemző",
+      "algorithmType": "Algoritmus típus",
+      "keySize": "Kulcsméret",
+      "signatureSize": "Aláírás méret",
+      "security": "Biztonsági szint",
+      "performance": "Teljesítmény",
+      "compatibility": "Kompatibilitás",
+      "quantumResistance": "Kvantum ellenállóság",
+      "bestFor": "Ideális használat",
+      "recommendation": "Ajánlás",
+      "ed25519AlgoType": "Elliptikus görbe (Curve25519)",
+      "rsaAlgoType": "Egész szám faktorizáció",
+      "ed25519KeySize": "256 bit (kompakt)",
+      "rsaKeySize": "2048-4096 bit (nagyobb)",
+      "ed25519SigSize": "64 byte",
+      "rsaSigSize": "256-512 byte",
+      "ed25519Security": "~128-bit ekvivalens",
+      "rsaSecurity": "~112-128-bit (4096)",
+      "ed25519Performance": "Nagyon gyors (10x gyorsabb)",
+      "rsaPerformance": "Lassabb generálás",
+      "ed25519Compat": "OpenSSH 6.5+ (2014)",
+      "rsaCompat": "Univerzális (minden rendszer)",
+      "ed25519Quantum": "Nem kvantumbiztos",
+      "rsaQuantum": "Nem kvantumbiztos",
+      "ed25519BestFor": "GitHub, GitLab, modern szerverek",
+      "rsaBestFor": "Régebbi rendszerek, örökölt hardverek",
+      "ed25519Rec": "Legjobb választás a legtöbb felhasználó számára",
+      "rsaRec": "Régebbi rendszerek támogatásához"
+    },
+    "useCases": {
+      "title": "Gyakori SSH kulcs felhasználási esetek",
+      "git": {
+        "title": "Git hosting",
+        "desc": "Kód feltöltése és letöltése biztonságosan GitHub, GitLab, Bitbucket szerverekről jelszó megadása nélkül."
+      },
+      "server": {
+        "title": "Szerver hozzáférés",
+        "desc": "SSH bejelentkezés Linux/Unix szerverekre, felhő instance-ekre (AWS, GCP, Azure) és VPS szolgáltatókhoz."
+      },
+      "automation": {
+        "title": "CI/CD automatizálás",
+        "desc": "Automatizált telepítések, szkriptek és DevOps pipeline-ok engedélyezése távoli erőforrások eléréséhez."
+      },
+      "tunnels": {
+        "title": "Biztonságos tunnelek",
+        "desc": "Titkosított tunnelek létrehozása adatbázis hozzáféréshez, port továbbításhoz és biztonságos kommunikációhoz."
+      }
+    },
+    "faq": {
+      "title": "Gyakran ismételt kérdések",
+      "subtitle": "Válaszok az SSH kulcsokkal és ezzel az eszközzel kapcsolatos gyakori kérdésekre.",
+      "safe": {
+        "question": "Biztonságos online SSH kulcsokat generálni?",
+        "answer": "Igen, ez az eszköz 100%-ban biztonságos, mert a teljes kulcsgenerálás a böngésződben történik a Web Crypto API használatával. A privát kulcsaid soha nem hagyják el az eszközödet és soha nem kerülnek továbbításra szerverekre. A forráskód nyílt és ellenőrizhető a GitHubon."
+      },
+      "ed25519VsRsa": {
+        "question": "Mi a különbség az Ed25519 és az RSA között?",
+        "answer": "Az Ed25519 egy modern elliptikus görbe algoritmus, amely jobb biztonságot nyújt kisebb kulcsmérettel (256-bit vs 2048-4096-bit RSA). Az Ed25519 kulcsok gyorsabban generálhatók és használhatók, és a legtöbb új SSH beállításhoz ajánlottak. Az RSA régebbi, de szélesebb körű kompatibilitást biztosít örökölt rendszerekkel."
+      },
+      "github": {
+        "question": "Hogyan adjam hozzá az SSH kulcsomat a GitHubhoz?",
+        "answer": "1) Generáld le az SSH kulcsodat ezzel az eszközzel, 2) Másold ki a publikus kulcsot, 3) Menj a GitHub Settings > SSH and GPG keys menüpontra, 4) Kattints a 'New SSH key' gombra, 5) Illeszd be a publikus kulcsodat és adj neki címet, 6) Kattints az 'Add SSH key' gombra. Teszteld: ssh -T git@github.com"
+      },
+      "rsaKeySize": {
+        "question": "Milyen kulcsméretet használjak RSA-hoz?",
+        "answer": "RSA kulcsokhoz a 4096-bit ajánlott a maximális biztonság érdekében. A 2048-bit a minimálisan elfogadható méret, és megfelelő biztonságot nyújt a legtöbb célra. A 2048-bitnél kisebb kulcsok nem tekinthetők biztonságosnak és nem ajánlott használatuk."
+      },
+      "offline": {
+        "question": "Használhatom ezt az SSH kulcsgenerátort offline?",
+        "answer": "Igen! Ez az SSH kulcsgenerátor egy Progressive Web App (PWA), amely offline is működik. Az első látogatás után telepítheted alkalmazásként az eszközödre, és internetkapcsolat nélkül is generálhatsz SSH kulcsokat. Minden kriptográfiai művelet helyileg fut a böngésződben."
+      },
+      "passphrase": {
+        "question": "Használjak jelmondatot az SSH kulcsomhoz?",
+        "answer": "Igen, a jelmondat használata erősen ajánlott. A jelmondat extra biztonsági réteget ad – még ha valaki hozzáfér is a privát kulcs fájlodhoz, jelmondat nélkül nem tudja használni. Használj erős, megjegyezhető jelmondatot fontos kulcsokhoz."
+      },
+      "multipleServers": {
+        "question": "Használhatom ugyanazt az SSH kulcsot több szerveren?",
+        "answer": "Igen, használhatod ugyanazt az SSH publikus kulcsot több szerveren. Azonban jobb biztonsági gyakorlat különböző kulcsokat használni különböző célokra (pl. munka vs személyes, éles vs fejlesztői környezet). Ez korlátozza a kitettséget, ha egy kulcs kompromittálódik."
+      },
+      "fingerprint": {
+        "question": "Mi az SSH kulcs ujjlenyomat?",
+        "answer": "Az SSH kulcs ujjlenyomat egy rövid, egyedi azonosító, amely a publikus kulcsodból származik hash függvénnyel (SHA256 vagy MD5). A kulcs hitelességének ellenőrzésére szolgál szerverekhez való kapcsolódáskor. Az ujjlenyomat segít megbizonyosodni arról, hogy a megfelelő szerverhez kapcsolódsz."
+      },
+      "bestAlgorithm": {
+        "question": "Mi a legjobb SSH kulcs algoritmus 2025-ben?",
+        "answer": "Az Ed25519 az ajánlott algoritmus 2025-ben a legtöbb felhasználási esethez. Kiváló biztonságot nyújt 256-bites kulcsmérettel, gyors teljesítménnyel, és minden modern SSH implementáció támogatja. Csak akkor használj RSA-t, ha régebbi rendszerekkel való kompatibilitásra van szükséged."
+      },
+      "authorizedKeys": {
+        "question": "Mi az az authorized_keys fájl?",
+        "answer": "Az authorized_keys fájl (Linux/macOS szervereken a ~/.ssh/authorized_keys helyen) tartalmazza azon publikus kulcsok listáját, amelyek csatlakozhatnak az adott fiókhoz. Minden sor egy publikus kulcs. Add hozzá a publikus kulcsodat ehhez a fájlhoz a jelszó nélküli SSH bejelentkezés engedélyezéséhez."
+      },
+      "bestOnlineGenerator": {
+        "question": "Mi a legjobb online SSH kulcsgenerátor?",
+        "answer": "Ez az SSH kulcsgenerátor az egyik legjobb ingyenes online lehetőség, mert 100%-ban a böngésződben fut, támogatja a modern Ed25519 és RSA algoritmusokat, PWA-ként offline is működik, és soha nem küldi el a privát kulcsaidat semmilyen szerverre."
+      },
+      "permissions": {
+        "question": "Milyen jogosultságok kellenek az SSH privát kulcsomnak?",
+        "answer": "Az SSH privát kulcsodnak korlátozott jogosultságokkal kell rendelkeznie. Linux/macOS rendszeren használd a 'chmod 600 ~/.ssh/id_ed25519' parancsot (tulajdonos olvasás/írás) vagy 'chmod 400' (tulajdonos csak olvasás). Az SSH nem használ megengedő jogosultságú kulcsot. A .ssh könyvtárnak 700-as jogosultsággal kell rendelkeznie."
+      }
+    }
+  },
+  "theme": {
+    "light": "Világos",
+    "dark": "Sötét",
+    "system": "Rendszer"
+  },
+  "notFound": {
+    "title": "Az oldal nem található",
+    "code": "404",
+    "description": "A keresett oldal nem létezik vagy áthelyezésre került.",
+    "backHome": "Vissza a kezdőlapra"
+  }
+}

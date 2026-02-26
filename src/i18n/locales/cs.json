@@ -1,0 +1,342 @@
+{
+  "header": {
+    "title": "SSH Key Generator",
+    "subtitle": "Zdarma a bezpečně",
+    "clientSide": "100% na straně klienta",
+    "viewOnGitHub": "Zobrazit na GitHubu"
+  },
+  "hero": {
+    "title": "Online SSH Key Generator",
+    "subtitle": "Vygenerujte si bezpečné SSH klíče okamžitě ve svém prohlížeči s tímto bezplatným online generátorem. Funguje s GitHub, GitLab, Bitbucket a jakýmkoli SSH serverem."
+  },
+  "tabs": {
+    "generate": "Generovat klíče",
+    "generateShort": "Generovat",
+    "commands": "Příkazový režim",
+    "commandsShort": "Příkazy",
+    "config": "SSH Config",
+    "configShort": "Config",
+    "guides": "Návody pro platformy",
+    "guidesShort": "Návody"
+  },
+  "generator": {
+    "title": "Online SSH Key Generator",
+    "description": "Vygenerujte si nový pár SSH klíčů bezpečně ve svém prohlížeči pomocí tohoto bezplatného online generátoru. Žádná data se neodesílají na server.",
+    "algorithm": "Algoritmus",
+    "algorithmTooltip": "Ed25519 je doporučen pro většinu případů. RSA použijte, pokud potřebujete kompatibilitu se staršími systémy.",
+    "comment": "Komentář (volitelné)",
+    "commentTooltip": "Komentář pro snazší identifikaci klíče. Obvykle vaše e-mailová adresa.",
+    "commentPlaceholder": "uzivatel@example.com",
+    "generateButton": "Vygenerovat pár klíčů",
+    "generating": "Generuji...",
+    "passphrase": "Heslo (volitelné)",
+    "passphraseTooltip": "Heslo přidává další vrstvu zabezpečení. I když někdo získá váš privátní klíč, bez hesla ho nemůže použít.",
+    "passphrasePlaceholder": "Zadejte heslo pro šifrování",
+    "confirmPassphrase": "Potvrďte heslo",
+    "confirmPassphrasePlaceholder": "Zadejte heslo znovu",
+    "passphrasesMismatch": "Hesla se neshodují",
+    "noPassphraseWarning": "Heslo není nastaveno. Váš privátní klíč nebude šifrován. Zvažte přidání hesla pro vyšší zabezpečení.",
+    "securityTitle": "100% SSH Key Generator na straně klienta",
+    "securityDesc": "Veškeré generování klíčů probíhá lokálně ve vašem prohlížeči. Tento online SSH Key Generator nikdy nepřenáší vaše privátní klíče.",
+    "noKeysYet": "Zatím nebyly vygenerovány žádné klíče",
+    "noKeysHint": "Klikněte na „Vygenerovat pár klíčů" pro vytvoření vašich SSH klíčů"
+  },
+  "algorithms": {
+    "ed25519": "Ed25519 (doporučeno)",
+    "ed25519Desc": "Moderní, rychlý, bezpečný. Nejlepší volba pro většinu případů.",
+    "rsa4096": "RSA 4096-bit",
+    "rsa4096Desc": "Maximální kompatibilita se staršími systémy.",
+    "rsa2048": "RSA 2048-bit",
+    "rsa2048Desc": "Minimální doporučená velikost RSA pro kompatibilitu."
+  },
+  "keyDisplay": {
+    "publicKey": "Veřejný klíč",
+    "publicKeyDesc": "Přidejte tento klíč do authorized_keys na vzdálených serverech nebo do GitHub/GitLab.",
+    "privateKey": "Privátní klíč",
+    "privateKeyWarning": "Udržujte v tajnosti! Nikdy nesdílejte svůj privátní klíč.",
+    "fingerprint": "Otisk klíče",
+    "copy": "Kopírovat",
+    "copied": "Zkopírováno!",
+    "download": "Stáhnout",
+    "reveal": "Zobrazit",
+    "hide": "Skrýt",
+    "clickToReveal": "Klikněte na Zobrazit pro zobrazení privátního klíče"
+  },
+  "commands": {
+    "title": "Příkazy pro generování SSH klíčů",
+    "description": "Vygenerujte příkazy ssh-keygen pro vaši preferovanou platformu. Zkopírujte a spusťte je ve svém terminálu.",
+    "algorithm": "Algoritmus",
+    "comment": "Komentář",
+    "filename": "Název souboru (volitelné)",
+    "quickCommand": "Rychlý příkaz",
+    "completeSetup": "Kompletní nastavení",
+    "copyAll": "Kopírovat vše"
+  },
+  "sshConfig": {
+    "title": "SSH Config Builder",
+    "description": "Vytvořte si soubor ~/.ssh/config. Přidejte hostitele a stáhněte konfiguraci.",
+    "hostAlias": "Alias hostitele",
+    "hostAliasRequired": "Alias hostitele *",
+    "hostname": "HostName",
+    "hostnameRequired": "HostName *",
+    "hostnamePlaceholder": "192.168.1.100 nebo example.com",
+    "user": "Uživatel",
+    "port": "Port",
+    "identityFile": "IdentityFile",
+    "identityFilePlaceholder": "~/.ssh/id_ed25519",
+    "addHost": "Přidat hostitele",
+    "configuredHosts": "Nakonfigurovaní hostitelé",
+    "generatedConfig": "Vygenerovaná konfigurace",
+    "saveToPath": "Uložte do ~/.ssh/config",
+    "noHosts": "# Zatím nejsou nakonfigurováni žádní hostitelé",
+    "advancedOptions": "Pokročilé možnosti",
+    "proxyJump": "ProxyJump",
+    "proxyJumpPlaceholder": "bastion-host",
+    "proxyJumpDesc": "Připojení přes bastion/jump host k cílovému serveru",
+    "forwardAgent": "Forward Agent",
+    "forwardAgentDesc": "Přesměrování SSH agenta na vzdálený hostitel"
+  },
+  "guides": {
+    "title": "Návody pro nastavení na platformách",
+    "description": "Podrobné instrukce pro nastavení SSH klíčů na oblíbených Git platformách.",
+    "officialDocs": "Oficiální dokumentace",
+    "sshSetup": "Nastavení SSH pro {platform}",
+    "github": {
+      "step1Title": "Vygenerujte SSH klíč",
+      "step1Desc": "Použijte generátor výše nebo spusťte tento příkaz:",
+      "step2Title": "Spusťte SSH Agent",
+      "step2Desc": "Spusťte ssh-agent na pozadí:",
+      "step3Title": "Přidejte klíč do agenta",
+      "step3Desc": "Přidejte svůj privátní SSH klíč do agenta:",
+      "step4Title": "Zkopírujte veřejný klíč",
+      "step4Desc": "Zkopírujte veřejný klíč do schránky:",
+      "step5Title": "Přidejte do GitHubu",
+      "step5Desc": "Přejděte do GitHub Settings > SSH and GPG keys > New SSH key. Vložte svůj veřejný klíč.",
+      "step6Title": "Otestujte připojení",
+      "step6Desc": "Ověřte své SSH připojení:"
+    },
+    "gitlab": {
+      "step1Title": "Vygenerujte SSH klíč",
+      "step1Desc": "Použijte Ed25519 pro lepší zabezpečení:",
+      "step2Title": "Přidejte klíč do agenta",
+      "step2Desc": "Přidejte svůj SSH klíč do agenta:",
+      "step3Title": "Zkopírujte veřejný klíč",
+      "step3Desc": "Zkopírujte svůj veřejný klíč:",
+      "step4Title": "Přidejte do GitLabu",
+      "step4Desc": "Přejděte do GitLab Preferences > SSH Keys. Vložte svůj veřejný klíč a nastavte datum expirace.",
+      "step5Title": "Otestujte připojení",
+      "step5Desc": "Ověřte své SSH připojení:"
+    },
+    "bitbucket": {
+      "step1Title": "Vygenerujte SSH klíč",
+      "step1Desc": "Vytvořte Ed25519 SSH klíč:",
+      "step2Title": "Přidejte klíč do agenta",
+      "step2Desc": "Spusťte ssh-agent a přidejte svůj klíč:",
+      "step3Title": "Zkopírujte veřejný klíč",
+      "step3Desc": "Zkopírujte veřejný klíč do schránky:",
+      "step4Title": "Přidejte do Bitbucketu",
+      "step4Desc": "Přejděte do Bitbucket Settings > Personal settings > SSH keys > Add key.",
+      "step5Title": "Otestujte připojení",
+      "step5Desc": "Ověřte své SSH připojení:"
+    },
+    "aws": {
+      "step1Title": "Vygenerujte SSH klíč",
+      "step1Desc": "Vytvořte Ed25519 SSH klíč pro AWS EC2:",
+      "step2Title": "Zkopírujte veřejný klíč",
+      "step2Desc": "Zobrazte svůj veřejný klíč pro zkopírování:",
+      "step3Title": "Importujte klíč do AWS",
+      "step3Desc": "Přejděte do AWS Console > EC2 > Key Pairs > Actions > Import Key Pair. Vložte svůj veřejný klíč.",
+      "step4Title": "Nastavte oprávnění",
+      "step4Desc": "Ujistěte se, že váš privátní klíč má správná oprávnění:",
+      "step5Title": "Připojte se k instanci",
+      "step5Desc": "Připojte se přes SSH k vaší EC2 instanci (nahraďte vlastními údaji):"
+    },
+    "azure": {
+      "step1Title": "Vygenerujte SSH klíč",
+      "step1Desc": "Vytvořte Ed25519 SSH klíč pro Azure:",
+      "step2Title": "Zkopírujte veřejný klíč",
+      "step2Desc": "Zobrazte svůj veřejný klíč:",
+      "step3Title": "Přidejte při vytváření VM",
+      "step3Desc": "Při vytváření VM vyberte 'SSH public key' pro autentizaci a vložte svůj veřejný klíč.",
+      "step4Title": "Připojte se k VM",
+      "step4Desc": "Připojte se přes SSH k vašemu Azure VM:",
+      "step5Title": "Aktualizujte existující VM (volitelné)",
+      "step5Desc": "Přidejte klíč do existujícího VM pomocí Azure CLI:"
+    },
+    "digitalocean": {
+      "step1Title": "Vygenerujte SSH klíč",
+      "step1Desc": "Vytvořte Ed25519 SSH klíč:",
+      "step2Title": "Zkopírujte veřejný klíč",
+      "step2Desc": "Zobrazte svůj veřejný klíč pro zkopírování:",
+      "step3Title": "Přidejte do DigitalOcean",
+      "step3Desc": "Přejděte do DigitalOcean Control Panel > Settings > Security > SSH Keys > Add SSH Key.",
+      "step4Title": "Vytvořte Droplet",
+      "step4Desc": "Při vytváření Dropletu vyberte svůj SSH klíč v sekci 'Authentication'.",
+      "step5Title": "Připojte se k Dropletu",
+      "step5Desc": "Připojte se přes SSH k vašemu Dropletu:"
+    }
+  },
+  "footer": {
+    "about": "O tomto online SSH Key Generatoru",
+    "aboutDesc": "Toto je bezplatný open-source online SSH Key Generator, který běží výhradně ve vašem prohlížeči. Žádné zpracování na serveru, žádné shromažďování dat – pouze bezpečné generování klíčů.",
+    "securityFirst": "Bezpečnost na prvním místě",
+    "security1": "Veškeré generování klíčů probíhá ve vašem prohlížeči",
+    "security2": "Žádná data se nikdy neodesílají na server",
+    "security3": "Open source a auditovatelný kód",
+    "security4": "Využívá standardní kryptografické knihovny",
+    "resources": "Zdroje",
+    "sshKeyGuide": "GitHub SSH dokumentace",
+    "githubSetup": "GitLab SSH dokumentace",
+    "bestPractices": "SSH Academy",
+    "madeWith": "Vytvořeno s",
+    "forDevelopers": "pro vývojáře po celém světě",
+    "copyright": "© {year} SSH Key Generator. Open source pod licencí MIT."
+  },
+  "seo": {
+    "whatIs": {
+      "title": "Co je online SSH Key Generator?",
+      "desc": "Online SSH Key Generator jako tento nástroj vytváří kryptografické páry klíčů bezpečně ve vašem prohlížeči. SSH klíče se skládají z veřejného klíče (sdíleného se servery) a privátního klíče (uchovávaného v tajnosti). Na rozdíl od hesel je SSH klíče vygenerované online prakticky nemožné prolomit hrubou silou."
+    },
+    "whyUse": {
+      "title": "Proč používat tento online SSH Key Generator?",
+      "secure": {
+        "title": "Bezpečné online generování",
+        "desc": "Veškeré kryptografické operace probíhají ve vašem prohlížeči. Tento online SSH Key Generator zajišťuje, že vaše privátní klíče nikdy neopustí vaše zařízení."
+      },
+      "modern": {
+        "title": "Moderní algoritmy",
+        "desc": "Generujte Ed25519 klíče (doporučeno) nebo RSA klíče s délkou až 4096 bitů."
+      },
+      "easy": {
+        "title": "Snadné použití",
+        "desc": "Jednoduché rozhraní s tlačítky pro kopírování a stažení. Funguje okamžitě bez instalace."
+      },
+      "free": {
+        "title": "Zdarma a open source",
+        "desc": "Bez registrace, bez sledování, bez poplatků. Licencováno pod MIT a ověřeno komunitou."
+      }
+    },
+    "howTo": {
+      "title": "Jak vygenerovat SSH klíč online",
+      "step1": "Vyberte algoritmus: Zvolte Ed25519 (doporučeno) nebo RSA",
+      "step2": "Přidejte komentář: Volitelný identifikátor jako váš e-mail",
+      "step3": "Generujte: Klikněte na tlačítko pro vytvoření páru klíčů",
+      "step4": "Uložte klíče: Stáhněte nebo zkopírujte váš veřejný a privátní klíč",
+      "step5": "Přidejte na server: Zkopírujte veřejný klíč do ~/.ssh/authorized_keys nebo do vašeho Git poskytovatele"
+    },
+    "comparison": {
+      "title": "Ed25519 vs RSA: Který zvolit?",
+      "intro": "Pochopení rozdílů mezi těmito dvěma populárními algoritmy SSH klíčů vám pomůže vybrat správnou volbu pro vaše bezpečnostní potřeby.",
+      "feature": "Vlastnost",
+      "algorithmType": "Typ algoritmu",
+      "keySize": "Velikost klíče",
+      "signatureSize": "Velikost podpisu",
+      "security": "Úroveň zabezpečení",
+      "performance": "Výkon",
+      "compatibility": "Kompatibilita",
+      "quantumResistance": "Odolnost vůči kvantovým počítačům",
+      "bestFor": "Nejlepší pro",
+      "recommendation": "Doporučení",
+      "ed25519AlgoType": "Eliptická křivka (Curve25519)",
+      "rsaAlgoType": "Faktorizace celých čísel",
+      "ed25519KeySize": "256 bitů (kompaktní)",
+      "rsaKeySize": "2048-4096 bitů (větší)",
+      "ed25519SigSize": "64 bajtů",
+      "rsaSigSize": "256-512 bajtů",
+      "ed25519Security": "Ekvivalent ~128 bitů",
+      "rsaSecurity": "~112-128 bitů (4096)",
+      "ed25519Performance": "Velmi rychlý (10x rychlejší)",
+      "rsaPerformance": "Pomalejší generování",
+      "ed25519Compat": "OpenSSH 6.5+ (2014)",
+      "rsaCompat": "Univerzální (všechny systémy)",
+      "ed25519Quantum": "Není odolný vůči kvantovým počítačům",
+      "rsaQuantum": "Není odolný vůči kvantovým počítačům",
+      "ed25519BestFor": "GitHub, GitLab, moderní servery",
+      "rsaBestFor": "Starší systémy, starší hardware",
+      "ed25519Rec": "Nejlepší volba pro většinu uživatelů",
+      "rsaRec": "Použijte pro podporu starších systémů"
+    },
+    "useCases": {
+      "title": "Běžné případy použití SSH klíčů",
+      "git": {
+        "title": "Git hosting",
+        "desc": "Bezpečně pushujte a pullujte kód z GitHub, GitLab, Bitbucket bez zadávání hesel."
+      },
+      "server": {
+        "title": "Přístup na servery",
+        "desc": "Připojte se přes SSH k Linux/Unix serverům, cloudovým instancím (AWS, GCP, Azure) a VPS poskytovatelům."
+      },
+      "automation": {
+        "title": "CI/CD automatizace",
+        "desc": "Umožněte automatizované deploymenty, skripty a DevOps pipelines přístup ke vzdáleným zdrojům."
+      },
+      "tunnels": {
+        "title": "Bezpečné tunely",
+        "desc": "Vytvářejte šifrované tunely pro přístup k databázím, port forwarding a bezpečnou komunikaci."
+      }
+    },
+    "faq": {
+      "title": "Často kladené otázky",
+      "subtitle": "Najděte odpovědi na časté otázky o SSH klíčích a tomto nástroji.",
+      "safe": {
+        "question": "Je bezpečné generovat SSH klíče online?",
+        "answer": "Ano, tento nástroj je 100% bezpečný, protože veškeré generování klíčů probíhá výhradně ve vašem prohlížeči pomocí Web Crypto API. Vaše privátní klíče nikdy neopustí vaše zařízení a nikdy se nepřenášejí na žádný server. Zdrojový kód je open source a auditovatelný na GitHubu."
+      },
+      "ed25519VsRsa": {
+        "question": "Jaký je rozdíl mezi Ed25519 a RSA?",
+        "answer": "Ed25519 je moderní algoritmus eliptických křivek, který nabízí lepší zabezpečení s menší velikostí klíče (256 bitů vs 2048-4096 bitů u RSA). Ed25519 klíče se rychleji generují a používají a jsou doporučeny pro většinu nových SSH nastavení. RSA je starší, ale má širší kompatibilitu se staršími systémy."
+      },
+      "github": {
+        "question": "Jak přidám svůj SSH klíč do GitHubu?",
+        "answer": "1) Vygenerujte si SSH klíč pomocí tohoto nástroje, 2) Zkopírujte veřejný klíč, 3) Přejděte do GitHub Settings > SSH and GPG keys, 4) Klikněte na 'New SSH key', 5) Vložte svůj veřejný klíč a pojmenujte ho, 6) Klikněte na 'Add SSH key'. Otestujte pomocí: ssh -T git@github.com"
+      },
+      "rsaKeySize": {
+        "question": "Jakou velikost klíče bych měl použít pro RSA?",
+        "answer": "Pro RSA klíče je doporučeno 4096 bitů pro maximální zabezpečení. 2048 bitů je minimální přijatelná velikost a nabízí adekvátní zabezpečení pro většinu účelů. Klíče menší než 2048 bitů jsou považovány za nezabezpečené a neměly by se používat."
+      },
+      "offline": {
+        "question": "Mohu používat tento SSH Key Generator offline?",
+        "answer": "Ano! Tento SSH Key Generator je Progressive Web App (PWA), která funguje offline. Po první návštěvě ji můžete nainstalovat jako aplikaci na svém zařízení a generovat SSH klíče bez internetového připojení. Veškeré kryptografické operace běží lokálně ve vašem prohlížeči."
+      },
+      "passphrase": {
+        "question": "Měl bych používat heslo pro svůj SSH klíč?",
+        "answer": "Ano, používání hesla je vysoce doporučeno. Heslo přidává další vrstvu zabezpečení – i když někdo získá přístup k vašemu souboru s privátním klíčem, nemůže ho použít bez hesla. Používejte silné a zapamatovatelné heslo pro důležité klíče."
+      },
+      "multipleServers": {
+        "question": "Mohu používat stejný SSH klíč pro více serverů?",
+        "answer": "Ano, můžete používat stejný veřejný SSH klíč na více serverech. Nicméně pro lepší bezpečnostní praxi zvažte používání různých klíčů pro různé účely (např. práce vs osobní, produkce vs vývoj). Tím omezíte riziko v případě kompromitace jednoho klíče."
+      },
+      "fingerprint": {
+        "question": "Co je otisk SSH klíče?",
+        "answer": "Otisk SSH klíče je krátký, unikátní identifikátor odvozený z vašeho veřejného klíče pomocí hashovací funkce (SHA256 nebo MD5). Používá se k ověření autenticity klíče při připojování k serverům. Otisk vám pomáhá potvrdit, že se připojujete ke správnému serveru."
+      },
+      "bestAlgorithm": {
+        "question": "Jaký je nejlepší algoritmus SSH klíče v roce 2025?",
+        "answer": "Ed25519 je doporučený algoritmus v roce 2025 pro většinu případů použití. Poskytuje vynikající zabezpečení s 256bitovou velikostí klíče, rychlý výkon a je podporován všemi moderními SSH implementacemi. RSA použijte pouze pokud potřebujete kompatibilitu se staršími systémy."
+      },
+      "authorizedKeys": {
+        "question": "Co je soubor authorized_keys?",
+        "answer": "Soubor authorized_keys (umístěný v ~/.ssh/authorized_keys na Linux/macOS serverech) obsahuje seznam veřejných klíčů, které mají povoleno se připojit k danému účtu. Každý řádek je jeden veřejný klíč. Přidejte svůj veřejný klíč do tohoto souboru pro povolení SSH přihlášení bez hesla."
+      },
+      "bestOnlineGenerator": {
+        "question": "Jaký je nejlepší online SSH Key Generator?",
+        "answer": "Tento SSH Key Generator je jednou z nejlepších bezplatných online možností, protože běží 100% ve vašem prohlížeči, podporuje moderní algoritmy Ed25519 a RSA, funguje offline jako PWA a nikdy neodesílá vaše privátní klíče na žádný server."
+      },
+      "permissions": {
+        "question": "Jaká oprávnění by měl mít můj privátní SSH klíč?",
+        "answer": "Váš privátní SSH klíč by měl mít omezená oprávnění. Na Linux/macOS použijte 'chmod 600 ~/.ssh/id_ed25519' (čtení/zápis pro vlastníka) nebo 'chmod 400' (pouze čtení pro vlastníka). SSH odmítne použít klíč s příliš volnými oprávněními. Adresář .ssh by měl mít oprávnění 700."
+      }
+    }
+  },
+  "theme": {
+    "light": "Světlý",
+    "dark": "Tmavý",
+    "system": "Systémový"
+  },
+  "notFound": {
+    "title": "Stránka nenalezena",
+    "code": "404",
+    "description": "Stránka, kterou hledáte, neexistuje nebo byla přesunuta.",
+    "backHome": "Zpět na úvodní stránku"
+  }
+}

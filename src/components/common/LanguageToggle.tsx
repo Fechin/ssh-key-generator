@@ -31,6 +31,15 @@ const languages = [
   { code: 'vi' as const, label: 'Tiếng Việt', flag: '🇻🇳', path: '/vi/' },
   { code: 'tr' as const, label: 'Türkçe', flag: '🇹🇷', path: '/tr/' },
   { code: 'id' as const, label: 'Indonesia', flag: '🇮🇩', path: '/id/' },
+  { code: 'fi' as const, label: 'Suomi', flag: '🇫🇮', path: '/fi/' },
+  { code: 'uk' as const, label: 'Українська', flag: '🇺🇦', path: '/uk/' },
+  { code: 'ar' as const, label: 'العربية', flag: '🇸🇦', path: '/ar/' },
+  { code: 'th' as const, label: 'ไทย', flag: '🇹🇭', path: '/th/' },
+  { code: 'ro' as const, label: 'Română', flag: '🇷🇴', path: '/ro/' },
+  { code: 'cs' as const, label: 'Čeština', flag: '🇨🇿', path: '/cs/' },
+  { code: 'bn' as const, label: 'বাংলা', flag: '🇧🇩', path: '/bn/' },
+  { code: 'el' as const, label: 'Ελληνικά', flag: '🇬🇷', path: '/el/' },
+  { code: 'hu' as const, label: 'Magyar', flag: '🇭🇺', path: '/hu/' },
 ]
 
 export function LanguageToggle() {

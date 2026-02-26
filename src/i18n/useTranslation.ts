@@ -20,6 +20,15 @@ import hi from './locales/hi.json'
 import vi from './locales/vi.json'
 import tr from './locales/tr.json'
 import id from './locales/id.json'
+import fi from './locales/fi.json'
+import uk from './locales/uk.json'
+import ar from './locales/ar.json'
+import th from './locales/th.json'
+import ro from './locales/ro.json'
+import cs from './locales/cs.json'
+import bn from './locales/bn.json'
+import el from './locales/el.json'
+import hu from './locales/hu.json'
 
 type TranslationValue = string | { [key: string]: TranslationValue }
 type Translations = { [key: string]: TranslationValue }
@@ -45,7 +54,16 @@ const translations: Record<Language, Translations> = {
   hi,
   vi,
   tr,
-  id
+  id,
+  fi,
+  uk,
+  ar,
+  th,
+  ro,
+  cs,
+  bn,
+  el,
+  hu
 }
 
 function getNestedValue(obj: Translations, path: string): string {

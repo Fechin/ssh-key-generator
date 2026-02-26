@@ -1,0 +1,342 @@
+{
+  "header": {
+    "title": "SSH Key Generator",
+    "subtitle": "Gratuit și Securizat",
+    "clientSide": "100% în Browser",
+    "viewOnGitHub": "Vezi pe GitHub"
+  },
+  "hero": {
+    "title": "SSH Key Generator Online",
+    "subtitle": "Generează chei SSH securizate instant în browser cu acest generator gratuit. Compatibil cu GitHub, GitLab, Bitbucket și orice server SSH."
+  },
+  "tabs": {
+    "generate": "Generare Chei",
+    "generateShort": "Generare",
+    "commands": "Mod Comandă",
+    "commandsShort": "Comenzi",
+    "config": "SSH Config",
+    "configShort": "Config",
+    "guides": "Ghiduri Platform",
+    "guidesShort": "Ghiduri"
+  },
+  "generator": {
+    "title": "SSH Key Generator Online",
+    "description": "Generează o pereche de chei SSH securizată direct în browser. Datele tale nu sunt trimise către niciun server.",
+    "algorithm": "Algoritm",
+    "algorithmTooltip": "Ed25519 este recomandat pentru majoritatea cazurilor. Folosește RSA dacă ai nevoie de compatibilitate cu sisteme mai vechi.",
+    "comment": "Comentariu (opțional)",
+    "commentTooltip": "Un comentariu pentru a identifica cheia. De obicei adresa ta de email.",
+    "commentPlaceholder": "utilizator@exemplu.com",
+    "generateButton": "Generează Pereche de Chei",
+    "generating": "Se generează...",
+    "passphrase": "Passphrase (opțional)",
+    "passphraseTooltip": "Un passphrase adaugă securitate suplimentară. Chiar dacă cineva obține cheia ta privată, nu o poate folosi fără passphrase.",
+    "passphrasePlaceholder": "Introdu passphrase pentru criptare",
+    "confirmPassphrase": "Confirmă Passphrase",
+    "confirmPassphrasePlaceholder": "Reintroduceți passphrase",
+    "passphrasesMismatch": "Passphrase-urile nu coincid",
+    "noPassphraseWarning": "Niciun passphrase setat. Cheia privată va fi necriptată. Consideră adăugarea unui passphrase pentru securitate suplimentară.",
+    "securityTitle": "SSH Key Generator 100% în Browser",
+    "securityDesc": "Toată generarea cheilor are loc local în browserul tău. Acest generator SSH nu transmite niciodată cheile tale private.",
+    "noKeysYet": "Nicio cheie generată încă",
+    "noKeysHint": "Apasă \"Generează Pereche de Chei\" pentru a crea cheile SSH"
+  },
+  "algorithms": {
+    "ed25519": "Ed25519 (Recomandat)",
+    "ed25519Desc": "Modern, rapid, securizat. Cel mai bun pentru majoritatea utilizărilor.",
+    "rsa4096": "RSA 4096-bit",
+    "rsa4096Desc": "Compatibilitate maximă cu sistemele legacy.",
+    "rsa2048": "RSA 2048-bit",
+    "rsa2048Desc": "Dimensiunea minimă recomandată pentru RSA."
+  },
+  "keyDisplay": {
+    "publicKey": "Cheie Publică",
+    "publicKeyDesc": "Adaugă aceasta în authorized_keys pe servere remote sau pe GitHub/GitLab.",
+    "privateKey": "Cheie Privată",
+    "privateKeyWarning": "Păstrează secret! Nu împărtăși niciodată cheia privată.",
+    "fingerprint": "Amprentă Cheie",
+    "copy": "Copiază",
+    "copied": "Copiat!",
+    "download": "Descarcă",
+    "reveal": "Afișează",
+    "hide": "Ascunde",
+    "clickToReveal": "Apasă Afișează pentru a vedea cheia privată"
+  },
+  "commands": {
+    "title": "Comenzi pentru Generarea Cheilor SSH",
+    "description": "Generează comenzi ssh-keygen pentru platforma ta preferată. Copiază și rulează-le în terminal.",
+    "algorithm": "Algoritm",
+    "comment": "Comentariu",
+    "filename": "Nume fișier (opțional)",
+    "quickCommand": "Comandă Rapidă",
+    "completeSetup": "Configurare Completă",
+    "copyAll": "Copiază Tot"
+  },
+  "sshConfig": {
+    "title": "Constructor SSH Config",
+    "description": "Construiește fișierul ~/.ssh/config. Adaugă host-uri și descarcă configurația.",
+    "hostAlias": "Alias Host",
+    "hostAliasRequired": "Alias Host *",
+    "hostname": "HostName",
+    "hostnameRequired": "HostName *",
+    "hostnamePlaceholder": "192.168.1.100 sau exemplu.com",
+    "user": "User",
+    "port": "Port",
+    "identityFile": "IdentityFile",
+    "identityFilePlaceholder": "~/.ssh/id_ed25519",
+    "addHost": "Adaugă Host",
+    "configuredHosts": "Host-uri Configurate",
+    "generatedConfig": "Config Generat",
+    "saveToPath": "Salvează în ~/.ssh/config",
+    "noHosts": "# Niciun host configurat încă",
+    "advancedOptions": "Opțiuni Avansate",
+    "proxyJump": "ProxyJump",
+    "proxyJumpPlaceholder": "bastion-host",
+    "proxyJumpDesc": "Conectare prin intermediul unui bastion/jump host",
+    "forwardAgent": "Forward Agent",
+    "forwardAgentDesc": "Trimite SSH agent-ul către host-ul remote"
+  },
+  "guides": {
+    "title": "Ghiduri de Configurare pe Platforme",
+    "description": "Instrucțiuni pas cu pas pentru configurarea cheilor SSH pe platformele Git populare.",
+    "officialDocs": "Documentație Oficială",
+    "sshSetup": "Configurare SSH pentru {platform}",
+    "github": {
+      "step1Title": "Generează Cheia SSH",
+      "step1Desc": "Folosește generatorul de mai sus sau rulează această comandă:",
+      "step2Title": "Pornește SSH Agent",
+      "step2Desc": "Pornește ssh-agent în fundal:",
+      "step3Title": "Adaugă Cheia în Agent",
+      "step3Desc": "Adaugă cheia SSH privată în agent:",
+      "step4Title": "Copiază Cheia Publică",
+      "step4Desc": "Copiază cheia publică în clipboard:",
+      "step5Title": "Adaugă pe GitHub",
+      "step5Desc": "Mergi la GitHub Settings > SSH and GPG keys > New SSH key. Lipește cheia publică.",
+      "step6Title": "Testează Conexiunea",
+      "step6Desc": "Verifică conexiunea SSH:"
+    },
+    "gitlab": {
+      "step1Title": "Generează Cheia SSH",
+      "step1Desc": "Folosește Ed25519 pentru securitate mai bună:",
+      "step2Title": "Adaugă Cheia în Agent",
+      "step2Desc": "Adaugă cheia SSH în agent:",
+      "step3Title": "Copiază Cheia Publică",
+      "step3Desc": "Copiază cheia publică:",
+      "step4Title": "Adaugă pe GitLab",
+      "step4Desc": "Mergi la GitLab Preferences > SSH Keys. Lipește cheia publică și setează o dată de expirare.",
+      "step5Title": "Testează Conexiunea",
+      "step5Desc": "Verifică conexiunea SSH:"
+    },
+    "bitbucket": {
+      "step1Title": "Generează Cheia SSH",
+      "step1Desc": "Creează o cheie SSH Ed25519:",
+      "step2Title": "Adaugă Cheia în Agent",
+      "step2Desc": "Pornește ssh-agent și adaugă cheia:",
+      "step3Title": "Copiază Cheia Publică",
+      "step3Desc": "Copiază cheia publică în clipboard:",
+      "step4Title": "Adaugă pe Bitbucket",
+      "step4Desc": "Mergi la Bitbucket Settings > Personal settings > SSH keys > Add key.",
+      "step5Title": "Testează Conexiunea",
+      "step5Desc": "Verifică conexiunea SSH:"
+    },
+    "aws": {
+      "step1Title": "Generează Cheia SSH",
+      "step1Desc": "Creează o cheie SSH Ed25519 pentru AWS EC2:",
+      "step2Title": "Copiază Cheia Publică",
+      "step2Desc": "Afișează cheia publică pentru a o copia:",
+      "step3Title": "Importă Cheia în AWS",
+      "step3Desc": "Mergi la AWS Console > EC2 > Key Pairs > Actions > Import Key Pair. Lipește cheia publică.",
+      "step4Title": "Setează Permisiunile",
+      "step4Desc": "Asigură-te că cheia privată are permisiunile corecte:",
+      "step5Title": "Conectează-te la Instanță",
+      "step5Desc": "Conectează-te prin SSH la instanța EC2 (înlocuiește cu datele tale):"
+    },
+    "azure": {
+      "step1Title": "Generează Cheia SSH",
+      "step1Desc": "Creează o cheie SSH Ed25519 pentru Azure:",
+      "step2Title": "Copiază Cheia Publică",
+      "step2Desc": "Afișează cheia publică:",
+      "step3Title": "Adaugă la Crearea VM",
+      "step3Desc": "La crearea unui VM, selectează 'SSH public key' pentru autentificare și lipește cheia publică.",
+      "step4Title": "Conectează-te la VM",
+      "step4Desc": "Conectează-te prin SSH la VM-ul Azure:",
+      "step5Title": "Actualizează VM Existent (Opțional)",
+      "step5Desc": "Adaugă cheia la un VM existent folosind Azure CLI:"
+    },
+    "digitalocean": {
+      "step1Title": "Generează Cheia SSH",
+      "step1Desc": "Creează o cheie SSH Ed25519:",
+      "step2Title": "Copiază Cheia Publică",
+      "step2Desc": "Afișează cheia publică pentru a o copia:",
+      "step3Title": "Adaugă pe DigitalOcean",
+      "step3Desc": "Mergi la DigitalOcean Control Panel > Settings > Security > SSH Keys > Add SSH Key.",
+      "step4Title": "Creează Droplet",
+      "step4Desc": "La crearea unui Droplet, selectează cheia SSH la 'Authentication'.",
+      "step5Title": "Conectează-te la Droplet",
+      "step5Desc": "Conectează-te prin SSH la Droplet:"
+    }
+  },
+  "footer": {
+    "about": "Despre Acest SSH Key Generator Online",
+    "aboutDesc": "Acesta este un generator de chei SSH gratuit, open-source, care rulează complet în browserul tău. Fără procesare pe server, fără colectare de date - doar generare securizată de chei.",
+    "securityFirst": "Securitate pe Primul Loc",
+    "security1": "Toată generarea cheilor are loc în browserul tău",
+    "security2": "Nicio dată nu este trimisă vreodată către vreun server",
+    "security3": "Cod open source și verificabil",
+    "security4": "Folosește biblioteci criptografice standard din industrie",
+    "resources": "Resurse",
+    "sshKeyGuide": "Documentație SSH GitHub",
+    "githubSetup": "Documentație SSH GitLab",
+    "bestPractices": "SSH Academy",
+    "madeWith": "Făcut cu",
+    "forDevelopers": "pentru developeri din întreaga lume",
+    "copyright": "© {year} SSH Key Generator. Open source sub Licența MIT."
+  },
+  "seo": {
+    "whatIs": {
+      "title": "Ce este un SSH Key Generator Online?",
+      "desc": "Un generator de chei SSH online precum acest instrument creează perechi de chei criptografice securizate în browserul tău. Cheile SSH constau dintr-o cheie publică (partajată cu serverele) și o cheie privată (păstrată secretă). Spre deosebire de parole, cheile SSH generate online sunt practic imposibil de spart prin forță brută."
+    },
+    "whyUse": {
+      "title": "De Ce Să Folosești Acest SSH Key Generator Online?",
+      "secure": {
+        "title": "Generare Securizată Online",
+        "desc": "Toate operațiunile criptografice au loc în browserul tău. Acest SSH key generator online asigură că cheile tale private nu părăsesc niciodată dispozitivul."
+      },
+      "modern": {
+        "title": "Algoritmi Moderni",
+        "desc": "Generează chei Ed25519 (recomandat) sau chei RSA cu până la 4096-bit."
+      },
+      "easy": {
+        "title": "Ușor de Folosit",
+        "desc": "Interfață simplă cu butoane de copiere/descărcare. Funcționează instant fără instalare."
+      },
+      "free": {
+        "title": "Gratuit și Open Source",
+        "desc": "Fără înregistrare, fără tracking, fără costuri. Licențiat MIT și verificat de comunitate."
+      }
+    },
+    "howTo": {
+      "title": "Cum Să Generezi o Cheie SSH Online",
+      "step1": "Selectează Algoritmul: Alege Ed25519 (recomandat) sau RSA",
+      "step2": "Adaugă Comentariu: Identificator opțional precum email-ul tău",
+      "step3": "Generează: Apasă butonul pentru a crea perechea de chei",
+      "step4": "Salvează Cheile: Descarcă sau copiază cheile publice și private",
+      "step5": "Adaugă pe Server: Copiază cheia publică în ~/.ssh/authorized_keys sau la furnizorul Git"
+    },
+    "comparison": {
+      "title": "Ed25519 vs RSA: Pe Care Să Îl Alegi?",
+      "intro": "Înțelegerea diferențelor dintre acești doi algoritmi populari pentru chei SSH te ajută să faci alegerea corectă pentru nevoile tale de securitate.",
+      "feature": "Caracteristică",
+      "algorithmType": "Tip Algoritm",
+      "keySize": "Dimensiune Cheie",
+      "signatureSize": "Dimensiune Semnătură",
+      "security": "Nivel Securitate",
+      "performance": "Performanță",
+      "compatibility": "Compatibilitate",
+      "quantumResistance": "Rezistență Quantum",
+      "bestFor": "Recomandat Pentru",
+      "recommendation": "Recomandare",
+      "ed25519AlgoType": "Curbă Eliptică (Curve25519)",
+      "rsaAlgoType": "Factorizare de Numere Întregi",
+      "ed25519KeySize": "256 biți (compact)",
+      "rsaKeySize": "2048-4096 biți (mai mare)",
+      "ed25519SigSize": "64 bytes",
+      "rsaSigSize": "256-512 bytes",
+      "ed25519Security": "Echivalent ~128-bit",
+      "rsaSecurity": "~112-128-bit (4096)",
+      "ed25519Performance": "Foarte Rapid (de 10x mai rapid)",
+      "rsaPerformance": "Generare mai lentă",
+      "ed25519Compat": "OpenSSH 6.5+ (2014)",
+      "rsaCompat": "Universal (toate sistemele)",
+      "ed25519Quantum": "Nu este quantum-safe",
+      "rsaQuantum": "Nu este quantum-safe",
+      "ed25519BestFor": "GitHub, GitLab, servere moderne",
+      "rsaBestFor": "Sisteme legacy, hardware mai vechi",
+      "ed25519Rec": "Cea mai bună alegere pentru majoritatea utilizatorilor",
+      "rsaRec": "Folosește pentru suport sisteme legacy"
+    },
+    "useCases": {
+      "title": "Cazuri Comune de Utilizare a Cheilor SSH",
+      "git": {
+        "title": "Hosting Git",
+        "desc": "Push și pull cod securizat de pe GitHub, GitLab, Bitbucket fără a introduce parole."
+      },
+      "server": {
+        "title": "Acces la Servere",
+        "desc": "SSH în servere Linux/Unix, instanțe cloud (AWS, GCP, Azure) și furnizori VPS."
+      },
+      "automation": {
+        "title": "Automatizare CI/CD",
+        "desc": "Permite deployment-uri automate, scripturi și pipeline-uri DevOps să acceseze resurse remote."
+      },
+      "tunnels": {
+        "title": "Tuneluri Securizate",
+        "desc": "Creează tuneluri criptate pentru acces la baze de date, port forwarding și comunicare securizată."
+      }
+    },
+    "faq": {
+      "title": "Întrebări Frecvente",
+      "subtitle": "Găsește răspunsuri la întrebările comune despre cheile SSH și acest instrument.",
+      "safe": {
+        "question": "Este sigur să generezi chei SSH online?",
+        "answer": "Da, acest instrument este 100% sigur deoarece toată generarea cheilor are loc complet în browserul tău folosind Web Crypto API. Cheile tale private nu părăsesc niciodată dispozitivul și nu sunt transmise către niciun server. Codul sursă este open source și verificabil pe GitHub."
+      },
+      "ed25519VsRsa": {
+        "question": "Care este diferența dintre Ed25519 și RSA?",
+        "answer": "Ed25519 este un algoritm modern bazat pe curbe eliptice care oferă securitate mai bună cu dimensiuni ale cheilor mai mici (256-bit vs 2048-4096-bit RSA). Cheile Ed25519 sunt mai rapide de generat și folosit, și sunt recomandate pentru majoritatea configurărilor SSH noi. RSA este mai vechi dar are compatibilitate mai largă cu sistemele legacy."
+      },
+      "github": {
+        "question": "Cum adaug cheia SSH pe GitHub?",
+        "answer": "1) Generează cheia SSH folosind acest instrument, 2) Copiază cheia publică, 3) Mergi la GitHub Settings > SSH and GPG keys, 4) Apasă 'New SSH key', 5) Lipește cheia publică și dă-i un titlu, 6) Apasă 'Add SSH key'. Testează cu: ssh -T git@github.com"
+      },
+      "rsaKeySize": {
+        "question": "Ce dimensiune a cheii ar trebui să folosesc pentru RSA?",
+        "answer": "Pentru chei RSA, 4096-bit este recomandat pentru securitate maximă. 2048-bit este dimensiunea minimă acceptabilă și oferă securitate adecvată pentru majoritatea scopurilor. Cheile mai mici de 2048-bit sunt considerate nesigure și nu ar trebui folosite."
+      },
+      "offline": {
+        "question": "Pot folosi acest SSH key generator offline?",
+        "answer": "Da! Acest SSH key generator este o Progressive Web App (PWA) care funcționează offline. După prima vizită, poți să-l instalezi ca aplicație pe dispozitivul tău și să generezi chei SSH fără conexiune la internet. Toate operațiunile criptografice rulează local în browserul tău."
+      },
+      "passphrase": {
+        "question": "Ar trebui să folosesc un passphrase pentru cheia SSH?",
+        "answer": "Da, folosirea unui passphrase este foarte recomandată. Un passphrase adaugă un nivel suplimentar de securitate - chiar dacă cineva obține acces la fișierul cheii tale private, nu îl poate folosi fără passphrase. Folosește un passphrase puternic și memorabil pentru cheile importante."
+      },
+      "multipleServers": {
+        "question": "Pot folosi aceeași cheie SSH pentru mai multe servere?",
+        "answer": "Da, poți folosi aceeași cheie SSH publică pe mai multe servere. Cu toate acestea, pentru practici de securitate mai bune, consideră folosirea cheilor diferite pentru scopuri diferite (de ex., serviciu vs personal, producție vs development). Aceasta limitează expunerea dacă o cheie este compromisă."
+      },
+      "fingerprint": {
+        "question": "Ce este amprenta unei chei SSH?",
+        "answer": "Amprenta unei chei SSH este un identificator scurt și unic derivat din cheia ta publică folosind o funcție hash (SHA256 sau MD5). Este folosită pentru a verifica autenticitatea cheii la conectarea la servere. Amprenta te ajută să confirmi că te conectezi la serverul corect."
+      },
+      "bestAlgorithm": {
+        "question": "Care este cel mai bun algoritm pentru chei SSH în 2025?",
+        "answer": "Ed25519 este algoritmul recomandat în 2025 pentru majoritatea cazurilor de utilizare. Oferă securitate excelentă cu o dimensiune a cheii de 256-bit, performanță rapidă și este suportat de toate implementările SSH moderne. Folosește RSA doar dacă ai nevoie de compatibilitate cu sisteme legacy."
+      },
+      "authorizedKeys": {
+        "question": "Ce este fișierul authorized_keys?",
+        "answer": "Fișierul authorized_keys (localizat la ~/.ssh/authorized_keys pe serverele Linux/macOS) conține o listă de chei publice care au voie să se conecteze la acel cont. Fiecare linie este o cheie publică. Adaugă cheia ta publică în acest fișier pentru a activa login-ul SSH fără parolă."
+      },
+      "bestOnlineGenerator": {
+        "question": "Care este cel mai bun SSH key generator online?",
+        "answer": "Acest SSH key generator este una dintre cele mai bune opțiuni gratuite online deoarece rulează 100% în browserul tău, suportă algoritmi moderni Ed25519 și RSA, funcționează offline ca PWA și nu trimite niciodată cheile tale private către vreun server."
+      },
+      "permissions": {
+        "question": "Ce permisiuni ar trebui să aibă cheia mea SSH privată?",
+        "answer": "Cheia ta SSH privată ar trebui să aibă permisiuni restricționate. Pe Linux/macOS, folosește 'chmod 600 ~/.ssh/id_ed25519' (citire/scriere proprietar) sau 'chmod 400' (doar citire proprietar). SSH va refuza să folosească o cheie cu permisiuni permisive. Directorul .ssh ar trebui să fie 700."
+      }
+    }
+  },
+  "theme": {
+    "light": "Luminos",
+    "dark": "Întunecat",
+    "system": "Sistem"
+  },
+  "notFound": {
+    "title": "Pagină Negăsită",
+    "code": "404",
+    "description": "Pagina pe care o cauți nu există sau a fost mutată.",
+    "backHome": "Înapoi la Pagina Principală"
+  }
+}
