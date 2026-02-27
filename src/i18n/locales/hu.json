@@ -39,7 +39,7 @@
     "securityTitle": "100% kliens oldali SSH Key Generator",
     "securityDesc": "A kulcsgenerálás teljes egészében a böngésződben történik. Ez az online SSH kulcsgenerátor soha nem továbbítja a privát kulcsaidat.",
     "noKeysYet": "Még nincsenek generált kulcsok",
-    "noKeysHint": "Kattints a „Kulcspár generálása" gombra az SSH kulcsok létrehozásához"
+    "noKeysHint": "Kattints a „Kulcspár generálása“ gombra az SSH kulcsok létrehozásához"
   },
   "algorithms": {
     "ed25519": "Ed25519 (Ajánlott)",

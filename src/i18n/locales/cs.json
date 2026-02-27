@@ -39,7 +39,7 @@
     "securityTitle": "100% SSH Key Generator na straně klienta",
     "securityDesc": "Veškeré generování klíčů probíhá lokálně ve vašem prohlížeči. Tento online SSH Key Generator nikdy nepřenáší vaše privátní klíče.",
     "noKeysYet": "Zatím nebyly vygenerovány žádné klíče",
-    "noKeysHint": "Klikněte na „Vygenerovat pár klíčů" pro vytvoření vašich SSH klíčů"
+    "noKeysHint": "Klikněte na „Vygenerovat pár klíčů“ pro vytvoření vašich SSH klíčů"
   },
   "algorithms": {
     "ed25519": "Ed25519 (doporučeno)",
