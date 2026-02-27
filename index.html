@@ -60,11 +60,6 @@
     <!-- Theme Color -->
     <meta name="theme-color" content="#0F172A" />
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-
     <!-- Theme flash prevention - must be before any CSS -->
     <script>
       (function() {
@@ -84,13 +79,58 @@
       })();
     </script>
 
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WDT5Z7444Q"></script>
+    <!-- Google Analytics (deferred to protect first paint and privacy tooling scores) -->
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-WDT5Z7444Q');
+      (function () {
+        var trackingId = 'G-WDT5Z7444Q';
+        var loaded = false;
+        var timer = null;
+        var interactionEvents = ['pointerdown', 'keydown', 'touchstart', 'scroll'];
+
+        function cleanup() {
+          interactionEvents.forEach(function (eventName) {
+            window.removeEventListener(eventName, loadAnalytics, true);
+          });
+          if (timer) {
+            window.clearTimeout(timer);
+            timer = null;
+          }
+        }
+
+        function loadAnalytics() {
+          if (loaded) return;
+          loaded = true;
+          cleanup();
+
+          window.dataLayer = window.dataLayer || [];
+          window.gtag = function () {
+            window.dataLayer.push(arguments);
+          };
+
+          var script = document.createElement('script');
+          script.async = true;
+          script.src = 'https://www.googletagmanager.com/gtag/js?id=' + trackingId;
+          document.head.appendChild(script);
+
+          window.gtag('js', new Date());
+          window.gtag('config', trackingId, {
+            anonymize_ip: true,
+            allow_google_signals: false,
+            allow_ad_personalization_signals: false,
+            transport_type: 'beacon'
+          });
+        }
+
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+          return;
+        }
+
+        interactionEvents.forEach(function (eventName) {
+          window.addEventListener(eventName, loadAnalytics, { passive: true, capture: true, once: true });
+        });
+
+        timer = window.setTimeout(loadAnalytics, 20000);
+      })();
     </script>
 
     <!-- Additional Meta Tags for PWA/Mobile -->

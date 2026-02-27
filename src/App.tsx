@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, lazy, Suspense } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { Key, Terminal, Settings, BookOpen } from 'lucide-react'
 import { Toaster } from 'sonner'
@@ -7,21 +7,123 @@ import { Footer } from '@/components/layout/Footer'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent } from '@/components/ui/card'
 import { KeyGeneratorForm } from '@/components/key-generator/KeyGeneratorForm'
-import { KeyPairDisplay } from '@/components/key-display/KeyPairDisplay'
-import { CommandGenerator } from '@/components/command-mode/CommandGenerator'
-import { SSHConfigBuilder } from '@/components/ssh-config/SSHConfigBuilder'
-import { PlatformGuides } from '@/components/platform-guides/PlatformGuides'
-import { SEOContent } from '@/components/seo/SEOContent'
-import { NotFound } from '@/components/pages/NotFound'
 import { useTranslation } from '@/i18n'
 import { useLanguageStore, syncLanguageFromPath, type Language } from '@/i18n/languageStore'
 import { useThemeStore } from '@/store/themeStore'
 import type { KeyPair } from '@/types/keys'
 
+const KeyPairDisplay = lazy(async () => {
+  const module = await import('@/components/key-display/KeyPairDisplay')
+  return { default: module.KeyPairDisplay }
+})
+
+const CommandGenerator = lazy(async () => {
+  const module = await import('@/components/command-mode/CommandGenerator')
+  return { default: module.CommandGenerator }
+})
+
+const SSHConfigBuilder = lazy(async () => {
+  const module = await import('@/components/ssh-config/SSHConfigBuilder')
+  return { default: module.SSHConfigBuilder }
+})
+
+const PlatformGuides = lazy(async () => {
+  const module = await import('@/components/platform-guides/PlatformGuides')
+  return { default: module.PlatformGuides }
+})
+
+const SEOContent = lazy(async () => {
+  const module = await import('@/components/seo/SEOContent')
+  return { default: module.SEOContent }
+})
+
+const NotFound = lazy(async () => {
+  const module = await import('@/components/pages/NotFound')
+  return { default: module.NotFound }
+})
+
+const LANGUAGE_PATHS: Record<Language, string> = {
+  en: '/',
+  zh: '/zh-Hans',
+  'zh-Hant': '/zh-Hant',
+  ja: '/ja',
+  ko: '/ko',
+  es: '/es',
+  pt: '/pt',
+  fr: '/fr',
+  de: '/de',
+  ru: '/ru',
+  it: '/it',
+  nl: '/nl',
+  pl: '/pl',
+  sv: '/sv',
+  he: '/he',
+  da: '/da',
+  nb: '/nb',
+  hi: '/hi',
+  vi: '/vi',
+  tr: '/tr',
+  id: '/id',
+  fi: '/fi',
+  uk: '/uk',
+  ar: '/ar',
+  th: '/th',
+  ro: '/ro',
+  cs: '/cs',
+  bn: '/bn',
+  el: '/el',
+  hu: '/hu'
+}
+
+const NON_DEFAULT_LANGUAGES = (Object.keys(LANGUAGE_PATHS) as Language[]).filter((lang) => lang !== 'en')
+
+function TabContentFallback() {
+  return (
+    <div className="min-h-[220px] flex items-center justify-center text-sm text-muted-foreground">
+      Loading...
+    </div>
+  )
+}
+
 function MainContent() {
   const [generatedKeyPair, setGeneratedKeyPair] = useState<KeyPair | null>(null)
+  const [shouldRenderSeoContent, setShouldRenderSeoContent] = useState(false)
+  const seoSentinelRef = useRef<HTMLDivElement | null>(null)
   const { t } = useTranslation()
   const { resolvedTheme } = useThemeStore()
+
+  useEffect(() => {
+    if (shouldRenderSeoContent) return
+
+    const sentinel = seoSentinelRef.current
+    if (!sentinel || typeof IntersectionObserver === 'undefined') {
+      const frame = window.requestAnimationFrame(() => {
+        setShouldRenderSeoContent(true)
+      })
+      return () => window.cancelAnimationFrame(frame)
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      if (entries.some((entry) => entry.isIntersecting)) {
+        setShouldRenderSeoContent(true)
+        observer.disconnect()
+      }
+    }, { rootMargin: '240px 0px' })
+
+    observer.observe(sentinel)
+
+    return () => observer.disconnect()
+  }, [shouldRenderSeoContent])
+
+  useEffect(() => {
+    if (shouldRenderSeoContent) return
+
+    const timer = window.setTimeout(() => {
+      setShouldRenderSeoContent(true)
+    }, 5000)
+
+    return () => window.clearTimeout(timer)
+  }, [shouldRenderSeoContent])
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -73,7 +175,9 @@ function MainContent() {
                     <KeyGeneratorForm onGenerated={setGeneratedKeyPair} />
                     <div>
                       {generatedKeyPair ? (
-                        <KeyPairDisplay keyPair={generatedKeyPair} />
+                        <Suspense fallback={<TabContentFallback />}>
+                          <KeyPairDisplay keyPair={generatedKeyPair} />
+                        </Suspense>
                       ) : (
                         <div className="h-full min-h-[360px] flex items-center justify-center rounded-xl border border-dashed border-border bg-card/30">
                           <div className="text-center text-muted-foreground">
@@ -91,25 +195,39 @@ function MainContent() {
 
                 {/* Command Mode Tab */}
                 <TabsContent value="commands" className="mt-0">
-                  <CommandGenerator />
+                  <Suspense fallback={<TabContentFallback />}>
+                    <CommandGenerator />
+                  </Suspense>
                 </TabsContent>
 
                 {/* SSH Config Tab */}
                 <TabsContent value="config" className="mt-0">
-                  <SSHConfigBuilder />
+                  <Suspense fallback={<TabContentFallback />}>
+                    <SSHConfigBuilder />
+                  </Suspense>
                 </TabsContent>
 
                 {/* Platform Guides Tab */}
                 <TabsContent value="guides" className="mt-0">
-                  <PlatformGuides />
+                  <Suspense fallback={<TabContentFallback />}>
+                    <PlatformGuides />
+                  </Suspense>
                 </TabsContent>
               </div>
             </Tabs>
           </CardContent>
         </Card>
 
-        {/* SEO Content Section */}
-        <SEOContent />
+        {/* SEO Content Section - load after first viewport for faster initial render */}
+        <div ref={seoSentinelRef}>
+          {shouldRenderSeoContent ? (
+            <Suspense fallback={<div className="mt-16 h-24" />}>
+              <SEOContent />
+            </Suspense>
+          ) : (
+            <div className="mt-16 h-24" aria-hidden="true" />
+          )}
+        </div>
       </main>
 
       <Footer />
@@ -122,41 +240,10 @@ function MainContent() {
 function updateCanonical(lang: Language) {
   const canonical = document.querySelector('link[rel="canonical"]')
   const baseUrl = 'https://sshkeygenerator.com'
-  const paths: Record<Language, string> = {
-    'en': '/',
-    'zh': '/zh-Hans/',
-    'zh-Hant': '/zh-Hant/',
-    'ja': '/ja/',
-    'ko': '/ko/',
-    'es': '/es/',
-    'pt': '/pt/',
-    'fr': '/fr/',
-    'de': '/de/',
-    'ru': '/ru/',
-    'it': '/it/',
-    'nl': '/nl/',
-    'pl': '/pl/',
-    'sv': '/sv/',
-    'he': '/he/',
-    'da': '/da/',
-    'nb': '/nb/',
-    'hi': '/hi/',
-    'vi': '/vi/',
-    'tr': '/tr/',
-    'id': '/id/',
-    'fi': '/fi/',
-    'uk': '/uk/',
-    'ar': '/ar/',
-    'th': '/th/',
-    'ro': '/ro/',
-    'cs': '/cs/',
-    'bn': '/bn/',
-    'el': '/el/',
-    'hu': '/hu/'
-  }
 
   if (canonical) {
-    canonical.setAttribute('href', baseUrl + paths[lang])
+    const path = LANGUAGE_PATHS[lang]
+    canonical.setAttribute('href', `${baseUrl}${path === '/' ? '/' : `${path}/`}`)
   }
 }
 
@@ -182,127 +269,23 @@ function App() {
 
   return (
     <Routes>
-      {/* Chinese Simplified route */}
-      <Route path="/zh-Hans/*" element={<LanguageRoute lang="zh" />} />
-      <Route path="/zh-Hans" element={<LanguageRoute lang="zh" />} />
-
-      {/* Chinese Traditional route */}
-      <Route path="/zh-Hant/*" element={<LanguageRoute lang="zh-Hant" />} />
-      <Route path="/zh-Hant" element={<LanguageRoute lang="zh-Hant" />} />
-
-      {/* Japanese route */}
-      <Route path="/ja/*" element={<LanguageRoute lang="ja" />} />
-      <Route path="/ja" element={<LanguageRoute lang="ja" />} />
-
-      {/* Korean route */}
-      <Route path="/ko/*" element={<LanguageRoute lang="ko" />} />
-      <Route path="/ko" element={<LanguageRoute lang="ko" />} />
-
-      {/* Spanish route */}
-      <Route path="/es/*" element={<LanguageRoute lang="es" />} />
-      <Route path="/es" element={<LanguageRoute lang="es" />} />
-
-      {/* Portuguese route */}
-      <Route path="/pt/*" element={<LanguageRoute lang="pt" />} />
-      <Route path="/pt" element={<LanguageRoute lang="pt" />} />
-
-      {/* French route */}
-      <Route path="/fr/*" element={<LanguageRoute lang="fr" />} />
-      <Route path="/fr" element={<LanguageRoute lang="fr" />} />
-
-      {/* German route */}
-      <Route path="/de/*" element={<LanguageRoute lang="de" />} />
-      <Route path="/de" element={<LanguageRoute lang="de" />} />
-
-      {/* Russian route */}
-      <Route path="/ru/*" element={<LanguageRoute lang="ru" />} />
-      <Route path="/ru" element={<LanguageRoute lang="ru" />} />
-
-      {/* Italian route */}
-      <Route path="/it/*" element={<LanguageRoute lang="it" />} />
-      <Route path="/it" element={<LanguageRoute lang="it" />} />
-
-      {/* Dutch route */}
-      <Route path="/nl/*" element={<LanguageRoute lang="nl" />} />
-      <Route path="/nl" element={<LanguageRoute lang="nl" />} />
-
-      {/* Polish route */}
-      <Route path="/pl/*" element={<LanguageRoute lang="pl" />} />
-      <Route path="/pl" element={<LanguageRoute lang="pl" />} />
-
-      {/* Swedish route */}
-      <Route path="/sv/*" element={<LanguageRoute lang="sv" />} />
-      <Route path="/sv" element={<LanguageRoute lang="sv" />} />
-
-      {/* Hebrew route */}
-      <Route path="/he/*" element={<LanguageRoute lang="he" />} />
-      <Route path="/he" element={<LanguageRoute lang="he" />} />
-
-      {/* Danish route */}
-      <Route path="/da/*" element={<LanguageRoute lang="da" />} />
-      <Route path="/da" element={<LanguageRoute lang="da" />} />
-
-      {/* Norwegian Bokmål route */}
-      <Route path="/nb/*" element={<LanguageRoute lang="nb" />} />
-      <Route path="/nb" element={<LanguageRoute lang="nb" />} />
-
-      {/* Hindi route */}
-      <Route path="/hi/*" element={<LanguageRoute lang="hi" />} />
-      <Route path="/hi" element={<LanguageRoute lang="hi" />} />
-
-      {/* Vietnamese route */}
-      <Route path="/vi/*" element={<LanguageRoute lang="vi" />} />
-      <Route path="/vi" element={<LanguageRoute lang="vi" />} />
-
-      {/* Turkish route */}
-      <Route path="/tr/*" element={<LanguageRoute lang="tr" />} />
-      <Route path="/tr" element={<LanguageRoute lang="tr" />} />
-
-      {/* Indonesian route */}
-      <Route path="/id/*" element={<LanguageRoute lang="id" />} />
-      <Route path="/id" element={<LanguageRoute lang="id" />} />
-
-      {/* Finnish route */}
-      <Route path="/fi/*" element={<LanguageRoute lang="fi" />} />
-      <Route path="/fi" element={<LanguageRoute lang="fi" />} />
-
-      {/* Ukrainian route */}
-      <Route path="/uk/*" element={<LanguageRoute lang="uk" />} />
-      <Route path="/uk" element={<LanguageRoute lang="uk" />} />
-
-      {/* Arabic route */}
-      <Route path="/ar/*" element={<LanguageRoute lang="ar" />} />
-      <Route path="/ar" element={<LanguageRoute lang="ar" />} />
-
-      {/* Thai route */}
-      <Route path="/th/*" element={<LanguageRoute lang="th" />} />
-      <Route path="/th" element={<LanguageRoute lang="th" />} />
-
-      {/* Romanian route */}
-      <Route path="/ro/*" element={<LanguageRoute lang="ro" />} />
-      <Route path="/ro" element={<LanguageRoute lang="ro" />} />
-
-      {/* Czech route */}
-      <Route path="/cs/*" element={<LanguageRoute lang="cs" />} />
-      <Route path="/cs" element={<LanguageRoute lang="cs" />} />
-
-      {/* Bengali route */}
-      <Route path="/bn/*" element={<LanguageRoute lang="bn" />} />
-      <Route path="/bn" element={<LanguageRoute lang="bn" />} />
-
-      {/* Greek route */}
-      <Route path="/el/*" element={<LanguageRoute lang="el" />} />
-      <Route path="/el" element={<LanguageRoute lang="el" />} />
-
-      {/* Hungarian route */}
-      <Route path="/hu/*" element={<LanguageRoute lang="hu" />} />
-      <Route path="/hu" element={<LanguageRoute lang="hu" />} />
+      {NON_DEFAULT_LANGUAGES.flatMap((lang) => {
+        const path = LANGUAGE_PATHS[lang]
+        return [
+          <Route key={`${lang}-nested`} path={`${path}/*`} element={<LanguageRoute lang={lang} />} />,
+          <Route key={`${lang}-root`} path={path} element={<LanguageRoute lang={lang} />} />
+        ]
+      })}
 
       {/* English route (default) */}
       <Route path="/" element={<LanguageRoute lang="en" />} />
 
       {/* 404 Not Found for any unknown paths */}
-      <Route path="*" element={<NotFound />} />
+      <Route path="*" element={
+        <Suspense fallback={null}>
+          <NotFound />
+        </Suspense>
+      } />
     </Routes>
   )
 }
