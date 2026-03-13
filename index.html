@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" dir="ltr">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/x-icon" href="/favicon/favicon.ico" />
@@ -11,13 +11,13 @@
 
     <!-- Primary Meta Tags -->
     <title>SSH Key Generator Online - Free Secure Key Generation</title>
-    <meta name="title" content="SSH Key Generator Online - Free Secure Key Generation" />
-    <meta name="description" content="Generate SSH keys securely in your browser. Support Ed25519, RSA. Works with GitHub, GitLab, Bitbucket. 100% client-side, no data sent to servers." />
+    <meta id="meta-title" name="title" content="SSH Key Generator Online - Free Secure Key Generation" />
+    <meta id="meta-description" name="description" content="Generate SSH keys securely in your browser. Support Ed25519, RSA. Works with GitHub, GitLab, Bitbucket. 100% client-side, no data sent to servers." />
     <meta name="author" content="SSH Key Generator" />
-    <meta name="robots" content="index, follow" />
+    <meta id="meta-robots" name="robots" content="index, follow" />
 
     <!-- Canonical URL -->
-    <link rel="canonical" href="https://sshkeygenerator.com/" />
+    <link id="link-canonical" rel="canonical" href="https://sshkeygenerator.com/" />
 
     <!-- Language alternates -->
     <link rel="alternate" hreflang="en" href="https://sshkeygenerator.com/" />
@@ -41,21 +41,32 @@
     <link rel="alternate" hreflang="vi" href="https://sshkeygenerator.com/vi/" />
     <link rel="alternate" hreflang="tr" href="https://sshkeygenerator.com/tr/" />
     <link rel="alternate" hreflang="id" href="https://sshkeygenerator.com/id/" />
+    <link rel="alternate" hreflang="fi" href="https://sshkeygenerator.com/fi/" />
+    <link rel="alternate" hreflang="uk" href="https://sshkeygenerator.com/uk/" />
+    <link rel="alternate" hreflang="ar" href="https://sshkeygenerator.com/ar/" />
+    <link rel="alternate" hreflang="th" href="https://sshkeygenerator.com/th/" />
+    <link rel="alternate" hreflang="ro" href="https://sshkeygenerator.com/ro/" />
+    <link rel="alternate" hreflang="cs" href="https://sshkeygenerator.com/cs/" />
+    <link rel="alternate" hreflang="bn" href="https://sshkeygenerator.com/bn/" />
+    <link rel="alternate" hreflang="el" href="https://sshkeygenerator.com/el/" />
+    <link rel="alternate" hreflang="hu" href="https://sshkeygenerator.com/hu/" />
     <link rel="alternate" hreflang="x-default" href="https://sshkeygenerator.com/" />
 
     <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://sshkeygenerator.com/" />
-    <meta property="og:title" content="SSH Key Generator Online - Free Secure Key Generation" />
-    <meta property="og:description" content="Generate SSH keys securely in your browser. Support Ed25519, RSA. Works with GitHub, GitLab, Bitbucket. 100% client-side, no data sent to servers." />
-    <meta property="og:image" content="https://sshkeygenerator.com/og.webp" />
+    <meta id="meta-og-type" property="og:type" content="website" />
+    <meta id="meta-og-url" property="og:url" content="https://sshkeygenerator.com/" />
+    <meta id="meta-og-title" property="og:title" content="SSH Key Generator Online - Free Secure Key Generation" />
+    <meta id="meta-og-description" property="og:description" content="Generate SSH keys securely in your browser. Support Ed25519, RSA. Works with GitHub, GitLab, Bitbucket. 100% client-side, no data sent to servers." />
+    <meta id="meta-og-image" property="og:image" content="https://sshkeygenerator.com/og.webp" />
+    <meta id="meta-og-site-name" property="og:site_name" content="SSH Key Generator" />
+    <meta id="meta-og-locale" property="og:locale" content="en_US" />
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://sshkeygenerator.com/" />
-    <meta property="twitter:title" content="SSH Key Generator Online - Free Secure Key Generation" />
-    <meta property="twitter:description" content="Generate SSH keys securely in your browser. Support Ed25519, RSA. Works with GitHub, GitLab, Bitbucket. 100% client-side, no data sent to servers." />
-    <meta property="twitter:image" content="https://sshkeygenerator.com/og.webp" />
+    <meta id="meta-twitter-url" property="twitter:url" content="https://sshkeygenerator.com/" />
+    <meta id="meta-twitter-title" property="twitter:title" content="SSH Key Generator Online - Free Secure Key Generation" />
+    <meta id="meta-twitter-description" property="twitter:description" content="Generate SSH keys securely in your browser. Support Ed25519, RSA. Works with GitHub, GitLab, Bitbucket. 100% client-side, no data sent to servers." />
+    <meta id="meta-twitter-image" property="twitter:image" content="https://sshkeygenerator.com/og.webp" />
 
     <!-- Theme Color -->
     <meta name="theme-color" content="#0F172A" />
@@ -142,15 +153,36 @@
     <meta name="format-detection" content="telephone=no" />
 
     <!-- Schema.org structured data - SoftwareApplication -->
-    <script type="application/ld+json">
+    <script id="structured-data-website" type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "@id": "https://sshkeygenerator.com#website",
+        "url": "https://sshkeygenerator.com/",
+        "name": "SSH Key Generator",
+        "inLanguage": "en",
+        "publisher": {
+          "@id": "https://sshkeygenerator.com#organization"
+        }
+      }
+    </script>
+
+    <!-- Schema.org structured data - SoftwareApplication -->
+    <script id="structured-data-page" type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "SoftwareApplication",
+        "@id": "https://sshkeygenerator.com/#software-application",
         "name": "SSH Key Generator",
+        "alternateName": "SSH Key Generator Online - Free Secure Key Generation",
         "description": "Generate SSH keys securely in your browser. Support Ed25519, RSA. 100% client-side.",
-        "url": "https://sshkeygenerator.com",
+        "url": "https://sshkeygenerator.com/",
+        "image": "https://sshkeygenerator.com/og.webp",
         "applicationCategory": "DeveloperApplication",
         "operatingSystem": "Web Browser",
+        "browserRequirements": "Requires a modern browser with Web Crypto API support.",
+        "inLanguage": "en",
+        "isAccessibleForFree": true,
         "offers": {
           "@type": "Offer",
           "price": "0",
@@ -167,17 +199,19 @@
         "screenshot": "https://sshkeygenerator.com/og.webp",
         "softwareVersion": "1.0.0",
         "author": {
-          "@type": "Organization",
-          "name": "SSH Key Generator"
+          "@id": "https://sshkeygenerator.com#organization"
         }
       }
     </script>
 
     <!-- Schema.org - FAQPage for Rich Results -->
-    <script type="application/ld+json">
+    <script id="structured-data-faq" type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "FAQPage",
+        "@id": "https://sshkeygenerator.com/#faq",
+        "url": "https://sshkeygenerator.com/",
+        "inLanguage": "en",
         "mainEntity": [
           {
             "@type": "Question",
@@ -253,10 +287,26 @@
           },
           {
             "@type": "Question",
+            "name": "What is the best SSH key generator online?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "This SSH key generator is one of the best free online options because it runs 100% in your browser, supports modern Ed25519 and RSA algorithms, works offline as a PWA, and never sends your private keys to any server."
+            }
+          },
+          {
+            "@type": "Question",
             "name": "What is the authorized_keys file?",
             "acceptedAnswer": {
               "@type": "Answer",
               "text": "The authorized_keys file (located at ~/.ssh/authorized_keys on Linux/macOS servers) contains a list of public keys that are allowed to connect to that account. Each line is one public key. Add your public key to this file to enable passwordless SSH login."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What permissions should my SSH private key have?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Your SSH private key should have restricted permissions. On Linux/macOS, use 'chmod 600 ~/.ssh/id_ed25519' (owner read/write) or 'chmod 400' (owner read-only). SSH will refuse to use a key with permissive permissions. The .ssh directory should be 700."
             }
           }
         ]
@@ -264,14 +314,16 @@
     </script>
 
     <!-- Schema.org - HowTo for Rich Results -->
-    <script type="application/ld+json">
+    <script id="structured-data-howto" type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "HowTo",
+        "@id": "https://sshkeygenerator.com/#how-to",
         "name": "How to Generate SSH Keys Online",
         "description": "Generate secure SSH keys in your browser using this free, client-side SSH key generator that supports Ed25519 and RSA algorithms.",
         "image": "https://sshkeygenerator.com/og.webp",
         "totalTime": "PT1M",
+        "inLanguage": "en",
         "tool": [
           {
             "@type": "HowToTool",
@@ -284,45 +336,46 @@
             "position": 1,
             "name": "Select Algorithm",
             "text": "Choose your preferred SSH key algorithm. Ed25519 is recommended for modern systems. RSA (4096-bit) is available for legacy compatibility.",
-            "url": "https://sshkeygenerator.com/#step1"
+            "url": "https://sshkeygenerator.com/#how-to-step-1"
           },
           {
             "@type": "HowToStep",
             "position": 2,
             "name": "Add Comment",
             "text": "Enter an optional comment to identify your key, typically your email address (e.g., user@example.com). This helps identify the key on servers.",
-            "url": "https://sshkeygenerator.com/#step2"
+            "url": "https://sshkeygenerator.com/#how-to-step-2"
           },
           {
             "@type": "HowToStep",
             "position": 3,
             "name": "Generate Keys",
             "text": "Click the Generate button. Your SSH key pair will be created instantly in your browser. No data is sent to any server.",
-            "url": "https://sshkeygenerator.com/#step3"
+            "url": "https://sshkeygenerator.com/#how-to-step-3"
           },
           {
             "@type": "HowToStep",
             "position": 4,
             "name": "Save Your Keys",
             "text": "Download both keys: the public key (.pub) to add to servers, and the private key to keep secure on your device. Never share your private key.",
-            "url": "https://sshkeygenerator.com/#step4"
+            "url": "https://sshkeygenerator.com/#how-to-step-4"
           },
           {
             "@type": "HowToStep",
             "position": 5,
             "name": "Add to Server",
             "text": "Copy your public key and add it to the authorized_keys file on your server, or add it to your GitHub/GitLab/Bitbucket account settings.",
-            "url": "https://sshkeygenerator.com/#step5"
+            "url": "https://sshkeygenerator.com/#how-to-step-5"
           }
         ]
       }
     </script>
 
     <!-- Schema.org - Organization -->
-    <script type="application/ld+json">
+    <script id="structured-data-organization" type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "Organization",
+        "@id": "https://sshkeygenerator.com#organization",
         "name": "SSH Key Generator",
         "url": "https://sshkeygenerator.com",
         "logo": "https://sshkeygenerator.com/favicon/android-chrome-512x512.png",

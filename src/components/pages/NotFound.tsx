@@ -1,15 +1,22 @@
+import { useEffect } from 'react'
 import { FileQuestion, Home } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { Button } from '@/components/ui/button'
 import { useTranslation } from '@/i18n'
 import { useLanguageStore, getLanguageBasePath } from '@/i18n/languageStore'
+import { buildNotFoundPageMetadata, syncPageMetadata } from '@/lib/seo'
 
 export function NotFound() {
   const { t } = useTranslation()
   const { language } = useLanguageStore()
+  const location = useLocation()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    syncPageMetadata(language, buildNotFoundPageMetadata(language, location.pathname, t))
+  }, [language, location.pathname, t])
 
   const handleBackHome = () => {
     const basePath = getLanguageBasePath(language)

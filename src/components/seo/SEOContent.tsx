@@ -7,9 +7,9 @@ export function SEOContent() {
   const { t } = useTranslation()
 
   return (
-    <section className="mt-16 space-y-10">
+    <section id="ssh-key-generator-guide" className="mt-16 space-y-10">
       {/* What is an SSH Key */}
-      <div className="space-y-3">
+      <div id="what-is-ssh-key-generator" className="space-y-3">
         <h2 className="text-xl font-bold">{t('seo.whatIs.title')}</h2>
         <p className="text-sm text-muted-foreground leading-relaxed">
           {t('seo.whatIs.desc')}
@@ -17,7 +17,7 @@ export function SEOContent() {
       </div>
 
       {/* Why Use This SSH Key Generator */}
-      <div className="space-y-4">
+      <div id="why-use-this-ssh-key-generator" className="space-y-4">
         <h2 className="text-xl font-bold">{t('seo.whyUse.title')}</h2>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <Card className="bg-card/50">
@@ -71,26 +71,26 @@ export function SEOContent() {
       </div>
 
       {/* How to Generate */}
-      <div className="space-y-3">
+      <div id="how-to-generate-ssh-key" className="space-y-3">
         <h2 className="text-xl font-bold">{t('seo.howTo.title')}</h2>
         <ol className="space-y-2 text-sm text-muted-foreground">
-          <li className="flex gap-3">
+          <li id="how-to-step-1" className="flex gap-3">
             <span className="flex-shrink-0 w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-semibold">1</span>
             <span>{t('seo.howTo.step1')}</span>
           </li>
-          <li className="flex gap-3">
+          <li id="how-to-step-2" className="flex gap-3">
             <span className="flex-shrink-0 w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-semibold">2</span>
             <span>{t('seo.howTo.step2')}</span>
           </li>
-          <li className="flex gap-3">
+          <li id="how-to-step-3" className="flex gap-3">
             <span className="flex-shrink-0 w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-semibold">3</span>
             <span>{t('seo.howTo.step3')}</span>
           </li>
-          <li className="flex gap-3">
+          <li id="how-to-step-4" className="flex gap-3">
             <span className="flex-shrink-0 w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-semibold">4</span>
             <span>{t('seo.howTo.step4')}</span>
           </li>
-          <li className="flex gap-3">
+          <li id="how-to-step-5" className="flex gap-3">
             <span className="flex-shrink-0 w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-semibold">5</span>
             <span>{t('seo.howTo.step5')}</span>
           </li>
@@ -98,7 +98,7 @@ export function SEOContent() {
       </div>
 
       {/* Ed25519 vs RSA Comparison */}
-      <div className="space-y-3">
+      <div id="ed25519-vs-rsa" className="space-y-3">
         <h2 className="text-xl font-bold">{t('seo.comparison.title')}</h2>
         <p className="text-sm text-muted-foreground">{t('seo.comparison.intro')}</p>
         <div className="overflow-x-auto">
@@ -162,7 +162,7 @@ export function SEOContent() {
       </div>
 
       {/* Common Use Cases */}
-      <div className="space-y-4">
+      <div id="ssh-key-use-cases" className="space-y-4">
         <h2 className="text-xl font-bold">{t('seo.useCases.title')}</h2>
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="flex gap-3 p-3 rounded-lg bg-card/50 border border-border">

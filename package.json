@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "seo:sync": "node scripts/generate-seo-assets.mjs",
+    "build": "pnpm seo:sync && tsc -b && vite build && node scripts/generate-seo-assets.mjs --dist",
     "lint": "eslint .",
     "preview": "vite preview",
     "deploy": "pnpm build && wrangler pages deploy dist --project-name=ssh-key-generator"

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, lazy, Suspense } from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { Key, Terminal, Settings, BookOpen } from 'lucide-react'
 import { Toaster } from 'sonner'
@@ -8,7 +8,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent } from '@/components/ui/card'
 import { KeyGeneratorForm } from '@/components/key-generator/KeyGeneratorForm'
 import { useTranslation } from '@/i18n'
-import { useLanguageStore, syncLanguageFromPath, type Language } from '@/i18n/languageStore'
+import {
+  DEFAULT_LANGUAGE,
+  NON_DEFAULT_LANGUAGE_CONFIG,
+  getLanguagePathname,
+  useLanguageStore,
+  syncLanguageFromPath,
+  type Language,
+} from '@/i18n'
+import { buildHomePageMetadata, syncPageMetadata } from '@/lib/seo'
 import { useThemeStore } from '@/store/themeStore'
 import type { KeyPair } from '@/types/keys'
 
@@ -42,41 +50,6 @@ const NotFound = lazy(async () => {
   return { default: module.NotFound }
 })
 
-const LANGUAGE_PATHS: Record<Language, string> = {
-  en: '/',
-  zh: '/zh-Hans',
-  'zh-Hant': '/zh-Hant',
-  ja: '/ja',
-  ko: '/ko',
-  es: '/es',
-  pt: '/pt',
-  fr: '/fr',
-  de: '/de',
-  ru: '/ru',
-  it: '/it',
-  nl: '/nl',
-  pl: '/pl',
-  sv: '/sv',
-  he: '/he',
-  da: '/da',
-  nb: '/nb',
-  hi: '/hi',
-  vi: '/vi',
-  tr: '/tr',
-  id: '/id',
-  fi: '/fi',
-  uk: '/uk',
-  ar: '/ar',
-  th: '/th',
-  ro: '/ro',
-  cs: '/cs',
-  bn: '/bn',
-  el: '/el',
-  hu: '/hu'
-}
-
-const NON_DEFAULT_LANGUAGES = (Object.keys(LANGUAGE_PATHS) as Language[]).filter((lang) => lang !== 'en')
-
 function TabContentFallback() {
   return (
     <div className="min-h-[220px] flex items-center justify-center text-sm text-muted-foreground">
@@ -87,43 +60,13 @@ function TabContentFallback() {
 
 function MainContent() {
   const [generatedKeyPair, setGeneratedKeyPair] = useState<KeyPair | null>(null)
-  const [shouldRenderSeoContent, setShouldRenderSeoContent] = useState(false)
-  const seoSentinelRef = useRef<HTMLDivElement | null>(null)
-  const { t } = useTranslation()
+  const { t, language } = useTranslation()
   const { resolvedTheme } = useThemeStore()
+  const location = useLocation()
 
   useEffect(() => {
-    if (shouldRenderSeoContent) return
-
-    const sentinel = seoSentinelRef.current
-    if (!sentinel || typeof IntersectionObserver === 'undefined') {
-      const frame = window.requestAnimationFrame(() => {
-        setShouldRenderSeoContent(true)
-      })
-      return () => window.cancelAnimationFrame(frame)
-    }
-
-    const observer = new IntersectionObserver((entries) => {
-      if (entries.some((entry) => entry.isIntersecting)) {
-        setShouldRenderSeoContent(true)
-        observer.disconnect()
-      }
-    }, { rootMargin: '240px 0px' })
-
-    observer.observe(sentinel)
-
-    return () => observer.disconnect()
-  }, [shouldRenderSeoContent])
-
-  useEffect(() => {
-    if (shouldRenderSeoContent) return
-
-    const timer = window.setTimeout(() => {
-      setShouldRenderSeoContent(true)
-    }, 5000)
-
-    return () => window.clearTimeout(timer)
-  }, [shouldRenderSeoContent])
+    syncPageMetadata(language, buildHomePageMetadata(language, t))
+  }, [language, location.pathname, t])
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -218,16 +161,9 @@ function MainContent() {
           </CardContent>
         </Card>
 
-        {/* SEO Content Section - load after first viewport for faster initial render */}
-        <div ref={seoSentinelRef}>
-          {shouldRenderSeoContent ? (
-            <Suspense fallback={<div className="mt-16 h-24" />}>
-              <SEOContent />
-            </Suspense>
-          ) : (
-            <div className="mt-16 h-24" aria-hidden="true" />
-          )}
-        </div>
+        <Suspense fallback={<div className="mt-16 h-24" />}>
+          <SEOContent />
+        </Suspense>
       </main>
 
       <Footer />
@@ -236,24 +172,12 @@ function MainContent() {
   )
 }
 
-// Update canonical URL based on current language
-function updateCanonical(lang: Language) {
-  const canonical = document.querySelector('link[rel="canonical"]')
-  const baseUrl = 'https://sshkeygenerator.com'
-
-  if (canonical) {
-    const path = LANGUAGE_PATHS[lang]
-    canonical.setAttribute('href', `${baseUrl}${path === '/' ? '/' : `${path}/`}`)
-  }
-}
-
 // Language route wrapper that syncs language from URL
 function LanguageRoute({ lang }: { lang: Language }) {
   const { setLanguage } = useLanguageStore()
 
   useEffect(() => {
     setLanguage(lang)
-    updateCanonical(lang)
   }, [lang, setLanguage])
 
   return <MainContent />
@@ -269,16 +193,24 @@ function App() {
 
   return (
     <Routes>
-      {NON_DEFAULT_LANGUAGES.flatMap((lang) => {
-        const path = LANGUAGE_PATHS[lang]
+      {NON_DEFAULT_LANGUAGE_CONFIG.flatMap((language) => {
+        const path = getLanguagePathname(language.code).replace(/\/$/, '')
         return [
-          <Route key={`${lang}-nested`} path={`${path}/*`} element={<LanguageRoute lang={lang} />} />,
-          <Route key={`${lang}-root`} path={path} element={<LanguageRoute lang={lang} />} />
+          <Route
+            key={`${language.code}-nested`}
+            path={`${path}/*`}
+            element={<LanguageRoute lang={language.code} />}
+          />,
+          <Route
+            key={`${language.code}-root`}
+            path={path}
+            element={<LanguageRoute lang={language.code} />}
+          />
         ]
       })}
 
       {/* English route (default) */}
-      <Route path="/" element={<LanguageRoute lang="en" />} />
+      <Route path="/" element={<LanguageRoute lang={DEFAULT_LANGUAGE} />} />
 
       {/* 404 Not Found for any unknown paths */}
       <Route path="*" element={

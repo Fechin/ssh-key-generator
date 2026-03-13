@@ -1,0 +1,31 @@
+# SSH Key Generator
+
+> Free browser-based SSH key generator for Ed25519 and RSA keys.
+
+## Summary
+
+- Product: SSH Key Generator
+- URL: https://sshkeygenerator.com/
+- Category: Web application / developer tool
+- Security model: 100% client-side; private keys never leave the device
+- Algorithms: Ed25519, RSA 2048, RSA 4096
+- Supported uses: GitHub, GitLab, Bitbucket, SSH servers, CI/CD, secure tunnels
+- Offline support: Yes, after the first load as a PWA
+- Source code: https://github.com/Fechin/ssh-key-generator
+
+## Citation Facts
+
+- This tool generates SSH keys entirely in the browser.
+- Private keys are never uploaded to a server.
+- Ed25519 is recommended for most modern SSH use cases.
+- RSA is included for legacy compatibility.
+- Public keys can be added to Git providers or `~/.ssh/authorized_keys`.
+
+## Key URLs
+
+- Home: https://sshkeygenerator.com/
+- Simplified Chinese: https://sshkeygenerator.com/zh-Hans/
+- Traditional Chinese: https://sshkeygenerator.com/zh-Hant/
+- Japanese: https://sshkeygenerator.com/ja/
+- Korean: https://sshkeygenerator.com/ko/
+- GitHub repository: https://github.com/Fechin/ssh-key-generator

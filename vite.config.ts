@@ -1,8 +1,32 @@
+import fs from 'node:fs'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
 import path from 'path'
+
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+const languageConfig = JSON.parse(
+  fs.readFileSync(path.resolve(__dirname, 'src/i18n/languageConfig.json'), 'utf8'),
+) as {
+  languages: Array<{ basePath: string }>
+}
+
+const localeNavigationDenylist = [
+  new RegExp(
+    `^/(?:${languageConfig.languages
+      .filter(({ basePath }) => basePath !== '')
+      .map(({ basePath }) => escapeRegExp(basePath.slice(1)))
+      .join('|')})(?:/.*)?$`,
+  ),
+  /^\/llms\.txt$/,
+  /^\/\.well-known\/llms\.txt$/,
+  /^\/robots\.txt$/,
+  /^\/sitemap\.xml$/,
+]
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -41,6 +65,7 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        navigateFallbackDenylist: localeNavigationDenylist,
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,

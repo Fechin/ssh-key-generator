@@ -1,4 +1,29 @@
 User-agent: *
 Allow: /
 
+# Explicitly permit major AI and search crawlers.
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
 Sitemap: https://sshkeygenerator.com/sitemap.xml
