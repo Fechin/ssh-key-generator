@@ -1,0 +1,283 @@
+# What Is SSH? The Complete Guide to Secure Shell
+
+SSH, which stands for **Secure Shell**, is a cryptographic network protocol that allows you to securely access and manage remote computers over an unsecured network. Whether you are logging into a Linux server, pushing code to GitHub, or transferring files between machines, SSH is almost certainly the protocol doing the work behind the scenes. This guide explains everything you need to know about SSH: what it is, how it works, and why it has become the universal standard for secure remote access.
+
+## What Does SSH Stand For?
+
+**SSH stands for Secure Shell**. The name describes exactly what the protocol does — it provides a secure, encrypted shell session to a remote machine. Before SSH existed, administrators used tools like Telnet and rsh (remote shell) to manage remote servers. Those protocols transmitted everything in plain text, including usernames and passwords, making them trivially easy to intercept on any shared network.
+
+SSH was created by Finnish computer scientist **Tatu Ylönen** in 1995, directly motivated by a password-sniffing attack he witnessed on his university network. He released SSH-1 as free software, and it was rapidly adopted across the internet. The protocol was later standardized by the IETF as SSH-2 (RFC 4251–4254), which introduced stronger cryptography and fixed several security weaknesses in the original design.
+
+Today, when people say "SSH," they almost always mean SSH-2. The most widely used implementation is **OpenSSH**, an open-source project maintained by the OpenBSD team and bundled with virtually every Linux distribution and macOS installation.
+
+The **meaning of SSH** in practice extends beyond just a login tool. It is a full protocol suite that underpins:
+- Secure remote terminal access
+- Encrypted file transfers (SFTP and SCP)
+- Git authentication (GitHub, GitLab, Bitbucket)
+- Secure port forwarding and tunneling
+- Automated deployment pipelines
+
+## How SSH Works
+
+The **secure shell protocol** operates on a layered architecture that handles encryption, authentication, and channel multiplexing separately. Understanding these layers helps demystify why SSH is trusted for sensitive operations.
+
+### The Three Protocol Layers
+
+**1. Transport Layer (RFC 4253)**
+
+When you initiate an SSH connection, the client and server first perform a handshake to negotiate encryption algorithms and establish a shared secret. This uses a key exchange algorithm — modern SSH defaults to Curve25519-based key exchange. After the handshake, all subsequent communication is encrypted. The transport layer also provides data integrity via message authentication codes (MACs), ensuring that data cannot be tampered with in transit.
+
+**2. User Authentication Layer (RFC 4252)**
+
+Once an encrypted channel is established, the server asks the client to authenticate. SSH supports multiple authentication methods:
+
+- **Public key authentication** — The client proves possession of a private key without ever sending it over the wire. This is the most secure and most common method.
+- **Password authentication** — The user's password is sent over the encrypted channel. More convenient but vulnerable to brute force attacks.
+- **Keyboard-interactive** — A challenge/response mechanism, often used for multi-factor authentication.
+- **GSSAPI/Kerberos** — Used in enterprise environments with centralized identity management.
+
+**3. Connection Layer (RFC 4254)**
+
+After authentication, the connection layer multiplexes the single encrypted connection into multiple logical channels. This is what allows you to have an interactive shell, run remote commands, forward ports, and transfer files all through a single TCP connection.
+
+### The Key Exchange in Detail
+
+When you type `ssh user@example.com`, here is what happens in the first few milliseconds:
+
+1. The client connects to TCP port 22 on the server.
+2. Both sides exchange protocol version strings.
+3. Both sides send lists of supported algorithms (key exchange, ciphers, MACs, compression).
+4. They perform a Diffie-Hellman or ECDH key exchange to derive a shared session key — this is why even if someone records the encrypted traffic, they cannot decrypt it later.
+5. The server sends its **host key** (public key), which the client verifies against its `~/.ssh/known_hosts` file.
+6. Authentication proceeds as described above.
+7. The session begins.
+
+## SSH vs Telnet: Why SSH Won
+
+Before SSH, **Telnet** was the standard protocol for remote terminal access. Telnet is simple and still works, but it has one fatal flaw: everything is transmitted in plain text. Your username, your password, every command you type, and every piece of output — all visible to anyone who can intercept the network traffic.
+
+In the 1990s, when the internet backbone was trusted academia and research networks, this was not considered a serious problem. As the internet became commercial and adversarial, tools like Dsniff and Ettercap made it trivial to capture Telnet credentials on local area networks.
+
+SSH solved this by encrypting everything. Here is a direct comparison:
+
+| Feature | Telnet | SSH |
+|---|---|---|
+| Encryption | None | Strong (AES, ChaCha20) |
+| Authentication | Plain text password | Public key + encrypted password |
+| Data integrity | None | HMAC verification |
+| Port | 23 | 22 |
+| Still recommended | No | Yes |
+
+rsh (remote shell) and rlogin had similar problems. They also relied on IP-based trust, which is trivially spoofed. SSH replaced all of these protocols and has remained the unchallenged standard for over 25 years.
+
+## What Is an SSH Key?
+
+SSH supports two primary authentication methods: passwords and **SSH keys**. SSH keys are cryptographic key pairs — a **public key** and a **private key** — based on asymmetric cryptography.
+
+The **private key** stays on your local machine, protected with an optional passphrase. The **public key** is placed on any server you want to access, in a file called `~/.ssh/authorized_keys`. When you connect, the server issues a cryptographic challenge that only the holder of the corresponding private key can answer. No password is sent over the network.
+
+This approach has several advantages:
+- **Immune to brute force** — there is nothing to guess. A 256-bit Ed25519 key has 2²⁵⁶ possible values.
+- **No password to steal** — even if someone intercepts the handshake, they gain nothing useful.
+- **Automatable** — scripts and CI/CD pipelines can authenticate without human interaction.
+- **Revocable** — removing a public key from `authorized_keys` immediately revokes access.
+
+The most modern and recommended key type is **Ed25519**, which uses elliptic curve cryptography over the Edwards curve. RSA keys are also widely supported, though you should use at least 4096 bits.
+
+For a deep dive into key pairs, see our guide on <a href="/what-is-an-ssh-key">what is an SSH key</a>.
+
+## Common SSH Use Cases
+
+SSH is used in a remarkably wide range of scenarios. Here are the most important ones.
+
+### Remote Server Administration
+
+The most fundamental use case. System administrators log into Linux and Unix servers to install software, edit configuration files, manage services, and diagnose problems — all through an SSH terminal session.
+
+```bash
+ssh user@192.168.1.100
+ssh admin@myserver.example.com
+ssh -p 2222 deploy@staging.example.com
+```
+
+### File Transfer with SFTP and SCP
+
+SSH provides two file transfer protocols built on the same encrypted channel:
+
+**SCP (Secure Copy Protocol)** is a simple command-line tool for copying files:
+
+```bash
+# Copy local file to remote server
+scp report.pdf user@server:/home/user/documents/
+
+# Copy remote file to local machine
+scp user@server:/var/log/app.log ./local-copy.log
+
+# Copy entire directory recursively
+scp -r ./project/ user@server:/var/www/
+```
+
+**SFTP (SSH File Transfer Protocol)** provides an interactive FTP-like interface with a richer feature set than SCP, including resumable transfers and directory listings.
+
+### Git Authentication
+
+When you add an SSH key to GitHub, GitLab, or Bitbucket, every `git clone`, `git push`, and `git pull` over SSH is authenticated using your private key. This eliminates the need to enter a username and password on every Git operation and is the recommended authentication method for developers.
+
+```bash
+# Clone a repository using SSH
+git clone git@github.com:username/repository.git
+
+# Verify your GitHub SSH connection
+ssh -T git@github.com
+```
+
+### Automated Deployment and CI/CD
+
+Deployment scripts and CI/CD systems like GitHub Actions, GitLab CI, and Jenkins use SSH keys to deploy code to production servers without human intervention. The private key is stored as a secret in the CI system, and the corresponding public key is added to the server's `authorized_keys` file.
+
+### Database and Application Port Forwarding
+
+SSH tunneling can securely expose remote services to your local machine. For example, to access a remote MySQL database that is not exposed to the internet:
+
+```bash
+ssh -L 3307:localhost:3306 user@dbserver.example.com -N
+```
+
+This creates a local tunnel: connecting to port 3307 on your machine transparently forwards traffic to port 3306 on the remote server, encrypted in the SSH tunnel.
+
+## SSH Port and Configuration Options
+
+### Default Port 22
+
+SSH listens on **TCP port 22** by default. This is an IANA-assigned well-known port that has been reserved for SSH since the protocol was created. When you run `ssh user@host` without specifying a port, the SSH client connects to port 22.
+
+Some administrators change the SSH port (e.g., to 2222 or 8022) as a minor security measure to reduce automated scanning noise in logs. This is called "security through obscurity" and is not a substitute for proper key-based authentication, but it can reduce log clutter.
+
+```bash
+# Connect to a non-standard SSH port
+ssh -p 2222 user@example.com
+```
+
+### The SSH Client Configuration File
+
+Rather than typing long command-line options every time, you can configure SSH connections in `~/.ssh/config`. This file lets you define aliases, set per-host options, and dramatically simplify your workflow.
+
+```
+Host myserver
+    HostName 203.0.113.10
+    User deploy
+    Port 2222
+    IdentityFile ~/.ssh/id_ed25519_prod
+
+Host bastion
+    HostName jump.example.com
+    User ec2-user
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host internal
+    HostName 10.0.1.50
+    User ubuntu
+    ProxyJump bastion
+```
+
+With this configuration, `ssh myserver` connects to the full hostname on the custom port using the specified key — no flags needed.
+
+For a complete reference on SSH command options and flags, see our <a href="/ssh-command">SSH command guide</a>.
+
+### Server-Side Configuration (sshd_config)
+
+The SSH server daemon (sshd) is configured via `/etc/ssh/sshd_config`. Key settings include:
+
+```
+# Disable password authentication — keys only
+PasswordAuthentication no
+
+# Disable root login
+PermitRootLogin no
+
+# Change the listening port
+Port 2222
+
+# Restrict to specific users
+AllowUsers deploy admin
+
+# Enable public key authentication
+PubkeyAuthentication yes
+```
+
+After editing, reload the daemon: `sudo systemctl reload sshd`
+
+## SSH Tunneling
+
+SSH tunneling (also called SSH port forwarding) allows you to route arbitrary TCP traffic through an encrypted SSH connection. It is one of SSH's most powerful and underused features.
+
+### Local Port Forwarding
+
+Local forwarding makes a remote service accessible on your local machine. The syntax is `-L local_port:remote_host:remote_port`.
+
+```bash
+# Access a remote PostgreSQL database locally
+ssh -L 5433:localhost:5432 user@dbserver -N
+
+# Access an internal web app through a jump server
+ssh -L 8080:internal-app.company.com:80 user@jump.company.com -N
+```
+
+The `-N` flag tells SSH not to execute a remote command — useful when you only want the tunnel.
+
+### Remote Port Forwarding
+
+Remote forwarding exposes a local service on the remote server. The syntax is `-R remote_port:local_host:local_port`.
+
+```bash
+# Expose your local web server to the remote machine
+ssh -R 9090:localhost:3000 user@server -N
+```
+
+This is useful for temporarily sharing a local development server with a colleague who has access to the remote host, or for giving a client temporary access to your work in progress.
+
+### Dynamic Port Forwarding (SOCKS Proxy)
+
+The `-D` flag creates a SOCKS proxy on your local machine, routing all SOCKS-compatible traffic through the SSH connection. This effectively uses the remote server as a VPN exit node.
+
+```bash
+# Create a SOCKS5 proxy on local port 1080
+ssh -D 1080 user@remote-server -N -f
+```
+
+Configure your browser or system to use `SOCKS5 proxy: 127.0.0.1:1080` and all web traffic will be routed through the remote server. This is often used to access geo-restricted content or to securely browse from an untrusted network.
+
+## Frequently Asked Questions
+
+### What does SSH stand for?
+
+SSH stands for **Secure Shell**. It is a cryptographic network protocol for operating network services securely over an unsecured network. The name refers to its primary use case: providing a secure interactive shell session on a remote computer.
+
+### Is SSH the same as SSL?
+
+No. SSH and SSL/TLS are both cryptographic protocols, but they serve different purposes. **SSL/TLS** (Secure Sockets Layer / Transport Layer Security) is used to secure web traffic (HTTPS), email, and other application protocols. **SSH** is specifically designed for secure remote shell access, file transfer, and tunneling. They use similar cryptographic primitives (public-key cryptography, symmetric encryption) but have different handshake mechanisms and use cases. SSH does not use SSL/TLS internally.
+
+### What port does SSH use?
+
+SSH uses **TCP port 22** by default. This is a well-known port assigned by IANA. You can configure the SSH server to listen on a different port using the `Port` directive in `/etc/ssh/sshd_config`, and connect to non-standard ports with `ssh -p PORT user@host`.
+
+### Can SSH be hacked?
+
+A properly configured SSH server with key-based authentication is extremely difficult to compromise. The cryptography — Ed25519 keys, AES-256 encryption, SHA-2 MACs — is considered quantum-resistant for key authentication and computationally infeasible to brute force. Real-world SSH compromises typically involve: stolen private key files, weak passphrases, misconfigured servers allowing password authentication with weak passwords, vulnerable software versions with unpatched CVEs, or social engineering rather than cryptographic attacks. Keep your server updated, disable password authentication, and protect your private key file.
+
+### What is the difference between SSH and HTTPS?
+
+Both SSH and HTTPS encrypt network traffic, but they are designed for different purposes. **HTTPS** secures web browsing — it uses TLS to encrypt HTTP requests and responses between browsers and web servers. **SSH** secures remote administrative access, file transfers, and tunneling. When you push code to GitHub, you can use either SSH (port 22, key-based auth) or HTTPS (port 443, token-based auth). SSH is generally preferred by developers because it does not require re-entering credentials. HTTPS is universally supported through firewalls that might block port 22.
+
+## Generate Your SSH Keys Now
+
+SSH key-based authentication is more secure and more convenient than passwords. If you have not already set up SSH keys, our free online generator creates Ed25519 or RSA key pairs instantly in your browser — no installation required, nothing sent to our servers.
+
+<a href="/">Generate your SSH key pair now →</a>
+
+---
+
+**Further reading:**
+- <a href="/what-is-an-ssh-key">What Is an SSH Key? Public Keys, Private Keys, and Key Pairs Explained</a>
+- <a href="/ssh-command">The SSH Command: Complete Reference with Examples</a>
+- <a href="/how-to-set-up-ssh">How to Set Up SSH: A Complete Step-by-Step Guide</a>

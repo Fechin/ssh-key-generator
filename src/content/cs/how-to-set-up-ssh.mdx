@@ -1,0 +1,563 @@
+# Jak nastavit SSH: Kompletní průvodce krok za krokem pro Linux, Mac a Windows
+
+Správné nastavení SSH trvá přibližně deset minut a přináší dividendy na roky dopředu. Jakmile je nakonfigurováno, můžete se přihlašovat na servery bez zadávání hesel, pushovat kód na GitHub bez zadávání přihlašovacích údajů při každé operaci a automatizovat nasazení s důvěrou. Tento průvodce provede celým procesem — od generování páru klíčů po řešení běžných chyb — pro Linux, macOS a Windows.
+
+Chcete-li nejprve pochopit základní technologii, přečtěte si naše průvodce o <a href="/cs/what-is-ssh">co je SSH</a> a <a href="/cs/what-is-an-ssh-key">co jsou SSH klíče</a>.
+
+## Předpoklady
+
+Před začátkem se ujistěte, že máte:
+
+**Pro přístup k serveru:**
+- Terminálovou aplikaci (Terminal na macOS/Linux, Windows Terminal nebo PowerShell na Windows)
+- Vzdálený server se systémem Linux/Unix s nainstalovaným SSH serverem (sshd)
+- Uživatelský účet na tomto serveru (nebo přístup root pro vytvoření účtu)
+- IP adresu nebo hostname serveru
+
+**Pro přístup k GitHub/GitLab:**
+- Účet na GitHub nebo GitLab
+- Terminál s dostupným příkazem `ssh`
+- Volitelně: lokálně nainstalovaný git
+
+**Požadavky na operační systém:**
+- **Linux**: SSH klient je předinstalován prakticky ve všech distribucích
+- **macOS**: SSH klient je zabudovaný, dostupný z Terminálu
+- **Windows 10 verze 1809+ / Windows 11**: OpenSSH klient je k dispozici jako volitelná funkce
+
+Na Linuxu nebo macOS nemusíte nic instalovat. Na Windows ověřte instalaci OpenSSH otevřením PowerShellu a spuštěním `ssh -V`. Pokud dostanete řetězec verze, jste připraveni. Pokud ne, viz Krok 4 pro pokyny k instalaci.
+
+## Krok 1: Vygenerujte si pár SSH klíčů
+
+Pár klíčů potřebujete předtím, než můžete dělat cokoli jiného. Pár klíčů sestává ze **soukromého klíče** (zůstává na vašem stroji) a **veřejného klíče** (jde na servery nebo služby jako GitHub).
+
+### Možnost A: Použijte online generátor
+
+Pokud preferujete grafické rozhraní, náš <a href="/">bezplatný online generátor SSH klíčů</a> vytváří páry klíčů Ed25519 nebo RSA ve vašem prohlížeči. Soukromý klíč je generován lokálně pomocí Web Crypto API — nic není odesíláno na naše servery. Stáhněte oba soubory a uložte je do `~/.ssh/` (Linux/macOS) nebo `C:\Users\YourName\.ssh\` (Windows).
+
+### Možnost B: Použijte ssh-keygen z příkazové řádky
+
+Příkaz `ssh-keygen` je dostupný na Linuxu, macOS a Windows s OpenSSH:
+
+```bash
+# Generování páru Ed25519 klíčů (doporučeno)
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+**Co každý příznak znamená:**
+- `-t ed25519` — typ klíče (Ed25519 je moderní, rychlý a bezpečný)
+- `-C "komentář"` — popisek vložený do veřejného klíče, obvykle vaše e-mailová adresa
+
+Budete vyzváni k zadání:
+
+```
+Generating public/private ed25519 key pair.
+Enter file in which to save the key (/home/user/.ssh/id_ed25519):
+```
+
+Stiskněte **Enter** pro přijetí výchozího umístění. Pokud máte více klíčů, můžete je pojmenovat popisně (např. `/home/user/.ssh/id_ed25519_github`).
+
+```
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+```
+
+Zadejte silné heslo passphrase. Tím se šifruje soubor soukromého klíče na disku — pokud je váš stroj odcizen, klíč nelze bez passphrase použít. Můžete ho ponechat prázdné pro případy automatizace, kde lidská interakce není možná, ale pro osobní klíče vždy používejte passphrase.
+
+**Výstup:**
+
+```
+Your identification has been saved in /home/user/.ssh/id_ed25519
+Your public key has been saved in /home/user/.ssh/id_ed25519.pub
+The key fingerprint is:
+SHA256:abc123defghijk... your@email.com
+The key's randomart image is:
++--[ED25519 256]--+
+...
+```
+
+Jsou vytvořeny dva soubory:
+- `~/.ssh/id_ed25519` — váš **soukromý klíč** (nikdy ho nesdílejte)
+- `~/.ssh/id_ed25519.pub` — váš **veřejný klíč** (bezpečné ke sdílení)
+
+### Pro RSA (kompatibilita se staršími systémy)
+
+Pokud se potřebujete připojit k velmi starým systémům, které nepodporují Ed25519:
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "your@email.com"
+```
+
+Použijte minimálně 4096 bitů. RSA klíče menší než 4096 bitů již nejsou považovány za dostatečné zabezpečení.
+
+## Krok 2: Nastavení SSH na Linuxu
+
+Tato sekce popisuje kopírování veřejného klíče na linuxový server, abyste se mohli autentizovat bez hesla.
+
+### Metoda 1: ssh-copy-id (nejjednodušší)
+
+`ssh-copy-id` je nejjednodušší způsob instalace veřejného klíče na vzdálený server. Připojí se pomocí autentizace heslem, přidá veřejný klíč do `~/.ssh/authorized_keys` na serveru a nastaví správná oprávnění.
+
+```bash
+ssh-copy-id user@server.example.com
+
+# Explicitní zadání souboru klíče
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server.example.com
+
+# Připojení na nestandardní port
+ssh-copy-id -p 2222 user@server.example.com
+```
+
+Budete vyzváni k zadání hesla serveru naposledy. Poté se můžete připojit pomocí `ssh user@server.example.com` s vaším klíčem.
+
+### Metoda 2: Ruční kopírování
+
+Pokud `ssh-copy-id` není dostupné (běžné na některých BSD systémech nebo minimálních instalacích Linuxu):
+
+```bash
+# Zobrazte veřejný klíč a zkopírujte výstup
+cat ~/.ssh/id_ed25519.pub
+
+# Poté se přihlaste na server (s heslem) a spusťte:
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+echo "VLOZTE_SVUJ_VEREJNY_KLIC_ZDE" >> ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+```
+
+Nebo to vše proveďte jedním příkazem v pipeline:
+
+```bash
+cat ~/.ssh/id_ed25519.pub | ssh user@server.example.com \
+  "mkdir -p ~/.ssh && chmod 700 ~/.ssh && \
+   cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+```
+
+### Ověření instalace klíče
+
+```bash
+ssh user@server.example.com
+# Mělo by se připojit bez výzvy k zadání hesla (pouze passphrase, pokud jste ho nastavili)
+```
+
+### Konfigurace SSH serveru (sshd)
+
+Na vzdáleném serveru se konfigurace SSH démona nachází v `/etc/ssh/sshd_config`. Pro bezpečné nastavení:
+
+```bash
+sudo nano /etc/ssh/sshd_config
+```
+
+Doporučená nastavení:
+
+```
+# Povolit autentizaci veřejným klíčem
+PubkeyAuthentication yes
+
+# Zakázat autentizaci heslem (po potvrzení, že klíče fungují!)
+ PasswordAuthentication no
+
+# Zakázat přihlášení root přes SSH
+ PermitRootLogin no
+
+# Povolit pouze konkrétní uživatele
+AllowUsers alice bob deploy
+
+# Udržovat relace aktivní
+ClientAliveInterval 60
+ClientAliveCountMax 3
+```
+
+Po úpravě znovu načtěte SSH démona:
+
+```bash
+sudo systemctl reload sshd
+# Nebo na starších systémech:
+sudo service ssh reload
+```
+
+**Důležité**: Nezakazujte `PasswordAuthentication`, dokud nepotvrdíte, že autentizace klíčem funguje. Pokud se zablokujete, budete potřebovat přístup přes konzoli (nebo nouzový přístupový mechanismus vašeho poskytovatele hostingu) k obnově.
+
+### Nastavení ssh-agent na Linuxu
+
+Pokud má váš klíč passphrase, přidejte ho do `ssh-agent` na začátku relace, abyste ho nemuseli opakovaně zadávat:
+
+```bash
+# Spustit agenta (často automaticky spouštěn desktopovými prostředími)
+eval "$(ssh-agent -s)"
+
+# Přidat klíč (zadejte passphrase jednou)
+ssh-add ~/.ssh/id_ed25519
+
+# Ověřit načtené klíče
+ssh-add -l
+```
+
+Pro automatické spuštění `ssh-agent` a přidání klíče při přihlášení přidejte do `~/.bashrc` nebo `~/.zshrc`:
+
+```bash
+# Automatické spuštění ssh-agent
+if [ -z "$SSH_AUTH_SOCK" ]; then
+  eval "$(ssh-agent -s)"
+  ssh-add ~/.ssh/id_ed25519
+fi
+```
+
+## Krok 3: Nastavení SSH na macOS
+
+macOS obsahuje plnohodnotného OpenSSH klienta. Postup nastavení autentizace klíčem na vzdáleném serveru je totožný s Linuxem (viz Krok 2 výše). Doplňky specifické pro macOS zahrnují integraci s Klíčenkou.
+
+### Integrace s Klíčenkou
+
+macOS může uložit vaše passphrase do systémové Klíčenky, abyste ho nemuseli zadávat po prvním použití:
+
+```bash
+# Přidejte klíč do ssh-agent s integrací Klíčenky
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+
+# Pro starší verze macOS (před Monterey)
+ssh-add -K ~/.ssh/id_ed25519
+```
+
+Pro automatické načítání klíčů z Klíčenky přidejte do `~/.ssh/config`:
+
+```
+Host *
+    AddKeysToAgent yes
+    UseKeychain yes
+    IdentityFile ~/.ssh/id_ed25519
+```
+
+Poté je passphrase uloženo v Klíčence a načítáno automaticky — při dalších startech systému již nebudete vyzváni k jeho zadání.
+
+### Ověření verze SSH klienta
+
+```bash
+ssh -V
+# OpenSSH_9.x, LibreSSL x.x.x
+```
+
+macOS je dodáváno s relativně novým OpenSSH, ale ne vždy s nejnovějším. Pokud potřebujete novější funkce, nainstalujte přes Homebrew: `brew install openssh`.
+
+## Krok 4: Nastavení SSH na Windows
+
+Windows 10 (1809+) a Windows 11 obsahují OpenSSH. Zde je návod, jak ho zprovoznit.
+
+### Instalace OpenSSH klienta
+
+**Zkontrolujte, zda je již nainstalován:**
+
+```powershell
+ssh -V
+```
+
+**Instalace přes Nastavení:**
+1. Otevřete **Nastavení → Aplikace → Volitelné funkce**
+2. Vyhledejte **OpenSSH Client**
+3. Klikněte na **Instalovat**
+
+**Instalace přes PowerShell (jako správce):**
+
+```powershell
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+```
+
+### Generování klíčů na Windows
+
+Otevřete PowerShell a spusťte:
+
+```powershell
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+Klíče jsou uloženy do `C:\Users\YourUsername\.ssh\`.
+
+### Kopírování veřejného klíče na linuxový server
+
+Windows nezahrnuje `ssh-copy-id`, ale můžete to provést ručně z PowerShellu:
+
+```powershell
+# Zobrazte veřejný klíč
+Get-Content ~/.ssh/id_ed25519.pub
+
+# Zkopírujte ho na vzdálený server (budete vyzváni k zadání hesla serveru)
+$pubkey = Get-Content ~/.ssh/id_ed25519.pub -Raw
+ssh user@server.example.com "mkdir -p ~/.ssh && echo '$pubkey' >> ~/.ssh/authorized_keys && chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys"
+```
+
+Nebo použijte `Add-Content` pro přenos přes pipe:
+
+```powershell
+type $env:USERPROFILE\.ssh\id_ed25519.pub | ssh user@server.example.com "cat >> ~/.ssh/authorized_keys"
+```
+
+### Nastavení ssh-agent na Windows
+
+Chcete-li se vyhnout opakovanému zadávání passphrase, spusťte službu OpenSSH Authentication Agent:
+
+```powershell
+# Spuštění služby
+Start-Service ssh-agent
+
+# Nastavit automatické spuštění
+Set-Service -Name ssh-agent -StartupType Automatic
+
+# Přidání klíče
+ssh-add ~/.ssh/id_ed25519
+```
+
+### PuTTY jako alternativa
+
+Pokud preferujete grafického SSH klienta, PuTTY je bezplatná možnost pro Windows. Použijte **PuTTYgen** pro generování klíčů (uložte ve formátu `.ppk` pro PuTTY a exportujte ve formátu OpenSSH). Pro nová nastavení je však vestavěný OpenSSH klient jednodušší a interoperabilní se zbytkem ekosystému.
+
+## Jak nastavit SSH klíče pro GitHub a GitLab
+
+Autentizace SSH klíčem na GitHub a GitLab funguje podobně — nahrajete veřejný klíč na službu a při provádění Git operací používáte odpovídající soukromý klíč.
+
+### Nastavení SSH pro GitHub
+
+**1. Zkopírujte veřejný klíč:**
+
+```bash
+# Linux
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+
+# macOS
+cat ~/.ssh/id_ed25519.pub | pbcopy
+
+# Windows PowerShell
+Get-Content ~/.ssh/id_ed25519.pub | Set-Clipboard
+```
+
+Nebo ho jednoduše zobrazte a zkopírujte ručně:
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+**2. Přidejte na GitHub:**
+
+1. Přejděte na **github.com** a přihlaste se
+2. Klikněte na avatara → **Settings**
+3. V levém postranním panelu: **SSH and GPG keys**
+4. Klikněte na **New SSH key**
+5. Zadejte popisný **název** (např. „MacBook Pro" nebo „Pracovní PC")
+6. Nastavte **typ klíče** na **Authentication Key**
+7. Vložte veřejný klíč
+8. Klikněte na **Add SSH key**
+
+**3. Otestujte připojení:**
+
+```bash
+ssh -T git@github.com
+# Hi username! You've successfully authenticated, but GitHub does not provide shell access.
+```
+
+**4. Použijte SSH pro Git operace:**
+
+```bash
+# Klonování pomocí SSH místo HTTPS
+git clone git@github.com:username/repository.git
+
+# Pokud existující repozitář používá HTTPS, přepněte ho na SSH
+git remote set-url origin git@github.com:username/repository.git
+```
+
+### Nastavení SSH pro GitLab
+
+Postup je totožný:
+
+1. Přejděte na **gitlab.com** → Klikněte na avatara → **Preferences**
+2. V levém postranním panelu: **SSH Keys**
+3. Vložte veřejný klíč, zadejte název a volitelně nastavte datum expirace
+4. Klikněte na **Add key**
+
+Otestujte pomocí:
+
+```bash
+ssh -T git@gitlab.com
+# Welcome to GitLab, @username!
+```
+
+Pro self-hostované instance GitLab nahraďte `gitlab.com` hostname vaší instance.
+
+### Použití samostatného klíče pro GitHub a další služby
+
+Pokud chcete dedikovaný klíč pro GitHub (doporučeno pro hygienu klíčů), vygenerujte pojmenovaný klíč:
+
+```bash
+ssh-keygen -t ed25519 -C "github" -f ~/.ssh/id_ed25519_github
+```
+
+Poté přidejte blok `Host` do `~/.ssh/config`:
+
+```
+Host github.com
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519_github
+    AddKeysToAgent yes
+```
+
+Nyní `git clone git@github.com:...` automaticky používá klíč specifický pro GitHub.
+
+## Testování a odstraňování problémů SSH
+
+### Základní test konektivity
+
+```bash
+ssh -v user@server.example.com
+```
+
+Příznak `-v` (verbose) zobrazuje přesně, co se děje v každém kroku. Hledejte řádky jako:
+- `Offering public key: ~/.ssh/id_ed25519` — SSH zkouší váš klíč
+- `Server accepts key` — klíč je v `authorized_keys`
+- `Authenticated to server.example.com` — úspěch
+
+### Běžné chyby a jejich řešení
+
+**„Permission denied (publickey)"**
+
+Toto je nejčastější chyba. Příčiny a řešení:
+
+```bash
+# Zkontrolujte, zda je váš klíč načten v ssh-agent
+ssh-add -l
+
+# Pokud nejsou uvedeny žádné klíče, přidejte klíč
+ssh-add ~/.ssh/id_ed25519
+
+# Na vzdáleném serveru zkontrolujte authorized_keys
+cat ~/.ssh/authorized_keys
+# Ujistěte se, že váš veřejný klíč je tam
+
+# Zkontrolujte oprávnění na vzdáleném serveru
+ls -la ~/.ssh/
+# ~/.ssh musí být 700
+# authorized_keys musí být 600
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/authorized_keys
+
+# Zkontrolujte, zda server povoluje autentizaci veřejným klíčem
+sudo grep PubkeyAuthentication /etc/ssh/sshd_config
+# Musí být: PubkeyAuthentication yes
+```
+
+**„WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED"**
+
+Hostitelský klíč serveru se změnil, což SSH považuje za potenciální bezpečnostní problém. Pokud víte, že je to legitimní (server byl přestavěn, IP byla přeřazena), odeberte starý záznam:
+
+```bash
+# Odeberte konkrétní záznam hostu
+ssh-keygen -R server.example.com
+
+# Nebo ručně upravte known_hosts a odstraňte postižený řádek
+nano ~/.ssh/known_hosts
+```
+
+**„Bad permissions" nebo „Permissions too open"**
+
+SSH je přísné ohledně oprávnění souborů klíčů:
+
+```bash
+# Opravte oprávnění soukromého klíče
+chmod 600 ~/.ssh/id_ed25519
+
+# Opravte oprávnění veřejného klíče
+chmod 644 ~/.ssh/id_ed25519.pub
+
+# Opravte oprávnění adresáře .ssh
+chmod 700 ~/.ssh
+```
+
+Na Windows jsou oprávnění soukromých klíčů spravována jinak. Klikněte pravým tlačítkem na soubor klíče → Vlastnosti → Zabezpečení → Upřesnit → Zakázat dědičnost → Odeberte všechny záznamy kromě vašeho uživatelského účtu a udělte plné řízení pouze sobě.
+
+### Nastavení a použití ssh-agent
+
+Pokud jste opakovaně vyzýváni k zadání passphrase, `ssh-agent` neběží nebo váš klíč není přidán:
+
+```bash
+# Spusťte agenta
+eval "$(ssh-agent -s)"
+# Agent pid 12345
+
+# Přidejte klíč
+ssh-add ~/.ssh/id_ed25519
+# Enter passphrase for /home/user/.ssh/id_ed25519:
+# Identity added: /home/user/.ssh/id_ed25519
+
+# Ověřte
+ssh-add -l
+# 256 SHA256:abc123... your@email.com (ED25519)
+```
+
+### Předvyplnění known_hosts v automatizaci
+
+V CI/CD pipeline použijte `ssh-keyscan` k přidání otisku vzdáleného hostu před připojením:
+
+```bash
+ssh-keyscan -H server.example.com >> ~/.ssh/known_hosts
+ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+```
+
+Tím se zabrání interaktivním výzvám k otisku v automatizovaných skriptech.
+
+## Často kladené otázky
+
+### Jak opravím „Permission denied (publickey)"?
+
+Projděte tento kontrolní seznam: (1) Ověřte, že váš klíč je v SSH agentovi: `ssh-add -l`. Pokud ne, spusťte `ssh-add ~/.ssh/id_ed25519`. (2) Zkontrolujte, zda je váš veřejný klíč v souboru `~/.ssh/authorized_keys` serveru. (3) Ověřte oprávnění: `~/.ssh` musí být `700`, `authorized_keys` musí být `600`. (4) Zkontrolujte, zda má server `PubkeyAuthentication yes` v `/etc/ssh/sshd_config`. (5) Použijte `ssh -vvv user@server` k zobrazení přesného místa selhání autentizace. Podrobný výstup vám sdělí, které klíče jsou zkoušeny a zda je server přijal.
+
+### Jak přidám svůj SSH klíč do ssh-agent?
+
+Spusťte `ssh-add ~/.ssh/id_ed25519` (nahraďte názvem souboru vašeho klíče). Pokud agent neběží, nejprve ho spusťte pomocí `eval "$(ssh-agent -s)"`. Na macOS použijte `ssh-add --apple-use-keychain ~/.ssh/id_ed25519` pro uložení passphrase v Klíčence. Na Windows povolte službu `ssh-agent` pomocí `Start-Service ssh-agent` a poté spusťte `ssh-add`. `ssh-add` stačí spustit jednou za relaci (nebo jednou provždy pomocí Klíčenky na macOS).
+
+### Mohu mít více SSH klíčů?
+
+Ano, a je to dobrá praxe. Vygenerujte samostatné klíče pro různé účely — například jeden pro osobní GitHub, jeden pro pracovní GitLab, jeden pro produkční servery. Použijte `~/.ssh/config` k mapování každého hostu na jeho konkrétní klíč pomocí `IdentityFile`. Oddělené klíče znamenají, že odvolání jednoho (odebráním ze služby nebo serveru) neovlivní ostatní, čímž se omezí dosah kompromitace klíče.
+
+### Jak změním passphrase na SSH klíči?
+
+Použijte `ssh-keygen -p`:
+
+```bash
+ssh-keygen -p -f ~/.ssh/id_ed25519
+```
+
+Budete vyzváni k zadání aktuálního passphrase, poté budete požádáni o zadání a potvrzení nového. Samotný klíč (a tedy veřejný klíč) se nemění — nemusíte ho nikde aktualizovat. To je užitečné, pokud máte podezření, že bylo vaše passphrase kompromitováno, nebo chcete ho rotovat jako rutinní bezpečnostní postup.
+
+### Jak odeberu starý SSH klíč ze serveru?
+
+Otevřete `~/.ssh/authorized_keys` na serveru a odstraňte řádek obsahující starý veřejný klíč:
+
+```bash
+# Upravte authorized_keys na vzdáleném serveru
+ssh user@server.example.com
+nano ~/.ssh/authorized_keys
+# Odstraňte řádek pro klíč, který chcete odebrat
+# Uložte a ukončete
+```
+
+Každý řádek v `authorized_keys` je jeden veřejný klíč. Komentář klíče (poslední pole, obvykle `user@hostname` nebo e-mail) pomáhá identifikovat, který klíč je který. Pokud nevíte, který řádek odstranit, porovnejte otisk:
+
+```bash
+# Na lokálním stroji získejte otisk
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+
+# Na serveru zkontrolujte otisky všech autorizovaných klíčů
+ssh-keygen -lf ~/.ssh/authorized_keys
+```
+
+Porovnejte otisky pro identifikaci a odstranění správného klíče.
+
+## Vygenerujte si SSH klíče zdarma
+
+Pokud jste si ještě nevygenerovali pár SSH klíčů, náš bezplatný online generátor vytváří klíče Ed25519 nebo RSA přímo ve vašem prohlížeči během několika sekund. Není nutná žádná instalace, nic se neodesílá na naše servery — generování probíhá zcela na vašem zařízení.
+
+<a href="/">Vygenerujte si SSH klíče zdarma →</a>
+
+---
+
+**Další čtení:**
+- <a href="/cs/what-is-ssh">Co je SSH? Kompletní průvodce protokolem Secure Shell</a>
+- <a href="/cs/what-is-an-ssh-key">Co je SSH klíč? Veřejné klíče, soukromé klíče a páry klíčů vysvětleny</a>
+- <a href="/cs/ssh-command">Příkaz SSH: Kompletní přehled s příklady</a>

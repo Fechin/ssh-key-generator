@@ -1,0 +1,337 @@
+# ¿Qué es una clave SSH? Claves públicas, privadas y pares de claves explicados
+
+Una **clave SSH** es una credencial criptográfica que se utiliza para autenticarse en servidores SSH sin necesidad de contraseña. Las claves SSH vienen en pares — una **clave pública** y una **clave privada** — y juntas hacen que el acceso remoto sea más seguro y cómodo que la autenticación tradicional por contraseña. Esta guía explica qué es una clave SSH, cómo funciona el sistema de pares de claves, qué tipos de clave elegir y cómo usar las claves SSH con servicios como GitHub y GitLab.
+
+## Cómo funcionan las claves SSH
+
+Las claves SSH se basan en la **criptografía asimétrica**, también llamada criptografía de clave pública. A diferencia de la criptografía simétrica (donde una única clave secreta tanto cifra como descifra los datos), los sistemas asimétricos utilizan pares de claves matemáticamente vinculadas, donde los datos cifrados con una clave solo pueden descifrarse con la otra.
+
+Este es el flujo de autenticación cuando usas una clave SSH para iniciar sesión en un servidor:
+
+1. Ejecutas `ssh user@server.example.com`.
+2. El servidor busca tu clave pública en `~/.ssh/authorized_keys`.
+3. El servidor genera un desafío aleatorio y lo cifra con tu clave pública.
+4. Tu cliente SSH descifra el desafío usando tu clave privada.
+5. El cliente envía una prueba criptográfica (derivada del desafío descifrado y del ID de sesión) de vuelta al servidor.
+6. El servidor verifica la prueba. Solo el poseedor de la clave privada podría haberla producido.
+7. La autenticación es satisfactoria. Ninguna contraseña sale de tu máquina.
+
+Esta es la clave del asunto: **tu clave privada nunca viaja por la red**. El servidor solo ve tu clave pública y las pruebas criptográficas que produces. Aunque alguien intercepte todos los paquetes de tu sesión SSH, no obtiene nada que le ayude a suplantarte.
+
+Para conocer el protocolo SSH en términos más amplios, consulta nuestra guía sobre <a href="/es/what-is-ssh">qué es SSH</a>.
+
+## Clave pública vs. clave privada: ¿cuál es la diferencia?
+
+Entender la distinción entre las dos claves es esencial para usar SSH correctamente.
+
+### La clave pública — tu candado
+
+La **clave pública** está diseñada para compartirse libremente. Piensa en ella como un candado: distribuyes copias a todos los sistemas a los que quieres acceder. Cuando un servidor tiene tu clave pública en su fichero `authorized_keys`, puede verificar tu identidad sin conocer tu clave privada.
+
+Las claves públicas:
+- Son seguras para compartir — no se pueden usar para suplantarte
+- Se colocan en los servidores en `~/.ssh/authorized_keys`
+- Se suben a GitHub, GitLab y otros servicios
+- Tienen habitualmente la extensión `.pub` (p. ej., `id_ed25519.pub`)
+- Tienen el aspecto: `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAA... user@hostname`
+
+### La clave privada — tu llave
+
+La **clave privada** es la mitad secreta del par. No debe salir nunca de tu máquina y no debe compartirse con nadie — ni siquiera con administradores, proveedores de nube o personal de soporte. Si tu clave privada se ve comprometida, cualquiera que la obtenga puede suplantarte en todos los servidores donde está instalada tu clave pública.
+
+Las claves privadas:
+- Deben mantenerse secretas y seguras
+- Se almacenan localmente en `~/.ssh/` con permisos restringidos (600)
+- Se cifran opcionalmente con una frase de contraseña
+- No tienen extensión o tienen una extensión específica (p. ej., `id_ed25519`)
+
+### El fichero `authorized_keys`
+
+En el lado del servidor, las claves públicas de cada usuario se almacenan en `~/.ssh/authorized_keys`. Es un fichero de texto plano donde cada línea contiene una clave pública. Cuando un cliente SSH intenta autenticarse, el servidor comprueba si el cliente puede demostrar que posee la clave privada correspondiente a alguna entrada de este fichero.
+
+```
+# Formato de ~/.ssh/authorized_keys
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGq... alice@laptop
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHr... alice@workstation
+ssh-rsa AAAAB3NzaC1yc2EAAAA... backup-deploy-key
+```
+
+Puedes tener tantas claves públicas como necesites en este fichero, lo que permite que varios dispositivos o sistemas de automatización se autentiquen en el mismo servidor.
+
+## Algoritmos de clave SSH: Ed25519 vs. RSA
+
+Cuando generas un par de claves SSH, eliges un algoritmo. Las dos opciones más comunes hoy en día son **Ed25519** y **RSA**. También existen ECDSA y DSA, pero DSA está obsoleto y ECDSA tiene problemas de implementación, por lo que nos centraremos en las dos opciones recomendadas.
+
+### Ed25519 — La opción moderna
+
+Ed25519 se introdujo en OpenSSH en la versión 6.5 (2014) y es ahora el valor predeterminado recomendado. Utiliza criptografía de curva elíptica sobre la curva de Edwards torcida (Curve25519), diseñada por Daniel J. Bernstein.
+
+**Ventajas de Ed25519:**
+- **Compacto** — las claves tienen solo 68 caracteres (clave pública) y los ficheros son pequeños
+- **Rápido** — la generación y verificación de firmas son extremadamente veloces
+- **Seguro por diseño** — no es vulnerable a ataques de canal lateral que afectan a algunas implementaciones RSA
+- **Tamaño de clave fijo** — nivel de seguridad de 256 bits, sin necesidad de elegir un tamaño de clave
+- **Determinista** — las firmas son deterministas, lo que elimina una clase de fallos del generador de números aleatorios
+
+```bash
+# Generar un par de claves Ed25519
+ssh-keygen -t ed25519 -C "tu@email.com"
+```
+
+### RSA — La opción universal
+
+RSA es el algoritmo más antiguo (inventado en 1977) y, aunque sigue siendo seguro con 4096 bits, es más lento y produce claves más grandes que Ed25519. Sin embargo, RSA tiene una compatibilidad mucho más amplia: funciona con servidores SSH muy antiguos, sistemas heredados y algunas claves de seguridad de hardware.
+
+**Cuándo usar RSA:**
+- Necesitas conectarte a sistemas heredados que ejecutan versiones antiguas de OpenSSH (anteriores a la 6.5)
+- Estás usando una tarjeta inteligente o HSM que no admite Ed25519
+- Se requiere compatibilidad con herramientas más antiguas
+
+```bash
+# Generar un par de claves RSA de 4096 bits
+ssh-keygen -t rsa -b 4096 -C "tu@email.com"
+```
+
+**Nunca uses RSA con menos de 4096 bits.** RSA-1024 y RSA-2048 se consideran cada vez más insuficientes a medida que crece la potencia de cómputo. Ed25519 con 256 bits proporciona una seguridad equivalente o superior con una fracción del tamaño de clave.
+
+### Comparativa resumida
+
+| Característica | Ed25519 | RSA 4096 |
+|---|---|---|
+| Tamaño de clave (pública) | ~68 caracteres | ~725 caracteres |
+| Nivel de seguridad | 128 bits (estructura resistente post-cuántica) | ~140 bits clásicos |
+| Velocidad | Muy rápido | Más lento |
+| Compatibilidad | SSH moderno (OpenSSH 6.5+) | Universal |
+| Recomendado para | Todas las claves nuevas | Solo sistemas heredados |
+
+**Conclusión: genera claves Ed25519 para cualquier caso de uso moderno.** Usa RSA solo cuando lo exijan requisitos de compatibilidad.
+
+## Cómo añadir una clave SSH a GitHub
+
+Añadir tu clave pública SSH a GitHub te permite hacer push y pull por SSH sin introducir tu nombre de usuario y contraseña en cada operación. Aquí está el proceso paso a paso.
+
+### Paso 1: Genera tu par de claves
+
+Si aún no tienes un par de claves SSH, genera uno. Puedes usar nuestro <a href="/">generador de claves SSH en línea gratuito</a> o ejecutar:
+
+```bash
+ssh-keygen -t ed25519 -C "tu-email-de-github@example.com"
+```
+
+Acepta la ubicación predeterminada del fichero (`~/.ssh/id_ed25519`) y opcionalmente establece una frase de contraseña.
+
+### Paso 2: Copia tu clave pública
+
+Muestra tu clave pública y cópiala al portapapeles:
+
+```bash
+# Linux
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+
+# macOS
+cat ~/.ssh/id_ed25519.pub | pbcopy
+
+# Windows (PowerShell)
+Get-Content ~/.ssh/id_ed25519.pub | Set-Clipboard
+```
+
+O simplemente muéstrala y cópiala manualmente:
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+### Paso 3: Añade la clave a GitHub
+
+1. Inicia sesión en **GitHub.com**
+2. Haz clic en tu foto de perfil → **Settings** (Configuración)
+3. En la barra lateral izquierda, haz clic en **SSH and GPG keys**
+4. Haz clic en **New SSH key** (Nueva clave SSH)
+5. Dale un título descriptivo (p. ej., «MacBook Pro 2024» o «Portátil del trabajo»)
+6. Pega tu clave pública en el campo **Key** (Clave)
+7. Haz clic en **Add SSH key** (Añadir clave SSH)
+
+### Paso 4: Prueba la conexión
+
+```bash
+ssh -T git@github.com
+```
+
+Deberías ver: `Hi username! You've successfully authenticated, but GitHub does not provide shell access.`
+
+### Cambiar un repositorio existente a SSH
+
+Si clonaste un repositorio usando HTTPS y quieres cambiar a SSH:
+
+```bash
+# Comprobar la URL remota actual
+git remote -v
+
+# Actualizar a SSH
+git remote set-url origin git@github.com:username/repository.git
+```
+
+Para GitLab, el proceso es idéntico — navega a **Preferences → SSH Keys** (Preferencias → Claves SSH) y sigue los mismos pasos.
+
+## ¿Dónde se almacenan las claves SSH?
+
+Las claves SSH se guardan en un directorio llamado `.ssh` dentro de la carpeta de inicio de tu usuario. La ubicación varía según el sistema operativo.
+
+### Linux y macOS
+
+```
+~/.ssh/
+├── id_ed25519          # Tu clave privada (permisos: 600)
+├── id_ed25519.pub      # Tu clave pública (permisos: 644)
+├── id_rsa              # Una clave privada RSA (si tienes una)
+├── id_rsa.pub          # La clave pública RSA
+├── authorized_keys     # Claves públicas autorizadas para iniciar sesión en este equipo
+├── known_hosts         # Huellas dactilares de los servidores a los que te has conectado
+└── config              # Fichero de configuración del cliente
+```
+
+El propio directorio `~/.ssh/` debe tener permisos **700** (solo lectura/escritura/ejecución del propietario). Los ficheros de clave privada deben tener permisos **600** (solo lectura/escritura del propietario). SSH rechazará usar claves con permisos demasiado permisivos.
+
+```bash
+# Corregir permisos si es necesario
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/id_ed25519
+chmod 644 ~/.ssh/id_ed25519.pub
+```
+
+### Windows
+
+En Windows 10 y 11 con OpenSSH instalado, las claves SSH se almacenan en:
+
+```
+C:\Users\TuNombreDeUsuario\.ssh\
+├── id_ed25519
+├── id_ed25519.pub
+├── authorized_keys
+├── known_hosts
+└── config
+```
+
+En Windows, puedes acceder al directorio `.ssh` desde el Explorador de archivos (puede que necesites habilitar «Mostrar archivos ocultos») o desde PowerShell usando `~\.ssh\`.
+
+### Múltiples ficheros de clave
+
+Si tienes claves para diferentes propósitos (GitHub personal, GitLab del trabajo, servidores de producción), usa el fichero `~/.ssh/config` para mapear cada host a su clave:
+
+```
+Host github.com
+    IdentityFile ~/.ssh/id_ed25519_github
+
+Host gitlab.work.com
+    IdentityFile ~/.ssh/id_ed25519_work
+
+Host prod-server
+    HostName 203.0.113.10
+    User deploy
+    IdentityFile ~/.ssh/id_ed25519_production
+```
+
+## Frases de contraseña para claves SSH
+
+Cuando generas un par de claves SSH, `ssh-keygen` pregunta si quieres establecer una **frase de contraseña**. Es una contraseña opcional que cifra el fichero de clave privada en el disco.
+
+### ¿Por qué usar una frase de contraseña?
+
+Si tu fichero de clave privada está protegido por una frase de contraseña robusta, robar el fichero no es suficiente para suplantarte — el atacante también necesitaría descifrar la frase de contraseña. Esto proporciona una segunda capa de seguridad fundamental, especialmente en portátiles que podrían ser robados físicamente.
+
+Sin frase de contraseña, tu clave privada se almacena en texto plano en el disco. Cualquiera que pueda leer el fichero (mediante malware, acceso físico o una copia de seguridad no asegurada correctamente) puede usarla inmediatamente.
+
+### Cómo interactúan las frases de contraseña con ssh-agent
+
+La desventaja de una frase de contraseña es tener que escribirla cada vez que usas la clave. **ssh-agent** soluciona esto guardando las claves descifradas en memoria durante la duración de tu sesión.
+
+```bash
+# Iniciar ssh-agent y añadir tu clave
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+# Introduce la frase de contraseña una vez — queda en caché para la sesión
+```
+
+En macOS, el Llavero del sistema se integra con ssh-agent. Añade `-K` para persistir entre reinicios:
+
+```bash
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+```
+
+### Cambiar una frase de contraseña
+
+Puedes cambiar la frase de contraseña de una clave existente sin regenerar el par de claves:
+
+```bash
+ssh-keygen -p -f ~/.ssh/id_ed25519
+```
+
+Esto solicita la frase de contraseña antigua y luego permite establecer una nueva. La clave pública no cambia, por lo que no necesitas actualizarla en ningún servidor.
+
+## Huellas dactilares de claves SSH
+
+Cada par de claves SSH tiene una **huella dactilar** — un hash corto de la clave pública que la identifica de forma única. Las huellas dactilares sirven para varios propósitos:
+
+- **Verificar la identidad del host** — cuando te conectas por primera vez a un servidor, SSH te muestra la huella dactilar de su clave de host. Si confirmas que coincide con lo que esperas (p. ej., proporcionado por tu proveedor de alojamiento), sabes que te estás conectando al servidor correcto.
+- **Identificar claves** — cuando gestionas muchas claves, las huellas dactilares te ayudan a identificar qué clave física corresponde a qué entrada en `authorized_keys` o en un servicio como GitHub.
+- **Auditoría y revocación** — los registros de auditoría suelen registrar huellas dactilares en lugar de claves completas. Conocer la huella dactilar de una clave te ayuda a encontrarla y eliminarla si es necesario.
+
+### Ver la huella dactilar de una clave
+
+```bash
+# Ver la huella dactilar de tu clave pública
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+# Salida: 256 SHA256:abcdef1234567890... tu@email.com (ED25519)
+
+# Ver la huella dactilar de la clave de host de un servidor
+ssh-keyscan server.example.com | ssh-keygen -lf -
+```
+
+GitHub muestra las huellas dactilares de todas las claves SSH añadidas en **Settings → SSH and GPG keys**, lo que te permite verificar que la clave que ves allí coincide con la de tu máquina.
+
+### El fichero `known_hosts`
+
+La primera vez que te conectas a un nuevo servidor SSH, ves un mensaje como este:
+
+```
+The authenticity of host 'example.com (203.0.113.10)' can't be established.
+ED25519 key fingerprint is SHA256:abcdef1234567890...
+Are you sure you want to continue connecting (yes/no/[fingerprint])?
+```
+
+Escribe `yes` y la huella dactilar del servidor se añade a `~/.ssh/known_hosts`. En conexiones posteriores, SSH verifica silenciosamente que la clave del servidor coincide con la huella dactilar almacenada. Si no coincide — lo que podría indicar una mala configuración o un ataque de intermediario — SSH te avisa con claridad y se niega a conectarse.
+
+## Preguntas frecuentes
+
+### ¿Para qué sirve una clave SSH?
+
+Las claves SSH te autentican en servidores remotos sin contraseña. Los usos más comunes son: iniciar sesión en servidores Linux/Unix para su administración, autenticarse con servicios de alojamiento de Git (GitHub, GitLab, Bitbucket) para acceso push/pull, scripts de despliegue automatizados que necesitan acceso sin contraseña al servidor, y pipelines de CI/CD que despliegan código en producción. Las claves SSH son preferibles a las contraseñas porque son inmunes a la fuerza bruta, no son reutilizables entre brechas y pueden usarse sin intervención humana.
+
+### ¿Cuántas claves SSH debería tener?
+
+No hay una respuesta única correcta, pero una buena práctica habitual es tener **una clave por dispositivo** (no por servicio). Tu portátil tiene un par de claves; tu escritorio, otro; tu servidor de CI, otro. Así, si un dispositivo es robado o comprometido, solo revocarás la clave de ese dispositivo. Algunas personas además las dividen por contexto (personal vs. trabajo), lo que resulta en dos claves por dispositivo. Evita compartir una única clave entre múltiples máquinas — si esa clave se ve comprometida, todo tu acceso está en riesgo simultáneamente.
+
+### ¿Puedo compartir mi clave pública SSH?
+
+Sí. La clave pública está diseñada para compartirse. Es seguro enviarla por correo electrónico, publicarla en la documentación de GitHub o incluirla en un ticket solicitando acceso al servidor. La clave pública sola no se puede usar para autenticarse como tú — eso requiere la clave privada correspondiente, que solo tú tienes. Esta es la propiedad fundamental de la criptografía asimétrica. Nunca compartas tu clave **privada** con nadie.
+
+### ¿Qué ocurre si pierdo mi clave privada SSH?
+
+Si pierdes tu clave privada y no tienes una copia de seguridad, pierdes la capacidad de autenticarte con ella. Tu clave pública, que sigue instalada en servidores y servicios, queda huérfana. Necesitarás una forma alternativa de acceder al servidor (autenticación por contraseña si está habilitada, acceso por consola, el mecanismo de acceso de emergencia de tu proveedor de alojamiento) para eliminar la clave pública antigua de `authorized_keys` y añadir una nueva. Por eso es importante hacer una copia de seguridad de tu clave privada (en un gestor de contraseñas o en una copia de seguridad cifrada). La clave privada no puede reconstruirse a partir de la clave pública.
+
+### ¿Es mejor Ed25519 o RSA?
+
+**Ed25519 es mejor para toda generación de claves nueva.** Es más rápido, produce claves más pequeñas, no es vulnerable a ciertas debilidades de implementación que afectan a RSA, y proporciona una seguridad equivalente o superior con una clave de 256 bits en comparación con RSA-4096. La única razón para usar RSA hoy en día es la compatibilidad con software de servidor SSH muy antiguo (OpenSSH anterior a la versión 6.5, lanzada en 2014) o módulos de seguridad de hardware heredados. Si accedes a cualquier servidor o servicio moderno como GitHub, usa Ed25519.
+
+## Genera tu par de claves SSH
+
+¿Listo para crear tus claves SSH? Nuestro generador en línea gratuito crea pares de claves Ed25519 o RSA directamente en tu navegador. La clave privada se genera localmente y nunca se envía a nuestros servidores.
+
+<a href="/">Genera tu par de claves SSH ahora →</a>
+
+---
+
+**Lectura adicional:**
+- <a href="/es/what-is-ssh">¿Qué es SSH? La guía completa sobre Secure Shell</a>
+- <a href="/es/ssh-command">El comando SSH: referencia completa con ejemplos</a>
+- <a href="/es/how-to-set-up-ssh">Cómo configurar SSH: guía completa paso a paso</a>

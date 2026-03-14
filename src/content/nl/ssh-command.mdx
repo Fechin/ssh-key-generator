@@ -1,0 +1,430 @@
+# Het SSH-commando: Volledige Referentie met Voorbeelden voor Linux, Mac en Windows
+
+Het commando `ssh` is het primaire hulpmiddel voor het initiëren van SSH-verbindingen vanaf de opdrachtregel. Of je nu inlogt op een externe Linux-server, een poort doorstuurt voor databasetoegang of via een bastionhost springt om een intern netwerk te bereiken — het commando `ssh` is je startpunt. Deze gids behandelt alles, van de basissyntaxis tot geavanceerde vlaggen, tunneling en ProxyJump-configuraties — met echte voorbeelden voor Linux, macOS en Windows.
+
+Voordat je SSH-commando's uitvoert, heb je SSH-sleutels nodig. Zie onze gids over <a href="/nl/what-is-an-ssh-key">wat een SSH-sleutel is</a> of gebruik de <a href="/">gratis online generator</a> om een sleutelpaar aan te maken.
+
+## SSH-opdrachtsyntaxis
+
+De fundamentele syntaxis van het commando `ssh` is:
+
+```
+ssh [opties] [user@]hostname [commando]
+```
+
+Uitleg per onderdeel:
+
+- **`[opties]`** — Nul of meer vlaggen die het gedrag aanpassen (behandeld in deze gids)
+- **`[user@]`** — Optionele gebruikersnaam. Als weggelaten, gebruikt SSH je huidige lokale gebruikersnaam
+- **`hostname`** — De externe host waarmee verbinding wordt gemaakt. Kan een IP-adres, domeinnaam of alias zijn gedefinieerd in `~/.ssh/config`
+- **`[commando]`** — Optioneel commando om op de externe host uit te voeren. Als weggelaten, start SSH een interactieve shellsessie
+
+**Basisvoorbeelden:**
+
+```bash
+# Verbind met je huidige gebruikersnaam
+ssh server.example.com
+
+# Verbind als een specifieke gebruiker
+ssh alice@server.example.com
+
+# Verbind via een IP-adres
+ssh ubuntu@192.168.1.100
+
+# Voer één commando uit en verbreek onmiddellijk de verbinding
+ssh user@server.example.com "df -h"
+
+# Voer een commando uit en blijf verbonden
+ssh user@server.example.com
+```
+
+## SSH op Linux en macOS
+
+Linux-distributies en macOS worden geleverd met **OpenSSH** vooraf geïnstalleerd. Op Linux maakt het deel uit van het pakket `openssh-client` (Debian/Ubuntu) of `openssh-clients` (RHEL/CentOS/Fedora). Op macOS is het meegeleverd met het systeem en direct beschikbaar vanuit Terminal of iTerm2.
+
+### Controleer of SSH Beschikbaar Is
+
+```bash
+ssh -V
+# Uitvoer: OpenSSH_9.6p1, LibreSSL 3.3.6
+```
+
+### Basisverbinding
+
+```bash
+# Verbind met een server
+ssh user@myserver.example.com
+
+# SSH controleert ~/.ssh/known_hosts bij de eerste verbinding en vraagt:
+# The authenticity of host 'myserver.example.com' can't be established.
+# ED25519 key fingerprint is SHA256:abc123...
+# Are you sure you want to continue connecting (yes/no)? yes
+
+# De hostvingerafdruk wordt opgeslagen in ~/.ssh/known_hosts
+```
+
+### Een SSH-configuratiebestand Gebruiken voor Gemak
+
+In plaats van elke keer volledige verbindingsgegevens te typen, maak je `~/.ssh/config` aan:
+
+```
+Host myserver
+    HostName myserver.example.com
+    User alice
+    Port 22
+    IdentityFile ~/.ssh/id_ed25519
+
+Host dev
+    HostName dev.example.com
+    User ubuntu
+    Port 2222
+    IdentityFile ~/.ssh/id_ed25519_work
+```
+
+Nu breidt `ssh myserver` uit naar de volledige verbinding — geen vlaggen nodig.
+
+## SSH op Windows (PowerShell en OpenSSH)
+
+Windows 10 (versie 1809) en Windows 11 bevatten de **OpenSSH-client** als optionele functie, waardoor het commando `ssh` beschikbaar is in PowerShell, Opdrachtprompt en Windows Terminal.
+
+### Controleer of OpenSSH Is Geïnstalleerd
+
+```powershell
+# In PowerShell
+ssh -V
+```
+
+Als het commando niet wordt gevonden, installeer het dan:
+
+**Via Instellingen:**
+1. Open **Instellingen → Apps → Optionele functies**
+2. Klik op **Een functie toevoegen**
+3. Zoek **OpenSSH-client** en installeer het
+
+**Via PowerShell (Beheerder):**
+
+```powershell
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+```
+
+### SSH Gebruiken in PowerShell
+
+Na installatie is de syntaxis identiek aan Linux en macOS:
+
+```powershell
+# Verbind met een server
+ssh user@server.example.com
+
+# Verbind op een aangepaste poort
+ssh -p 2222 user@server.example.com
+
+# Gebruik een specifiek sleutelbestand
+ssh -i C:\Users\JouwNaam\.ssh\id_ed25519 user@server.example.com
+```
+
+### SSH-sleutellocatie op Windows
+
+SSH-sleutels op Windows worden opgeslagen in `C:\Users\JouwGebruikersnaam\.ssh\`. PowerShell herkent `~` als afkorting:
+
+```powershell
+# Dit zijn gelijkwaardig
+ssh -i ~/.ssh/id_ed25519 user@server
+ssh -i C:\Users\JouwGebruikersnaam\.ssh\id_ed25519 user@server
+```
+
+### PuTTY vs OpenSSH op Windows
+
+Voor OpenSSH beschikbaar was op Windows, was **PuTTY** de standaard SSH-client. PuTTY gebruikt zijn eigen sleutelformaat (`.ppk`-bestanden) en zijn eigen sleutelgenerator (PuTTYgen). Als je een `.ppk`-sleutel hebt en deze wilt omzetten naar het standaard OpenSSH-formaat:
+
+```bash
+# Met PuTTY-tools
+puttygen mykey.ppk -O private-openssh -o id_ed25519
+```
+
+Voor nieuwe installaties heeft de ingebouwde OpenSSH-client op Windows de voorkeur — het wordt onderhouden door het OpenSSH-project en gebruikt hetzelfde sleutelformaat en configuratiebestand als Linux en macOS.
+
+## SSH met Sleutelauthenticatie: De Vlag -i
+
+Standaard zoekt SSH naar sleutelbestanden in `~/.ssh/` met standaardnamen (`id_ed25519`, `id_rsa`, `id_ecdsa`, `id_dsa`). De **vlag `-i`** (identiteitsbestand) laat je expliciet een ander sleutelbestand opgeven.
+
+```bash
+# Gebruik een specifiek sleutelbestand
+ssh -i ~/.ssh/id_ed25519_production user@prod.example.com
+
+# Gebruik een sleutel op een niet-standaard locatie
+ssh -i /pad/naar/mijn/aangepaste_sleutel deploy@server.example.com
+
+# Combineer met andere opties
+ssh -i ~/.ssh/deploy_key -p 2222 -l deploy server.example.com
+```
+
+De vlag `-i` is essentieel in verschillende situaties:
+- Je hebt meerdere sleutelparen voor verschillende servers of doeleinden
+- Je sleutel staat niet in de standaardmap `~/.ssh/`
+- Je geeft een sleutel op in een CI/CD-omgeving waar het pad expliciet is
+- Je hebt een `.pem`-sleutel gedownload van AWS of een andere cloudprovider
+
+### AWS EC2-voorbeeld
+
+AWS levert een `.pem`-sleutelbestand bij het starten van een EC2-instantie:
+
+```bash
+# Verbind met een AWS EC2-instantie met een .pem-sleutel
+ssh -i ~/Downloads/my-aws-key.pem ec2-user@54.123.456.789
+
+# Herstel rechten indien nodig (vereist — SSH weigert wereldleesbare sleutels)
+chmod 400 ~/Downloads/my-aws-key.pem
+```
+
+## Essentiële SSH-opdrachtopties en Vlaggen
+
+Het commando `ssh` heeft tientallen opties. Dit zijn de opties die je daadwerkelijk zult gebruiken.
+
+| Vlag | Lange vorm / Beschrijving | Voorbeeld |
+|---|---|---|
+| `-p POORT` | Verbind op een niet-standaard poort | `ssh -p 2222 user@host` |
+| `-i BESTAND` | Gebruik een specifiek identiteits- (sleutel)bestand | `ssh -i ~/.ssh/mykey user@host` |
+| `-l GEBRUIKER` | Geef login-gebruikersnaam op (alternatief voor `user@`) | `ssh -l alice host` |
+| `-L lokaal:host:extern` | Lokale port forwarding | `ssh -L 8080:localhost:80 host` |
+| `-R extern:host:lokaal` | Externe port forwarding | `ssh -R 9090:localhost:3000 host` |
+| `-D poort` | Dynamische (SOCKS-)proxy | `ssh -D 1080 host` |
+| `-N` | Voer geen extern commando uit (alleen tunneling) | `ssh -N -L 3307:db:3306 host` |
+| `-f` | Ga naar achtergrond na authenticatie | `ssh -f -N -D 1080 host` |
+| `-v` | Uitgebreide (debug)uitvoer | `ssh -v user@host` |
+| `-vv` of `-vvv` | Meer uitgebreide uitvoer | `ssh -vvv user@host` |
+| `-A` | Schakel SSH-agentdoorschakeling in | `ssh -A user@jump-host` |
+| `-X` | Schakel X11-doorschakeling in | `ssh -X user@host xclock` |
+| `-C` | Schakel compressie in | `ssh -C user@host` |
+| `-T` | Schakel pseudo-terminaltoewijzing uit | `ssh -T git@github.com` |
+| `-q` | Stille modus (onderdrukt waarschuwingen) | `ssh -q user@host` |
+| `-o OPTIE=WAARDE` | Stel een configuratieoptie inline in | `ssh -o StrictHostKeyChecking=no host` |
+| `-J JUMP` | ProxyJump via een bastionhost | `ssh -J jump.host user@internal` |
+| `-W host:poort` | Stuur stdio door naar een host:poort (voor ProxyJump) | Intern gebruikt door `-J` |
+
+### Uitgebreide Modus voor Foutopsporing
+
+Wanneer SSH mislukt, onthult `-v` (of `-vv` of `-vvv`) precies wat er gebeurt:
+
+```bash
+ssh -v user@server.example.com
+# Toont: welke sleutels worden geprobeerd, welke authenticatiemethoden de server accepteert,
+# of de agent betrokken is en waar de verbinding mislukt
+
+ssh -vvv user@server.example.com
+# Maximale uitgebreidheid — toont gedetailleerde cryptografische onderhandeling
+```
+
+### Hostsleutelcontrole Omzeilen (Met Voorzichtigheid Gebruiken)
+
+In automatiserings- en testomgevingen waar hostsleutelverificatie onpraktisch is:
+
+```bash
+ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null user@host
+```
+
+**Gebruik dit niet in productie.** Het schakelt de bescherming tegen man-in-the-middle-aanvallen uit. Gebruik in plaats daarvan `ssh-keyscan` in je inrichtingsscripts om `known_hosts` vooraf te vullen.
+
+### Agentdoorschakeling
+
+```bash
+# Stuur je lokale SSH-agent door naar de externe server
+ssh -A user@jump-server
+
+# Vanaf de jumpserver kun je nu SSH naar interne hosts uitvoeren met je lokale sleutels
+# Geen privésleutels naar de jumpserver hoeven te kopiëren
+ssh internal-server.private
+```
+
+Agentdoorschakeling is handig maar heeft beveiligingsimplicaties: iedereen met root-toegang op de tussenliggende server kan je doorgestuurde agent gebruiken. Gebruik het alleen met vertrouwde servers en geef de voorkeur aan **ProxyJump** indien mogelijk (dit stelt je agent niet bloot aan tussenliggende hosts).
+
+## SSH-tunnelingcommando's
+
+SSH-tunneling routeert TCP-verbindingen via een versleuteld SSH-kanaal. Voor achtergrondinformatie over wat tunneling is, zie de <a href="/nl/what-is-ssh">tunnelingssectie van onze SSH-gids</a>.
+
+### Lokale Port Forwarding
+
+Maakt een externe dienst toegankelijk op je lokale machine.
+
+```bash
+# Toegang tot een externe MySQL-database op lokale poort 3307
+ssh -L 3307:localhost:3306 user@db-server.example.com -N
+
+# Verbind met een externe webserver die alleen toegankelijk is vanaf de SSH-host
+ssh -L 8080:intranet.company.com:80 user@vpn.company.com -N
+
+# Toegang tot een Redis-instantie op een privénetwerk
+ssh -L 6380:10.0.1.50:6379 user@bastion.example.com -N
+```
+
+Na het uitvoeren van een van de bovenstaande opdrachten, verbind je lokale applicatie met `127.0.0.1:LOKALE_POORT`.
+
+### Externe Port Forwarding
+
+Stelt een lokale dienst beschikbaar op de externe server.
+
+```bash
+# Stel je lokale ontwikkelserver (poort 3000) beschikbaar op poort 9090 van de externe server
+ssh -R 9090:localhost:3000 user@remote.example.com -N
+
+# Sta elke interface op de externe server toe te verbinden (vereist GatewayPorts yes in sshd_config)
+ssh -R 0.0.0.0:9090:localhost:3000 user@remote.example.com -N
+```
+
+### Dynamische Port Forwarding (SOCKS-proxy)
+
+```bash
+# Maak een SOCKS5-proxy op lokale poort 1080, op de achtergrond uitvoeren
+ssh -D 1080 -N -f user@remote.example.com
+
+# Configureer nu je browser of systeem om SOCKS5-proxy: 127.0.0.1:1080 te gebruiken
+# Al het verkeer wordt via de externe server gerouteerd
+```
+
+Voor gebruik met curl:
+
+```bash
+curl --socks5 127.0.0.1:1080 https://api.example.com/
+```
+
+### De Tunnel op de Achtergrond Uitvoeren
+
+```bash
+# -f stuurt SSH naar de achtergrond, -N betekent geen extern commando
+ssh -f -N -L 3307:localhost:3306 user@db-server
+
+# Vind het SSH-achtergrondproces
+ps aux | grep ssh
+
+# Stop het
+kill PID
+```
+
+## SSH ProxyJump en Bastionhosts
+
+In veel organisaties bevinden productieservers zich op privénetwerken die niet direct toegankelijk zijn vanaf het internet. Een **bastionhost** (of jumphost) is een geharde server op de netwerkperimeter waarnaar je eerst SSH-verbinding maakt en vervolgens naar interne servers springt. De vlag `ssh -J` (ProxyJump, toegevoegd in OpenSSH 7.3) maakt dit naadloos.
+
+### Basis ProxyJump
+
+```bash
+# Spring via één bastion om een interne server te bereiken
+ssh -J ec2-user@bastion.example.com ubuntu@10.0.1.50
+
+# Korte vorm
+ssh -J user@jump-host user@internal-server
+```
+
+Dit maakt twee SSH-verbindingen: eerst naar de bastion, dan van de bastion naar de interne server — alles in één commando, met end-to-end-versleuteling. Je lokale SSH-agent verwerkt de authenticatie naar beide hosts.
+
+### Meerdere Sprongen Ketenen
+
+```bash
+# Spring via twee tussenliggende hosts
+ssh -J user@jump1.example.com,user@jump2.example.com user@eindbestemming
+```
+
+### ProxyJump in het SSH-configuratiebestand
+
+Voor servers die je vaak benadert, zet je de ProxyJump-configuratie in `~/.ssh/config`:
+
+```
+Host bastion
+    HostName bastion.example.com
+    User ec2-user
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host prod-web
+    HostName 10.0.1.100
+    User ubuntu
+    ProxyJump bastion
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host prod-db
+    HostName 10.0.2.50
+    User postgres
+    ProxyJump bastion
+    IdentityFile ~/.ssh/id_ed25519_aws
+```
+
+Nu verbindt `ssh prod-web` automatisch via de bastion. Geen handmatige `-J`-vlaggen nodig.
+
+### ProxyJump vs Agentdoorschakeling
+
+ProxyJump heeft de voorkeur boven agentdoorschakeling (`-A`) omdat:
+- Je privésleutel nooit wordt doorgestuurd naar de tussenliggende host
+- De bastionhost je inloggegevens niet kan gebruiken om elders te authenticeren
+- De verbinding end-to-end geverifieerd is — de doelserver verifieert je direct
+
+Voor meer installatie-details, zie onze volledige gids over <a href="/nl/how-to-set-up-ssh">SSH instellen</a>.
+
+## Veelgestelde Vragen
+
+### Hoe voer ik een SSH-commando uit zonder wachtwoord?
+
+Stel SSH-sleutelauthenticatie in. Genereer een sleutelpaar (`ssh-keygen -t ed25519`), kopieer de openbare sleutel naar het bestand `~/.ssh/authorized_keys` van de server met `ssh-copy-id user@host`, en volgende verbindingen gebruiken je sleutel zonder om een wachtwoord te vragen. Als je sleutel een wachtwoordzin heeft, gebruik dan `ssh-agent` en `ssh-add` om deze te cachen zodat je het slechts één keer per sessie hoeft in te voeren.
+
+### Hoe verlaat ik een SSH-sessie?
+
+Typ `exit` of druk op **Ctrl+D** om de externe shell te sluiten en de verbinding te verbreken. Als de sessie is vastgelopen (bijv. netwerk viel weg), gebruik dan de SSH-ontsnappingsreeks: druk op **Enter**, typ vervolgens `~.` (tilde gevolgd door een punt). SSH beëindigt de verbinding onmiddellijk. Andere ontsnappingsreeksen: `~^Z` plaatst SSH op de achtergrond, `~?` toont alle ontsnappingsreeksen.
+
+### Hoe voer ik een commando uit op een externe server via SSH?
+
+Voeg het commando toe na de hostnaam:
+
+```bash
+ssh user@server "uit te voeren commando"
+ssh user@server "ls -la /var/log/"
+ssh user@server "sudo systemctl status nginx"
+```
+
+Voor meerregelige opdrachten of scripts, gebruik een heredoc:
+
+```bash
+ssh user@server << 'EOF'
+cd /var/www/html
+git pull origin main
+systemctl reload nginx
+EOF
+```
+
+Voor interactieve opdrachten (zoals opdrachten die een terminal vereisen), voeg de vlag `-t` toe om een pseudo-terminal toe te wijzen: `ssh -t user@server sudo apt upgrade`.
+
+### Wat is het verschil tussen ssh en scp?
+
+`ssh` opent een terminalsessie (of voert één commando uit) op een externe machine. `scp` (Secure Copy Protocol) kopieert bestanden tussen je lokale machine en een externe machine, of tussen twee externe machines, via SSH voor versleuteling en authenticatie. Beide gebruiken hetzelfde SSH-protocol en dezelfde sleutelinfrastructuur. Voor bestandsoverdrachten is `scp` het toegewijde hulpmiddel:
+
+```bash
+# scp lokaal naar extern
+scp bestand.txt user@server:/doelpad/
+
+# scp extern naar lokaal
+scp user@server:/extern/bestand.txt ./lokale-kopie.txt
+```
+
+Voor geavanceerdere bestandsoverdrachten (recursief, hervattbaar, mapondoorbladering), gebruik `sftp`. Voor grootschalige overdrachten is `rsync -avz -e ssh` nog efficiënter.
+
+### Hoe gebruik ik SSH met een configuratiebestand?
+
+Maak `~/.ssh/config` aan en voeg hostgegevens toe. Elk `Host`-blok definieert een verbindingsalias met zijn volledige instellingen:
+
+```
+Host alias-naam
+    HostName werkelijke.server.com
+    User gebruikersnaam
+    Port 22
+    IdentityFile ~/.ssh/specifieke_sleutel
+```
+
+Dan gebruikt `ssh alias-naam` automatisch alle gedefinieerde instellingen. Het configuratiebestand ondersteunt jokertekens: `Host *.example.com` past instellingen toe op alle overeenkomende hosts. `Host *` aan het einde past standaardinstellingen toe op alle verbindingen. Opties in een specifiek `Host`-blok overschrijven globale standaardinstellingen.
+
+## SSH-sleutels Nodig? Genereer Ze Gratis
+
+Om SSH-sleutelauthenticatie te gebruiken — waarmee wachtwoorden overbodig worden — heb je een sleutelpaar nodig. Genereer direct Ed25519- of RSA-sleutels in je browser, met niets dat naar onze servers wordt gestuurd.
+
+<a href="/">Genereer je SSH-sleutels gratis →</a>
+
+---
+
+**Verder lezen:**
+- <a href="/nl/what-is-ssh">Wat Is SSH? De Volledige Gids voor Secure Shell</a>
+- <a href="/nl/what-is-an-ssh-key">Wat Is een SSH-sleutel? Openbare Sleutels, Privésleutels en Sleutelparen Uitgelegd</a>
+- <a href="/nl/how-to-set-up-ssh">SSH Instellen: Een Volledige Stapsgewijze Handleiding</a>

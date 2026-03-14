@@ -1,10 +1,47 @@
-import { Shield, Zap, ThumbsUp, Heart, Github, Server, RefreshCw, Lock } from 'lucide-react'
+import { Shield, Zap, ThumbsUp, Heart, Github, Server, RefreshCw, Lock, BookOpen, ArrowRight } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { useTranslation } from '@/i18n'
+import { useTranslation, getLanguagePathname } from '@/i18n'
+import { ARTICLE_SLUGS, getArticleMeta } from '@/content/articles'
 import { FAQSection } from './FAQSection'
 
+const SECTION_TITLE: Partial<Record<string, string>> = {
+  en: 'SSH Guides & Learning Resources',
+  zh: 'SSH 学习指南',
+  'zh-Hant': 'SSH 學習指南',
+  ja: 'SSH ガイド・学習リソース',
+  ko: 'SSH 가이드 및 학습 자료',
+  es: 'Guías y recursos de aprendizaje SSH',
+  pt: 'Guias e recursos de aprendizagem SSH',
+  fr: 'Guides et ressources SSH',
+  de: 'SSH-Anleitungen & Lernressourcen',
+  ru: 'Руководства и обучающие материалы по SSH',
+  it: 'Guide e risorse SSH',
+  nl: 'SSH-handleidingen en leermiddelen',
+  pl: 'Przewodniki i zasoby edukacyjne SSH',
+  sv: 'SSH-guider och lärresurser',
+  he: 'מדריכים ומשאבי למידה SSH',
+  da: 'SSH-guider og læringsressourcer',
+  nb: 'SSH-guider og læringsressurser',
+  hi: 'SSH गाइड और सीखने के संसाधन',
+  vi: 'Hướng dẫn và tài nguyên học tập SSH',
+  tr: 'SSH Kılavuzları ve Öğrenme Kaynakları',
+  id: 'Panduan dan sumber belajar SSH',
+  fi: 'SSH-oppaat ja oppimisresurssit',
+  uk: 'Посібники та навчальні матеріали SSH',
+  ar: 'أدلة ومصادر تعلم SSH',
+  th: 'คู่มือและแหล่งเรียนรู้ SSH',
+  ro: 'Ghiduri și resurse de învățare SSH',
+  cs: 'Průvodce a studijní zdroje SSH',
+  bn: 'SSH গাইড ও শেখার সম্পদ',
+  el: 'Οδηγοί και πόροι εκμάθησης SSH',
+  hu: 'SSH útmutatók és tanulási anyagok',
+}
+
 export function SEOContent() {
-  const { t } = useTranslation()
+  const { t, language } = useTranslation()
+  const basePath = language === 'en' ? '' : getLanguagePathname(language).replace(/\/$/, '')
+  const sectionTitle = SECTION_TITLE[language] ?? SECTION_TITLE['en']!
 
   return (
     <section id="ssh-key-generator-guide" className="mt-16 space-y-10">
@@ -196,6 +233,32 @@ export function SEOContent() {
               <p className="text-xs text-muted-foreground mt-1">{t('seo.useCases.tunnels.desc')}</p>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Related Articles */}
+      <div id="ssh-guides" className="space-y-4">
+        <div className="flex items-center gap-2">
+          <BookOpen className="h-5 w-5 text-primary" />
+          <h2 className="text-xl font-bold">{sectionTitle}</h2>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {ARTICLE_SLUGS.map((slug) => {
+            const meta = getArticleMeta(slug, language)
+            return (
+              <Link
+                key={slug}
+                to={`${basePath}/${slug}`}
+                className="flex items-start justify-between gap-3 p-4 rounded-lg bg-card/50 border border-border hover:border-primary/50 hover:bg-card transition-colors group"
+              >
+                <div className="space-y-1 min-w-0">
+                  <p className="font-medium text-sm leading-snug">{meta.title}</p>
+                  <p className="text-xs text-muted-foreground line-clamp-2">{meta.description}</p>
+                </div>
+                <ArrowRight className="h-4 w-4 text-muted-foreground flex-shrink-0 mt-0.5 group-hover:text-primary transition-colors" />
+              </Link>
+            )
+          })}
         </div>
       </div>
 

@@ -1,0 +1,202 @@
+{
+  "ro": {
+    "what-is-ssh": {
+      "title": "Ce este SSH? Ghidul complet pentru Secure Shell",
+      "description": "SSH (Secure Shell) este un protocol criptografic pentru acces securizat de la distanță și transfer de fișiere. Aflați ce este SSH, cum funcționează și de ce fiecare dezvoltator are nevoie de el.",
+      "keywords": [
+        "ce este ssh",
+        "sensul ssh",
+        "sensul lui ssh",
+        "cochilie sigură",
+        "protocol ssh"
+      ],
+      "publishDate": "2026-03-14"
+    },
+    "what-is-an-ssh-key": {
+      "title": "Ce este o cheie SSH? Cheile publice, cheile private și perechile de chei explicate",
+      "description": "O cheie SSH este o acreditare criptografică utilizată pentru autentificarea securizată. Aflați ce este o cheie SSH, cum funcționează cheile publice și private și cum să le folosiți cu GitHub.",
+      "keywords": [
+        "ce este o cheie ssh",
+        "sensul cheii ssh",
+        "pereche de chei ssh",
+        "cheie publică cheie privată",
+        "cheie github ssh"
+      ],
+      "publishDate": "2026-03-14"
+    },
+    "ssh-command": {
+      "title": "Comanda SSH: Referință completă cu exemple pentru Linux, Mac și Windows",
+      "description": "Un ghid complet pentru comanda SSH cu exemple pentru Linux, macOS și Windows. Acoperă ssh -i flag, tunneling, ProxyJump, opțiuni esențiale și PowerShell SSH.",
+      "keywords": [
+        "comanda ssh",
+        "exemplu de comandă ssh",
+        "comanda ssh linux",
+        "ferestre de comandă ssh",
+        "comanda powershell ssh"
+      ],
+      "publishDate": "2026-03-14"
+    },
+    "how-to-set-up-ssh": {
+      "title": "Cum să configurați SSH: un ghid complet pas cu pas pentru Linux, Mac și Windows",
+      "description": "Aflați cum să configurați SSH pe Linux, macOS și Windows. Ghidul pas cu pas acoperă generarea cheilor, ssh-copy-id, ssh-agent, configurarea GitHub SSH și depanarea.",
+      "keywords": [
+        "cum se configurează ssh",
+        "cum se configurează cheia ssh github",
+        "ssh-copy-id",
+        "ssh-agent",
+        "permisiunea refuzată cheie publică"
+      ],
+      "publishDate": "2026-03-14"
+    }
+  },
+  "cs": {
+    "what-is-ssh": {
+      "title": "Co je SSH? Kompletní průvodce Secure Shell",
+      "description": "SSH (Secure Shell) je kryptografický protokol pro bezpečný vzdálený přístup a přenos souborů. Zjistěte, co je SSH, jak funguje a proč jej každý vývojář potřebuje.",
+      "keywords": [
+        "co je ssh",
+        "význam ssh",
+        "význam ssh",
+        "bezpečná skořápka",
+        "ssh protokol"
+      ],
+      "publishDate": "2026-03-14"
+    },
+    "what-is-an-ssh-key": {
+      "title": "Co je klíč SSH? Vysvětlení veřejných klíčů, soukromých klíčů a párů klíčů",
+      "description": "Klíč SSH je šifrovací pověření používané pro bezpečné ověřování. Přečtěte si, co je klíč SSH, jak fungují veřejné a soukromé klíče a jak je používat s GitHubem.",
+      "keywords": [
+        "co je ssh klíč",
+        "význam klíče ssh",
+        "pár klíčů ssh",
+        "veřejný klíč soukromý klíč",
+        "github ssh klíč"
+      ],
+      "publishDate": "2026-03-14"
+    },
+    "ssh-command": {
+      "title": "Příkaz SSH: Kompletní reference s příklady pro Linux, Mac a Windows",
+      "description": "Kompletní průvodce příkazem SSH s příklady pro Linux, macOS a Windows. Pokrývá příznak ssh -i, tunelování, ProxyJump, základní možnosti a PowerShell SSH.",
+      "keywords": [
+        "příkaz ssh",
+        "příklad příkazu ssh",
+        "ssh příkaz linux",
+        "příkazová okna ssh",
+        "příkaz powershell ssh"
+      ],
+      "publishDate": "2026-03-14"
+    },
+    "how-to-set-up-ssh": {
+      "title": "Jak nastavit SSH: Kompletní průvodce krok za krokem pro Linux, Mac a Windows",
+      "description": "Přečtěte si, jak nastavit SSH v systémech Linux, macOS a Windows. Podrobný průvodce pokrývá generování klíčů, ssh-copy-id, ssh-agent, nastavení GitHub SSH a odstraňování problémů.",
+      "keywords": [
+        "jak nastavit ssh",
+        "jak nastavit ssh klíč github",
+        "ssh-copy-id",
+        "ssh-agent",
+        "povolení odepřeno veřejný klíč"
+      ],
+      "publishDate": "2026-03-14"
+    }
+  },
+  "el": {
+    "what-is-ssh": {
+      "title": "Τι είναι το SSH; Ο πλήρης οδηγός για το Secure Shell",
+      "description": "Το SSH (Secure Shell) είναι ένα κρυπτογραφικό πρωτόκολλο για ασφαλή απομακρυσμένη πρόσβαση και μεταφορά αρχείων. Μάθετε τι είναι το SSH, πώς λειτουργεί και γιατί το χρειάζεται κάθε προγραμματιστής.",
+      "keywords": [
+        "τι είναι το ssh",
+        "ssh έννοια",
+        "έννοια του ssh",
+        "ασφαλές κέλυφος",
+        "πρωτόκολλο ssh"
+      ],
+      "publishDate": "2026-03-14"
+    },
+    "what-is-an-ssh-key": {
+      "title": "Τι είναι ένα κλειδί SSH; Επεξήγηση των δημόσιων κλειδιών, των ιδιωτικών κλειδιών και των ζευγών κλειδιών",
+      "description": "Ένα κλειδί SSH είναι ένα κρυπτογραφικό διαπιστευτήριο που χρησιμοποιείται για ασφαλή έλεγχο ταυτότητας. Μάθετε τι είναι ένα κλειδί SSH, πώς λειτουργούν τα δημόσια και ιδιωτικά κλειδιά και πώς να τα χρησιμοποιείτε με το GitHub.",
+      "keywords": [
+        "τι είναι ένα κλειδί ssh",
+        "Σημασία κλειδιού ssh",
+        "ζεύγος κλειδιών ssh",
+        "δημόσιο κλειδί ιδιωτικό κλειδί",
+        "κλειδί github ssh"
+      ],
+      "publishDate": "2026-03-14"
+    },
+    "ssh-command": {
+      "title": "Η εντολή SSH: Πλήρης αναφορά με παραδείγματα για Linux, Mac και Windows",
+      "description": "Ένας πλήρης οδηγός για την εντολή SSH με παραδείγματα για Linux, macOS και Windows. Καλύπτει τη σημαία ssh -i, τη δημιουργία σήραγγας, το ProxyJump, τις βασικές επιλογές και το PowerShell SSH.",
+      "keywords": [
+        "εντολή ssh",
+        "Παράδειγμα εντολής ssh",
+        "ssh εντολή linux",
+        "ssh παράθυρα εντολής",
+        "εντολή powershell ssh"
+      ],
+      "publishDate": "2026-03-14"
+    },
+    "how-to-set-up-ssh": {
+      "title": "Πώς να ρυθμίσετε το SSH: Ένας πλήρης οδηγός βήμα προς βήμα για Linux, Mac και Windows",
+      "description": "Μάθετε πώς να ρυθμίζετε το SSH σε Linux, macOS και Windows. Ο οδηγός βήμα προς βήμα καλύπτει τη δημιουργία κλειδιών, το ssh-copy-id, τον ssh-agent, τη ρύθμιση του GitHub SSH και την αντιμετώπιση προβλημάτων.",
+      "keywords": [
+        "πώς να ρυθμίσετε το ssh",
+        "πώς να ρυθμίσετε το κλειδί ssh github",
+        "ssh-copy-id",
+        "ssh-agent",
+        "δεν επιτρέπεται η άδεια δημόσιου κλειδιού"
+      ],
+      "publishDate": "2026-03-14"
+    }
+  },
+  "hu": {
+    "what-is-ssh": {
+      "title": "Mi az SSH? A Secure Shell teljes útmutatója",
+      "description": "Az SSH (Secure Shell) egy titkosítási protokoll a biztonságos távoli hozzáféréshez és fájlátvitelhez. Ismerje meg, mi az SSH, hogyan működik, és miért van rá szüksége minden fejlesztőnek.",
+      "keywords": [
+        "mi az az ssh",
+        "ssh jelentése",
+        "ssh jelentése",
+        "biztonságos héj",
+        "ssh protokoll"
+      ],
+      "publishDate": "2026-03-14"
+    },
+    "what-is-an-ssh-key": {
+      "title": "Mi az SSH kulcs? Nyilvános kulcsok, privát kulcsok és kulcspárok magyarázata",
+      "description": "Az SSH-kulcs egy titkosítási hitelesítő adat, amelyet a biztonságos hitelesítéshez használnak. Ismerje meg, mi az SSH-kulcs, hogyan működnek a nyilvános és privát kulcsok, és hogyan használhatjuk őket a GitHubbal.",
+      "keywords": [
+        "mi az ssh kulcs",
+        "ssh kulcs jelentése",
+        "ssh kulcspár",
+        "nyilvános kulcsú privát kulcs",
+        "github ssh kulcs"
+      ],
+      "publishDate": "2026-03-14"
+    },
+    "ssh-command": {
+      "title": "Az SSH-parancs: Teljes referencia példákkal Linuxra, Macre és Windowsra",
+      "description": "Az SSH parancs teljes útmutatója példákkal Linux, macOS és Windows rendszerekhez. Tartalmazza az ssh -i jelzőt, az tunnelinget, a ProxyJumpot, az alapvető beállításokat és a PowerShell SSH-t.",
+      "keywords": [
+        "ssh parancsot",
+        "ssh parancs példa",
+        "ssh parancs linux",
+        "ssh parancs windows",
+        "powershell ssh parancs"
+      ],
+      "publishDate": "2026-03-14"
+    },
+    "how-to-set-up-ssh": {
+      "title": "Az SSH beállítása: Teljes, lépésről lépésre útmutató Linux, Mac és Windows rendszerekhez",
+      "description": "Ismerje meg, hogyan állíthatja be az SSH-t Linuxon, macOS-en és Windowson. A lépésenkénti útmutató a kulcsgenerálást, az ssh-copy-id, az ssh-agent, a GitHub SSH beállítását és a hibaelhárítást tartalmazza.",
+      "keywords": [
+        "hogyan kell beállítani az ssh-t",
+        "hogyan kell beállítani az ssh key githubot",
+        "ssh-copy-id",
+        "ssh-agent",
+        "engedély megtagadva nyilvános kulcs"
+      ],
+      "publishDate": "2026-03-14"
+    }
+  }
+}

@@ -1,0 +1,337 @@
+# SSH Anahtarı Nedir? Açık Anahtarlar, Özel Anahtarlar ve Anahtar Çiftleri Açıklandı
+
+**SSH anahtarı**, parola kullanmadan SSH sunucularında kimlik doğrulaması yapmak için kullanılan kriptografik bir kimlik bilgisidir. SSH anahtarları çift olarak gelir — **açık anahtar** ve **özel anahtar** — ve birlikte uzak erişimi geleneksel parola kimlik doğrulamasından daha güvenli ve daha kullanışlı hale getirir. Bu kılavuz, SSH anahtarının ne olduğunu, anahtar çifti sisteminin nasıl çalıştığını, hangi anahtar türlerinin seçileceğini ve SSH anahtarlarının GitHub ve GitLab gibi hizmetlerle nasıl kullanılacağını açıklar.
+
+## SSH Anahtarları Nasıl Çalışır?
+
+SSH anahtarları, açık anahtar kriptografisi olarak da adlandırılan **asimetrik kriptografi** temeline dayanır. Simetrik kriptografinin aksine (burada tek bir gizli anahtar hem şifreler hem de şifre çözer), asimetrik sistemler matematiksel olarak bağlantılı anahtar çiftleri kullanır; bir anahtarla şifrelenen veri yalnızca diğer anahtarla çözülebilir.
+
+Bir sunucuya giriş yapmak için SSH anahtarı kullandığınızda kimlik doğrulama akışı şöyledir:
+
+1. `ssh user@server.example.com` komutunu çalıştırırsınız.
+2. Sunucu, açık anahtarınızı `~/.ssh/authorized_keys` dosyasında arar.
+3. Sunucu rastgele bir meydan okuma oluşturur ve açık anahtarınızla şifreler.
+4. SSH istemciniz, meydan okumayı özel anahtarınızı kullanarak çözer.
+5. İstemci, çözülmüş meydan okuma ve oturum kimliğinden türetilen bir kriptografik kanıt sunucuya gönderir.
+6. Sunucu kanıtı doğrular. Bunu yalnızca özel anahtarın sahibi üretebilirdi.
+7. Kimlik doğrulama başarılı olur. Makinenizden hiçbir parola çıkmaz.
+
+İşte temel içgörü budur: **özel anahtarınız hiçbir zaman ağ üzerinden iletilmez**. Sunucu yalnızca açık anahtarınızı ve ürettiğiniz kriptografik kanıtları görür. Biri SSH oturumunuzdaki her paketi ele geçirse bile, sizi taklit etmelerine yardımcı olacak hiçbir şey elde edemez.
+
+SSH protokolünün genel arka planı için <a href="/tr/what-is-ssh">SSH nedir</a> kılavuzumuza bakın.
+
+## Açık Anahtar ile Özel Anahtar: Fark Nedir?
+
+İki anahtar arasındaki farkı anlamak, SSH'yi doğru kullanmak için temel önem taşır.
+
+### Açık Anahtar — Kiliniz
+
+**Açık anahtar**, serbestçe paylaşılmak üzere tasarlanmıştır. Bunu bir asma kilit olarak düşünün: erişmek istediğiniz sistemlerin herkesine kopyasını dağıtırsınız. Bir sunucunun `authorized_keys` dosyasında açık anahtarınız bulunduğunda, sunucu özel anahtarınızı bilmeden kimliğinizi doğrulayabilir.
+
+Açık anahtarlar:
+- Paylaşmak güvenlidir — sizi taklit etmek için kullanılamazlar
+- `~/.ssh/authorized_keys` dosyasına sunuculara yerleştirilir
+- GitHub, GitLab ve diğer hizmetlere yüklenir
+- Genellikle `.pub` uzantısına sahiptir (örn. `id_ed25519.pub`)
+- Şu şekilde görünür: `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAA... user@hostname`
+
+### Özel Anahtar — Anahtarınız
+
+**Özel anahtar**, çiftin gizli yarısıdır. Makinenizden asla ayrılmamalı ve yöneticiler, bulut sağlayıcılar, destek personeli dahil kimseyle paylaşılmamalıdır. Özel anahtarınız ele geçirilirse, onu ele geçiren herkes açık anahtarınızın yüklü olduğu her sunucuda sizi taklit edebilir.
+
+Özel anahtarlar:
+- Gizli ve güvende tutulmalıdır
+- `~/.ssh/` dizininde kısıtlı izinlerle (600) yerel olarak saklanır
+- İsteğe bağlı olarak bir parola ifadesiyle şifrelenir
+- Uzantısı yoktur veya dile özgü bir uzantıya sahiptir (örn. `id_ed25519`)
+
+### `authorized_keys` Dosyası
+
+Sunucu tarafında her kullanıcının açık anahtarları `~/.ssh/authorized_keys` dosyasında saklanır. Bu, her satırın bir açık anahtar içerdiği düz bir metin dosyasıdır. Bir SSH istemcisi kimlik doğrulaması yapmaya çalıştığında, sunucu istemcinin bu dosyadaki herhangi bir girişe karşılık gelen özel anahtara sahip olduğunu kanıtlayıp kanıtlayamadığını kontrol eder.
+
+```
+# ~/.ssh/authorized_keys biçimi
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGq... alice@laptop
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHr... alice@workstation
+ssh-rsa AAAAB3NzaC1yc2EAAAA... backup-deploy-key
+```
+
+Bu dosyada ihtiyacınız kadar çok açık anahtar bulunabilir; böylece birden fazla cihaz veya otomasyon sistemi aynı sunucuya kimlik doğrulaması yapabilir.
+
+## SSH Anahtar Algoritmaları: Ed25519 ve RSA Karşılaştırması
+
+SSH anahtar çifti oluşturduğunuzda bir algoritma seçersiniz. Bugün en yaygın iki seçenek **Ed25519** ve **RSA**'dır. ECDSA ve DSA da mevcuttur; ancak DSA kullanımdan kaldırılmıştır ve ECDSA'nın uygulama tuzakları vardır; bu nedenle önerilen iki seçeneğe odaklanacağız.
+
+### Ed25519 — Modern Seçim
+
+Ed25519, OpenSSH'in 6.5 sürümünde (2014) tanıtıldı ve artık önerilen varsayılandır. Daniel J. Bernstein tarafından tasarlanan Twisted Edwards eğrisi (Curve25519) üzerinde eliptik eğri kriptografisi kullanır.
+
+**Ed25519'un avantajları:**
+- **Kompakt** — anahtarlar yalnızca 68 karakterdir (açık anahtar) ve dosyalar küçüktür
+- **Hızlı** — imza oluşturma ve doğrulama son derece hızlıdır
+- **Tasarım gereği güvenli** — bazı RSA uygulamalarını etkileyen yan kanal saldırılarına karşı savunmasız değildir
+- **Sabit anahtar boyutu** — 256-bit güvenlik düzeyi, anahtar boyutu seçmeye gerek yoktur
+- **Deterministik** — imzalar deterministiktir, bu da bir sınıf rastgele sayı üreteci hatalarını ortadan kaldırır
+
+```bash
+# Ed25519 anahtar çifti oluştur
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+### RSA — Evrensel Seçenek
+
+RSA daha eski bir algoritmadır (1977'de icat edildi) ve 4096 bit'te hâlâ güvenli olsa da Ed25519'a kıyasla daha yavaş ve daha büyük anahtarlar üretir. Ancak RSA çok daha geniş uyumluluğa sahiptir — çok eski SSH sunucularıyla, eski sistemlerle ve bazı donanım güvenlik anahtarlarıyla çalışır.
+
+**RSA ne zaman kullanılır:**
+- Eski OpenSSH sürümlerini (6.5'ten önce) çalıştıran eski sistemlere bağlanmanız gerekiyor
+- Ed25519'u desteklemeyen bir akıllı kart veya HSM kullanıyorsunuz
+- Eski araçlarla uyumluluk gerekiyor
+
+```bash
+# RSA 4096-bit anahtar çifti oluştur
+ssh-keygen -t rsa -b 4096 -C "your@email.com"
+```
+
+**RSA'yı hiçbir zaman 4096 bitten az kullanmayın.** RSA-1024 ve RSA-2048, artan hesaplama gücüyle birlikte giderek yetersiz kabul edilmektedir. 256-bit Ed25519, anahtar boyutunun çok küçük bir kısmıyla eşdeğer veya daha iyi güvenlik sağlar.
+
+### Özet Karşılaştırma
+
+| Özellik | Ed25519 | RSA 4096 |
+|---|---|---|
+| Anahtar boyutu (açık) | ~68 karakter | ~725 karakter |
+| Güvenlik düzeyi | 128-bit (kuantum sonrası dayanıklı yapı) | ~140-bit klasik |
+| Hız | Çok hızlı | Daha yavaş |
+| Uyumluluk | Modern SSH (OpenSSH 6.5+) | Evrensel |
+| Önerilen kullanım | Tüm yeni anahtarlar | Yalnızca eski sistemler |
+
+**Sonuç: modern tüm kullanım durumları için Ed25519 anahtarları oluşturun.** RSA'yı yalnızca uyumluluk gereksinimleri zorunlu kıldığında kullanın.
+
+## GitHub'a SSH Anahtarı Nasıl Eklenir?
+
+SSH açık anahtarınızı GitHub'a eklemek, her işlemde kullanıcı adı ve parola girmeden SSH üzerinden push ve pull yapmanızı sağlar. İşte adım adım süreç.
+
+### Adım 1: Anahtar Çiftinizi Oluşturun
+
+Henüz SSH anahtar çiftiniz yoksa bir tane oluşturun. <a href="/">Ücretsiz çevrimiçi SSH anahtar oluşturucumuzu</a> kullanabilir ya da şunu çalıştırabilirsiniz:
+
+```bash
+ssh-keygen -t ed25519 -C "your-github-email@example.com"
+```
+
+Varsayılan dosya konumunu (`~/.ssh/id_ed25519`) kabul edin ve isteğe bağlı olarak bir parola ifadesi belirleyin.
+
+### Adım 2: Açık Anahtarınızı Kopyalayın
+
+Açık anahtarınızı görüntüleyin ve panoya kopyalayın:
+
+```bash
+# Linux
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+
+# macOS
+cat ~/.ssh/id_ed25519.pub | pbcopy
+
+# Windows (PowerShell)
+Get-Content ~/.ssh/id_ed25519.pub | Set-Clipboard
+```
+
+Ya da sadece görüntüleyip elle kopyalayın:
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+### Adım 3: Anahtarı GitHub'a Ekleyin
+
+1. **GitHub.com**'a giriş yapın
+2. Profil resminize tıklayın → **Settings** (Ayarlar)
+3. Sol kenar çubuğunda **SSH and GPG keys**'e tıklayın
+4. **New SSH key**'e tıklayın
+5. Açıklayıcı bir başlık verin (örn. "MacBook Pro 2024" veya "İş Dizüstü")
+6. Açık anahtarınızı **Key** alanına yapıştırın
+7. **Add SSH key**'e tıklayın
+
+### Adım 4: Bağlantıyı Test Edin
+
+```bash
+ssh -T git@github.com
+```
+
+Şunu görmelisiniz: `Hi username! You've successfully authenticated, but GitHub does not provide shell access.`
+
+### Mevcut Bir Depoyu SSH'ye Geçirme
+
+Bir depoyu HTTPS kullanarak klonladıysanız ve SSH'ye geçmek istiyorsanız:
+
+```bash
+# Mevcut uzak URL'yi kontrol et
+git remote -v
+
+# SSH'ye güncelle
+git remote set-url origin git@github.com:username/repository.git
+```
+
+GitLab için süreç aynıdır — **Preferences → SSH Keys** bölümüne gidin ve aynı adımları izleyin.
+
+## SSH Anahtarları Nerede Saklanır?
+
+SSH anahtarları, kullanıcının ana klasöründe `.ssh` adlı bir dizinde saklanır. Konum, işletim sistemine göre değişir.
+
+### Linux ve macOS
+
+```
+~/.ssh/
+├── id_ed25519          # Özel anahtarınız (izinler: 600)
+├── id_ed25519.pub      # Açık anahtarınız (izinler: 644)
+├── id_rsa              # Varsa RSA özel anahtarı
+├── id_rsa.pub          # RSA açık anahtarı
+├── authorized_keys     # Bu makineye giriş yapmasına izin verilen açık anahtarlar
+├── known_hosts         # Bağlandığınız sunucuların parmak izleri
+└── config              # İstemci yapılandırma dosyası
+```
+
+`~/.ssh/` dizininin kendisi **700** izinlerine sahip olmalıdır (yalnızca sahip okuma/yazma/çalıştırma). Özel anahtar dosyaları **600** izinlerine sahip olmalıdır (yalnızca sahip okuma/yazma). SSH, aşırı izin veren anahtarları kullanmayı reddeder.
+
+```bash
+# Gerekirse izinleri düzelt
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/id_ed25519
+chmod 644 ~/.ssh/id_ed25519.pub
+```
+
+### Windows
+
+OpenSSH yüklü Windows 10 ve 11'de SSH anahtarları şurada saklanır:
+
+```
+C:\Users\YourUsername\.ssh\
+├── id_ed25519
+├── id_ed25519.pub
+├── authorized_keys
+├── known_hosts
+└── config
+```
+
+Windows'ta `.ssh` dizinine Dosya Gezgini'nden (gizli dosyaları göster seçeneğini etkinleştirmeniz gerekebilir) veya PowerShell'den `~\.ssh\` kullanarak erişebilirsiniz.
+
+### Birden Fazla Anahtar Dosyası
+
+Farklı amaçlar için anahtarlarınız varsa (kişisel GitHub, iş GitLab, üretim sunucuları), her hostu kendi anahtarıyla eşleştirmek için `~/.ssh/config` dosyasını kullanın:
+
+```
+Host github.com
+    IdentityFile ~/.ssh/id_ed25519_github
+
+Host gitlab.work.com
+    IdentityFile ~/.ssh/id_ed25519_work
+
+Host prod-server
+    HostName 203.0.113.10
+    User deploy
+    IdentityFile ~/.ssh/id_ed25519_production
+```
+
+## SSH Anahtar Parola İfadeleri
+
+SSH anahtar çifti oluşturduğunuzda, `ssh-keygen` bir **parola ifadesi** belirlemek isteyip istemediğinizi sorar. Bu, diskteki özel anahtar dosyasını şifreleyen isteğe bağlı bir paroladır.
+
+### Neden Parola İfadesi Kullanılır?
+
+Özel anahtar dosyanız güçlü bir parola ifadesiyle korunuyorsa, dosyayı çalmak sizi taklit etmek için yeterli değildir — saldırganın parola ifadesini de kırması gerekir. Bu, özellikle fiziksel olarak çalınabilecek dizüstü bilgisayarlarda kritik ikinci bir güvenlik katmanı sağlar.
+
+Parola ifadesi olmadan özel anahtarınız diskte düz metin olarak saklanır. Dosyayı okuyabilen herkes (kötü amaçlı yazılım, fiziksel erişim veya düzgün güvende olmayan bir yedek aracılığıyla) onu hemen kullanabilir.
+
+### Parola İfadelerinin ssh-agent ile Etkileşimi
+
+Parola ifadesinin dezavantajı, her anahtarı kullandığınızda yazmanız gerekmesidir. **ssh-agent**, oturumunuz boyunca çözülmüş anahtarları bellekte tutarak bu sorunu çözer.
+
+```bash
+# ssh-agent'ı başlat ve anahtarınızı ekle
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+# Parola ifadesini bir kez girin — oturum süresince önbelleğe alınır
+```
+
+macOS'ta sistem Anahtarlık'ı ssh-agent ile entegre olur. Yeniden başlatmalar arasında kalıcı hale getirmek için `-K` ekleyin:
+
+```bash
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+```
+
+### Parola İfadesini Değiştirme
+
+Anahtar çiftini yeniden oluşturmadan mevcut bir anahtardaki parola ifadesini değiştirebilirsiniz:
+
+```bash
+ssh-keygen -p -f ~/.ssh/id_ed25519
+```
+
+Bu, eski parola ifadesini sorar ve ardından yeni bir tane belirlemenize olanak tanır. Açık anahtar değişmez; dolayısıyla onu hiçbir sunucuda güncellemeniz gerekmez.
+
+## SSH Anahtar Parmak İzleri
+
+Her SSH anahtar çiftinin, onu benzersiz biçimde tanımlayan açık anahtarın kısa bir karması olan bir **parmak izi** vardır. Parmak izleri çeşitli amaçlara hizmet eder:
+
+- **Host kimliğini doğrulama** — Bir sunucuya ilk kez bağlandığınızda SSH, host anahtarının parmak izini gösterir. Bunun beklediğinizle eşleştiğini onaylarsanız (örn. barındırma sağlayıcınız tarafından sağlandı), doğru sunucuya bağlandığınızı bilirsiniz.
+- **Anahtarları tanımlama** — Çok sayıda anahtarı yönetirken parmak izleri, hangi fiziksel anahtarın `authorized_keys` dosyasındaki veya GitHub gibi bir hizmetteki hangi girişe karşılık geldiğini belirlemenize yardımcı olur.
+- **Denetim ve iptal** — Denetim günlükleri genellikle tam anahtarlar yerine parmak izlerini kaydeder. Anahtarın parmak izini bilmek, gerekirse onu bulup kaldırmanıza yardımcı olur.
+
+### Anahtarın Parmak İzini Görüntüleme
+
+```bash
+# Açık anahtarınızın parmak izini görüntüle
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+# Çıktı: 256 SHA256:abcdef1234567890... your@email.com (ED25519)
+
+# Bir sunucunun host anahtarının parmak izini görüntüle
+ssh-keyscan server.example.com | ssh-keygen -lf -
+```
+
+GitHub, eklenen tüm SSH anahtarlarının parmak izlerini **Settings → SSH and GPG keys** bölümünde gösterir; bu sayede orada gördüğünüzün makinenizdekiyle eşleştiğini doğrulayabilirsiniz.
+
+### `known_hosts` Dosyası
+
+Yeni bir SSH sunucusuna ilk kez bağlandığınızda şuna benzer bir mesaj görürsünüz:
+
+```
+The authenticity of host 'example.com (203.0.113.10)' can't be established.
+ED25519 key fingerprint is SHA256:abcdef1234567890...
+Are you sure you want to continue connecting (yes/no/[fingerprint])?
+```
+
+`yes` yazın; sunucunun parmak izi `~/.ssh/known_hosts` dosyasına eklenir. Sonraki bağlantılarda SSH, sunucunun anahtarının saklanan parmak iziyle eşleşip eşleşmediğini sessizce doğrular. Eşleşmezse — bu bir yanlış yapılandırmayı veya ortadaki adam saldırısını gösterebilir — SSH sizi güçlü biçimde uyarır ve bağlanmayı reddeder.
+
+## Sık Sorulan Sorular
+
+### SSH anahtarı ne için kullanılır?
+
+SSH anahtarları, parola olmadan uzak sunucularda kimliğinizi doğrular. En yaygın kullanımlar: yönetim için Linux/Unix sunucularına giriş yapma, push/pull erişimi için Git barındırma hizmetleriyle (GitHub, GitLab, Bitbucket) kimlik doğrulama, parolasız sunucu erişimine ihtiyaç duyan otomatik dağıtım betikleri ve kodu üretime dağıtan CI/CD hatları. SSH anahtarları parolalara kıyasla tercih edilir çünkü kaba kuvvete karşı bağışıktır, ihlaller arasında yeniden kullanılamaz ve insan müdahalesi olmadan kullanılabilir.
+
+### Kaç SSH anahtarım olmalı?
+
+Tek bir doğru yanıt yoktur; ancak yaygın en iyi uygulama **cihaz başına bir anahtar**tır (hizmet başına değil). Dizüstü bilgisayarınızın bir anahtar çifti vardır; masaüstünüzün başka bir tane; CI sunucunuzun başka bir tane. Bu şekilde bir cihaz çalınır veya ele geçirilirse yalnızca o cihazın anahtarını iptal edersiniz. Bazı kişiler bağlama göre daha fazla ayrım yapar (kişisel/iş), cihaz başına iki anahtarla sonuçlanır. Tek bir anahtarı birden fazla makinede paylaşmaktan kaçının — o anahtar ele geçirilirse tüm erişiminiz aynı anda risk altında olur.
+
+### SSH açık anahtarımı paylaşabilir miyim?
+
+Evet. Açık anahtar paylaşılmak üzere tasarlanmıştır. E-postayla göndermek, GitHub belgelerine eklemek veya sunucu erişimi isteyen bir bilette belirtmek güvenlidir. Açık anahtar tek başına sizin olarak kimlik doğrulaması yapmak için kullanılamaz — bunun için yalnızca sizin sahip olduğunuz karşılık gelen özel anahtar gerekir. Bu, asimetrik kriptografinin temel özelliğidir. **Özel** anahtarınızı asla kimseyle paylaşmayın.
+
+### SSH özel anahtarımı kaybedersem ne olur?
+
+Özel anahtarınızı kaybederseniz ve bir yedeğiniz yoksa, onunla kimlik doğrulama yapma yeteneğinizi kaybedersiniz. Sunuculara ve hizmetlere hâlâ yüklü olan açık anahtarınız yetim kalır. Eski açık anahtarı `authorized_keys` dosyasından kaldırmak ve yeni bir tane eklemek için sunucuya alternatif bir erişim yoluna ihtiyacınız olacaktır (etkinleştirilmişse parola kimlik doğrulaması, konsol erişimi veya barındırma sağlayıcınızın acil erişim mekanizması). Bu nedenle özel anahtarınızı yedeklemek (bir parola yöneticisinde veya şifreli yedekte) önemlidir. Özel anahtar açık anahtardan yeniden oluşturulamaz.
+
+### Ed25519 mi RSA mı daha iyi?
+
+**Ed25519, tüm yeni anahtar oluşturma işlemleri için daha iyidir.** Daha hızlıdır, daha küçük anahtarlar üretir, RSA'yı etkileyen belirli uygulama zayıflıklarına karşı savunmasız değildir ve RSA-4096 ile karşılaştırıldığında 256-bit anahtarla eşdeğer veya üstün güvenlik sağlar. Bugün RSA kullanmanın tek nedeni, çok eski SSH sunucu yazılımıyla (2014'te yayımlanan OpenSSH 6.5'ten öncesi) veya eski donanım güvenlik modülleriyle uyumluluktur. Herhangi bir modern sunucuya veya GitHub gibi bir hizmete erişiyorsanız Ed25519 kullanın.
+
+## SSH Anahtar Çiftinizi Oluşturun
+
+SSH anahtarlarınızı oluşturmaya hazır mısınız? Ücretsiz çevrimiçi oluşturucumuz, doğrudan tarayıcınızda Ed25519 veya RSA anahtar çiftleri oluşturur. Özel anahtar yerel olarak oluşturulur ve sunucularımıza hiçbir zaman gönderilmez.
+
+<a href="/">SSH anahtar çiftinizi şimdi oluşturun →</a>
+
+---
+
+**Daha fazla okuma:**
+- <a href="/tr/what-is-ssh">SSH Nedir? Güvenli Kabuk'a Tam Kılavuz</a>
+- <a href="/tr/ssh-command">SSH Komutu: Örneklerle Tam Başvuru Kılavuzu</a>
+- <a href="/tr/how-to-set-up-ssh">SSH Nasıl Kurulur: Eksiksiz Adım Adım Kılavuz</a>

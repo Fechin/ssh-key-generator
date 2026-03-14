@@ -1,0 +1,563 @@
+# Jak Skonfigurować SSH: Kompletny Przewodnik Krok po Kroku dla Linux, Mac i Windows
+
+Prawidłowe skonfigurowanie SSH zajmuje około dziesięciu minut i przynosi korzyści przez lata. Po skonfigurowaniu możesz logować się na serwery bez wpisywania haseł, wysyłać kod do GitHub bez podawania poświadczeń przy każdej operacji i automatyzować wdrożenia z pełnym zaufaniem. Niniejszy przewodnik przeprowadza przez cały proces — od generowania pary kluczy po rozwiązywanie typowych błędów — dla systemów Linux, macOS i Windows.
+
+Jeśli chcesz najpierw zrozumieć technologię leżącą u podstaw, przeczytaj nasze przewodniki o <a href="/pl/what-is-ssh">tym, czym jest SSH</a> i <a href="/pl/what-is-an-ssh-key">tym, czym są klucze SSH</a>.
+
+## Wymagania Wstępne
+
+Przed rozpoczęciem upewnij się, że masz:
+
+**Dla dostępu do serwera:**
+- Aplikację terminalową (Terminal na macOS/Linux, Windows Terminal lub PowerShell na Windows)
+- Zdalny serwer z systemem Linux/Unix z zainstalowanym oprogramowaniem serwera SSH (sshd)
+- Konto użytkownika na tym serwerze (lub dostęp root do jego utworzenia)
+- Adres IP lub nazwę hosta serwera
+
+**Dla dostępu do GitHub/GitLab:**
+- Konto GitHub lub GitLab
+- Terminal z dostępnym poleceniem `ssh`
+- Opcjonalnie: git zainstalowany lokalnie
+
+**Wymagania systemu operacyjnego:**
+- **Linux**: Klient SSH jest preinstalowany praktycznie we wszystkich dystrybucjach
+- **macOS**: Klient SSH jest wbudowany, dostępny z Terminala
+- **Windows 10 wersja 1809+ / Windows 11**: Klient OpenSSH jest dostępny jako opcjonalna funkcja
+
+Nie musisz niczego instalować na systemie Linux ani macOS. W systemie Windows sprawdź, czy OpenSSH jest zainstalowany, otwierając PowerShell i uruchamiając `ssh -V`. Jeśli otrzymasz ciąg wersji, jesteś gotowy. W przeciwnym razie zapoznaj się z Krokiem 4 dla instrukcji instalacji.
+
+## Krok 1: Wygeneruj Swoją Parę Kluczy SSH
+
+Potrzebujesz pary kluczy, zanim będziesz mógł zrobić cokolwiek innego. Para kluczy składa się z **klucza prywatnego** (pozostaje na Twojej maszynie) i **klucza publicznego** (trafia na serwery lub serwisy takie jak GitHub).
+
+### Opcja A: Użyj Generatora Online
+
+Jeśli wolisz interfejs graficzny, nasz <a href="/">bezpłatny generator kluczy SSH online</a> tworzy pary kluczy Ed25519 lub RSA w przeglądarce. Klucz prywatny jest generowany lokalnie przy użyciu Web Crypto API — nic nie jest wysyłane na nasze serwery. Pobierz oba pliki i zapisz je w `~/.ssh/` (Linux/macOS) lub `C:\Users\TwojeImię\.ssh\` (Windows).
+
+### Opcja B: Użyj ssh-keygen w Wierszu Poleceń
+
+Polecenie `ssh-keygen` jest dostępne na systemach Linux, macOS i Windows z OpenSSH:
+
+```bash
+# Wygeneruj parę kluczy Ed25519 (zalecane)
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+**Znaczenie poszczególnych flag:**
+- `-t ed25519` — typ klucza (Ed25519 jest nowoczesny, szybki i bezpieczny)
+- `-C "komentarz"` — etykieta osadzona w kluczu publicznym, zazwyczaj Twój adres e-mail
+
+Zostaniesz zapytany:
+
+```
+Generating public/private ed25519 key pair.
+Enter file in which to save the key (/home/user/.ssh/id_ed25519):
+```
+
+Naciśnij **Enter**, aby zaakceptować domyślną lokalizację. Jeśli masz wiele kluczy, możesz nadać im opisowe nazwy (np. `/home/user/.ssh/id_ed25519_github`).
+
+```
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+```
+
+Wprowadź silne hasło. Szyfruje ono plik klucza prywatnego na dysku — jeśli Twoja maszyna zostanie skradziona, klucz nie może być używany bez hasła. Możesz pozostawić pole puste w przypadkach automatyzacji, gdzie interakcja człowieka nie jest możliwa, ale dla osobistych kluczy zawsze używaj hasła.
+
+**Wyjście:**
+
+```
+Your identification has been saved in /home/user/.ssh/id_ed25519
+Your public key has been saved in /home/user/.ssh/id_ed25519.pub
+The key fingerprint is:
+SHA256:abc123defghijk... your@email.com
+The key's randomart image is:
++--[ED25519 256]--+
+...
+```
+
+Tworzone są dwa pliki:
+- `~/.ssh/id_ed25519` — Twój **klucz prywatny** (nigdy go nie udostępniaj)
+- `~/.ssh/id_ed25519.pub` — Twój **klucz publiczny** (bezpieczny do udostępniania)
+
+### Dla RSA (Kompatybilność z Systemami Legacy)
+
+Jeśli musisz łączyć się z bardzo starymi systemami, które nie obsługują Ed25519:
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "your@email.com"
+```
+
+Używaj co najmniej 4096 bitów. Klucze RSA mniejsze niż 4096 bitów nie są już uważane za odpowiednie zabezpieczenie.
+
+## Krok 2: Konfiguracja SSH na Linux
+
+Ta sekcja omawia kopiowanie klucza publicznego na serwer Linux, aby uwierzytelniać się bez hasła.
+
+### Metoda 1: ssh-copy-id (Najłatwiejsza)
+
+`ssh-copy-id` to najprostszy sposób instalacji klucza publicznego na zdalnym serwerze. Łączy się przy użyciu uwierzytelniania hasłem, dodaje klucz publiczny do pliku `~/.ssh/authorized_keys` serwera i ustawia odpowiednie uprawnienia.
+
+```bash
+ssh-copy-id user@server.example.com
+
+# Jawnie określ plik klucza
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server.example.com
+
+# Połącz na niestandardowym porcie
+ssh-copy-id -p 2222 user@server.example.com
+```
+
+Zostaniesz poproszony o hasło serwera po raz ostatni. Następnie możesz łączyć się za pomocą `ssh user@server.example.com` używając klucza.
+
+### Metoda 2: Ręczne Kopiowanie
+
+Jeśli `ssh-copy-id` nie jest dostępne (typowe na niektórych systemach BSD lub minimalnych instalacjach Linux):
+
+```bash
+# Wyświetl klucz publiczny i skopiuj wyjście
+cat ~/.ssh/id_ed25519.pub
+
+# Następnie połącz się przez SSH z serwerem (z hasłem) i uruchom:
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+echo "WKLEJ_TU_SWÓJ_KLUCZ_PUBLICZNY" >> ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+```
+
+Lub zrób to wszystko w jednym potoku:
+
+```bash
+cat ~/.ssh/id_ed25519.pub | ssh user@server.example.com \
+  "mkdir -p ~/.ssh && chmod 700 ~/.ssh && \
+   cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+```
+
+### Weryfikacja Instalacji Klucza
+
+```bash
+ssh user@server.example.com
+# Powinno połączyć bez pytania o hasło (tylko hasło jeśli je ustawiłeś)
+```
+
+### Konfiguracja Serwera SSH (sshd)
+
+Na serwerze zdalnym konfiguracja demona SSH znajduje się w `/etc/ssh/sshd_config`. Dla bezpiecznej konfiguracji:
+
+```bash
+sudo nano /etc/ssh/sshd_config
+```
+
+Zalecane ustawienia:
+
+```
+# Włącz uwierzytelnianie kluczem publicznym
+PubkeyAuthentication yes
+
+# Wyłącz uwierzytelnianie hasłem (po potwierdzeniu działania kluczy!)
+ PasswordAuthentication no
+
+# Wyłącz logowanie root przez SSH
+ PermitRootLogin no
+
+# Zezwól tylko określonym użytkownikom
+AllowUsers alice bob deploy
+
+# Utrzymuj aktywność sesji
+ClientAliveInterval 60
+ClientAliveCountMax 3
+```
+
+Po edycji przeładuj demona SSH:
+
+```bash
+sudo systemctl reload sshd
+# Lub w starszych systemach:
+sudo service ssh reload
+```
+
+**Ważne**: Nie wyłączaj `PasswordAuthentication`, dopóki nie potwierdzisz, że uwierzytelnianie oparte na kluczach działa. Jeśli się zablokujesz, będziesz potrzebować dostępu do konsoli (lub awaryjnego dostępu dostawcy hostingu) do odzyskania.
+
+### Konfiguracja ssh-agent na Linux
+
+Jeśli Twój klucz ma hasło, dodaj go do `ssh-agent` na początku sesji, aby uniknąć jego ponownego wpisywania:
+
+```bash
+# Uruchom agenta (często uruchamiany automatycznie przez środowiska graficzne)
+eval "$(ssh-agent -s)"
+
+# Dodaj klucz (wpisz hasło raz)
+ssh-add ~/.ssh/id_ed25519
+
+# Sprawdź załadowane klucze
+ssh-add -l
+```
+
+Aby automatycznie uruchamiać `ssh-agent` i dodawać klucz przy logowaniu, dodaj do `~/.bashrc` lub `~/.zshrc`:
+
+```bash
+# Automatyczne uruchamianie ssh-agent
+if [ -z "$SSH_AUTH_SOCK" ]; then
+  eval "$(ssh-agent -s)"
+  ssh-add ~/.ssh/id_ed25519
+fi
+```
+
+## Krok 3: Konfiguracja SSH na macOS
+
+macOS zawiera pełnego klienta OpenSSH. Proces konfiguracji uwierzytelniania opartego na kluczach do zdalnego serwera jest identyczny jak na Linux (patrz Krok 2 powyżej). Dodatki specyficzne dla macOS dotyczą integracji z Pękiem kluczy.
+
+### Integracja z Pękiem Kluczy
+
+macOS może przechowywać hasło w systemowym Pęku kluczy, dzięki czemu nigdy nie musisz go wpisywać po pierwszym razie:
+
+```bash
+# Dodaj klucz do ssh-agent z integracją Pęku kluczy
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+
+# Dla starszych wersji macOS (przed Monterey)
+ssh-add -K ~/.ssh/id_ed25519
+```
+
+Aby macOS zawsze ładował klucze z Pęku kluczy, dodaj do `~/.ssh/config`:
+
+```
+Host *
+    AddKeysToAgent yes
+    UseKeychain yes
+    IdentityFile ~/.ssh/id_ed25519
+```
+
+Po tym hasło jest przechowywane w Pęku kluczy i ładowane automatycznie — nie będziesz o nie pytany po kolejnych uruchomieniach.
+
+### Sprawdź Wersję Klienta SSH
+
+```bash
+ssh -V
+# OpenSSH_9.x, LibreSSL x.x.x
+```
+
+macOS jest dostarczany z stosunkowo aktualnym OpenSSH, ale nie zawsze najnowszym. Jeśli potrzebujesz nowszych funkcji, zainstaluj przez Homebrew: `brew install openssh`.
+
+## Krok 4: Konfiguracja SSH na Windows
+
+Windows 10 (1809+) i Windows 11 zawierają OpenSSH. Oto jak go uruchomić.
+
+### Zainstaluj Klienta OpenSSH
+
+**Sprawdź, czy jest już zainstalowany:**
+
+```powershell
+ssh -V
+```
+
+**Zainstaluj przez Ustawienia:**
+1. Otwórz **Ustawienia → Aplikacje → Funkcje opcjonalne**
+2. Wyszukaj **Klient OpenSSH**
+3. Kliknij **Zainstaluj**
+
+**Zainstaluj przez PowerShell (jako Administrator):**
+
+```powershell
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+```
+
+### Generowanie Kluczy na Windows
+
+Otwórz PowerShell i uruchom:
+
+```powershell
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+Klucze są zapisywane w `C:\Users\TwojaNazwaUżytkownika\.ssh\`.
+
+### Kopiowanie Klucza Publicznego na Serwer Linux
+
+Windows nie zawiera `ssh-copy-id`, ale można to zrobić ręcznie z PowerShell:
+
+```powershell
+# Wyświetl klucz publiczny
+Get-Content ~/.ssh/id_ed25519.pub
+
+# Skopiuj go na serwer zdalny (zostaniesz poproszony o hasło serwera)
+$pubkey = Get-Content ~/.ssh/id_ed25519.pub -Raw
+ssh user@server.example.com "mkdir -p ~/.ssh && echo '$pubkey' >> ~/.ssh/authorized_keys && chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys"
+```
+
+Lub użyj `Add-Content` do przesłania potokiem:
+
+```powershell
+type $env:USERPROFILE\.ssh\id_ed25519.pub | ssh user@server.example.com "cat >> ~/.ssh/authorized_keys"
+```
+
+### Konfiguracja ssh-agent na Windows
+
+Aby uniknąć wielokrotnego wpisywania hasła, uruchom usługę agenta uwierzytelniania OpenSSH:
+
+```powershell
+# Uruchom usługę
+Start-Service ssh-agent
+
+# Ustaw automatyczne uruchamianie
+Set-Service -Name ssh-agent -StartupType Automatic
+
+# Dodaj klucz
+ssh-add ~/.ssh/id_ed25519
+```
+
+### PuTTY jako Alternatywa
+
+Jeśli wolisz graficznego klienta SSH, PuTTY jest bezpłatną opcją dla Windows. Użyj **PuTTYgen** do generowania kluczy (zapisz w formacie `.ppk` dla PuTTY i wyeksportuj w formacie OpenSSH). Jednak w przypadku nowych konfiguracji wbudowany klient OpenSSH jest prostszy i interoperacyjny z resztą ekosystemu.
+
+## Jak Skonfigurować Klucze SSH dla GitHub i GitLab
+
+Uwierzytelnianie kluczem SSH w GitHub i GitLab działa podobnie — przesyłasz klucz publiczny do serwisu i używasz odpowiadającego klucza prywatnego podczas wykonywania operacji Git.
+
+### Konfiguracja SSH dla GitHub
+
+**1. Skopiuj klucz publiczny:**
+
+```bash
+# Linux
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+
+# macOS
+cat ~/.ssh/id_ed25519.pub | pbcopy
+
+# Windows PowerShell
+Get-Content ~/.ssh/id_ed25519.pub | Set-Clipboard
+```
+
+Lub wyświetl i skopiuj ręcznie:
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+**2. Dodaj do GitHub:**
+
+1. Przejdź na **github.com** i zaloguj się
+2. Kliknij swój awatar → **Ustawienia**
+3. W lewym pasku bocznym: **Klucze SSH i GPG**
+4. Kliknij **Nowy klucz SSH**
+5. Nadaj mu opisowy **Tytuł** (np. „MacBook Pro" lub „Komputer służbowy")
+6. Ustaw **Typ klucza** na **Klucz uwierzytelniający**
+7. Wklej klucz publiczny
+8. Kliknij **Dodaj klucz SSH**
+
+**3. Przetestuj połączenie:**
+
+```bash
+ssh -T git@github.com
+# Hi username! You've successfully authenticated, but GitHub does not provide shell access.
+```
+
+**4. Użyj SSH dla operacji Git:**
+
+```bash
+# Sklonuj używając SSH zamiast HTTPS
+git clone git@github.com:username/repository.git
+
+# Jeśli istniejące repozytorium używa HTTPS, przełącz je na SSH
+git remote set-url origin git@github.com:username/repository.git
+```
+
+### Konfiguracja SSH dla GitLab
+
+Proces jest identyczny:
+
+1. Przejdź na **gitlab.com** → Kliknij swój awatar → **Preferencje**
+2. W lewym pasku bocznym: **Klucze SSH**
+3. Wklej klucz publiczny, nadaj mu tytuł i opcjonalnie ustaw datę wygaśnięcia
+4. Kliknij **Dodaj klucz**
+
+Przetestuj za pomocą:
+
+```bash
+ssh -T git@gitlab.com
+# Welcome to GitLab, @username!
+```
+
+W przypadku self-hosted instancji GitLab zamień `gitlab.com` na nazwę hosta swojej instancji.
+
+### Używanie Oddzielnego Klucza dla GitHub i Innych Serwisów
+
+Jeśli chcesz mieć dedykowany klucz dla GitHub (zalecane dla higieny kluczy), wygeneruj nazwany klucz:
+
+```bash
+ssh-keygen -t ed25519 -C "github" -f ~/.ssh/id_ed25519_github
+```
+
+Następnie dodaj blok `Host` do `~/.ssh/config`:
+
+```
+Host github.com
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519_github
+    AddKeysToAgent yes
+```
+
+Teraz `git clone git@github.com:...` automatycznie używa klucza dedykowanego dla GitHub.
+
+## Testowanie i Rozwiązywanie Problemów SSH
+
+### Podstawowy Test Łączności
+
+```bash
+ssh -v user@server.example.com
+```
+
+Flaga `-v` (szczegółowe wyjście) pokazuje dokładnie, co dzieje się na każdym etapie. Szukaj linii takich jak:
+- `Offering public key: ~/.ssh/id_ed25519` — SSH próbuje Twojego klucza
+- `Server accepts key` — klucz znajduje się w `authorized_keys`
+- `Authenticated to server.example.com` — sukces
+
+### Typowe Błędy i Rozwiązania
+
+**„Permission denied (publickey)"**
+
+Jest to najczęstszy błąd. Przyczyny i rozwiązania:
+
+```bash
+# Sprawdź, czy klucz jest załadowany w ssh-agent
+ssh-add -l
+
+# Jeśli brak kluczy na liście, dodaj swój klucz
+ssh-add ~/.ssh/id_ed25519
+
+# Na serwerze zdalnym sprawdź authorized_keys
+cat ~/.ssh/authorized_keys
+# Upewnij się, że Twój klucz publiczny tam jest
+
+# Sprawdź uprawnienia na serwerze zdalnym
+ls -la ~/.ssh/
+# ~/.ssh musi mieć uprawnienia 700
+# authorized_keys musi mieć uprawnienia 600
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/authorized_keys
+
+# Sprawdź, czy serwer zezwala na uwierzytelnianie kluczem publicznym
+sudo grep PubkeyAuthentication /etc/ssh/sshd_config
+# Musi być: PubkeyAuthentication yes
+```
+
+**„WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED"**
+
+Klucz hosta serwera się zmienił, co SSH traktuje jako potencjalny problem bezpieczeństwa. Jeśli wiesz, że jest to uzasadnione (serwer został przebudowany, adres IP został ponownie przypisany), usuń stary wpis:
+
+```bash
+# Usuń konkretny wpis hosta
+ssh-keygen -R server.example.com
+
+# Lub ręcznie edytuj known_hosts i usuń problematyczną linię
+nano ~/.ssh/known_hosts
+```
+
+**„Bad permissions" lub „Permissions too open"**
+
+SSH jest rygorystyczny w kwestii uprawnień do plików kluczy:
+
+```bash
+# Napraw uprawnienia klucza prywatnego
+chmod 600 ~/.ssh/id_ed25519
+
+# Napraw uprawnienia klucza publicznego
+chmod 644 ~/.ssh/id_ed25519.pub
+
+# Napraw uprawnienia katalogu .ssh
+chmod 700 ~/.ssh
+```
+
+W systemie Windows uprawnienia do kluczy prywatnych są zarządzane inaczej. Kliknij prawym przyciskiem myszy plik klucza → Właściwości → Zabezpieczenia → Zaawansowane → Wyłącz dziedziczenie → Usuń wszystkich z wyjątkiem własnego konta użytkownika, przyznając sobie wyłącznie pełną kontrolę.
+
+### Konfiguracja i Używanie ssh-agent
+
+Jeśli wielokrotnie proszone jesteś o hasło, `ssh-agent` nie działa lub klucz nie został dodany:
+
+```bash
+# Uruchom agenta
+eval "$(ssh-agent -s)"
+# Agent pid 12345
+
+# Dodaj klucz
+ssh-add ~/.ssh/id_ed25519
+# Enter passphrase for /home/user/.ssh/id_ed25519:
+# Identity added: /home/user/.ssh/id_ed25519
+
+# Sprawdź
+ssh-add -l
+# 256 SHA256:abc123... your@email.com (ED25519)
+```
+
+### Wstępne Wypełnianie known_hosts w Automatyzacji
+
+W potokach CI/CD użyj `ssh-keyscan`, aby dodać odcisk palca hosta zdalnego przed połączeniem:
+
+```bash
+ssh-keyscan -H server.example.com >> ~/.ssh/known_hosts
+ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+```
+
+Zapobiega to interaktywnym monitorom o odcisk palca w zautomatyzowanych skryptach.
+
+## Często Zadawane Pytania
+
+### Jak naprawić błąd „Permission denied (publickey)"?
+
+Przejdź przez tę listę kontrolną: (1) Sprawdź, czy klucz jest w agencie SSH: `ssh-add -l`. Jeśli nie, uruchom `ssh-add ~/.ssh/id_ed25519`. (2) Sprawdź, czy klucz publiczny jest w pliku `~/.ssh/authorized_keys` serwera. (3) Sprawdź uprawnienia: `~/.ssh` musi mieć `700`, `authorized_keys` musi mieć `600`. (4) Sprawdź, czy serwer ma `PubkeyAuthentication yes` w `/etc/ssh/sshd_config`. (5) Użyj `ssh -vvv user@server`, aby zobaczyć dokładnie, gdzie uwierzytelnianie zawodzi. Szczegółowe wyjście powie Ci, które klucze są próbowane i czy serwer je zaakceptował.
+
+### Jak dodać klucz SSH do ssh-agent?
+
+Uruchom `ssh-add ~/.ssh/id_ed25519` (zastąp nazwą swojego pliku klucza). Jeśli agent nie działa, najpierw uruchom go poleceniem `eval "$(ssh-agent -s)"`. Na macOS użyj `ssh-add --apple-use-keychain ~/.ssh/id_ed25519`, aby przechować hasło w Pęku kluczy. Na Windows włącz usługę `ssh-agent` poleceniem `Start-Service ssh-agent`, a następnie uruchom `ssh-add`. Musisz uruchomić `ssh-add` tylko raz na sesję (lub raz na zawsze, z Pękiem kluczy na macOS).
+
+### Czy mogę mieć wiele kluczy SSH?
+
+Tak, i jest to dobra praktyka. Generuj oddzielne klucze do różnych celów — na przykład jeden dla osobistego GitHub, jeden dla służbowego GitLab, jeden dla serwerów produkcyjnych. Użyj `~/.ssh/config`, aby powiązać każdy host z jego konkretnym kluczem za pomocą `IdentityFile`. Posiadanie oddzielnych kluczy oznacza, że unieważnienie jednego (przez usunięcie go z serwisu lub serwera) nie wpływa na inne, ograniczając skutki ewentualnego kompromitowania klucza.
+
+### Jak zmienić hasło klucza SSH?
+
+Użyj `ssh-keygen -p`:
+
+```bash
+ssh-keygen -p -f ~/.ssh/id_ed25519
+```
+
+Zostaniesz poproszony o bieżące hasło, a następnie będziesz mógł wprowadzić i potwierdzić nowe. Sam klucz (a co za tym idzie klucz publiczny) nie zmienia się — nie musisz go aktualizować nigdzie. Jest to przydatne, jeśli podejrzewasz, że hasło zostało skompromitowane lub chcesz je rotować w ramach rutynowej praktyki bezpieczeństwa.
+
+### Jak usunąć stary klucz SSH z serwera?
+
+Otwórz `~/.ssh/authorized_keys` na serwerze i usuń linię zawierającą stary klucz publiczny:
+
+```bash
+# Edytuj authorized_keys na serwerze zdalnym
+ssh user@server.example.com
+nano ~/.ssh/authorized_keys
+# Usuń linię dla klucza, który chcesz usunąć
+# Zapisz i wyjdź
+```
+
+Każda linia w `authorized_keys` to jeden klucz publiczny. Komentarz klucza (ostatnie pole, zazwyczaj `user@hostname` lub adres e-mail) pomaga zidentyfikować, który klucz jest który. Jeśli nie wiesz, którą linię usunąć, porównaj odcisk palca:
+
+```bash
+# Na lokalnej maszynie, uzyskaj odcisk palca
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+
+# Na serwerze, sprawdź odciski palców wszystkich autoryzowanych kluczy
+ssh-keygen -lf ~/.ssh/authorized_keys
+```
+
+Dopasuj odciski palców, aby zidentyfikować i usunąć właściwy klucz.
+
+## Wygeneruj Swoje Klucze SSH Bezpłatnie
+
+Jeśli nie wygenerowałeś jeszcze pary kluczy SSH, nasz bezpłatny generator online tworzy klucze Ed25519 lub RSA bezpośrednio w przeglądarce w ciągu kilku sekund. Nie wymaga instalacji, nic nie jest wysyłane na nasze serwery — generowanie odbywa się całkowicie na Twoim urządzeniu.
+
+<a href="/">Wygeneruj swoje klucze SSH bezpłatnie →</a>
+
+---
+
+**Dalsze lektury:**
+- <a href="/pl/what-is-ssh">Czym Jest SSH? Kompletny Przewodnik po Secure Shell</a>
+- <a href="/pl/what-is-an-ssh-key">Czym Jest Klucz SSH? Klucze Publiczne, Prywatne i Pary Kluczy Wyjaśnione</a>
+- <a href="/pl/ssh-command">Polecenie SSH: Kompletny Przewodnik z Przykładami</a>

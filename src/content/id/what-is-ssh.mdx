@@ -1,0 +1,283 @@
+# Apa Itu SSH? Panduan Lengkap Secure Shell
+
+SSH, singkatan dari **Secure Shell**, adalah protokol jaringan kriptografi yang memungkinkan Anda mengakses dan mengelola komputer jarak jauh secara aman melalui jaringan yang tidak terenkripsi. Baik saat login ke server Linux, mengirim kode ke GitHub, atau mentransfer file antar mesin, SSH hampir pasti adalah protokol yang bekerja di balik layar. Panduan ini menjelaskan semua yang perlu Anda ketahui tentang SSH: apa itu, cara kerjanya, dan mengapa protokol ini menjadi standar universal untuk akses jarak jauh yang aman.
+
+## Apa Kepanjangan SSH?
+
+**SSH adalah singkatan dari Secure Shell**. Nama ini menggambarkan dengan tepat apa yang dilakukan protokol ini — menyediakan sesi shell terenkripsi yang aman ke mesin jarak jauh. Sebelum SSH ada, para administrator menggunakan alat seperti Telnet dan rsh (remote shell) untuk mengelola server jarak jauh. Protokol tersebut mengirimkan segalanya dalam teks biasa, termasuk nama pengguna dan kata sandi, sehingga sangat mudah dicegat di jaringan bersama mana pun.
+
+SSH diciptakan oleh ilmuwan komputer asal Finlandia, **Tatu Ylönen**, pada tahun 1995, langsung terinspirasi dari serangan penyadapan kata sandi yang ia saksikan di jaringan universitasnya. Ia merilis SSH-1 sebagai perangkat lunak bebas dan diadopsi dengan cepat di seluruh internet. Protokol ini kemudian distandarisasi oleh IETF sebagai SSH-2 (RFC 4251–4254), yang memperkenalkan kriptografi lebih kuat dan memperbaiki beberapa kelemahan keamanan pada desain awal.
+
+Saat ini, ketika orang menyebut "SSH," mereka hampir selalu mengacu pada SSH-2. Implementasi yang paling banyak digunakan adalah **OpenSSH**, proyek sumber terbuka yang dikelola oleh tim OpenBSD dan disertakan dalam hampir semua distribusi Linux dan instalasi macOS.
+
+**Makna SSH** dalam praktiknya melampaui sekadar alat login. SSH adalah rangkaian protokol lengkap yang mendasari:
+- Akses terminal jarak jauh yang aman
+- Transfer file terenkripsi (SFTP dan SCP)
+- Autentikasi Git (GitHub, GitLab, Bitbucket)
+- Port forwarding dan tunneling yang aman
+- Pipeline deployment otomatis
+
+## Cara Kerja SSH
+
+**Protokol secure shell** beroperasi pada arsitektur berlapis yang menangani enkripsi, autentikasi, dan multipleksing saluran secara terpisah. Memahami lapisan-lapisan ini membantu menjelaskan mengapa SSH dipercaya untuk operasi sensitif.
+
+### Tiga Lapisan Protokol
+
+**1. Transport Layer (RFC 4253)**
+
+Saat Anda memulai koneksi SSH, klien dan server terlebih dahulu melakukan handshake untuk menegosiasikan algoritma enkripsi dan membuat shared secret. Ini menggunakan algoritma pertukaran kunci — SSH modern menggunakan pertukaran kunci berbasis Curve25519 secara default. Setelah handshake, semua komunikasi selanjutnya dienkripsi. Transport layer juga menyediakan integritas data melalui message authentication code (MAC), memastikan data tidak dapat diubah saat transit.
+
+**2. User Authentication Layer (RFC 4252)**
+
+Setelah saluran terenkripsi terbentuk, server meminta klien untuk melakukan autentikasi. SSH mendukung berbagai metode autentikasi:
+
+- **Autentikasi kunci publik** — Klien membuktikan kepemilikan kunci privat tanpa pernah mengirimkannya melalui jaringan. Ini adalah metode yang paling aman dan paling umum.
+- **Autentikasi kata sandi** — Kata sandi pengguna dikirim melalui saluran terenkripsi. Lebih mudah tetapi rentan terhadap serangan brute force.
+- **Keyboard-interactive** — Mekanisme tantangan/respons, sering digunakan untuk autentikasi multi-faktor.
+- **GSSAPI/Kerberos** — Digunakan di lingkungan enterprise dengan manajemen identitas terpusat.
+
+**3. Connection Layer (RFC 4254)**
+
+Setelah autentikasi, connection layer memultipleks satu koneksi terenkripsi menjadi beberapa saluran logis. Inilah yang memungkinkan Anda memiliki shell interaktif, menjalankan perintah jarak jauh, meneruskan port, dan mentransfer file semuanya melalui satu koneksi TCP.
+
+### Detail Pertukaran Kunci
+
+Saat Anda mengetik `ssh user@example.com`, inilah yang terjadi dalam beberapa milidetik pertama:
+
+1. Klien terhubung ke port TCP 22 di server.
+2. Kedua sisi bertukar string versi protokol.
+3. Kedua sisi mengirim daftar algoritma yang didukung (pertukaran kunci, cipher, MAC, kompresi).
+4. Mereka melakukan pertukaran kunci Diffie-Hellman atau ECDH untuk mendapatkan shared session key — inilah mengapa bahkan jika seseorang merekam lalu lintas terenkripsi, mereka tidak dapat mendekripsinya nanti.
+5. Server mengirim **host key** (kunci publik), yang diverifikasi oleh klien terhadap file `~/.ssh/known_hosts`.
+6. Autentikasi berlanjut seperti yang dijelaskan di atas.
+7. Sesi dimulai.
+
+## SSH vs Telnet: Mengapa SSH Menang
+
+Sebelum SSH, **Telnet** adalah protokol standar untuk akses terminal jarak jauh. Telnet sederhana dan masih bekerja, namun memiliki satu kelemahan fatal: semua data ditransmisikan dalam teks biasa. Nama pengguna, kata sandi, setiap perintah yang Anda ketik, dan setiap output — semuanya terlihat oleh siapa saja yang dapat mengintersep lalu lintas jaringan.
+
+Pada tahun 1990-an, ketika backbone internet terdiri dari jaringan akademik dan penelitian yang terpercaya, hal ini tidak dianggap sebagai masalah serius. Seiring internet menjadi komersial dan penuh ancaman, alat seperti Dsniff dan Ettercap membuat sangat mudah untuk menangkap kredensial Telnet di jaringan area lokal.
+
+SSH menyelesaikan ini dengan mengenkripsi segalanya. Berikut perbandingan langsungnya:
+
+| Fitur | Telnet | SSH |
+|---|---|---|
+| Enkripsi | Tidak ada | Kuat (AES, ChaCha20) |
+| Autentikasi | Kata sandi teks biasa | Kunci publik + kata sandi terenkripsi |
+| Integritas data | Tidak ada | Verifikasi HMAC |
+| Port | 23 | 22 |
+| Masih direkomendasikan | Tidak | Ya |
+
+rsh (remote shell) dan rlogin memiliki masalah serupa. Mereka juga mengandalkan kepercayaan berbasis IP, yang mudah dipalsukan. SSH menggantikan semua protokol ini dan tetap menjadi standar tak tertandingi selama lebih dari 25 tahun.
+
+## Apa Itu Kunci SSH?
+
+SSH mendukung dua metode autentikasi utama: kata sandi dan **kunci SSH**. Kunci SSH adalah pasangan kunci kriptografi — **kunci publik** dan **kunci privat** — berdasarkan kriptografi asimetris.
+
+**Kunci privat** tetap ada di mesin lokal Anda, dilindungi dengan passphrase opsional. **Kunci publik** ditempatkan di server mana pun yang ingin Anda akses, dalam file bernama `~/.ssh/authorized_keys`. Saat Anda terhubung, server mengeluarkan tantangan kriptografi yang hanya dapat dijawab oleh pemegang kunci privat yang sesuai. Tidak ada kata sandi yang dikirim melalui jaringan.
+
+Pendekatan ini memiliki beberapa keunggulan:
+- **Kebal terhadap brute force** — tidak ada yang perlu ditebak. Kunci Ed25519 256-bit memiliki 2²⁵⁶ kemungkinan nilai.
+- **Tidak ada kata sandi yang bisa dicuri** — bahkan jika seseorang mengintersep handshake, mereka tidak mendapatkan apa pun yang berguna.
+- **Dapat diotomasi** — skrip dan pipeline CI/CD dapat mengautentikasi tanpa interaksi manusia.
+- **Dapat dicabut** — menghapus kunci publik dari `authorized_keys` langsung mencabut akses.
+
+Jenis kunci paling modern dan direkomendasikan adalah **Ed25519**, yang menggunakan kriptografi kurva eliptik pada kurva Edwards. Kunci RSA juga didukung secara luas, meskipun Anda harus menggunakan minimal 4096 bit.
+
+Untuk penjelasan mendalam tentang pasangan kunci, lihat panduan kami tentang <a href="/id/what-is-an-ssh-key">apa itu kunci SSH</a>.
+
+## Kasus Penggunaan SSH yang Umum
+
+SSH digunakan dalam berbagai skenario yang sangat luas. Berikut yang paling penting.
+
+### Administrasi Server Jarak Jauh
+
+Kasus penggunaan yang paling mendasar. Administrator sistem login ke server Linux dan Unix untuk menginstal perangkat lunak, mengedit file konfigurasi, mengelola layanan, dan mendiagnosis masalah — semuanya melalui sesi terminal SSH.
+
+```bash
+ssh user@192.168.1.100
+ssh admin@myserver.example.com
+ssh -p 2222 deploy@staging.example.com
+```
+
+### Transfer File dengan SFTP dan SCP
+
+SSH menyediakan dua protokol transfer file yang dibangun di atas saluran terenkripsi yang sama:
+
+**SCP (Secure Copy Protocol)** adalah alat baris perintah sederhana untuk menyalin file:
+
+```bash
+# Salin file lokal ke server jarak jauh
+scp report.pdf user@server:/home/user/documents/
+
+# Salin file jarak jauh ke mesin lokal
+scp user@server:/var/log/app.log ./local-copy.log
+
+# Salin seluruh direktori secara rekursif
+scp -r ./project/ user@server:/var/www/
+```
+
+**SFTP (SSH File Transfer Protocol)** menyediakan antarmuka seperti FTP yang interaktif dengan fitur lebih lengkap dari SCP, termasuk transfer yang dapat dilanjutkan dan daftar direktori.
+
+### Autentikasi Git
+
+Saat Anda menambahkan kunci SSH ke GitHub, GitLab, atau Bitbucket, setiap `git clone`, `git push`, dan `git pull` melalui SSH diautentikasi menggunakan kunci privat Anda. Ini menghilangkan kebutuhan untuk memasukkan nama pengguna dan kata sandi di setiap operasi Git dan merupakan metode autentikasi yang direkomendasikan untuk developer.
+
+```bash
+# Clone repositori menggunakan SSH
+git clone git@github.com:username/repository.git
+
+# Verifikasi koneksi SSH GitHub Anda
+ssh -T git@github.com
+```
+
+### Deployment Otomatis dan CI/CD
+
+Skrip deployment dan sistem CI/CD seperti GitHub Actions, GitLab CI, dan Jenkins menggunakan kunci SSH untuk men-deploy kode ke server produksi tanpa intervensi manusia. Kunci privat disimpan sebagai secret di sistem CI, dan kunci publik yang sesuai ditambahkan ke file `authorized_keys` server.
+
+### Port Forwarding Database dan Aplikasi
+
+SSH tunneling dapat secara aman mengekspos layanan jarak jauh ke mesin lokal Anda. Misalnya, untuk mengakses database MySQL jarak jauh yang tidak terekspos ke internet:
+
+```bash
+ssh -L 3307:localhost:3306 user@dbserver.example.com -N
+```
+
+Ini membuat tunnel lokal: menghubungkan ke port 3307 di mesin Anda secara transparan meneruskan lalu lintas ke port 3306 di server jarak jauh, terenkripsi dalam tunnel SSH.
+
+## Port SSH dan Opsi Konfigurasi
+
+### Port Default 22
+
+SSH mendengarkan pada **port TCP 22** secara default. Ini adalah port terkenal yang ditetapkan oleh IANA yang telah dicadangkan untuk SSH sejak protokol dibuat. Saat Anda menjalankan `ssh user@host` tanpa menentukan port, klien SSH terhubung ke port 22.
+
+Beberapa administrator mengubah port SSH (misalnya ke 2222 atau 8022) sebagai tindakan keamanan minor untuk mengurangi kebisingan pemindaian otomatis di log. Ini disebut "security through obscurity" dan bukan pengganti autentikasi berbasis kunci yang tepat, tetapi dapat mengurangi kebisingan log.
+
+```bash
+# Terhubung ke port SSH non-standar
+ssh -p 2222 user@example.com
+```
+
+### File Konfigurasi Klien SSH
+
+Alih-alih mengetik opsi baris perintah yang panjang setiap kali, Anda dapat mengonfigurasi koneksi SSH di `~/.ssh/config`. File ini memungkinkan Anda mendefinisikan alias, mengatur opsi per-host, dan menyederhanakan alur kerja Anda secara dramatis.
+
+```
+Host myserver
+    HostName 203.0.113.10
+    User deploy
+    Port 2222
+    IdentityFile ~/.ssh/id_ed25519_prod
+
+Host bastion
+    HostName jump.example.com
+    User ec2-user
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host internal
+    HostName 10.0.1.50
+    User ubuntu
+    ProxyJump bastion
+```
+
+Dengan konfigurasi ini, `ssh myserver` terhubung ke hostname lengkap pada port kustom menggunakan kunci yang ditentukan — tidak perlu flag.
+
+Untuk referensi lengkap tentang opsi dan flag perintah SSH, lihat <a href="/id/ssh-command">panduan perintah SSH</a> kami.
+
+### Konfigurasi Sisi Server (sshd_config)
+
+Daemon server SSH (sshd) dikonfigurasi melalui `/etc/ssh/sshd_config`. Pengaturan kunci meliputi:
+
+```
+# Nonaktifkan autentikasi kata sandi — hanya kunci
+PasswordAuthentication no
+
+# Nonaktifkan login root
+PermitRootLogin no
+
+# Ubah port yang didengarkan
+Port 2222
+
+# Batasi ke pengguna tertentu
+AllowUsers deploy admin
+
+# Aktifkan autentikasi kunci publik
+PubkeyAuthentication yes
+```
+
+Setelah mengedit, muat ulang daemon: `sudo systemctl reload sshd`
+
+## SSH Tunneling
+
+SSH tunneling (juga disebut port forwarding SSH) memungkinkan Anda merutekan lalu lintas TCP arbitrer melalui koneksi SSH terenkripsi. Ini adalah salah satu fitur SSH yang paling kuat dan paling jarang digunakan.
+
+### Local Port Forwarding
+
+Local forwarding membuat layanan jarak jauh dapat diakses di mesin lokal Anda. Sintaksnya adalah `-L local_port:remote_host:remote_port`.
+
+```bash
+# Akses database PostgreSQL jarak jauh secara lokal
+ssh -L 5433:localhost:5432 user@dbserver -N
+
+# Akses aplikasi web internal melalui jump server
+ssh -L 8080:internal-app.company.com:80 user@jump.company.com -N
+```
+
+Flag `-N` memberitahu SSH untuk tidak mengeksekusi perintah jarak jauh — berguna saat Anda hanya menginginkan tunnel.
+
+### Remote Port Forwarding
+
+Remote forwarding mengekspos layanan lokal di server jarak jauh. Sintaksnya adalah `-R remote_port:local_host:local_port`.
+
+```bash
+# Ekspos web server lokal Anda ke mesin jarak jauh
+ssh -R 9090:localhost:3000 user@server -N
+```
+
+Ini berguna untuk sementara berbagi server pengembangan lokal dengan rekan yang memiliki akses ke host jarak jauh, atau memberikan klien akses sementara ke pekerjaan Anda yang sedang berlangsung.
+
+### Dynamic Port Forwarding (SOCKS Proxy)
+
+Flag `-D` membuat SOCKS proxy di mesin lokal Anda, merutekan semua lalu lintas yang kompatibel dengan SOCKS melalui koneksi SSH. Ini secara efektif menggunakan server jarak jauh sebagai exit node VPN.
+
+```bash
+# Buat SOCKS5 proxy di port lokal 1080
+ssh -D 1080 user@remote-server -N -f
+```
+
+Konfigurasikan browser atau sistem Anda untuk menggunakan `SOCKS5 proxy: 127.0.0.1:1080` dan semua lalu lintas web akan dirutekan melalui server jarak jauh. Ini sering digunakan untuk mengakses konten yang dibatasi secara geografis atau untuk menjelajah dengan aman dari jaringan yang tidak tepercaya.
+
+## Pertanyaan yang Sering Diajukan
+
+### Apa kepanjangan SSH?
+
+SSH adalah singkatan dari **Secure Shell**. Ini adalah protokol jaringan kriptografi untuk mengoperasikan layanan jaringan secara aman melalui jaringan yang tidak aman. Nama tersebut mengacu pada kasus penggunaan utamanya: menyediakan sesi shell interaktif yang aman di komputer jarak jauh.
+
+### Apakah SSH sama dengan SSL?
+
+Tidak. SSH dan SSL/TLS keduanya adalah protokol kriptografi, tetapi mereka melayani tujuan yang berbeda. **SSL/TLS** (Secure Sockets Layer / Transport Layer Security) digunakan untuk mengamankan lalu lintas web (HTTPS), email, dan protokol aplikasi lainnya. **SSH** dirancang khusus untuk akses shell jarak jauh yang aman, transfer file, dan tunneling. Mereka menggunakan primitif kriptografi yang serupa (kriptografi kunci publik, enkripsi simetris) tetapi memiliki mekanisme handshake dan kasus penggunaan yang berbeda. SSH tidak menggunakan SSL/TLS secara internal.
+
+### Port berapa yang digunakan SSH?
+
+SSH menggunakan **port TCP 22** secara default. Ini adalah port terkenal yang ditetapkan oleh IANA. Anda dapat mengonfigurasi server SSH untuk mendengarkan di port yang berbeda menggunakan direktif `Port` di `/etc/ssh/sshd_config`, dan terhubung ke port non-standar dengan `ssh -p PORT user@host`.
+
+### Bisakah SSH diretas?
+
+Server SSH yang dikonfigurasi dengan benar dengan autentikasi berbasis kunci sangat sulit untuk dikompromikan. Kriptografinya — kunci Ed25519, enkripsi AES-256, HMAC SHA-2 — dianggap tahan kuantum untuk autentikasi kunci dan tidak layak secara komputasi untuk di-brute force. Kompromi SSH di dunia nyata biasanya melibatkan: file kunci privat yang dicuri, passphrase yang lemah, server yang salah dikonfigurasi yang mengizinkan autentikasi kata sandi dengan kata sandi yang lemah, versi perangkat lunak rentan dengan CVE yang belum ditambal, atau rekayasa sosial daripada serangan kriptografi. Perbarui server Anda, nonaktifkan autentikasi kata sandi, dan lindungi file kunci privat Anda.
+
+### Apa perbedaan antara SSH dan HTTPS?
+
+Baik SSH maupun HTTPS mengenkripsi lalu lintas jaringan, tetapi dirancang untuk tujuan yang berbeda. **HTTPS** mengamankan penjelajahan web — menggunakan TLS untuk mengenkripsi permintaan dan respons HTTP antara browser dan server web. **SSH** mengamankan akses administratif jarak jauh, transfer file, dan tunneling. Saat Anda mengirim kode ke GitHub, Anda dapat menggunakan SSH (port 22, autentikasi berbasis kunci) atau HTTPS (port 443, autentikasi berbasis token). SSH umumnya lebih disukai developer karena tidak memerlukan memasukkan ulang kredensial. HTTPS didukung secara universal melalui firewall yang mungkin memblokir port 22.
+
+## Buat Kunci SSH Anda Sekarang
+
+Autentikasi berbasis kunci SSH lebih aman dan lebih nyaman daripada kata sandi. Jika Anda belum menyiapkan kunci SSH, generator online gratis kami membuat pasangan kunci Ed25519 atau RSA secara instan di browser Anda — tidak perlu instalasi, tidak ada yang dikirim ke server kami.
+
+<a href="/">Buat pasangan kunci SSH Anda sekarang →</a>
+
+---
+
+**Bacaan lebih lanjut:**
+- <a href="/id/what-is-an-ssh-key">Apa Itu Kunci SSH? Kunci Publik, Kunci Privat, dan Pasangan Kunci Dijelaskan</a>
+- <a href="/id/ssh-command">Perintah SSH: Referensi Lengkap dengan Contoh</a>
+- <a href="/id/how-to-set-up-ssh">Cara Mengatur SSH: Panduan Langkah demi Langkah yang Lengkap</a>

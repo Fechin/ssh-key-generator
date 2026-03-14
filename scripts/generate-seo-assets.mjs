@@ -74,6 +74,7 @@ const faqKeys = [
 ]
 
 const howToStepKeys = ['step1', 'step2', 'step3', 'step4', 'step5']
+const articleSlugs = ['what-is-ssh', 'what-is-an-ssh-key', 'ssh-command', 'how-to-set-up-ssh']
 
 const englishTranslations = JSON.parse(
   await fs.readFile(path.join(projectRoot, 'src', 'i18n', 'locales', defaultLanguage.localeFile), 'utf8'),
@@ -85,6 +86,14 @@ function getPathname(language) {
 
 function getAbsoluteUrl(language) {
   return `${siteUrl}${getPathname(language)}`
+}
+
+function getArticlePathname(language, slug) {
+  return `${getPathname(language)}${slug}`
+}
+
+function getArticleAbsoluteUrl(language, slug) {
+  return new URL(getArticlePathname(language, slug), siteUrl).toString()
 }
 
 function getTextDirection(language) {
@@ -153,15 +162,17 @@ function buildHtmlAlternateLinks() {
   return links.join('\n')
 }
 
-function buildSitemapAlternateLinks() {
+function buildSitemapAlternateLinks(slug = '') {
   const links = languages.map(
     (language) =>
-      `    <xhtml:link rel="alternate" hreflang="${language.hreflang}" href="${escapeAttribute(getAbsoluteUrl(language))}"/>`,
+      `    <xhtml:link rel="alternate" hreflang="${language.hreflang}" href="${escapeAttribute(
+        slug ? getArticleAbsoluteUrl(language, slug) : getAbsoluteUrl(language),
+      )}"/>`,
   )
 
   links.push(
     `    <xhtml:link rel="alternate" hreflang="x-default" href="${escapeAttribute(
-      getAbsoluteUrl(defaultLanguage),
+      slug ? getArticleAbsoluteUrl(defaultLanguage, slug) : getAbsoluteUrl(defaultLanguage),
     )}"/>`,
   )
 
@@ -169,16 +180,30 @@ function buildSitemapAlternateLinks() {
 }
 
 function buildSitemapXml() {
-  const alternateLinks = buildSitemapAlternateLinks()
-  const urls = languages
+  const homeAlternateLinks = buildSitemapAlternateLinks()
+  const homeUrls = languages
     .map((language, index) => `  <url>
     <loc>${escapeHtml(getAbsoluteUrl(language))}</loc>
     <lastmod>${today}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>${index === 0 ? '1.0' : '0.8'}</priority>
-${alternateLinks}
+${homeAlternateLinks}
   </url>`)
     .join('\n\n')
+
+  const articleUrls = articleSlugs
+    .flatMap((slug) =>
+      languages.map((language) => `  <url>
+    <loc>${escapeHtml(getArticleAbsoluteUrl(language, slug))}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+${buildSitemapAlternateLinks(slug)}
+  </url>`),
+    )
+    .join('\n\n')
+
+  const urls = [homeUrls, articleUrls].filter(Boolean).join('\n\n')
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"

@@ -1,0 +1,563 @@
+# Cum să configurezi SSH: Un ghid complet pas cu pas pentru Linux, Mac și Windows
+
+Configurarea SSH corect durează aproximativ zece minute și aduce beneficii timp de ani de zile. Odată configurat, poți să te autentifici pe servere fără a tasta parole, să trimiți cod pe GitHub fără a introduce credențiale la fiecare operațiune și să automatizezi deployment-urile cu încredere. Acest ghid parcurge întregul proces — de la generarea unei perechi de chei până la depanarea erorilor comune — pentru Linux, macOS și Windows.
+
+Dacă vrei să înțelegi mai întâi tehnologia de bază, citește ghidurile noastre despre <a href="/ro/what-is-ssh">ce este SSH</a> și <a href="/ro/what-is-an-ssh-key">ce sunt cheile SSH</a>.
+
+## Cerințe prealabile
+
+Înainte de a începe, asigură-te că ai:
+
+**Pentru accesul la server:**
+- O aplicație terminal (Terminal pe macOS/Linux, Windows Terminal sau PowerShell pe Windows)
+- Un server la distanță care rulează Linux/Unix cu software-ul de server SSH (sshd) instalat
+- Un cont de utilizator pe acel server (sau acces root pentru a crea unul)
+- Adresa IP sau hostname-ul serverului
+
+**Pentru accesul la GitHub/GitLab:**
+- Un cont GitHub sau GitLab
+- Un terminal cu `ssh` disponibil
+- Opțional: git instalat local
+
+**Cerințe de sistem de operare:**
+- **Linux**: Clientul SSH este pre-instalat pe practic toate distribuțiile
+- **macOS**: Clientul SSH este integrat, accesibil din Terminal
+- **Windows 10 versiunea 1809+ / Windows 11**: Clientul OpenSSH este disponibil ca funcție opțională
+
+Nu trebuie să instalezi nimic pe Linux sau macOS. Pe Windows, verifică dacă OpenSSH este instalat deschizând PowerShell și rulând `ssh -V`. Dacă obții un șir de versiune, ești pregătit. Dacă nu, consultă Pasul 4 pentru instrucțiuni de instalare.
+
+## Pasul 1: Generează-ți perechea de chei SSH
+
+Ai nevoie de o pereche de chei înainte de a putea face orice altceva. Perechea de chei constă dintr-o **cheie privată** (rămâne pe mașina ta) și o **cheie publică** (merge pe servere sau servicii precum GitHub).
+
+### Opțiunea A: Folosește generatorul online
+
+Dacă preferi o interfață grafică, <a href="/">generatorul nostru gratuit de chei SSH online</a> creează perechi de chei Ed25519 sau RSA în browserul tău. Cheia privată este generată local folosind Web Crypto API — nimic nu este trimis pe serverele noastre. Descarcă ambele fișiere și salvează-le în `~/.ssh/` (Linux/macOS) sau `C:\Users\YourName\.ssh\` (Windows).
+
+### Opțiunea B: Folosește ssh-keygen din linia de comandă
+
+Comanda `ssh-keygen` este disponibilă pe Linux, macOS și Windows cu OpenSSH:
+
+```bash
+# Generarea unei perechi de chei Ed25519 (recomandat)
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+**Ce înseamnă fiecare flag:**
+- `-t ed25519` — tipul cheii (Ed25519 este modern, rapid și sigur)
+- `-C "comentariu"` — o etichetă inclusă în cheia publică, de obicei adresa ta de e-mail
+
+Vei fi solicitat pentru:
+
+```
+Generating public/private ed25519 key pair.
+Enter file in which to save the key (/home/user/.ssh/id_ed25519):
+```
+
+Apasă **Enter** pentru a accepta locația implicită. Dacă ai mai multe chei, le poți numi descriptiv (de ex., `/home/user/.ssh/id_ed25519_github`).
+
+```
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+```
+
+Introdu o frază de acces puternică. Aceasta criptează fișierul cheii private pe disc — dacă mașina ta este furată, cheia nu poate fi folosită fără fraza de acces. O poți lăsa goală pentru cazuri de utilizare de automatizare unde interacțiunea umană nu este posibilă, dar pentru chei personale, folosește întotdeauna o frază de acces.
+
+**Output:**
+
+```
+Your identification has been saved in /home/user/.ssh/id_ed25519
+Your public key has been saved in /home/user/.ssh/id_ed25519.pub
+The key fingerprint is:
+SHA256:abc123defghijk... your@email.com
+The key's randomart image is:
++--[ED25519 256]--+
+...
+```
+
+Sunt create două fișiere:
+- `~/.ssh/id_ed25519` — **cheia ta privată** (nu o partaja niciodată)
+- `~/.ssh/id_ed25519.pub` — **cheia ta publică** (sigur de partajat)
+
+### Pentru RSA (compatibilitate legacy)
+
+Dacă trebuie să te conectezi la sisteme foarte vechi care nu suportă Ed25519:
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "your@email.com"
+```
+
+Folosește minimum 4096 de biți. Cheile RSA mai mici de 4096 de biți nu mai sunt considerate securitate adecvată.
+
+## Pasul 2: Configurează SSH pe Linux
+
+Această secțiune acoperă copierea cheii tale publice pe un server Linux astfel încât să te poți autentifica fără parolă.
+
+### Metoda 1: ssh-copy-id (cel mai simplu)
+
+`ssh-copy-id` este cea mai simplă modalitate de a instala cheia ta publică pe un server la distanță. Se conectează folosind autentificarea prin parolă, adaugă cheia ta publică în `~/.ssh/authorized_keys` al serverului și setează permisiunile corecte.
+
+```bash
+ssh-copy-id user@server.example.com
+
+# Specificarea explicită a unui fișier de cheie
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server.example.com
+
+# Conectarea pe un port non-standard
+ssh-copy-id -p 2222 user@server.example.com
+```
+
+Vei fi solicitat pentru parola serverului pentru ultima dată. După aceasta, te poți conecta cu `ssh user@server.example.com` folosind cheia ta.
+
+### Metoda 2: Copiere manuală
+
+Dacă `ssh-copy-id` nu este disponibil (comun pe unele sisteme BSD sau instalări Linux minimale):
+
+```bash
+# Afișează cheia ta publică și copiază output-ul
+cat ~/.ssh/id_ed25519.pub
+
+# Apoi autentifică-te pe server (cu parolă) și rulează:
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+echo "LIPESTE_CHEIA_TA_PUBLICA_AICI" >> ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+```
+
+Sau fă toate într-un singur pipeline:
+
+```bash
+cat ~/.ssh/id_ed25519.pub | ssh user@server.example.com \
+  "mkdir -p ~/.ssh && chmod 700 ~/.ssh && \
+   cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+```
+
+### Verificarea instalării cheii
+
+```bash
+ssh user@server.example.com
+# Ar trebui să se conecteze fără a solicita o parolă (doar fraza de acces dacă ai setat una)
+```
+
+### Configurarea serverului SSH (sshd)
+
+Pe serverul la distanță, configurația daemonului SSH se află în `/etc/ssh/sshd_config`. Pentru o configurare sigură:
+
+```bash
+sudo nano /etc/ssh/sshd_config
+```
+
+Setări recomandate:
+
+```
+# Activarea autentificării cu cheie publică
+PubkeyAuthentication yes
+
+# Dezactivarea autentificării prin parolă (după confirmarea că cheile funcționează!)
+ PasswordAuthentication no
+
+# Dezactivarea autentificării ca root prin SSH
+ PermitRootLogin no
+
+# Permite doar utilizatori specifici
+AllowUsers alice bob deploy
+
+# Menține sesiunile active
+ClientAliveInterval 60
+ClientAliveCountMax 3
+```
+
+După editare, reîncarcă daemonul SSH:
+
+```bash
+sudo systemctl reload sshd
+# Sau pe sisteme mai vechi:
+sudo service ssh reload
+```
+
+**Important**: Nu dezactiva `PasswordAuthentication` până nu ai confirmat că autentificarea bazată pe chei funcționează. Dacă te blochezi, vei avea nevoie de acces la consolă (sau mecanismul de acces de urgență al furnizorului tău de hosting) pentru a te recupera.
+
+### Configurarea ssh-agent pe Linux
+
+Dacă cheia ta are o frază de acces, adaugă-o la `ssh-agent` la începutul sesiunii tale pentru a evita să o reintroduci:
+
+```bash
+# Pornește agentul (adesea pornit automat de mediile desktop)
+eval "$(ssh-agent -s)"
+
+# Adaugă cheia ta (introdu fraza de acces o dată)
+ssh-add ~/.ssh/id_ed25519
+
+# Verifică cheile încărcate
+ssh-add -l
+```
+
+Pentru a porni automat `ssh-agent` și a adăuga cheia la autentificare, adaugă în `~/.bashrc` sau `~/.zshrc`:
+
+```bash
+# Auto-pornire ssh-agent
+if [ -z "$SSH_AUTH_SOCK" ]; then
+  eval "$(ssh-agent -s)"
+  ssh-add ~/.ssh/id_ed25519
+fi
+```
+
+## Pasul 3: Configurează SSH pe macOS
+
+macOS include un client OpenSSH complet. Procesul de configurare a autentificării bazate pe chei la un server la distanță este identic cu Linux (consultă Pasul 2 de mai sus). Adăugirile specifice macOS implică integrarea cu Keychain.
+
+### Integrarea cu Keychain
+
+macOS poate stoca fraza de acces în Keychain-ul sistemului astfel încât să nu mai trebuiești să o introduci după prima dată:
+
+```bash
+# Adaugă cheia la ssh-agent cu integrarea Keychain
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+
+# Pentru versiuni mai vechi de macOS (înainte de Monterey)
+ssh-add -K ~/.ssh/id_ed25519
+```
+
+Pentru ca macOS să încarce întotdeauna cheile din Keychain, adaugă aceasta în `~/.ssh/config`:
+
+```
+Host *
+    AddKeysToAgent yes
+    UseKeychain yes
+    IdentityFile ~/.ssh/id_ed25519
+```
+
+După aceasta, fraza de acces este stocată în Keychain și încărcată automat — nu vei mai fi solicitat pentru ea la pornirile ulterioare.
+
+### Verifică versiunea clientului SSH
+
+```bash
+ssh -V
+# OpenSSH_9.x, LibreSSL x.x.x
+```
+
+macOS vine cu un OpenSSH relativ recent, dar nu întotdeauna cu cel mai recent. Dacă ai nevoie de funcții mai noi, instalează prin Homebrew: `brew install openssh`.
+
+## Pasul 4: Configurează SSH pe Windows
+
+Windows 10 (1809+) și Windows 11 includ OpenSSH. Iată cum să îl faci să funcționeze.
+
+### Instalează clientul OpenSSH
+
+**Verifică dacă este deja instalat:**
+
+```powershell
+ssh -V
+```
+
+**Instalare prin Settings:**
+1. Deschide **Settings → Apps → Optional Features**
+2. Caută **OpenSSH Client**
+3. Apasă **Install**
+
+**Instalare prin PowerShell (Administrator):**
+
+```powershell
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+```
+
+### Generarea cheilor pe Windows
+
+Deschide PowerShell și rulează:
+
+```powershell
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+Cheile sunt salvate în `C:\Users\YourUsername\.ssh\`.
+
+### Copierea cheii tale publice pe un server Linux
+
+Windows nu include `ssh-copy-id`, dar o poți face manual din PowerShell:
+
+```powershell
+# Afișează cheia ta publică
+Get-Content ~/.ssh/id_ed25519.pub
+
+# Copiaz-o pe serverul la distanță (vei fi solicitat pentru parola serverului)
+$pubkey = Get-Content ~/.ssh/id_ed25519.pub -Raw
+ssh user@server.example.com "mkdir -p ~/.ssh && echo '$pubkey' >> ~/.ssh/authorized_keys && chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys"
+```
+
+Sau folosește `Add-Content` pentru a o trimite prin pipe:
+
+```powershell
+type $env:USERPROFILE\.ssh\id_ed25519.pub | ssh user@server.example.com "cat >> ~/.ssh/authorized_keys"
+```
+
+### Configurarea ssh-agent pe Windows
+
+Pentru a evita introducerea frazei de acces în mod repetat, pornește serviciul OpenSSH Authentication Agent:
+
+```powershell
+# Pornește serviciul
+Start-Service ssh-agent
+
+# Setează-l să pornească automat
+Set-Service -Name ssh-agent -StartupType Automatic
+
+# Adaugă cheia ta
+ssh-add ~/.ssh/id_ed25519
+```
+
+### PuTTY ca alternativă
+
+Dacă preferi un client SSH grafic, PuTTY este o opțiune gratuită pentru Windows. Folosește **PuTTYgen** pentru a genera chei (salvează atât în format `.ppk` pentru PuTTY, cât și exportă în format OpenSSH). Cu toate acestea, pentru configurări noi, clientul OpenSSH integrat este mai simplu și interoperabil cu restul ecosistemului.
+
+## Cum să configurezi cheile SSH pentru GitHub și GitLab
+
+Autentificarea SSH prin cheie pentru GitHub și GitLab funcționează similar — încarci cheia ta publică pe serviciu și folosești cheia privată corespunzătoare când efectuezi operațiuni Git.
+
+### Configurarea SSH pentru GitHub
+
+**1. Copiază cheia ta publică:**
+
+```bash
+# Linux
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+
+# macOS
+cat ~/.ssh/id_ed25519.pub | pbcopy
+
+# Windows PowerShell
+Get-Content ~/.ssh/id_ed25519.pub | Set-Clipboard
+```
+
+Sau pur și simplu afișeaz-o și copiaz-o manual:
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+**2. Adaugă pe GitHub:**
+
+1. Mergi la **github.com** și autentifică-te
+2. Apasă pe avatar → **Settings**
+3. În bara laterală stângă: **SSH and GPG keys**
+4. Apasă **New SSH key**
+5. Dă-i un **Title** descriptiv (de ex., „MacBook Pro" sau „PC de birou")
+6. Setează **Key type** la **Authentication Key**
+7. Lipește cheia ta publică
+8. Apasă **Add SSH key**
+
+**3. Testează conexiunea:**
+
+```bash
+ssh -T git@github.com
+# Hi username! You've successfully authenticated, but GitHub does not provide shell access.
+```
+
+**4. Folosește SSH pentru operațiunile Git:**
+
+```bash
+# Clonare folosind SSH în loc de HTTPS
+git clone git@github.com:username/repository.git
+
+# Dacă un repo existent folosește HTTPS, comută-l la SSH
+git remote set-url origin git@github.com:username/repository.git
+```
+
+### Configurarea SSH pentru GitLab
+
+Procesul este identic:
+
+1. Mergi la **gitlab.com** → Apasă pe avatar → **Preferences**
+2. În bara laterală stângă: **SSH Keys**
+3. Lipește cheia ta publică, dă-i un titlu și opțional setează o dată de expirare
+4. Apasă **Add key**
+
+Testează cu:
+
+```bash
+ssh -T git@gitlab.com
+# Welcome to GitLab, @username!
+```
+
+Pentru instanțe GitLab auto-găzduite, înlocuiește `gitlab.com` cu hostname-ul instanței tale.
+
+### Folosirea unei chei separate pentru GitHub și alte servicii
+
+Dacă dorești o cheie dedicată pentru GitHub (recomandat pentru igiena cheilor), generează o cheie cu un nume specific:
+
+```bash
+ssh-keygen -t ed25519 -C "github" -f ~/.ssh/id_ed25519_github
+```
+
+Apoi adaugă un bloc `Host` în `~/.ssh/config`:
+
+```
+Host github.com
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519_github
+    AddKeysToAgent yes
+```
+
+Acum `git clone git@github.com:...` folosește automat cheia specifică pentru GitHub.
+
+## Testarea și depanarea SSH
+
+### Test de conectivitate de bază
+
+```bash
+ssh -v user@server.example.com
+```
+
+Flag-ul `-v` (verbos) arată exact ce se întâmplă la fiecare pas. Caută linii ca:
+- `Offering public key: ~/.ssh/id_ed25519` — SSH încearcă cheia ta
+- `Server accepts key` — cheia se află în `authorized_keys`
+- `Authenticated to server.example.com` — succes
+
+### Erori comune și soluții
+
+**„Permission denied (publickey)"**
+
+Aceasta este cea mai comună eroare. Cauze și soluții:
+
+```bash
+# Verifică că cheia ta este încărcată în ssh-agent
+ssh-add -l
+
+# Dacă nu sunt listate chei, adaugă cheia ta
+ssh-add ~/.ssh/id_ed25519
+
+# Pe serverul la distanță, verifică authorized_keys
+cat ~/.ssh/authorized_keys
+# Asigură-te că cheia ta publică se află acolo
+
+# Verifică permisiunile pe serverul la distanță
+ls -la ~/.ssh/
+# ~/.ssh trebuie să fie 700
+# authorized_keys trebuie să fie 600
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/authorized_keys
+
+# Verifică că serverul permite autentificarea cu cheie publică
+sudo grep PubkeyAuthentication /etc/ssh/sshd_config
+# Trebuie să fie: PubkeyAuthentication yes
+```
+
+**„WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED"**
+
+Cheia de gazdă a serverului s-a schimbat, ceea ce SSH tratează ca o potențială problemă de securitate. Dacă știi că aceasta este legitimă (serverul a fost reconstruit, IP-ul a fost reatribuit), elimină vechea intrare:
+
+```bash
+# Elimină intrarea specifică a gazdei
+ssh-keygen -R server.example.com
+
+# Sau editează known_hosts manual și șterge linia afectată
+nano ~/.ssh/known_hosts
+```
+
+**„Bad permissions" sau „Permissions too open"**
+
+SSH este strict în ceea ce privește permisiunile fișierelor de cheie:
+
+```bash
+# Corectează permisiunile cheii private
+chmod 600 ~/.ssh/id_ed25519
+
+# Corectează permisiunile cheii publice
+chmod 644 ~/.ssh/id_ed25519.pub
+
+# Corectează permisiunile directorului .ssh
+chmod 700 ~/.ssh
+```
+
+Pe Windows, permisiunile cheilor private sunt gestionate diferit. Click dreapta pe fișierul cheii → Properties → Security → Advanced → Disable inheritance → Elimină toate cu excepția contului tău de utilizator, acordând control total doar ție.
+
+### Configurarea și folosirea ssh-agent
+
+Dacă ți se solicită în mod repetat fraza de acces, `ssh-agent` nu rulează sau cheia ta nu este adăugată:
+
+```bash
+# Pornește agentul
+eval "$(ssh-agent -s)"
+# Agent pid 12345
+
+# Adaugă cheia ta
+ssh-add ~/.ssh/id_ed25519
+# Enter passphrase for /home/user/.ssh/id_ed25519:
+# Identity added: /home/user/.ssh/id_ed25519
+
+# Verifică
+ssh-add -l
+# 256 SHA256:abc123... your@email.com (ED25519)
+```
+
+### Pre-popularea known_hosts în automatizare
+
+În pipeline-urile CI/CD, folosește `ssh-keyscan` pentru a adăuga amprenta gazdei la distanță înainte de a te conecta:
+
+```bash
+ssh-keyscan -H server.example.com >> ~/.ssh/known_hosts
+ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+```
+
+Aceasta previne solicitările interactive de amprentă în scripturile automatizate.
+
+## Întrebări frecvente
+
+### Cum remediez „Permission denied (publickey)"?
+
+Parcurge această listă de verificare: (1) Verifică că cheia ta se află în agentul SSH: `ssh-add -l`. Dacă nu, rulează `ssh-add ~/.ssh/id_ed25519`. (2) Verifică că cheia ta publică se află în fișierul `~/.ssh/authorized_keys` al serverului. (3) Verifică permisiunile: `~/.ssh` trebuie să fie `700`, `authorized_keys` trebuie să fie `600`. (4) Verifică că serverul are `PubkeyAuthentication yes` în `/etc/ssh/sshd_config`. (5) Folosește `ssh -vvv user@server` pentru a vedea exact unde eșuează autentificarea. Output-ul verbos îți va spune ce chei sunt încercate și dacă serverul le-a acceptat.
+
+### Cum adaug cheia mea SSH la ssh-agent?
+
+Rulează `ssh-add ~/.ssh/id_ed25519` (înlocuiește cu numele fișierului tău de cheie). Dacă agentul nu rulează, pornește-l mai întâi cu `eval "$(ssh-agent -s)"`. Pe macOS, folosește `ssh-add --apple-use-keychain ~/.ssh/id_ed25519` pentru a stoca fraza de acces în Keychain. Pe Windows, activează serviciul `ssh-agent` cu `Start-Service ssh-agent` și apoi rulează `ssh-add`. Trebuie să rulezi `ssh-add` o singură dată pe sesiune (sau o singură dată vreodată, cu Keychain pe macOS).
+
+### Pot să am mai multe chei SSH?
+
+Da, și este o bună practică. Generează chei separate pentru scopuri diferite — de exemplu, una pentru GitHub personal, una pentru GitLab de serviciu, una pentru serverele de producție. Folosește `~/.ssh/config` pentru a mapa fiecare gazdă la cheia sa specifică cu `IdentityFile`. Chei separate înseamnă că revocarea uneia (prin eliminarea ei dintr-un serviciu sau server) nu afectează celelalte, limitând impactul compromiterii unei chei.
+
+### Cum schimb fraza de acces pe o cheie SSH?
+
+Folosește `ssh-keygen -p`:
+
+```bash
+ssh-keygen -p -f ~/.ssh/id_ed25519
+```
+
+Vei fi solicitat pentru fraza de acces curentă, apoi vei fi rugat să introduci și să confirmi cea nouă. Cheia în sine (și prin urmare cheia publică) nu se schimbă — nu trebuie să o actualizezi nicăieri. Aceasta este utilă dacă suspectezi că fraza ta de acces a fost compromisă sau dorești să o rotești ca practică de securitate de rutină.
+
+### Cum elimin o cheie SSH veche de pe un server?
+
+Deschide `~/.ssh/authorized_keys` pe server și șterge linia care conține vechea cheie publică:
+
+```bash
+# Editează authorized_keys pe serverul la distanță
+ssh user@server.example.com
+nano ~/.ssh/authorized_keys
+# Șterge linia pentru cheia pe care dorești să o elimini
+# Salvează și ieși
+```
+
+Fiecare linie din `authorized_keys` este o cheie publică. Comentariul cheii (ultimul câmp, de obicei `user@hostname` sau un e-mail) ajută la identificarea cărei chei aparține. Dacă nu știi ce linie să ștergi, compară amprenta:
+
+```bash
+# Pe mașina ta locală, obține amprenta
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+
+# Pe server, verifică amprentele tuturor cheilor autorizate
+ssh-keygen -lf ~/.ssh/authorized_keys
+```
+
+Potrivește amprentele pentru a identifica și șterge cheia corectă.
+
+## Generează-ți cheile SSH gratuit
+
+Dacă nu ai generat încă perechea ta de chei SSH, generatorul nostru gratuit online creează chei Ed25519 sau RSA direct în browserul tău în câteva secunde. Nu este necesară instalarea, nimic nu este trimis pe serverele noastre — generarea are loc în totalitate pe dispozitivul tău.
+
+<a href="/">Generează-ți cheile SSH gratuit →</a>
+
+---
+
+**Lectură suplimentară:**
+- <a href="/ro/what-is-ssh">Ce este SSH? Ghidul complet pentru Secure Shell</a>
+- <a href="/ro/what-is-an-ssh-key">Ce este o cheie SSH? Chei publice, chei private și perechi de chei explicate</a>
+- <a href="/ro/ssh-command">Comanda SSH: Referință completă cu exemple</a>

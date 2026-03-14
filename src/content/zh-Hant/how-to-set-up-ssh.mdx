@@ -1,0 +1,563 @@
+# 如何設定 SSH：Linux、Mac 和 Windows 完整的逐步指南
+
+正確設定 SSH 大約需要十分鐘，但帶來的回報會持續多年。一旦設定完成，您就可以在不輸入密碼的情況下登入伺服器、在每次 Git 操作時無需輸入憑證地將程式碼推送到 GitHub，並且有信心地自動化部署。本指南涵蓋整個過程——從產生金鑰對到排除常見錯誤——適用於 Linux、macOS 和 Windows。
+
+如果您想先了解底層技術，請閱讀我們關於 <a href="/zh-Hant/what-is-ssh">SSH 是什麼</a>和 <a href="/zh-Hant/what-is-an-ssh-key">SSH 金鑰是什麼</a>的指南。
+
+## 前置需求
+
+開始之前，請確保您具備：
+
+**伺服器存取：**
+- 終端機應用程式（macOS/Linux 上的終端機、Windows 上的 Windows 終端機或 PowerShell）
+- 執行 Linux/Unix 且安裝了 SSH 伺服器軟體（sshd）的遠端伺服器
+- 該伺服器上的使用者帳號（或建立帳號的 root 存取權限）
+- 伺服器的 IP 位址或主機名稱
+
+**GitHub/GitLab 存取：**
+- GitHub 或 GitLab 帳號
+- 可用 `ssh` 的終端機
+- 可選：已在本地安裝 git
+
+**作業系統需求：**
+- **Linux**：SSH 用戶端幾乎在所有發行版上都已預裝
+- **macOS**：SSH 用戶端已內建，可從終端機使用
+- **Windows 10 1809 版+ / Windows 11**：OpenSSH 用戶端可作為選用功能使用
+
+在 Linux 或 macOS 上無需安裝任何東西。在 Windows 上，開啟 PowerShell 並執行 `ssh -V` 來驗證 OpenSSH 是否已安裝。如果得到版本字串，您就準備好了。如果沒有，請參閱第 4 步的安裝說明。
+
+## 第 1 步：產生您的 SSH 金鑰對
+
+在做任何其他事情之前，您需要一個金鑰對。金鑰對由**私密金鑰**（保留在您的機器上）和**公開金鑰**（放置在伺服器或 GitHub 等服務上）組成。
+
+### 選項 A：使用線上產生器
+
+如果您偏好圖形化介面，我們的<a href="/">免費線上 SSH 金鑰產生器</a>可在您的瀏覽器中建立 Ed25519 或 RSA 金鑰對。私密金鑰使用 Web Crypto API 在本地產生——不會有任何內容傳送到我們的伺服器。下載兩個檔案並將其儲存到 `~/.ssh/`（Linux/macOS）或 `C:\Users\YourName\.ssh\`（Windows）。
+
+### 選項 B：在命令列使用 ssh-keygen
+
+`ssh-keygen` 命令可在 Linux、macOS 和具有 OpenSSH 的 Windows 上使用：
+
+```bash
+# 產生 Ed25519 金鑰對（推薦）
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+**每個旗標的含義：**
+- `-t ed25519` — 金鑰類型（Ed25519 是現代、快速且安全的）
+- `-C "comment"` — 嵌入在公開金鑰中的標籤，通常是您的電子郵件地址
+
+系統會提示您：
+
+```
+Generating public/private ed25519 key pair.
+Enter file in which to save the key (/home/user/.ssh/id_ed25519):
+```
+
+按 **Enter** 接受預設位置。如果您有多個金鑰，可以給它們描述性的名稱（例如 `/home/user/.ssh/id_ed25519_github`）。
+
+```
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+```
+
+輸入強密碼短語。這會加密磁碟上的私密金鑰檔案——如果您的機器被竊，沒有密碼短語就無法使用金鑰。對於無法進行人工互動的自動化使用情境，您可以將其留空，但對於個人金鑰，請務必使用密碼短語。
+
+**輸出：**
+
+```
+Your identification has been saved in /home/user/.ssh/id_ed25519
+Your public key has been saved in /home/user/.ssh/id_ed25519.pub
+The key fingerprint is:
+SHA256:abc123defghijk... your@email.com
+The key's randomart image is:
++--[ED25519 256]--+
+...
+```
+
+建立了兩個檔案：
+- `~/.ssh/id_ed25519` — 您的**私密金鑰**（切勿分享）
+- `~/.ssh/id_ed25519.pub` — 您的**公開金鑰**（可以安全分享）
+
+### 對於 RSA（舊系統相容性）
+
+如果您需要連線到不支援 Ed25519 的非常老舊的系統：
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "your@email.com"
+```
+
+最少使用 4096 位元。小於 4096 位元的 RSA 金鑰不再被認為具有足夠的安全性。
+
+## 第 2 步：在 Linux 上設定 SSH
+
+本節介紹如何將您的公開金鑰複製到 Linux 伺服器，以便在不輸入密碼的情況下進行驗證。
+
+### 方法 1：ssh-copy-id（最簡單）
+
+`ssh-copy-id` 是在遠端伺服器上安裝公開金鑰的最簡單方式。它使用密碼驗證連線，將您的公開金鑰加入伺服器的 `~/.ssh/authorized_keys`，並設定正確的權限。
+
+```bash
+ssh-copy-id user@server.example.com
+
+# 明確指定金鑰檔案
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server.example.com
+
+# 在非標準連接埠上連線
+ssh-copy-id -p 2222 user@server.example.com
+```
+
+系統會最後一次提示您輸入伺服器密碼。之後，您可以使用金鑰透過 `ssh user@server.example.com` 連線。
+
+### 方法 2：手動複製
+
+如果 `ssh-copy-id` 不可用（在某些 BSD 系統或最小化 Linux 安裝上很常見）：
+
+```bash
+# 顯示您的公開金鑰並複製輸出
+cat ~/.ssh/id_ed25519.pub
+
+# 然後使用密碼 SSH 到伺服器並執行：
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+echo "PASTE_YOUR_PUBLIC_KEY_HERE" >> ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+```
+
+或在一個管道中完成所有操作：
+
+```bash
+cat ~/.ssh/id_ed25519.pub | ssh user@server.example.com \
+  "mkdir -p ~/.ssh && chmod 700 ~/.ssh && \
+   cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+```
+
+### 驗證金鑰已安裝
+
+```bash
+ssh user@server.example.com
+# 應在不提示輸入密碼的情況下連線（如果您設定了密碼短語，只會提示輸入密碼短語）
+```
+
+### 設定 SSH 伺服器（sshd）
+
+在遠端伺服器上，SSH 常駐程式設定位於 `/etc/ssh/sshd_config`。對於安全設定：
+
+```bash
+sudo nano /etc/ssh/sshd_config
+```
+
+推薦設定：
+
+```
+# 啟用公開金鑰驗證
+PubkeyAuthentication yes
+
+# 停用密碼驗證（在確認金鑰有效後！）
+PasswordAuthentication no
+
+# 透過 SSH 停用 root 登入
+PermitRootLogin no
+
+# 僅允許特定使用者
+AllowUsers alice bob deploy
+
+# 保持會話活躍
+ClientAliveInterval 60
+ClientAliveCountMax 3
+```
+
+編輯後，重新載入 SSH 常駐程式：
+
+```bash
+sudo systemctl reload sshd
+# 或在舊系統上：
+sudo service ssh reload
+```
+
+**重要**：在確認基於金鑰的驗證有效之前，不要停用 `PasswordAuthentication`。如果您將自己鎖定在外，您將需要控制台存取（或您的託管服務提供商的緊急存取）來恢復。
+
+### 在 Linux 上設定 ssh-agent
+
+如果您的金鑰有密碼短語，請在會話開始時將其加入 `ssh-agent`，以避免重複輸入：
+
+```bash
+# 啟動代理（通常由桌面環境自動啟動）
+eval "$(ssh-agent -s)"
+
+# 加入您的金鑰（輸入一次密碼短語）
+ssh-add ~/.ssh/id_ed25519
+
+# 驗證已載入的金鑰
+ssh-add -l
+```
+
+要在登入時自動啟動 `ssh-agent` 並加入您的金鑰，請加入到 `~/.bashrc` 或 `~/.zshrc`：
+
+```bash
+# 自動啟動 ssh-agent
+if [ -z "$SSH_AUTH_SOCK" ]; then
+  eval "$(ssh-agent -s)"
+  ssh-add ~/.ssh/id_ed25519
+fi
+```
+
+## 第 3 步：在 macOS 上設定 SSH
+
+macOS 包含完整的 OpenSSH 用戶端。在遠端伺服器上設定基於金鑰驗證的流程與 Linux 完全相同（請參閱上面的第 2 步）。macOS 特有的部分涉及鑰匙圈整合。
+
+### 鑰匙圈整合
+
+macOS 可以將您的密碼短語儲存在系統鑰匙圈中，這樣您第一次之後就不需要再輸入它：
+
+```bash
+# 使用鑰匙圈整合將金鑰加入 ssh-agent
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+
+# 對於較舊的 macOS 版本（Monterey 之前）
+ssh-add -K ~/.ssh/id_ed25519
+```
+
+要讓 macOS 始終從鑰匙圈載入您的金鑰，請將此加入 `~/.ssh/config`：
+
+```
+Host *
+    AddKeysToAgent yes
+    UseKeychain yes
+    IdentityFile ~/.ssh/id_ed25519
+```
+
+之後，密碼短語會儲存在鑰匙圈中並自動載入——後續重新開機時不會再提示您輸入。
+
+### 驗證 SSH 用戶端版本
+
+```bash
+ssh -V
+# OpenSSH_9.x, LibreSSL x.x.x
+```
+
+macOS 附帶的 OpenSSH 版本相對較新，但不一定是最新版本。如果您需要較新的功能，請透過 Homebrew 安裝：`brew install openssh`。
+
+## 第 4 步：在 Windows 上設定 SSH
+
+Windows 10（1809+）和 Windows 11 包含 OpenSSH。以下是如何讓它運作。
+
+### 安裝 OpenSSH 用戶端
+
+**檢查是否已安裝：**
+
+```powershell
+ssh -V
+```
+
+**透過設定安裝：**
+1. 開啟 **設定 → 應用程式 → 選用功能**
+2. 搜尋 **OpenSSH 用戶端**
+3. 點擊 **安裝**
+
+**透過 PowerShell 安裝（系統管理員）：**
+
+```powershell
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+```
+
+### 在 Windows 上產生金鑰
+
+開啟 PowerShell 並執行：
+
+```powershell
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+金鑰會儲存到 `C:\Users\YourUsername\.ssh\`。
+
+### 將您的公開金鑰複製到 Linux 伺服器
+
+Windows 不包含 `ssh-copy-id`，但您可以從 PowerShell 手動完成：
+
+```powershell
+# 顯示您的公開金鑰
+Get-Content ~/.ssh/id_ed25519.pub
+
+# 將其複製到遠端伺服器（系統會提示您輸入伺服器密碼）
+$pubkey = Get-Content ~/.ssh/id_ed25519.pub -Raw
+ssh user@server.example.com "mkdir -p ~/.ssh && echo '$pubkey' >> ~/.ssh/authorized_keys && chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys"
+```
+
+或使用 `Add-Content` 管道：
+
+```powershell
+type $env:USERPROFILE\.ssh\id_ed25519.pub | ssh user@server.example.com "cat >> ~/.ssh/authorized_keys"
+```
+
+### 在 Windows 上設定 ssh-agent
+
+為避免重複輸入密碼短語，請啟動 OpenSSH 驗證代理服務：
+
+```powershell
+# 啟動服務
+Start-Service ssh-agent
+
+# 設定為自動啟動
+Set-Service -Name ssh-agent -StartupType Automatic
+
+# 加入您的金鑰
+ssh-add ~/.ssh/id_ed25519
+```
+
+### PuTTY 作為替代方案
+
+如果您偏好圖形化 SSH 用戶端，PuTTY 是 Windows 的免費選項。使用 **PuTTYgen** 產生金鑰（以 `.ppk` 格式儲存供 PuTTY 使用，並以 OpenSSH 格式匯出）。但對於新的設定，內建的 OpenSSH 用戶端更簡單且與其他生態系統互通。
+
+## 如何為 GitHub 和 GitLab 設定 SSH 金鑰
+
+SSH 金鑰驗證到 GitHub 和 GitLab 的工作方式類似——您將公開金鑰上傳到服務，並在執行 Git 操作時使用對應的私密金鑰。
+
+### 為 GitHub 設定 SSH
+
+**1. 複製您的公開金鑰：**
+
+```bash
+# Linux
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+
+# macOS
+cat ~/.ssh/id_ed25519.pub | pbcopy
+
+# Windows PowerShell
+Get-Content ~/.ssh/id_ed25519.pub | Set-Clipboard
+```
+
+或直接顯示並手動複製：
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+**2. 加入 GitHub：**
+
+1. 前往 **github.com** 並登入
+2. 點擊您的頭像 → **Settings（設定）**
+3. 左側邊欄：**SSH and GPG keys（SSH 和 GPG 金鑰）**
+4. 點擊 **New SSH key（新增 SSH 金鑰）**
+5. 給它一個描述性的 **Title（標題）**（例如「MacBook Pro」或「Work PC」）
+6. 將 **Key type（金鑰類型）** 設定為 **Authentication Key（驗證金鑰）**
+7. 貼上您的公開金鑰
+8. 點擊 **Add SSH key（新增 SSH 金鑰）**
+
+**3. 測試連線：**
+
+```bash
+ssh -T git@github.com
+# Hi username! You've successfully authenticated, but GitHub does not provide shell access.
+```
+
+**4. 使用 SSH 進行 Git 操作：**
+
+```bash
+# 使用 SSH 而非 HTTPS 複製
+git clone git@github.com:username/repository.git
+
+# 如果現有儲存庫使用 HTTPS，將其切換到 SSH
+git remote set-url origin git@github.com:username/repository.git
+```
+
+### 為 GitLab 設定 SSH
+
+流程完全相同：
+
+1. 前往 **gitlab.com** → 點擊您的頭像 → **Preferences（偏好設定）**
+2. 左側邊欄：**SSH Keys（SSH 金鑰）**
+3. 貼上您的公開金鑰，給它一個標題，並可選擇設定到期日
+4. 點擊 **Add key（新增金鑰）**
+
+使用以下命令測試：
+
+```bash
+ssh -T git@gitlab.com
+# Welcome to GitLab, @username!
+```
+
+對於自託管的 GitLab 執行個體，請將 `gitlab.com` 替換為您的執行個體主機名稱。
+
+### 為 GitHub 和其他服務使用單獨的金鑰
+
+如果您想為 GitHub 使用專用金鑰（建議用於金鑰衛生管理），請產生一個具名金鑰：
+
+```bash
+ssh-keygen -t ed25519 -C "github" -f ~/.ssh/id_ed25519_github
+```
+
+然後在 `~/.ssh/config` 中加入一個 `Host` 區塊：
+
+```
+Host github.com
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519_github
+    AddKeysToAgent yes
+```
+
+現在 `git clone git@github.com:...` 會自動使用 GitHub 專用的金鑰。
+
+## 測試和排除 SSH 故障
+
+### 基本連線測試
+
+```bash
+ssh -v user@server.example.com
+```
+
+`-v`（詳細）旗標可精確顯示每個步驟發生了什麼。尋找如下行：
+- `Offering public key: ~/.ssh/id_ed25519` — SSH 正在嘗試您的金鑰
+- `Server accepts key` — 金鑰在 `authorized_keys` 中
+- `Authenticated to server.example.com` — 成功
+
+### 常見錯誤及修正
+
+**「Permission denied (publickey)」**
+
+這是最常見的錯誤。原因和修正方法：
+
+```bash
+# 檢查您的金鑰是否已載入到 ssh-agent
+ssh-add -l
+
+# 如果未列出金鑰，請加入您的金鑰
+ssh-add ~/.ssh/id_ed25519
+
+# 在遠端伺服器上，檢查 authorized_keys
+cat ~/.ssh/authorized_keys
+# 確保您的公開金鑰在那裡
+
+# 檢查遠端伺服器上的權限
+ls -la ~/.ssh/
+# ~/.ssh 必須是 700
+# authorized_keys 必須是 600
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/authorized_keys
+
+# 檢查伺服器是否允許公開金鑰驗證
+sudo grep PubkeyAuthentication /etc/ssh/sshd_config
+# 必須是：PubkeyAuthentication yes
+```
+
+**「WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED」**
+
+伺服器的主機金鑰已更改，SSH 將此視為潛在的安全問題。如果您知道這是合法的（伺服器已重建，IP 已重新分配），請移除舊條目：
+
+```bash
+# 移除特定的主機條目
+ssh-keygen -R server.example.com
+
+# 或手動編輯 known_hosts 並刪除受影響的行
+nano ~/.ssh/known_hosts
+```
+
+**「Bad permissions」或「Permissions too open」**
+
+SSH 對金鑰檔案權限要求嚴格：
+
+```bash
+# 修正私密金鑰權限
+chmod 600 ~/.ssh/id_ed25519
+
+# 修正公開金鑰權限
+chmod 644 ~/.ssh/id_ed25519.pub
+
+# 修正 .ssh 目錄權限
+chmod 700 ~/.ssh
+```
+
+在 Windows 上，私密金鑰權限的管理方式不同。右鍵點擊金鑰檔案 → 內容 → 安全性 → 進階 → 停用繼承 → 移除所有條目，僅授予您的使用者帳號完全控制。
+
+### 設定和使用 ssh-agent
+
+如果您反覆被要求輸入密碼短語，`ssh-agent` 未在執行或您的金鑰未被加入：
+
+```bash
+# 啟動代理
+eval "$(ssh-agent -s)"
+# Agent pid 12345
+
+# 加入您的金鑰
+ssh-add ~/.ssh/id_ed25519
+# Enter passphrase for /home/user/.ssh/id_ed25519:
+# Identity added: /home/user/.ssh/id_ed25519
+
+# 驗證
+ssh-add -l
+# 256 SHA256:abc123... your@email.com (ED25519)
+```
+
+### 在自動化中預先填充 known_hosts
+
+在 CI/CD 流水線中，使用 `ssh-keyscan` 在連線之前加入遠端主機指紋：
+
+```bash
+ssh-keyscan -H server.example.com >> ~/.ssh/known_hosts
+ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+```
+
+這可以防止自動化腳本中出現互動式指紋提示。
+
+## 常見問題
+
+### 如何修正「Permission denied (publickey)」？
+
+按照這個清單逐一排查：(1) 驗證您的金鑰在 SSH 代理中：`ssh-add -l`。如果沒有，請執行 `ssh-add ~/.ssh/id_ed25519`。(2) 檢查您的公開金鑰是否在伺服器的 `~/.ssh/authorized_keys` 檔案中。(3) 驗證權限：`~/.ssh` 必須是 `700`，`authorized_keys` 必須是 `600`。(4) 檢查伺服器在 `/etc/ssh/sshd_config` 中是否有 `PubkeyAuthentication yes`。(5) 使用 `ssh -vvv user@server` 查看驗證在哪裡失敗。詳細輸出會告訴您正在嘗試哪些金鑰以及伺服器是否接受了它們。
+
+### 如何將我的 SSH 金鑰加入 ssh-agent？
+
+執行 `ssh-add ~/.ssh/id_ed25519`（替換為您的金鑰檔案名稱）。如果代理未在執行，請先用 `eval "$(ssh-agent -s)"` 啟動它。在 macOS 上，使用 `ssh-add --apple-use-keychain ~/.ssh/id_ed25519` 將密碼短語儲存在鑰匙圈中。在 Windows 上，使用 `Start-Service ssh-agent` 啟用 `ssh-agent` 服務，然後執行 `ssh-add`。每個會話只需執行一次 `ssh-add`（或在 macOS 上使用鑰匙圈，只需執行一次即可永久有效）。
+
+### 我可以有多個 SSH 金鑰嗎？
+
+可以，而且這是好的做法。為不同目的產生單獨的金鑰——例如，一個用於個人 GitHub，一個用於工作 GitLab，一個用於生產伺服器。使用 `~/.ssh/config` 透過 `IdentityFile` 將每個主機對應到其特定金鑰。擁有單獨的金鑰意味著撤銷一個（從服務或伺服器中移除）不會影響其他金鑰，限制了金鑰洩露的影響範圍。
+
+### 如何更改 SSH 金鑰的密碼短語？
+
+使用 `ssh-keygen -p`：
+
+```bash
+ssh-keygen -p -f ~/.ssh/id_ed25519
+```
+
+系統會提示您輸入目前的密碼短語，然後要求您輸入並確認新密碼短語。金鑰本身（因此也是公開金鑰）不會改變——您不需要在任何地方更新它。當您懷疑密碼短語已洩露或想要將其作為例行安全做法進行輪換時，這很有用。
+
+### 如何從伺服器移除舊的 SSH 金鑰？
+
+在伺服器上開啟 `~/.ssh/authorized_keys` 並刪除包含舊公開金鑰的行：
+
+```bash
+# 在遠端伺服器上編輯 authorized_keys
+ssh user@server.example.com
+nano ~/.ssh/authorized_keys
+# 刪除您要移除的金鑰所在的行
+# 儲存並退出
+```
+
+`authorized_keys` 中的每一行都是一個公開金鑰。金鑰的備註（最後一個欄位，通常是 `user@hostname` 或電子郵件）有助於識別哪個金鑰是哪個。如果您不知道要刪除哪一行，請比較指紋：
+
+```bash
+# 在您的本機上，取得指紋
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+
+# 在伺服器上，檢查所有已授權金鑰的指紋
+ssh-keygen -lf ~/.ssh/authorized_keys
+```
+
+比對指紋以識別並刪除正確的金鑰。
+
+## 免費產生您的 SSH 金鑰
+
+如果您還未產生 SSH 金鑰對，我們的免費線上產生器可以在幾秒鐘內直接在您的瀏覽器中建立 Ed25519 或 RSA 金鑰。無需安裝，不會有任何內容傳送到我們的伺服器——產生完全在您的裝置上進行。
+
+<a href="/">免費產生您的 SSH 金鑰 →</a>
+
+---
+
+**延伸閱讀：**
+- <a href="/zh-Hant/what-is-ssh">什麼是 SSH？安全外殼協定完整指南</a>
+- <a href="/zh-Hant/what-is-an-ssh-key">什麼是 SSH 金鑰？公開金鑰、私密金鑰與金鑰對詳解</a>
+- <a href="/zh-Hant/ssh-command">SSH 命令：含範例的完整參考指南</a>

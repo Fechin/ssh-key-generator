@@ -1,0 +1,337 @@
+# Cos'è una Chiave SSH? Chiavi Pubbliche, Private e Coppie di Chiavi Spiegate
+
+Una **chiave SSH** è una credenziale crittografica utilizzata per autenticarsi ai server SSH senza password. Le chiavi SSH vengono in coppia — una **chiave pubblica** e una **chiave privata** — e insieme rendono l'accesso remoto più sicuro e più comodo rispetto alla tradizionale autenticazione con password. Questa guida spiega cos'è una chiave SSH, come funziona il sistema di coppie di chiavi, quale tipo di chiave scegliere e come usare le chiavi SSH con servizi come GitHub e GitLab.
+
+## Come Funzionano le Chiavi SSH
+
+Le chiavi SSH si basano sulla **crittografia asimmetrica**, detta anche crittografia a chiave pubblica. A differenza della crittografia simmetrica (dove una singola chiave segreta cifra e decifra i dati), i sistemi asimmetrici usano coppie di chiavi matematicamente collegate dove i dati cifrati con una chiave possono essere decifrati solo con l'altra.
+
+Ecco il flusso di autenticazione quando si usa una chiave SSH per accedere a un server:
+
+1. Si esegue `ssh user@server.example.com`.
+2. Il server cerca la chiave pubblica in `~/.ssh/authorized_keys`.
+3. Il server genera una sfida casuale e la cifra con la chiave pubblica.
+4. Il client SSH decifra la sfida usando la chiave privata.
+5. Il client invia una prova crittografica (derivata dalla sfida decifrata e dall'ID di sessione) al server.
+6. Il server verifica la prova. Solo il possessore della chiave privata potrebbe averla prodotta.
+7. L'autenticazione ha successo. Nessuna password lascia mai la propria macchina.
+
+Questo è il punto chiave: **la chiave privata non viaggia mai sulla rete**. Il server vede solo la chiave pubblica e le prove crittografiche prodotte. Anche se qualcuno intercetta ogni pacchetto della sessione SSH, non ottiene nulla che gli consenta di impersonare l'utente.
+
+Per informazioni di base sul protocollo SSH più ampio, vedere la nostra guida su <a href="/it/what-is-ssh">cos'è SSH</a>.
+
+## Chiave Pubblica vs. Chiave Privata: Qual è la Differenza?
+
+Comprendere la distinzione tra le due chiavi è fondamentale per usare SSH correttamente.
+
+### La Chiave Pubblica — Il Lucchetto
+
+La **chiave pubblica** è progettata per essere condivisa liberamente. Pensala come un lucchetto: ne distribuisci copie a tutti i sistemi a cui vuoi accedere. Quando un server ha la tua chiave pubblica nel suo file `authorized_keys`, può verificare la tua identità senza conoscere la chiave privata.
+
+Chiavi pubbliche:
+- È sicuro condividerle — non possono essere usate per impersonarti
+- Vengono inserite sui server in `~/.ssh/authorized_keys`
+- Vengono caricate su GitHub, GitLab e altri servizi
+- Hanno tipicamente estensione `.pub` (ad esempio, `id_ed25519.pub`)
+- Appaiono come: `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAA... user@hostname`
+
+### La Chiave Privata — La Chiave
+
+La **chiave privata** è la metà segreta della coppia. Non deve mai lasciare la propria macchina e non deve essere mai condivisa con nessuno — nemmeno con gli amministratori, i cloud provider o il personale di supporto. Se la chiave privata viene compromessa, chiunque la ottenga può impersonarti su ogni server dove è installata la tua chiave pubblica.
+
+Chiavi private:
+- Devono essere mantenute segrete e al sicuro
+- Sono memorizzate localmente in `~/.ssh/` con permessi limitati (600)
+- Possono essere cifrate con una passphrase
+- Non hanno estensione o hanno un'estensione specifica (ad esempio, `id_ed25519`)
+
+### Il File `authorized_keys`
+
+Sul lato server, le chiavi pubbliche di ciascun utente sono memorizzate in `~/.ssh/authorized_keys`. È un file di testo normale dove ogni riga contiene una chiave pubblica. Quando un client SSH tenta di autenticarsi, il server verifica se il client può provare il possesso della chiave privata corrispondente a qualsiasi voce in questo file.
+
+```
+# Formato ~/.ssh/authorized_keys
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGq... alice@laptop
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHr... alice@workstation
+ssh-rsa AAAAB3NzaC1yc2EAAAA... backup-deploy-key
+```
+
+È possibile avere tutte le chiavi pubbliche necessarie in questo file, consentendo a più dispositivi o sistemi di automazione di autenticarsi allo stesso server.
+
+## Algoritmi per Chiavi SSH: Ed25519 vs RSA
+
+Quando si genera una coppia di chiavi SSH, si sceglie un algoritmo. Le due opzioni più comuni oggi sono **Ed25519** e **RSA**. Esistono anche ECDSA e DSA, ma DSA è deprecato e ECDSA ha insidie di implementazione, quindi ci concentreremo sulle due opzioni raccomandate.
+
+### Ed25519 — La Scelta Moderna
+
+Ed25519 è stato introdotto in OpenSSH nella versione 6.5 (2014) ed è ora il valore predefinito consigliato. Usa la crittografia a curva ellittica sulla curva di Twisted Edwards (Curve25519), progettata da Daniel J. Bernstein.
+
+**Vantaggi di Ed25519:**
+- **Compatto** — le chiavi sono di soli 68 caratteri (chiave pubblica) e i file sono minuscoli
+- **Veloce** — la generazione e la verifica delle firme sono estremamente rapide
+- **Sicuro per design** — non vulnerabile agli attacchi side-channel che colpiscono alcune implementazioni RSA
+- **Dimensione fissa della chiave** — livello di sicurezza a 256 bit, nessuna necessità di scegliere una dimensione della chiave
+- **Deterministico** — le firme sono deterministiche, eliminando una classe di fallimenti del generatore di numeri casuali
+
+```bash
+# Genera una coppia di chiavi Ed25519
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+### RSA — L'Opzione Universale
+
+RSA è l'algoritmo più vecchio (inventato nel 1977) e, sebbene sia ancora sicuro a 4096 bit, è più lento e produce chiavi più grandi rispetto a Ed25519. Tuttavia, RSA ha una compatibilità molto più ampia — funziona con vecchi server SSH, sistemi legacy e alcune chiavi hardware di sicurezza.
+
+**Quando usare RSA:**
+- È necessario connettersi a sistemi legacy che eseguono vecchie versioni di OpenSSH (prima della 6.5)
+- Si usa una smartcard o HSM che non supporta Ed25519
+- È richiesta la compatibilità con strumenti più vecchi
+
+```bash
+# Genera una coppia di chiavi RSA a 4096 bit
+ssh-keygen -t rsa -b 4096 -C "your@email.com"
+```
+
+**Non usare mai RSA con meno di 4096 bit.** RSA-1024 e RSA-2048 sono considerati sempre più insufficienti con l'aumento della potenza computazionale. Ed25519 a 256 bit fornisce una sicurezza equivalente o superiore con una frazione della dimensione della chiave.
+
+### Confronto Riepilogativo
+
+| Caratteristica | Ed25519 | RSA 4096 |
+|---|---|---|
+| Dimensione chiave (pubblica) | ~68 caratteri | ~725 caratteri |
+| Livello di sicurezza | 128 bit (struttura resistente al post-quantistico) | ~140 bit classico |
+| Velocità | Molto veloce | Più lento |
+| Compatibilità | SSH moderno (OpenSSH 6.5+) | Universale |
+| Consigliato per | Tutte le nuove chiavi | Solo sistemi legacy |
+
+**Conclusione: genera chiavi Ed25519 per qualsiasi caso d'uso moderno.** Usa RSA solo quando imposto da requisiti di compatibilità.
+
+## Come Aggiungere una Chiave SSH a GitHub
+
+Aggiungere la chiave pubblica SSH a GitHub consente di fare push e pull via SSH senza inserire nome utente e password ad ogni operazione. Ecco il processo passo dopo passo.
+
+### Passo 1: Genera la Coppia di Chiavi
+
+Se non hai ancora una coppia di chiavi SSH, generane una. Puoi usare il nostro <a href="/">generatore di chiavi SSH online gratuito</a> oppure eseguire:
+
+```bash
+ssh-keygen -t ed25519 -C "your-github-email@example.com"
+```
+
+Accetta la posizione predefinita del file (`~/.ssh/id_ed25519`) e imposta opzionalmente una passphrase.
+
+### Passo 2: Copia la Chiave Pubblica
+
+Visualizza la chiave pubblica e copiala negli appunti:
+
+```bash
+# Linux
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+
+# macOS
+cat ~/.ssh/id_ed25519.pub | pbcopy
+
+# Windows (PowerShell)
+Get-Content ~/.ssh/id_ed25519.pub | Set-Clipboard
+```
+
+Oppure visualizzala e copiala manualmente:
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+### Passo 3: Aggiungi la Chiave a GitHub
+
+1. Accedi a **GitHub.com**
+2. Clicca sulla tua immagine del profilo → **Impostazioni**
+3. Nella barra laterale sinistra, clicca **Chiavi SSH e GPG**
+4. Clicca **Nuova chiave SSH**
+5. Dagli un titolo descrittivo (ad esempio, "MacBook Pro 2024" o "PC di lavoro")
+6. Incolla la tua chiave pubblica nel campo **Chiave**
+7. Clicca **Aggiungi chiave SSH**
+
+### Passo 4: Testa la Connessione
+
+```bash
+ssh -T git@github.com
+```
+
+Dovresti vedere: `Hi username! You've successfully authenticated, but GitHub does not provide shell access.`
+
+### Passare un Repository Esistente a SSH
+
+Se hai clonato un repository usando HTTPS e vuoi passare a SSH:
+
+```bash
+# Controlla l'URL remoto corrente
+git remote -v
+
+# Aggiorna a SSH
+git remote set-url origin git@github.com:username/repository.git
+```
+
+Per GitLab, il processo è identico — vai su **Preferenze → Chiavi SSH** e segui gli stessi passaggi.
+
+## Dove Sono Memorizzate le Chiavi SSH?
+
+Le chiavi SSH sono memorizzate in una directory chiamata `.ssh` nella cartella home dell'utente. La posizione varia in base al sistema operativo.
+
+### Linux e macOS
+
+```
+~/.ssh/
+├── id_ed25519          # La chiave privata (permessi: 600)
+├── id_ed25519.pub      # La chiave pubblica (permessi: 644)
+├── id_rsa              # Una chiave privata RSA (se presente)
+├── id_rsa.pub          # La chiave pubblica RSA
+├── authorized_keys     # Chiavi pubbliche autorizzate ad accedere a questa macchina
+├── known_hosts         # Fingerprint dei server a cui ci si è connessi
+└── config              # File di configurazione del client
+```
+
+La directory `~/.ssh/` stessa deve avere permessi **700** (solo lettura/scrittura/esecuzione del proprietario). I file delle chiavi private devono avere permessi **600** (solo lettura/scrittura del proprietario). SSH si rifiuterà di usare chiavi con permessi eccessivamente permissivi.
+
+```bash
+# Correggi i permessi se necessario
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/id_ed25519
+chmod 644 ~/.ssh/id_ed25519.pub
+```
+
+### Windows
+
+Su Windows 10 e 11 con OpenSSH installato, le chiavi SSH sono memorizzate in:
+
+```
+C:\Users\NomeUtente\.ssh\
+├── id_ed25519
+├── id_ed25519.pub
+├── authorized_keys
+├── known_hosts
+└── config
+```
+
+Su Windows, è possibile accedere alla directory `.ssh` da Esplora file (potrebbe essere necessario abilitare "Mostra file nascosti") o da PowerShell usando `~\.ssh\`.
+
+### File di Chiavi Multipli
+
+Se hai chiavi per scopi diversi (GitHub personale, GitLab aziendale, server di produzione), usa il file `~/.ssh/config` per mappare ogni host alla sua chiave:
+
+```
+Host github.com
+    IdentityFile ~/.ssh/id_ed25519_github
+
+Host gitlab.work.com
+    IdentityFile ~/.ssh/id_ed25519_work
+
+Host prod-server
+    HostName 203.0.113.10
+    User deploy
+    IdentityFile ~/.ssh/id_ed25519_production
+```
+
+## Passphrase per le Chiavi SSH
+
+Quando si genera una coppia di chiavi SSH, `ssh-keygen` chiede se si vuole impostare una **passphrase**. È una password opzionale che cifra il file della chiave privata su disco.
+
+### Perché Usare una Passphrase?
+
+Se il file della chiave privata è protetto da una passphrase robusta, rubare il file non è sufficiente per impersonarti — l'attaccante dovrebbe anche craccare la passphrase. Questo fornisce un secondo livello critico di sicurezza, specialmente sui laptop che potrebbero essere rubati fisicamente.
+
+Senza una passphrase, la chiave privata è memorizzata in testo normale su disco. Chiunque riesca a leggere il file (tramite malware, accesso fisico o un backup non adeguatamente protetto) può usarla immediatamente.
+
+### Come le Passphrase Interagiscono con ssh-agent
+
+Lo svantaggio di una passphrase è doverla digitare ogni volta che si usa la chiave. **ssh-agent** risolve questo problema mantenendo le chiavi decifrate in memoria per la durata della sessione.
+
+```bash
+# Avvia ssh-agent e aggiungi la chiave
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+# Inserisci la passphrase una volta — viene ora memorizzata nella cache per la sessione
+```
+
+Su macOS, il portachiavi di sistema si integra con ssh-agent. Aggiungi `-K` per persistere tra i riavvii:
+
+```bash
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+```
+
+### Cambiare una Passphrase
+
+È possibile cambiare la passphrase su una chiave esistente senza rigenerare la coppia di chiavi:
+
+```bash
+ssh-keygen -p -f ~/.ssh/id_ed25519
+```
+
+Questo richiede la vecchia passphrase, poi consente di impostarne una nuova. La chiave pubblica non cambia, quindi non è necessario aggiornarla sui server.
+
+## Fingerprint delle Chiavi SSH
+
+Ogni coppia di chiavi SSH ha un **fingerprint** — un breve hash della chiave pubblica che la identifica univocamente. I fingerprint hanno diversi scopi:
+
+- **Verifica dell'identità dell'host** — Quando ci si connette per la prima volta a un server, SSH mostra il fingerprint della chiave host. Se si conferma che corrisponde a quello atteso (ad esempio, fornito dal provider di hosting), si sa di connettersi al server corretto.
+- **Identificazione delle chiavi** — Quando si gestiscono molte chiavi, i fingerprint aiutano a identificare quale chiave fisica corrisponde a quale voce in `authorized_keys` o su un servizio come GitHub.
+- **Audit e revoca** — I log di audit spesso registrano i fingerprint anziché le chiavi complete. Conoscere il fingerprint di una chiave aiuta a trovarla e rimuoverla se necessario.
+
+### Visualizzare il Fingerprint di una Chiave
+
+```bash
+# Visualizza il fingerprint della chiave pubblica
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+# Output: 256 SHA256:abcdef1234567890... your@email.com (ED25519)
+
+# Visualizza il fingerprint della chiave host di un server
+ssh-keyscan server.example.com | ssh-keygen -lf -
+```
+
+GitHub mostra i fingerprint di tutte le chiavi SSH aggiunte in **Impostazioni → Chiavi SSH e GPG**, consentendoti di verificare che la chiave visualizzata corrisponda a quella sul tuo dispositivo.
+
+### Il File `known_hosts`
+
+La prima volta che ci si connette a un nuovo server SSH, si vede un messaggio come:
+
+```
+The authenticity of host 'example.com (203.0.113.10)' can't be established.
+ED25519 key fingerprint is SHA256:abcdef1234567890...
+Are you sure you want to continue connecting (yes/no/[fingerprint])?
+```
+
+Digita `yes` e il fingerprint del server viene aggiunto a `~/.ssh/known_hosts`. Nelle connessioni successive, SSH verifica silenziosamente che la chiave del server corrisponda al fingerprint memorizzato. Se non corrisponde — il che potrebbe indicare una configurazione errata o un attacco man-in-the-middle — SSH avvisa chiaramente e si rifiuta di connettersi.
+
+## Domande Frequenti
+
+### A cosa serve una chiave SSH?
+
+Le chiavi SSH autenticano l'utente ai server remoti senza password. Gli usi più comuni sono: accedere a server Linux/Unix per l'amministrazione, autenticarsi con servizi di hosting Git (GitHub, GitLab, Bitbucket) per l'accesso push/pull, script di deployment automatizzati che necessitano di accesso al server senza password, e pipeline CI/CD che distribuiscono codice in produzione. Le chiavi SSH sono preferite alle password perché sono immuni alla forza bruta, non riutilizzabili in caso di violazione e possono essere usate senza interazione umana.
+
+### Quante chiavi SSH dovrei avere?
+
+Non esiste una risposta unica corretta, ma una pratica comune è **una chiave per dispositivo** (non per servizio). Il laptop ha una coppia di chiavi; il desktop ne ha un'altra; il server CI ne ha un'altra ancora. In questo modo, se un dispositivo viene rubato o compromesso, si revoca solo la chiave di quel dispositivo. Alcune persone dividono ulteriormente per contesto (personale vs. lavoro), risultando in due chiavi per dispositivo. Evita di condividere una singola chiave su più macchine — se quella chiave viene compromessa, tutti gli accessi sono a rischio simultaneamente.
+
+### Posso condividere la mia chiave pubblica SSH?
+
+Sì. La chiave pubblica è progettata per essere condivisa. È sicuro inviarla via email, pubblicarla nella documentazione di GitHub o includerla in un ticket per richiedere l'accesso al server. La chiave pubblica da sola non può essere usata per autenticarsi come te — questo richiede la corrispondente chiave privata, che solo tu hai. Questa è la proprietà fondamentale della crittografia asimmetrica. Non condividere mai la tua chiave **privata** con nessuno.
+
+### Cosa succede se perdo la chiave privata SSH?
+
+Se perdi la chiave privata e non hai un backup, perdi la capacità di autenticarti con essa. La chiave pubblica, ancora installata su server e servizi, diventa orfana. Avrai bisogno di un modo alternativo per accedere al server (autenticazione con password se abilitata, accesso alla console, meccanismo di accesso di emergenza del tuo provider di hosting) per rimuovere la vecchia chiave pubblica da `authorized_keys` e aggiungerne una nuova. Ecco perché è importante fare il backup della chiave privata (in un gestore di password o in un backup cifrato). La chiave privata non può essere ricostruita dalla chiave pubblica.
+
+### È meglio Ed25519 o RSA?
+
+**Ed25519 è meglio per tutta la nuova generazione di chiavi.** È più veloce, produce chiavi più piccole, non è vulnerabile a certe debolezze di implementazione che colpiscono RSA, e fornisce una sicurezza equivalente o superiore con una chiave a 256 bit rispetto a RSA-4096. L'unica ragione per usare RSA oggi è la compatibilità con software server SSH molto vecchio (OpenSSH prima della versione 6.5, rilasciato nel 2014) o moduli di sicurezza hardware legacy. Se si accede a qualsiasi server o servizio moderno come GitHub, si usi Ed25519.
+
+## Genera la Tua Coppia di Chiavi SSH
+
+Pronto a creare le tue chiavi SSH? Il nostro generatore online gratuito crea coppie di chiavi Ed25519 o RSA direttamente nel browser. La chiave privata viene generata localmente e non viene mai inviata ai nostri server.
+
+<a href="/">Genera la tua coppia di chiavi SSH ora →</a>
+
+---
+
+**Ulteriori letture:**
+- <a href="/it/what-is-ssh">Cos'è SSH? La Guida Completa al Secure Shell</a>
+- <a href="/it/ssh-command">Il Comando SSH: Riferimento Completo con Esempi</a>
+- <a href="/it/how-to-set-up-ssh">Come Configurare SSH: Una Guida Completa Passo dopo Passo</a>

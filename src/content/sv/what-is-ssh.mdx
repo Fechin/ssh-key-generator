@@ -1,0 +1,283 @@
+# Vad är SSH? Den kompletta guiden till Secure Shell
+
+SSH, som står för **Secure Shell**, är ett kryptografiskt nätverksprotokoll som låter dig säkert komma åt och hantera fjärrdatorer via ett oskyddat nätverk. Oavsett om du loggar in på en Linux-server, pushar kod till GitHub eller överför filer mellan maskiner är SSH nästan säkert det protokoll som utför jobbet bakom kulisserna. Den här guiden förklarar allt du behöver veta om SSH: vad det är, hur det fungerar och varför det har blivit den universella standarden för säker fjärråtkomst.
+
+## Vad står SSH för?
+
+**SSH står för Secure Shell**. Namnet beskriver exakt vad protokollet gör — det tillhandahåller en säker, krypterad skalsession till en fjärrdator. Innan SSH existerade använde administratörer verktyg som Telnet och rsh (remote shell) för att hantera fjärrservrar. Dessa protokoll överförde allt i klartext, inklusive användarnamn och lösenord, vilket gjorde dem trivialt enkla att avlyssna på delade nätverk.
+
+SSH skapades av den finske datavetaren **Tatu Ylönen** 1995, direkt motiverat av en lösenordsavlyssningsattack han bevittnade på sitt universitätsnätverk. Han släppte SSH-1 som fri programvara och det adopterades snabbt över hela internet. Protokollet standardiserades senare av IETF som SSH-2 (RFC 4251–4254), vilket introducerade starkare kryptografi och åtgärdade flera säkerhetsbrister i den ursprungliga designen.
+
+Idag menar människor nästan alltid SSH-2 när de säger "SSH". Den mest använda implementationen är **OpenSSH**, ett öppen källkodsprojekt som underhålls av OpenBSD-teamet och som medföljer praktiskt taget varje Linux-distribution och macOS-installation.
+
+**Innebörden av SSH** i praktiken sträcker sig bortom ett inloggningsverktyg. Det är en komplett protokollsvit som utgör grunden för:
+- Säker fjärrterminalåtkomst
+- Krypterade filöverföringar (SFTP och SCP)
+- Git-autentisering (GitHub, GitLab, Bitbucket)
+- Säker portvidarebefordran och tunnling
+- Automatiserade driftsättningspipelines
+
+## Hur SSH fungerar
+
+**Secure Shell-protokollet** arbetar med en skiktad arkitektur som hanterar kryptering, autentisering och kanalmultiplexering separat. Att förstå dessa skikt hjälper till att avmystifiera varför SSH är betrodd för känsliga operationer.
+
+### De tre protokollskikten
+
+**1. Transportskiktet (RFC 4253)**
+
+När du initierar en SSH-anslutning utför klienten och servern först ett handskakningsförfarande för att förhandla om krypteringsalgoritmer och upprätta en gemensam hemlighet. Detta använder en nyckelutbytesalgoritm — modern SSH använder som standard Curve25519-baserat nyckelutbyte. Efter handskakningen är all efterföljande kommunikation krypterad. Transportskiktet tillhandahåller även dataintegritet via meddelandeautentiseringskoder (MAC:er), vilket säkerställer att data inte kan manipuleras under transit.
+
+**2. Användarautentiseringsskiktet (RFC 4252)**
+
+När en krypterad kanal har upprättats ber servern klienten att autentisera sig. SSH stöder flera autentiseringsmetoder:
+
+- **Autentisering med publik nyckel** — Klienten bevisar att den har en privat nyckel utan att någonsin skicka den över nätverket. Detta är den säkraste och vanligaste metoden.
+- **Lösenordsautentisering** — Användarens lösenord skickas via den krypterade kanalen. Bekvämare men sårbar för brute force-attacker.
+- **Tangentbordsinteraktiv** — En utmaning/svar-mekanism, ofta använd för multifaktorautentisering.
+- **GSSAPI/Kerberos** — Används i företagsmiljöer med centraliserad identitetshantering.
+
+**3. Anslutningsskiktet (RFC 4254)**
+
+Efter autentisering multiplexerar anslutningsskiktet den enskilda krypterade anslutningen till flera logiska kanaler. Det är detta som gör att du kan ha ett interaktivt skal, köra fjärrkommandon, vidarebefordra portar och överföra filer — allt via en enda TCP-anslutning.
+
+### Nyckelutbytet i detalj
+
+När du skriver `ssh user@example.com` händer följande under de första millisekunder­na:
+
+1. Klienten ansluter till TCP-port 22 på servern.
+2. Båda sidor utbyter protokollversionssträngar.
+3. Båda sidor skickar listor över algoritmer de stöder (nyckelutbyte, chiffer, MAC:er, komprimering).
+4. De utför ett Diffie-Hellman- eller ECDH-nyckelutbyte för att härleda en gemensam sessionsnyckel — det är därför som även om någon spelar in den krypterade trafiken, kan de inte dekryptera den senare.
+5. Servern skickar sin **värdnyckel** (publik nyckel), som klienten verifierar mot sin `~/.ssh/known_hosts`-fil.
+6. Autentisering fortsätter som beskrivits ovan.
+7. Sessionen börjar.
+
+## SSH vs Telnet: Varför SSH vann
+
+Innan SSH var **Telnet** standardprotokollet för fjärrterminalåtkomst. Telnet är enkelt och fungerar fortfarande, men har ett fatalt fel: allt överförs i klartext. Ditt användarnamn, ditt lösenord, varje kommando du skriver och varje bit av utdata — allt synligt för vem som helst som kan avlyssna nätverkstrafiken.
+
+På 1990-talet, när internets ryggrad bestod av betrodda akademiska och forskningsnätverk, ansågs detta inte vara ett allvarligt problem. När internet blev kommersiellt och fientligt gjort verktyg som Dsniff och Ettercap det trivialt att fånga upp Telnet-inloggningsuppgifter på lokala nätverk.
+
+SSH löste detta genom att kryptera allt. Här är en direkt jämförelse:
+
+| Funktion | Telnet | SSH |
+|---|---|---|
+| Kryptering | Ingen | Stark (AES, ChaCha20) |
+| Autentisering | Lösenord i klartext | Publik nyckel + krypterat lösenord |
+| Dataintegritet | Ingen | HMAC-verifiering |
+| Port | 23 | 22 |
+| Fortfarande rekommenderat | Nej | Ja |
+
+rsh (remote shell) och rlogin hade liknande problem. De förlitade sig också på IP-baserat förtroende, vilket är trivialt att förfalska. SSH ersatte alla dessa protokoll och har förblivit den obestridda standarden i över 25 år.
+
+## Vad är en SSH-nyckel?
+
+SSH stöder två primära autentiseringsmetoder: lösenord och **SSH-nycklar**. SSH-nycklar är kryptografiska nyckelpar — en **publik nyckel** och en **privat nyckel** — baserade på asymmetrisk kryptografi.
+
+Den **privata nyckeln** stannar på din lokala maskin, skyddad med en valfri lösenfras. Den **publika nyckeln** placeras på varje server du vill komma åt, i en fil som heter `~/.ssh/authorized_keys`. När du ansluter utfärdar servern en kryptografisk utmaning som bara innehavaren av motsvarande privata nyckel kan besvara. Inget lösenord skickas via nätverket.
+
+Detta tillvägagångssätt har flera fördelar:
+- **Immun mot brute force** — det finns inget att gissa. En 256-bitars Ed25519-nyckel har 2²⁵⁶ möjliga värden.
+- **Inget lösenord att stjäla** — även om någon avlyssnar handskakningen får de inget användbart.
+- **Automatiserbar** — skript och CI/CD-pipelines kan autentisera utan mänsklig interaktion.
+- **Återkallbar** — att ta bort en publik nyckel från `authorized_keys` återkallar omedelbart åtkomsten.
+
+Den modernaste och rekommenderade nyckeltypen är **Ed25519**, som använder elliptisk kurvkryptografi över Edwards-kurvan. RSA-nycklar stöds också brett, men du bör använda minst 4096 bitar.
+
+För en djupdykning i nyckelpar, se vår guide om <a href="/sv/what-is-an-ssh-key">vad en SSH-nyckel är</a>.
+
+## Vanliga användningsfall för SSH
+
+SSH används i ett anmärkningsvärt brett spektrum av scenarier. Här är de viktigaste.
+
+### Fjärrserveradministration
+
+Det mest grundläggande användningsfallet. Systemadministratörer loggar in på Linux- och Unix-servrar för att installera programvara, redigera konfigurationsfiler, hantera tjänster och diagnostisera problem — allt via en SSH-terminalsession.
+
+```bash
+ssh user@192.168.1.100
+ssh admin@myserver.example.com
+ssh -p 2222 deploy@staging.example.com
+```
+
+### Filöverföring med SFTP och SCP
+
+SSH tillhandahåller två filöverföringsprotokoll byggda på samma krypterade kanal:
+
+**SCP (Secure Copy Protocol)** är ett enkelt kommandoradsverktyg för att kopiera filer:
+
+```bash
+# Kopiera lokal fil till fjärrserver
+scp report.pdf user@server:/home/user/documents/
+
+# Kopiera fjärrfil till lokal maskin
+scp user@server:/var/log/app.log ./local-copy.log
+
+# Kopiera hela katalogen rekursivt
+scp -r ./project/ user@server:/var/www/
+```
+
+**SFTP (SSH File Transfer Protocol)** tillhandahåller ett interaktivt FTP-liknande gränssnitt med en rikare funktionsuppsättning än SCP, inklusive återupptagbara överföringar och kataloglistningar.
+
+### Git-autentisering
+
+När du lägger till en SSH-nyckel till GitHub, GitLab eller Bitbucket autentiseras varje `git clone`, `git push` och `git pull` via SSH med din privata nyckel. Detta eliminerar behovet av att ange användarnamn och lösenord vid varje Git-operation och är den rekommenderade autentiseringsmetoden för utvecklare.
+
+```bash
+# Klona ett repo med SSH
+git clone git@github.com:username/repository.git
+
+# Verifiera din GitHub SSH-anslutning
+ssh -T git@github.com
+```
+
+### Automatiserad driftsättning och CI/CD
+
+Driftsättningsskript och CI/CD-system som GitHub Actions, GitLab CI och Jenkins använder SSH-nycklar för att driftsätta kod till produktionsservrar utan mänsklig inblandning. Den privata nyckeln lagras som en hemlighet i CI-systemet, och den motsvarande publika nyckeln läggs till i serverns `authorized_keys`-fil.
+
+### Portvidarebefordran för databaser och applikationer
+
+SSH-tunnling kan säkert exponera fjärrtjänster till din lokala maskin. Till exempel, för att komma åt en fjärr-MySQL-databas som inte är exponerad mot internet:
+
+```bash
+ssh -L 3307:localhost:3306 user@dbserver.example.com -N
+```
+
+Detta skapar en lokal tunnel: att ansluta till port 3307 på din maskin vidarebefordrar transparent trafik till port 3306 på fjärrservern, krypterat i SSH-tunneln.
+
+## SSH-port och konfigurationsalternativ
+
+### Standardport 22
+
+SSH lyssnar på **TCP-port 22** som standard. Detta är en av IANA tilldelad välkänd port som har reserverats för SSH sedan protokollet skapades. När du kör `ssh user@host` utan att ange en port ansluter SSH-klienten till port 22.
+
+Vissa administratörer ändrar SSH-porten (t.ex. till 2222 eller 8022) som en mindre säkerhetsåtgärd för att minska automatiserat skanningsbrus i loggar. Detta kallas "säkerhet genom obskyritet" och är inte ett substitut för ordentlig nyckelbaserad autentisering, men kan minska loggröran.
+
+```bash
+# Anslut till en icke-standardiserad SSH-port
+ssh -p 2222 user@example.com
+```
+
+### SSH-klientkonfigurationsfilen
+
+Istället för att skriva långa kommandoradsalternativ varje gång kan du konfigurera SSH-anslutningar i `~/.ssh/config`. Den här filen låter dig definiera alias, ange alternativ per värd och dramatiskt förenkla ditt arbetsflöde.
+
+```
+Host myserver
+    HostName 203.0.113.10
+    User deploy
+    Port 2222
+    IdentityFile ~/.ssh/id_ed25519_prod
+
+Host bastion
+    HostName jump.example.com
+    User ec2-user
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host internal
+    HostName 10.0.1.50
+    User ubuntu
+    ProxyJump bastion
+```
+
+Med den här konfigurationen ansluter `ssh myserver` till det fullständiga värdnamnet på den anpassade porten med den angivna nyckeln — inga flaggor behövs.
+
+För en komplett referens om SSH-kommandoalternativ och flaggor, se vår <a href="/sv/ssh-command">guide för SSH-kommandot</a>.
+
+### Serversidekonfiguration (sshd_config)
+
+SSH-serverdemon (sshd) konfigureras via `/etc/ssh/sshd_config`. Viktiga inställningar inkluderar:
+
+```
+# Inaktivera lösenordsautentisering — endast nycklar
+ PasswordAuthentication no
+
+# Inaktivera root-inloggning
+ PermitRootLogin no
+
+# Ändra lyssningsporten
+Port 2222
+
+# Begränsa till specifika användare
+AllowUsers deploy admin
+
+# Aktivera autentisering med publik nyckel
+PubkeyAuthentication yes
+```
+
+Efter redigering, ladda om demonen: `sudo systemctl reload sshd`
+
+## SSH-tunnling
+
+SSH-tunnling (även kallat SSH-portvidarebefordran) gör det möjligt att dirigera godtycklig TCP-trafik via en krypterad SSH-anslutning. Det är en av SSH:s kraftfullaste och mest underutnyttjade funktioner.
+
+### Lokal portvidarebefordran
+
+Lokal vidarebefordran gör en fjärrtjänst tillgänglig på din lokala maskin. Syntaxen är `-L lokal_port:fjärrvärd:fjärrport`.
+
+```bash
+# Kom åt en fjärr-PostgreSQL-databas lokalt
+ssh -L 5433:localhost:5432 user@dbserver -N
+
+# Kom åt en intern webbapp via en hoppserver
+ssh -L 8080:internal-app.company.com:80 user@jump.company.com -N
+```
+
+Flaggan `-N` säger åt SSH att inte köra ett fjärrkommando — användbart när du bara vill ha tunneln.
+
+### Fjärrportvidarebefordran
+
+Fjärrvidarebefordran exponerar en lokal tjänst på fjärrservern. Syntaxen är `-R fjärrport:lokal_värd:lokal_port`.
+
+```bash
+# Exponera din lokala webbserver på fjärrmaskinen
+ssh -R 9090:localhost:3000 user@server -N
+```
+
+Detta är användbart för att tillfälligt dela en lokal utvecklingsserver med en kollega som har tillgång till fjärrvärden, eller för att ge en klient tillfällig åtkomst till ditt pågående arbete.
+
+### Dynamisk portvidarebefordran (SOCKS-proxy)
+
+Flaggan `-D` skapar en SOCKS-proxy på din lokala maskin och dirigerar all SOCKS-kompatibel trafik via SSH-anslutningen. Detta använder effektivt fjärrservern som en VPN-utgångsnod.
+
+```bash
+# Skapa en SOCKS5-proxy på lokal port 1080
+ssh -D 1080 user@remote-server -N -f
+```
+
+Konfigurera din webbläsare eller ditt system att använda `SOCKS5-proxy: 127.0.0.1:1080` och all webbtrafik dirigeras via fjärrservern. Detta används ofta för att komma åt geobegränsat innehåll eller för att surfa säkert från ett otrustat nätverk.
+
+## Vanliga frågor
+
+### Vad står SSH för?
+
+SSH står för **Secure Shell**. Det är ett kryptografiskt nätverksprotokoll för att driva nätverkstjänster säkert via ett oskyddat nätverk. Namnet syftar på dess primära användningsfall: att tillhandahålla en säker interaktiv skalsession på en fjärrdator.
+
+### Är SSH detsamma som SSL?
+
+Nej. SSH och SSL/TLS är båda kryptografiska protokoll, men de tjänar olika syften. **SSL/TLS** (Secure Sockets Layer / Transport Layer Security) används för att säkra webbtrafik (HTTPS), e-post och andra applikationsprotokoll. **SSH** är specifikt utformat för säker fjärrskalåtkomst, filöverföring och tunnling. De använder liknande kryptografiska primitiver (publik-nyckelkryptografi, symmetrisk kryptering) men har olika handskakningsmek­anismer och användningsfall. SSH använder inte SSL/TLS internt.
+
+### Vilken port använder SSH?
+
+SSH använder **TCP-port 22** som standard. Detta är en välkänd port tilldelad av IANA. Du kan konfigurera SSH-servern att lyssna på en annan port med `Port`-direktivet i `/etc/ssh/sshd_config` och ansluta till icke-standardiserade portar med `ssh -p PORT user@host`.
+
+### Kan SSH hackas?
+
+En korrekt konfigurerad SSH-server med nyckelbaserad autentisering är extremt svår att kompromissa. Kryptografin — Ed25519-nycklar, AES-256-kryptering, SHA-2-MAC:er — anses vara kvantresistent för nyckelautentisering och beräkningsmässigt omöjlig att brute-forca. Verkliga SSH-komprometteringar involverar vanligtvis: stulna privata nyckelfiler, svaga lösensfraser, felkonfigurerade servrar som tillåter lösenordsautentisering med svaga lösenord, sårbara programvaruversioner med opatchar CVE:er, eller social ingenjörskonst snarare än kryptografiska attacker. Håll din server uppdaterad, inaktivera lösenordsautentisering och skydda din privata nyckelfil.
+
+### Vad är skillnaden mellan SSH och HTTPS?
+
+Både SSH och HTTPS krypterar nätverkstrafik, men de är utformade för olika syften. **HTTPS** säkrar webbsurfning — det använder TLS för att kryptera HTTP-förfrågningar och svar mellan webbläsare och webbservrar. **SSH** säkrar fjärradministrativ åtkomst, filöverföringar och tunnling. När du pushar kod till GitHub kan du använda antingen SSH (port 22, nyckelbaserad autentisering) eller HTTPS (port 443, tokenbaserad autentisering). SSH föredras generellt av utvecklare eftersom det inte kräver att man anger inloggningsuppgifter igen. HTTPS stöds universellt via brandväggar som kan blockera port 22.
+
+## Generera dina SSH-nycklar nu
+
+Nyckelbaserad SSH-autentisering är säkrare och bekvämare än lösenord. Om du inte redan har konfigurerat SSH-nycklar skapar vår kostnadsfria onlinegenerator Ed25519- eller RSA-nyckelpar omedelbart i din webbläsare — ingen installation krävs, inget skickas till våra servrar.
+
+<a href="/">Generera ditt SSH-nyckelpar nu →</a>
+
+---
+
+**Vidare läsning:**
+- <a href="/sv/what-is-an-ssh-key">Vad är en SSH-nyckel? Publika nycklar, privata nycklar och nyckelpar förklarade</a>
+- <a href="/sv/ssh-command">SSH-kommandot: Komplett referens med exempel</a>
+- <a href="/sv/how-to-set-up-ssh">Hur man konfigurerar SSH: En komplett steg-för-steg-guide</a>

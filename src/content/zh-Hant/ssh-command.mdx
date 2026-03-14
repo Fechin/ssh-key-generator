@@ -1,0 +1,430 @@
+# SSH 命令：Linux、Mac 和 Windows 含範例的完整參考指南
+
+`ssh` 命令是從命令列發起 SSH 連線的主要工具。無論是登入遠端 Linux 伺服器、為資料庫存取轉送連接埠，還是透過跳板主機進入內部網路，`ssh` 命令都是您的入口。本指南涵蓋從基本語法到進階旗標、通道和 ProxyJump 設定的所有內容——並附有適用於 Linux、macOS 和 Windows 的實際範例。
+
+在執行 SSH 命令之前，您需要 SSH 金鑰。請參閱我們關於<a href="/zh-Hant/what-is-an-ssh-key">什麼是 SSH 金鑰</a>的指南，或使用<a href="/">免費線上產生器</a>建立金鑰對。
+
+## SSH 命令語法
+
+`ssh` 命令的基本語法為：
+
+```
+ssh [options] [user@]hostname [command]
+```
+
+分解說明：
+
+- **`[options]`** — 修改行為的零個或多個旗標（本指南將逐一介紹）
+- **`[user@]`** — 可選的使用者名稱。省略時，SSH 使用您目前的本機使用者名稱
+- **`hostname`** — 要連線的遠端主機。可以是 IP 位址、網域名稱，或在 `~/.ssh/config` 中定義的別名
+- **`[command]`** — 在遠端主機上執行的可選命令。省略時，SSH 會啟動互動式外殼會話
+
+**基本範例：**
+
+```bash
+# 使用目前的使用者名稱連線
+ssh server.example.com
+
+# 以特定使用者身份連線
+ssh alice@server.example.com
+
+# 使用 IP 位址連線
+ssh ubuntu@192.168.1.100
+
+# 執行單一命令後立即斷線
+ssh user@server.example.com "df -h"
+
+# 連線並保持連線
+ssh user@server.example.com
+```
+
+## Linux 和 macOS 上的 SSH
+
+Linux 發行版和 macOS 都預裝了 **OpenSSH**。在 Linux 上，它是 `openssh-client` 套件（Debian/Ubuntu）或 `openssh-clients`（RHEL/CentOS/Fedora）的一部分。在 macOS 上，它與系統一起內建，可從終端機或 iTerm2 立即使用。
+
+### 驗證 SSH 是否可用
+
+```bash
+ssh -V
+# 輸出：OpenSSH_9.6p1, LibreSSL 3.3.6
+```
+
+### 基本連線
+
+```bash
+# 連線到伺服器
+ssh user@myserver.example.com
+
+# 首次連線時，SSH 會檢查 ~/.ssh/known_hosts 並提示：
+# The authenticity of host 'myserver.example.com' can't be established.
+# ED25519 key fingerprint is SHA256:abc123...
+# Are you sure you want to continue connecting (yes/no)? yes
+
+# 主機指紋已儲存到 ~/.ssh/known_hosts
+```
+
+### 使用 SSH 設定檔提升便利性
+
+與其每次都輸入完整的連線詳情，不如建立 `~/.ssh/config`：
+
+```
+Host myserver
+    HostName myserver.example.com
+    User alice
+    Port 22
+    IdentityFile ~/.ssh/id_ed25519
+
+Host dev
+    HostName dev.example.com
+    User ubuntu
+    Port 2222
+    IdentityFile ~/.ssh/id_ed25519_work
+```
+
+現在 `ssh myserver` 就會展開為完整的連線——無需任何旗標。
+
+## Windows 上的 SSH（PowerShell 和 OpenSSH）
+
+Windows 10（1809 版）和 Windows 11 內建了 **OpenSSH 用戶端**作為可選功能，使 `ssh` 命令可在 PowerShell、命令提示字元和 Windows 終端機中使用。
+
+### 檢查 OpenSSH 是否已安裝
+
+```powershell
+# 在 PowerShell 中
+ssh -V
+```
+
+如果找不到命令，請安裝它：
+
+**透過設定：**
+1. 開啟 **設定 → 應用程式 → 選用功能**
+2. 點擊 **新增功能**
+3. 找到 **OpenSSH 用戶端** 並安裝
+
+**透過 PowerShell（系統管理員）：**
+
+```powershell
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+```
+
+### 在 PowerShell 中使用 SSH
+
+安裝後，語法與 Linux 和 macOS 完全相同：
+
+```powershell
+# 連線到伺服器
+ssh user@server.example.com
+
+# 使用自訂連接埠連線
+ssh -p 2222 user@server.example.com
+
+# 使用特定金鑰檔案
+ssh -i C:\Users\YourName\.ssh\id_ed25519 user@server.example.com
+```
+
+### Windows SSH 金鑰位置
+
+Windows 上的 SSH 金鑰儲存在 `C:\Users\YourUsername\.ssh\`。PowerShell 識別 `~` 作為縮寫：
+
+```powershell
+# 這兩個是等效的
+ssh -i ~/.ssh/id_ed25519 user@server
+ssh -i C:\Users\YourUsername\.ssh\id_ed25519 user@server
+```
+
+### Windows 上的 PuTTY 與 OpenSSH
+
+在 Windows 上有 OpenSSH 之前，**PuTTY** 是標準的 SSH 用戶端。PuTTY 使用自己的金鑰格式（`.ppk` 檔案）和自己的金鑰產生器（PuTTYgen）。如果您有 `.ppk` 金鑰並需要將其轉換為標準 OpenSSH 格式：
+
+```bash
+# 使用 PuTTY 工具
+puttygen mykey.ppk -O private-openssh -o id_ed25519
+```
+
+對於新的設定，建議使用 Windows 內建的 OpenSSH 用戶端——它由 OpenSSH 專案維護，使用與 Linux 和 macOS 相同的金鑰格式和設定檔。
+
+## 使用金鑰驗證的 SSH：-i 旗標
+
+預設情況下，SSH 在 `~/.ssh/` 中尋找標準名稱的金鑰檔案（`id_ed25519`、`id_rsa`、`id_ecdsa`、`id_dsa`）。**`-i` 旗標**（身份檔案）讓您明確指定不同的金鑰檔案。
+
+```bash
+# 使用特定的金鑰檔案
+ssh -i ~/.ssh/id_ed25519_production user@prod.example.com
+
+# 使用儲存在非標準位置的金鑰
+ssh -i /path/to/my/custom_key deploy@server.example.com
+
+# 與其他選項結合使用
+ssh -i ~/.ssh/deploy_key -p 2222 -l deploy server.example.com
+```
+
+`-i` 旗標在以下幾種情況下必不可少：
+- 您有多個金鑰對用於不同的伺服器或目的
+- 您的金鑰不在預設的 `~/.ssh/` 目錄中
+- 您在 CI/CD 環境中指定路徑明確的金鑰
+- 您從 AWS 或其他雲端提供商下載了 `.pem` 金鑰
+
+### AWS EC2 範例
+
+AWS 在您啟動 EC2 執行個體時提供 `.pem` 金鑰檔案：
+
+```bash
+# 使用 .pem 金鑰連線到 AWS EC2 執行個體
+ssh -i ~/Downloads/my-aws-key.pem ec2-user@54.123.456.789
+
+# 如需要，修正權限（必要——SSH 會拒絕所有人可讀的金鑰）
+chmod 400 ~/Downloads/my-aws-key.pem
+```
+
+## 必備 SSH 命令選項和旗標
+
+`ssh` 命令有數十個選項。以下是您實際會用到的選項。
+
+| 旗標 | 完整說明 | 範例 |
+|---|---|---|
+| `-p PORT` | 在非標準連接埠上連線 | `ssh -p 2222 user@host` |
+| `-i FILE` | 使用特定的身份（金鑰）檔案 | `ssh -i ~/.ssh/mykey user@host` |
+| `-l USER` | 指定登入使用者名稱（`user@` 的替代方式） | `ssh -l alice host` |
+| `-L local:host:remote` | 本地連接埠轉送 | `ssh -L 8080:localhost:80 host` |
+| `-R remote:host:local` | 遠端連接埠轉送 | `ssh -R 9090:localhost:3000 host` |
+| `-D port` | 動態（SOCKS）代理 | `ssh -D 1080 host` |
+| `-N` | 不執行遠端命令（僅通道） | `ssh -N -L 3307:db:3306 host` |
+| `-f` | 驗證後轉入背景執行 | `ssh -f -N -D 1080 host` |
+| `-v` | 詳細（偵錯）輸出 | `ssh -v user@host` |
+| `-vv` 或 `-vvv` | 更詳細的輸出 | `ssh -vvv user@host` |
+| `-A` | 啟用 SSH 代理轉送 | `ssh -A user@jump-host` |
+| `-X` | 啟用 X11 轉送 | `ssh -X user@host xclock` |
+| `-C` | 啟用壓縮 | `ssh -C user@host` |
+| `-T` | 停用偽終端機配置 | `ssh -T git@github.com` |
+| `-q` | 安靜模式（隱藏警告） | `ssh -q user@host` |
+| `-o OPTION=VALUE` | 內嵌設定選項 | `ssh -o StrictHostKeyChecking=no host` |
+| `-J JUMP` | 透過跳板主機 ProxyJump | `ssh -J jump.host user@internal` |
+| `-W host:port` | 將 stdio 轉送到 host:port（用於 ProxyJump） | 由 `-J` 內部使用 |
+
+### 用於偵錯的詳細模式
+
+當 SSH 出現問題時，`-v`（或 `-vv` 或 `-vvv`）可以精確顯示發生了什麼：
+
+```bash
+ssh -v user@server.example.com
+# 顯示：正在嘗試哪些金鑰、伺服器接受哪些驗證方式、
+# 是否涉及代理，以及連線在哪裡失敗
+
+ssh -vvv user@server.example.com
+# 最高詳細程度——顯示詳細的加密協商
+```
+
+### 繞過主機金鑰檢查（謹慎使用）
+
+在主機金鑰驗證不便的自動化和測試環境中：
+
+```bash
+ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null user@host
+```
+
+**不要在生產環境中使用此選項。** 它會停用對中間人攻擊的保護。應在您的佈建腳本中使用 `ssh-keyscan` 預先填充 `known_hosts`。
+
+### 代理轉送
+
+```bash
+# 將您的本地 SSH 代理轉送到遠端伺服器
+ssh -A user@jump-server
+
+# 從 jump-server，您現在可以使用本地金鑰 SSH 到內部主機
+# 無需將私密金鑰複製到跳板伺服器
+ssh internal-server.private
+```
+
+代理轉送很有用，但有安全隱患：對中間伺服器有 root 存取權限的任何人都可以使用您轉送的代理。僅對受信任的伺服器使用，並在可能的情況下優先使用 **ProxyJump**（它不會將您的代理暴露給中間主機）。
+
+## SSH 通道命令
+
+SSH 通道透過加密的 SSH 通道路由 TCP 連線。如需了解通道的背景知識，請參閱我們的 <a href="/zh-Hant/what-is-ssh">SSH 指南的通道章節</a>。
+
+### 本地連接埠轉送
+
+使遠端服務可在您的本機上存取。
+
+```bash
+# 在本地 3307 埠存取遠端 MySQL 資料庫
+ssh -L 3307:localhost:3306 user@db-server.example.com -N
+
+# 連線到只能從 SSH 主機存取的遠端 Web 伺服器
+ssh -L 8080:intranet.company.com:80 user@vpn.company.com -N
+
+# 存取私有網路上的 Redis 執行個體
+ssh -L 6380:10.0.1.50:6379 user@bastion.example.com -N
+```
+
+執行以上任一命令後，將您的本地應用程式連線到 `127.0.0.1:本地連接埠`。
+
+### 遠端連接埠轉送
+
+在遠端伺服器上暴露本地服務。
+
+```bash
+# 將您的本地開發伺服器（3000 埠）暴露在遠端伺服器的 9090 埠
+ssh -R 9090:localhost:3000 user@remote.example.com -N
+
+# 允許遠端伺服器上的任何介面連線（需要 sshd_config 中的 GatewayPorts yes）
+ssh -R 0.0.0.0:9090:localhost:3000 user@remote.example.com -N
+```
+
+### 動態連接埠轉送（SOCKS 代理）
+
+```bash
+# 在本地 1080 埠建立 SOCKS5 代理，在背景執行
+ssh -D 1080 -N -f user@remote.example.com
+
+# 現在設定您的瀏覽器或系統使用 SOCKS5 代理：127.0.0.1:1080
+# 所有流量透過遠端伺服器路由
+```
+
+與 curl 一起使用：
+
+```bash
+curl --socks5 127.0.0.1:1080 https://api.example.com/
+```
+
+### 在背景執行通道
+
+```bash
+# -f 將 SSH 發送到背景，-N 表示沒有遠端命令
+ssh -f -N -L 3307:localhost:3306 user@db-server
+
+# 找到背景 SSH 程序
+ps aux | grep ssh
+
+# 終止它
+kill PID
+```
+
+## SSH ProxyJump 與跳板主機
+
+在許多組織中，生產伺服器位於無法從網際網路直接存取的私有網路上。**跳板主機**（或跳躍主機）是網路邊界上的強化伺服器，您首先 SSH 進入它，然後再跳到內部伺服器。`ssh -J` 旗標（ProxyJump，在 OpenSSH 7.3 中加入）使這個過程無縫銜接。
+
+### 基本 ProxyJump
+
+```bash
+# 透過一個跳板主機到達內部伺服器
+ssh -J ec2-user@bastion.example.com ubuntu@10.0.1.50
+
+# 簡短形式
+ssh -J user@jump-host user@internal-server
+```
+
+這會建立兩個 SSH 連線：首先到跳板主機，然後從跳板主機到內部伺服器——全部在一個命令中完成，並具有端對端加密。您的本地 SSH 代理處理對兩個主機的驗證。
+
+### 串聯多個跳躍
+
+```bash
+# 透過兩個中間主機跳躍
+ssh -J user@jump1.example.com,user@jump2.example.com user@final-destination
+```
+
+### 在 SSH 設定檔中設定 ProxyJump
+
+對於頻繁存取的伺服器，將 ProxyJump 設定放入 `~/.ssh/config`：
+
+```
+Host bastion
+    HostName bastion.example.com
+    User ec2-user
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host prod-web
+    HostName 10.0.1.100
+    User ubuntu
+    ProxyJump bastion
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host prod-db
+    HostName 10.0.2.50
+    User postgres
+    ProxyJump bastion
+    IdentityFile ~/.ssh/id_ed25519_aws
+```
+
+現在 `ssh prod-web` 會自動透過跳板主機連線。無需手動設定 `-J` 旗標。
+
+### ProxyJump 與代理轉送
+
+ProxyJump 優於代理轉送（`-A`），因為：
+- 您的私密金鑰永遠不會轉送到中間主機
+- 跳板主機無法使用您的憑證在其他地方進行驗證
+- 連線是端對端驗證的——目標伺服器直接驗證您
+
+如需更多設定詳情，請參閱我們的完整指南：<a href="/zh-Hant/how-to-set-up-ssh">如何設定 SSH</a>。
+
+## 常見問題
+
+### 如何在不輸入密碼的情況下執行 SSH 命令？
+
+設定 SSH 金鑰驗證。產生金鑰對（`ssh-keygen -t ed25519`），使用 `ssh-copy-id user@host` 將公開金鑰複製到伺服器的 `~/.ssh/authorized_keys` 檔案，之後的連線將使用您的金鑰而不提示輸入密碼。如果您的金鑰有密碼短語，請使用 `ssh-agent` 和 `ssh-add` 將其快取，這樣每個會話只需輸入一次。
+
+### 如何退出 SSH 會話？
+
+輸入 `exit` 或按 **Ctrl+D** 關閉遠端外殼並斷線。如果會話凍結（例如網路中斷），請使用 SSH 逸出序列：按 **Enter**，然後輸入 `~.`（波浪號後跟句點）。SSH 會立即終止連線。其他逸出序列：`~^Z` 將 SSH 暫停到背景，`~?` 列出所有逸出序列。
+
+### 如何透過 SSH 在遠端伺服器上執行命令？
+
+在主機名稱後加入命令：
+
+```bash
+ssh user@server "command to run"
+ssh user@server "ls -la /var/log/"
+ssh user@server "sudo systemctl status nginx"
+```
+
+對於多行命令或腳本，使用 heredoc：
+
+```bash
+ssh user@server << 'EOF'
+cd /var/www/html
+git pull origin main
+systemctl reload nginx
+EOF
+```
+
+對於互動式命令（例如需要終端機的命令），請加入 `-t` 旗標以配置偽終端機：`ssh -t user@server sudo apt upgrade`。
+
+### ssh 和 scp 有什麼區別？
+
+`ssh` 在遠端機器上開啟終端機會話（或執行單一命令）。`scp`（安全複製協定）使用 SSH 進行加密和驗證，在您的本機和遠端機器之間，或在兩台遠端機器之間複製檔案。兩者使用相同的 SSH 協定和金鑰基礎架構。對於檔案傳輸，`scp` 是專用工具：
+
+```bash
+# 從本地複製到遠端
+scp file.txt user@server:/destination/path/
+
+# 從遠端複製到本地
+scp user@server:/remote/file.txt ./local-copy.txt
+```
+
+對於更進階的檔案傳輸（遞迴、可恢復、目錄瀏覽），請使用 `sftp`。對於大規模傳輸，`rsync -avz -e ssh` 效率更高。
+
+### 如何使用帶設定檔的 SSH？
+
+建立 `~/.ssh/config` 並加入主機條目。每個 `Host` 區塊定義一個連線別名及其完整設定：
+
+```
+Host alias-name
+    HostName actual.server.com
+    User username
+    Port 22
+    IdentityFile ~/.ssh/specific_key
+```
+
+然後 `ssh alias-name` 自動使用所有定義的設定。設定檔支援萬用字元：`Host *.example.com` 將設定套用到所有相符的主機。結尾的 `Host *` 將預設設定套用到所有連線。特定 `Host` 區塊中的選項會覆蓋全域預設值。
+
+## 需要 SSH 金鑰？免費產生
+
+要使用 SSH 金鑰驗證——它消除了對密碼的需求——您需要一個金鑰對。在您的瀏覽器中即時產生 Ed25519 或 RSA 金鑰，不會有任何內容傳送到我們的伺服器。
+
+<a href="/">免費產生您的 SSH 金鑰 →</a>
+
+---
+
+**延伸閱讀：**
+- <a href="/zh-Hant/what-is-ssh">什麼是 SSH？安全外殼協定完整指南</a>
+- <a href="/zh-Hant/what-is-an-ssh-key">什麼是 SSH 金鑰？公開金鑰、私密金鑰與金鑰對詳解</a>
+- <a href="/zh-Hant/how-to-set-up-ssh">如何設定 SSH：完整的逐步指南</a>

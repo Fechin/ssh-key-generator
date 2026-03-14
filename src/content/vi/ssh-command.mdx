@@ -1,0 +1,430 @@
+# Lệnh SSH: Tài Liệu Tham Khảo Đầy Đủ với Ví Dụ cho Linux, Mac và Windows
+
+Lệnh `ssh` là công cụ chính để khởi tạo kết nối SSH từ dòng lệnh. Dù bạn đang đăng nhập vào server Linux từ xa, chuyển tiếp cổng để truy cập cơ sở dữ liệu hay nhảy qua bastion host để vào mạng nội bộ, lệnh `ssh` là điểm vào của bạn. Hướng dẫn này bao gồm mọi thứ từ cú pháp cơ bản đến các flag nâng cao, tunneling và cấu hình ProxyJump — với ví dụ thực tế cho Linux, macOS và Windows.
+
+Trước khi chạy lệnh SSH, bạn cần SSH key. Xem hướng dẫn của chúng tôi về <a href="/vi/what-is-an-ssh-key">SSH key là gì</a> hoặc dùng <a href="/">trình tạo trực tuyến miễn phí</a> để tạo cặp khóa.
+
+## Cú Pháp Lệnh SSH
+
+Cú pháp cơ bản của lệnh `ssh` là:
+
+```
+ssh [tùy-chọn] [user@]hostname [lệnh]
+```
+
+Phân tích chi tiết:
+
+- **`[tùy-chọn]`** — Không hoặc nhiều flag thay đổi hành vi (được đề cập trong hướng dẫn này)
+- **`[user@]`** — Tên người dùng tùy chọn. Nếu bỏ qua, SSH dùng tên người dùng cục bộ hiện tại của bạn
+- **`hostname`** — Host từ xa cần kết nối. Có thể là địa chỉ IP, tên miền hoặc alias được định nghĩa trong `~/.ssh/config`
+- **`[lệnh]`** — Lệnh tùy chọn để chạy trên host từ xa. Nếu bỏ qua, SSH khởi động phiên shell tương tác
+
+**Ví dụ cơ bản:**
+
+```bash
+# Kết nối bằng tên người dùng hiện tại của bạn
+ssh server.example.com
+
+# Kết nối với tư cách người dùng cụ thể
+ssh alice@server.example.com
+
+# Kết nối bằng địa chỉ IP
+ssh ubuntu@192.168.1.100
+
+# Chạy một lệnh và ngắt kết nối ngay lập tức
+ssh user@server.example.com "df -h"
+
+# Chạy lệnh và tiếp tục kết nối
+ssh user@server.example.com
+```
+
+## SSH trên Linux và macOS
+
+Các bản phân phối Linux và macOS đều có **OpenSSH** được cài sẵn. Trên Linux, nó là một phần của gói `openssh-client` (Debian/Ubuntu) hoặc `openssh-clients` (RHEL/CentOS/Fedora). Trên macOS, nó được tích hợp sẵn và có thể dùng ngay từ Terminal hoặc iTerm2.
+
+### Xác Minh SSH Có Sẵn
+
+```bash
+ssh -V
+# Output: OpenSSH_9.6p1, LibreSSL 3.3.6
+```
+
+### Kết Nối Cơ Bản
+
+```bash
+# Kết nối đến server
+ssh user@myserver.example.com
+
+# SSH kiểm tra ~/.ssh/known_hosts lần kết nối đầu tiên và hỏi:
+# The authenticity of host 'myserver.example.com' can't be established.
+# ED25519 key fingerprint is SHA256:abc123...
+# Are you sure you want to continue connecting (yes/no)? yes
+
+# Dấu vân tay host được lưu vào ~/.ssh/known_hosts
+```
+
+### Dùng File Cấu Hình SSH để Tiện Lợi
+
+Thay vì gõ thông tin kết nối đầy đủ mỗi lần, tạo `~/.ssh/config`:
+
+```
+Host myserver
+    HostName myserver.example.com
+    User alice
+    Port 22
+    IdentityFile ~/.ssh/id_ed25519
+
+Host dev
+    HostName dev.example.com
+    User ubuntu
+    Port 2222
+    IdentityFile ~/.ssh/id_ed25519_work
+```
+
+Bây giờ `ssh myserver` mở rộng thành kết nối đầy đủ — không cần flag nào.
+
+## SSH trên Windows (PowerShell và OpenSSH)
+
+Windows 10 (phiên bản 1809) và Windows 11 bao gồm **OpenSSH client** như một tính năng tùy chọn, làm cho lệnh `ssh` có sẵn trong PowerShell, Command Prompt và Windows Terminal.
+
+### Kiểm Tra Xem OpenSSH Đã Được Cài Đặt Chưa
+
+```powershell
+# Trong PowerShell
+ssh -V
+```
+
+Nếu lệnh không được tìm thấy, hãy cài đặt:
+
+**Qua Cài đặt:**
+1. Mở **Settings → Apps → Optional Features**
+2. Nhấp **Add a feature**
+3. Tìm **OpenSSH Client** và cài đặt
+
+**Qua PowerShell (Quản trị viên):**
+
+```powershell
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+```
+
+### Dùng SSH trong PowerShell
+
+Sau khi cài đặt, cú pháp giống hệt Linux và macOS:
+
+```powershell
+# Kết nối đến server
+ssh user@server.example.com
+
+# Kết nối trên cổng tùy chỉnh
+ssh -p 2222 user@server.example.com
+
+# Dùng file khóa cụ thể
+ssh -i C:\Users\YourName\.ssh\id_ed25519 user@server.example.com
+```
+
+### Vị Trí SSH Key trên Windows
+
+SSH key trên Windows được lưu trong `C:\Users\YourUsername\.ssh\`. PowerShell nhận ra `~` như viết tắt:
+
+```powershell
+# Hai lệnh này tương đương
+ssh -i ~/.ssh/id_ed25519 user@server
+ssh -i C:\Users\YourUsername\.ssh\id_ed25519 user@server
+```
+
+### PuTTY vs OpenSSH trên Windows
+
+Trước khi OpenSSH có sẵn trên Windows, **PuTTY** là SSH client tiêu chuẩn. PuTTY dùng định dạng khóa riêng (file `.ppk`) và trình tạo khóa riêng (PuTTYgen). Nếu bạn có khóa `.ppk` và cần chuyển đổi sang định dạng OpenSSH chuẩn:
+
+```bash
+# Dùng công cụ PuTTY
+puttygen mykey.ppk -O private-openssh -o id_ed25519
+```
+
+Đối với các thiết lập mới, hãy dùng OpenSSH client tích hợp trên Windows — được duy trì bởi dự án OpenSSH và dùng cùng định dạng khóa và file cấu hình như Linux và macOS.
+
+## SSH với Xác Thực Khóa: Flag -i
+
+Theo mặc định, SSH tìm file khóa trong `~/.ssh/` với các tên tiêu chuẩn (`id_ed25519`, `id_rsa`, `id_ecdsa`, `id_dsa`). **Flag `-i`** (identity file) cho phép bạn chỉ định một file khóa khác một cách rõ ràng.
+
+```bash
+# Dùng file khóa cụ thể
+ssh -i ~/.ssh/id_ed25519_production user@prod.example.com
+
+# Dùng khóa được lưu ở vị trí không chuẩn
+ssh -i /path/to/my/custom_key deploy@server.example.com
+
+# Kết hợp với các tùy chọn khác
+ssh -i ~/.ssh/deploy_key -p 2222 -l deploy server.example.com
+```
+
+Flag `-i` cần thiết trong một số tình huống:
+- Bạn có nhiều cặp khóa cho các server hoặc mục đích khác nhau
+- Khóa của bạn không ở thư mục `~/.ssh/` mặc định
+- Bạn đang chỉ định khóa trong môi trường CI/CD nơi đường dẫn rõ ràng
+- Bạn đã tải xuống khóa `.pem` từ AWS hoặc nhà cung cấp đám mây khác
+
+### Ví Dụ AWS EC2
+
+AWS cung cấp file khóa `.pem` khi bạn khởi chạy EC2 instance:
+
+```bash
+# Kết nối đến EC2 instance của AWS với khóa .pem
+ssh -i ~/Downloads/my-aws-key.pem ec2-user@54.123.456.789
+
+# Sửa quyền nếu cần (bắt buộc — SSH từ chối khóa có thể đọc bởi tất cả)
+chmod 400 ~/Downloads/my-aws-key.pem
+```
+
+## Các Tùy Chọn và Flag Lệnh SSH Thiết Yếu
+
+Lệnh `ssh` có hàng chục tùy chọn. Đây là những cái bạn sẽ thực sự dùng.
+
+| Flag | Mô Tả | Ví Dụ |
+|---|---|---|
+| `-p PORT` | Kết nối trên cổng không chuẩn | `ssh -p 2222 user@host` |
+| `-i FILE` | Dùng file identity (khóa) cụ thể | `ssh -i ~/.ssh/mykey user@host` |
+| `-l USER` | Chỉ định tên người dùng đăng nhập (thay thế cho `user@`) | `ssh -l alice host` |
+| `-L local:host:remote` | Chuyển tiếp cổng cục bộ | `ssh -L 8080:localhost:80 host` |
+| `-R remote:host:local` | Chuyển tiếp cổng từ xa | `ssh -R 9090:localhost:3000 host` |
+| `-D port` | Proxy động (SOCKS) | `ssh -D 1080 host` |
+| `-N` | Không thực thi lệnh từ xa (chỉ tunneling) | `ssh -N -L 3307:db:3306 host` |
+| `-f` | Chạy nền sau khi xác thực | `ssh -f -N -D 1080 host` |
+| `-v` | Output verbose (debug) | `ssh -v user@host` |
+| `-vv` hoặc `-vvv` | Output chi tiết hơn | `ssh -vvv user@host` |
+| `-A` | Bật chuyển tiếp SSH agent | `ssh -A user@jump-host` |
+| `-X` | Bật chuyển tiếp X11 | `ssh -X user@host xclock` |
+| `-C` | Bật nén | `ssh -C user@host` |
+| `-T` | Tắt phân bổ pseudo-terminal | `ssh -T git@github.com` |
+| `-q` | Chế độ im lặng (ẩn cảnh báo) | `ssh -q user@host` |
+| `-o OPTION=VALUE` | Đặt tùy chọn cấu hình trực tiếp | `ssh -o StrictHostKeyChecking=no host` |
+| `-J JUMP` | ProxyJump qua bastion host | `ssh -J jump.host user@internal` |
+| `-W host:port` | Chuyển tiếp stdio đến host:port (cho ProxyJump) | Được dùng nội bộ bởi `-J` |
+
+### Chế Độ Verbose để Debug
+
+Khi SSH thất bại, `-v` (hoặc `-vv` hay `-vvv`) tiết lộ chính xác điều gì đang xảy ra:
+
+```bash
+ssh -v user@server.example.com
+# Hiển thị: khóa nào đang được thử, phương thức xác thực nào server chấp nhận,
+# liệu agent có liên quan không và kết nối thất bại ở đâu
+
+ssh -vvv user@server.example.com
+# Độ chi tiết tối đa — hiển thị đàm phán mật mã chi tiết
+```
+
+### Bỏ Qua Kiểm Tra Host Key (Dùng Cẩn Thận)
+
+Trong môi trường tự động hóa và kiểm thử khi xác minh host key không thuận tiện:
+
+```bash
+ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null user@host
+```
+
+**Đừng dùng điều này trong môi trường sản xuất.** Nó vô hiệu hóa bảo vệ chống lại tấn công man-in-the-middle. Thay vào đó, điền trước `known_hosts` bằng `ssh-keyscan` trong các script provisioning của bạn.
+
+### Agent Forwarding
+
+```bash
+# Chuyển tiếp SSH agent cục bộ của bạn đến server từ xa
+ssh -A user@jump-server
+
+# Từ jump-server, bạn có thể SSH đến host nội bộ bằng khóa cục bộ của mình
+# Không cần sao chép khóa riêng tư đến jump server
+ssh internal-server.private
+```
+
+Agent forwarding hữu ích nhưng có hàm ý bảo mật: bất kỳ ai có quyền truy cập root trên server trung gian đều có thể dùng agent đã được chuyển tiếp. Chỉ dùng với server đáng tin cậy và ưu tiên **ProxyJump** khi có thể (nó không expose agent của bạn đến các host trung gian).
+
+## Các Lệnh SSH Tunneling
+
+SSH tunneling định tuyến kết nối TCP qua kênh SSH được mã hóa. Để tìm hiểu nền tảng về tunneling là gì, xem <a href="/vi/what-is-ssh">phần tunneling trong hướng dẫn SSH</a> của chúng tôi.
+
+### Chuyển Tiếp Cổng Cục Bộ
+
+Làm cho dịch vụ từ xa có thể truy cập trên máy cục bộ của bạn.
+
+```bash
+# Truy cập cơ sở dữ liệu MySQL từ xa trên cổng cục bộ 3307
+ssh -L 3307:localhost:3306 user@db-server.example.com -N
+
+# Kết nối đến web server từ xa chỉ có thể truy cập từ SSH host
+ssh -L 8080:intranet.company.com:80 user@vpn.company.com -N
+
+# Truy cập Redis instance trên mạng riêng
+ssh -L 6380:10.0.1.50:6379 user@bastion.example.com -N
+```
+
+Sau khi chạy bất kỳ lệnh nào ở trên, kết nối ứng dụng cục bộ của bạn đến `127.0.0.1:CỔNG_CỤC_BỘ`.
+
+### Chuyển Tiếp Cổng Từ Xa
+
+Hiển thị dịch vụ cục bộ trên server từ xa.
+
+```bash
+# Hiển thị server phát triển cục bộ của bạn (cổng 3000) trên cổng 9090 của server từ xa
+ssh -R 9090:localhost:3000 user@remote.example.com -N
+
+# Cho phép bất kỳ giao diện nào trên server từ xa kết nối (yêu cầu GatewayPorts yes trong sshd_config)
+ssh -R 0.0.0.0:9090:localhost:3000 user@remote.example.com -N
+```
+
+### Chuyển Tiếp Cổng Động (SOCKS Proxy)
+
+```bash
+# Tạo SOCKS5 proxy trên cổng cục bộ 1080, chạy nền
+ssh -D 1080 -N -f user@remote.example.com
+
+# Bây giờ cấu hình trình duyệt hoặc hệ thống của bạn dùng SOCKS5 proxy: 127.0.0.1:1080
+# Tất cả lưu lượng được định tuyến qua server từ xa
+```
+
+Để dùng với curl:
+
+```bash
+curl --socks5 127.0.0.1:1080 https://api.example.com/
+```
+
+### Chạy Tunnel Ở Nền
+
+```bash
+# -f gửi SSH vào nền, -N nghĩa là không có lệnh từ xa
+ssh -f -N -L 3307:localhost:3306 user@db-server
+
+# Tìm tiến trình SSH ở nền
+ps aux | grep ssh
+
+# Dừng nó
+kill PID
+```
+
+## SSH ProxyJump và Bastion Host
+
+Trong nhiều tổ chức, server sản xuất nằm trên mạng riêng không thể truy cập trực tiếp từ internet. **Bastion host** (hoặc jump host) là server được tăng cường bảo mật trên biên mạng mà bạn SSH vào đầu tiên, sau đó nhảy đến server nội bộ. Flag `ssh -J` (ProxyJump, được thêm trong OpenSSH 7.3) làm cho điều này liền mạch.
+
+### ProxyJump Cơ Bản
+
+```bash
+# Nhảy qua một bastion để đến server nội bộ
+ssh -J ec2-user@bastion.example.com ubuntu@10.0.1.50
+
+# Dạng rút gọn
+ssh -J user@jump-host user@internal-server
+```
+
+Lệnh này tạo hai kết nối SSH: đầu tiên đến bastion, sau đó từ bastion đến server nội bộ — tất cả trong một lệnh duy nhất, với mã hóa đầu cuối. SSH agent cục bộ của bạn xử lý xác thực với cả hai host.
+
+### Chuỗi Nhiều Bước Nhảy
+
+```bash
+# Nhảy qua hai host trung gian
+ssh -J user@jump1.example.com,user@jump2.example.com user@final-destination
+```
+
+### ProxyJump trong File Cấu Hình SSH
+
+Đối với server được truy cập thường xuyên, đặt cấu hình ProxyJump trong `~/.ssh/config`:
+
+```
+Host bastion
+    HostName bastion.example.com
+    User ec2-user
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host prod-web
+    HostName 10.0.1.100
+    User ubuntu
+    ProxyJump bastion
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host prod-db
+    HostName 10.0.2.50
+    User postgres
+    ProxyJump bastion
+    IdentityFile ~/.ssh/id_ed25519_aws
+```
+
+Bây giờ `ssh prod-web` tự động kết nối qua bastion. Không cần flag `-J` thủ công.
+
+### ProxyJump vs Agent Forwarding
+
+ProxyJump được ưu tiên hơn agent forwarding (`-A`) vì:
+- Khóa riêng tư của bạn không bao giờ được chuyển tiếp đến host trung gian
+- Bastion host không thể dùng thông tin xác thực của bạn để xác thực ở nơi khác
+- Kết nối được xác thực đầu cuối — server đích xác minh bạn trực tiếp
+
+Để biết thêm chi tiết thiết lập, xem hướng dẫn đầy đủ của chúng tôi về <a href="/vi/how-to-set-up-ssh">cách thiết lập SSH</a>.
+
+## Câu Hỏi Thường Gặp
+
+### Làm thế nào để chạy lệnh SSH mà không cần mật khẩu?
+
+Thiết lập xác thực SSH key. Tạo cặp khóa (`ssh-keygen -t ed25519`), sao chép khóa công khai vào file `~/.ssh/authorized_keys` của server bằng `ssh-copy-id user@host`, và các kết nối tiếp theo sẽ dùng khóa của bạn mà không cần nhập mật khẩu. Nếu khóa của bạn có passphrase, dùng `ssh-agent` và `ssh-add` để cache nó để bạn chỉ cần nhập một lần mỗi phiên.
+
+### Làm thế nào để thoát khỏi phiên SSH?
+
+Gõ `exit` hoặc nhấn **Ctrl+D** để đóng shell từ xa và ngắt kết nối. Nếu phiên bị đóng băng (ví dụ mạng bị ngắt), dùng chuỗi escape SSH: nhấn **Enter**, sau đó gõ `~.` (dấu ngã theo sau dấu chấm). SSH ngay lập tức kết thúc kết nối. Các chuỗi escape khác: `~^Z` tạm dừng SSH vào nền, `~?` liệt kê tất cả chuỗi escape.
+
+### Làm thế nào để chạy lệnh trên server từ xa qua SSH?
+
+Thêm lệnh sau hostname:
+
+```bash
+ssh user@server "lệnh để chạy"
+ssh user@server "ls -la /var/log/"
+ssh user@server "sudo systemctl status nginx"
+```
+
+Đối với lệnh hoặc script nhiều dòng, dùng heredoc:
+
+```bash
+ssh user@server << 'EOF'
+cd /var/www/html
+git pull origin main
+systemctl reload nginx
+EOF
+```
+
+Đối với các lệnh tương tác (như những lệnh yêu cầu terminal), thêm flag `-t` để phân bổ pseudo-terminal: `ssh -t user@server sudo apt upgrade`.
+
+### Sự khác biệt giữa ssh và scp là gì?
+
+`ssh` mở phiên terminal (hoặc chạy một lệnh duy nhất) trên máy từ xa. `scp` (Secure Copy Protocol) sao chép tệp giữa máy cục bộ và máy từ xa, hoặc giữa hai máy từ xa, dùng SSH để mã hóa và xác thực. Cả hai đều dùng cùng giao thức SSH và cơ sở hạ tầng khóa. Đối với truyền tệp, `scp` là công cụ chuyên dụng:
+
+```bash
+# scp cục bộ đến từ xa
+scp file.txt user@server:/destination/path/
+
+# scp từ xa đến cục bộ
+scp user@server:/remote/file.txt ./local-copy.txt
+```
+
+Đối với truyền tệp nâng cao hơn (đệ quy, có thể tiếp tục, duyệt thư mục), dùng `sftp`. Đối với truyền quy mô lớn, `rsync -avz -e ssh` thậm chí hiệu quả hơn.
+
+### Làm thế nào để dùng SSH với file cấu hình?
+
+Tạo `~/.ssh/config` và thêm các mục host. Mỗi khối `Host` định nghĩa alias kết nối với các cài đặt đầy đủ của nó:
+
+```
+Host tên-alias
+    HostName actual.server.com
+    User tên-người-dùng
+    Port 22
+    IdentityFile ~/.ssh/specific_key
+```
+
+Sau đó `ssh tên-alias` tự động dùng tất cả cài đặt đã định nghĩa. File cấu hình hỗ trợ ký tự đại diện: `Host *.example.com` áp dụng cài đặt cho tất cả host phù hợp. `Host *` ở cuối áp dụng giá trị mặc định cho tất cả kết nối. Các tùy chọn trong khối `Host` cụ thể ghi đè giá trị mặc định toàn cục.
+
+## Cần SSH Key? Tạo Miễn Phí
+
+Để dùng xác thực SSH key — loại bỏ nhu cầu mật khẩu — bạn cần cặp khóa. Tạo khóa Ed25519 hoặc RSA ngay lập tức trong trình duyệt, không có gì được gửi đến server của chúng tôi.
+
+<a href="/">Tạo SSH key của bạn miễn phí →</a>
+
+---
+
+**Đọc thêm:**
+- <a href="/vi/what-is-ssh">SSH Là Gì? Hướng Dẫn Đầy Đủ về Secure Shell</a>
+- <a href="/vi/what-is-an-ssh-key">SSH Key Là Gì? Khóa Công Khai, Khóa Riêng Tư và Cặp Khóa Được Giải Thích</a>
+- <a href="/vi/how-to-set-up-ssh">Cách Thiết Lập SSH: Hướng Dẫn Từng Bước Đầy Đủ</a>

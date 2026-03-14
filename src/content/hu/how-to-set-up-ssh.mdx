@@ -1,0 +1,563 @@
+# Az SSH beállítása: Teljes, lépésről lépésre útmutató Linux, Mac és Windows rendszerekhez
+
+Az SSH helyes beállítása körülbelül tíz percet vesz igénybe, és évekig megtérül. A konfigurálás után jelszavak beírása nélkül jelentkezhet be a kiszolgálókra, kódot küldhet a GitHubba anélkül, hogy minden műveletnél megadná a hitelesítő adatokat, és magabiztosan automatizálhatja a telepítéseket. Ez az útmutató végigvezeti a teljes folyamatot – a kulcspár létrehozásától a gyakori hibák hibaelhárításáig – Linux, macOS és Windows esetén.
+
+Ha először meg szeretné érteni a mögöttes technológiát, olvassa el útmutatónkat arról, hogy <a href="/hu/what-is-ssh">mi az SSH</a> és <a href="/hu/what-is-an-ssh-key">mik az SSH-kulcsok</a>.
+
+## Előfeltételek
+
+Mielőtt elkezdené, győződjön meg arról, hogy rendelkezik:
+
+**A szerver eléréséhez:**
+- Terminálalkalmazás (Terminál macOS/Linux rendszeren, Windows Terminal vagy PowerShell Windows rendszeren)
+- Linuxot/Unixot futtató távoli szerver SSH szerverszoftverrel (sshd) telepítve
+- Felhasználói fiók az adott szerveren (vagy root hozzáférés létrehozásához)
+- A szerver IP-címe vagy gazdagépneve
+
+**GitHub/GitLab hozzáféréshez:**
+- GitHub- vagy GitLab-fiók
+- Rendelkezésre áll egy `ssh` terminál
+- Opcionálisan: git helyben telepítve
+
+**Operációs rendszerkövetelmények:**
+- **Linux**: Az SSH-kliens gyakorlatilag minden disztribúción előre telepítve van
+- **macOS**: Az SSH kliens beépített, terminálról érhető el
+- **Windows 10 1809+ verzió / Windows 11**: Az OpenSSH kliens opcionális funkcióként érhető el
+
+Nem kell semmit sem telepítenie Linuxra vagy macOS-re. Windows rendszeren ellenőrizze, hogy az OpenSSH telepítve van-e a PowerShell megnyitásával és a `ssh -V` futtatásával. Ha kap egy verzió karakterláncot, készen áll. Ha nem, lásd a 4. lépést a telepítési utasításokért.
+
+## 1. lépés: Az SSH kulcspár létrehozása
+
+Szüksége van egy kulcspárra, mielőtt bármi mást tehetne. A kulcspár egy **privát kulcsból** (a gépen marad) és egy **nyilvános kulcsból** (a kiszolgálókon vagy szolgáltatásokon, például a GitHubon működik) áll.
+
+### A lehetőség: Használja az Online Generatort
+
+Ha inkább grafikus felületet szeretne, az <a href="/">ingyenes online SSH-kulcsgenerátorunk</a> Ed25519 vagy RSA kulcspárokat hoz létre a böngészőben. A privát kulcsot helyileg állítják elő a Web Crypto API segítségével – semmit sem küldenek el szervereinknek. Töltse le mindkét fájlt, és mentse el őket `~/.ssh/` (Linux/macOS) vagy `C:\Users\YourName\.ssh\` (Windows) címre.
+
+### B lehetőség: Használja az ssh-keygen parancsot a parancssorban
+
+A `ssh-keygen` parancs elérhető Linuxon, macOS-en és Windowson OpenSSH-val:
+
+```bash
+# Ed25519 kulcspár létrehozása (ajánlott)
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+**Az egyes zászlók jelentése:**
+- `-t ed25519` — kulcstípus (Az Ed25519 modern, gyors és biztonságos)
+- `-C "comment"` — nyilvános kulcsba, általában az Ön e-mail címébe ágyazott címke
+
+A rendszer kérni fogja:
+
+```
+Generating public/private ed25519 key pair.
+Enter file in which to save the key (/home/user/.ssh/id_ed25519):
+```
+
+Nyomja meg az **Enter** billentyűt az alapértelmezett hely elfogadásához. Ha több kulcsa van, elnevezze őket leíró módon (pl. `/home/user/.ssh/id_ed25519_github`).
+
+```
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+```
+
+Írjon be egy erős jelszót. Ez titkosítja a lemezen lévő privát kulcsfájlt – ha a gépét ellopják, a kulcs nem használható jelszó nélkül. Üresen hagyhatja az automatizálási felhasználási esetekben, amikor az emberi interakció nem lehetséges, de a személyes kulcsok esetében mindig használjon jelszót.
+
+**Kimenet:**
+
+```
+Your identification has been saved in /home/user/.ssh/id_ed25519
+Your public key has been saved in /home/user/.ssh/id_ed25519.pub
+The key fingerprint is:
+SHA256:abc123defghijk... your@email.com
+The key's randomart image is:
++--[ED25519 256]--+
+...
+```
+
+Két fájl jön létre:
+- `~/.ssh/id_ed25519` — az Ön **privát kulcsa** (soha ne ossza meg ezt)
+- `~/.ssh/id_ed25519.pub` — az Ön **nyilvános kulcsa** (biztonságosan megosztható)
+
+### RSA-hoz (örökölt kompatibilitás)
+
+Ha nagyon régi rendszerekhez kell csatlakoznia, amelyek nem támogatják az Ed25519-et:
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "your@email.com"
+```
+
+Használjon legalább 4096 bitet. A 4096 bitnél kisebb RSA-kulcsok már nem tekinthetők megfelelő biztonságnak.
+
+## 2. lépés: Az SSH beállítása Linuxon
+
+Ez a szakasz a nyilvános kulcs Linux-kiszolgálóra másolásával foglalkozik, így jelszó nélkül hitelesítheti.
+
+### 1. módszer: ssh-copy-id (a legegyszerűbb)
+
+A `ssh-copy-id` a nyilvános kulcs távoli szerverre való telepítésének legegyszerűbb módja. Jelszavas hitelesítéssel csatlakozik, hozzáadja a nyilvános kulcsot a szerver `~/.ssh/authorized_keys` címéhez, és beállítja a megfelelő engedélyeket.
+
+```bash
+ssh-copy-id user@server.example.com
+
+# Adjon meg kifejezetten egy kulcsfájlt
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server.example.com
+
+# Csatlakoztassa egy nem szabványos portra
+ssh-copy-id -p 2222 user@server.example.com
+```
+
+A rendszer utoljára kéri a szerver jelszavát. Ezt követően a kulcsával csatlakozhat a `ssh user@server.example.com` címhez.
+
+### 2. módszer: Kézi másolás
+
+Ha az `ssh-copy-id` nem érhető el (egyes BSD rendszereken vagy minimális Linux-telepítéseken gyakori):
+
+```bash
+# Jelenítse meg nyilvános kulcsát, és másolja ki a kimenetet
+cat ~/.ssh/id_ed25519.pub
+
+# Ezután SSH-t a szerverre (jelszóval), és futtassa:
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+echo "PASTE_YOUR_PUBLIC_KEY_HERE" >> ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+```
+
+Vagy tegye mindezt egy csővezetékben:
+
+```bash
+cat ~/.ssh/id_ed25519.pub | ssh user@server.example.com \
+  "mkdir -p ~/.ssh && chmod 700 ~/.ssh && \
+   cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+```
+
+### A kulcs telepítésének ellenőrzése
+
+```bash
+ssh user@server.example.com
+# Jelszókérés nélkül kell csatlakoznia (csak jelmondat, ha beállított egyet)
+```
+
+### Az SSH-kiszolgáló (sshd) konfigurálása
+
+A távoli kiszolgálón az SSH-démon konfigurációja a `/etc/ssh/sshd_config` címen található. A biztonságos beállításhoz:
+
+```bash
+sudo nano /etc/ssh/sshd_config
+```
+
+Javasolt beállítások:
+
+```
+# Nyilvános kulcsú hitelesítés engedélyezése
+PubkeyAuthentication yes
+
+# Jelszó-hitelesítés letiltása (a kulcsok működésének megerősítése után!)
+PasswordAuthentication no
+
+# Az SSH-n keresztüli root bejelentkezés letiltása
+PermitRootLogin no
+
+# Csak meghatározott felhasználók engedélyezése
+AllowUsers alice bob deploy
+
+# Tartsa életben az üléseket
+ClientAliveInterval 60
+ClientAliveCountMax 3
+```
+
+Szerkesztés után töltse be újra az SSH démont:
+
+```bash
+sudo systemctl reload sshd
+# Vagy régebbi rendszereken:
+sudo service ssh reload
+```
+
+**Fontos**: Ne tiltsa le a `PasswordAuthentication` kódot, amíg meg nem győződött arról, hogy a kulcsalapú hitelesítés működik. Ha kizárja magát, akkor a helyreállításhoz konzol-hozzáférésre (vagy tárhelyszolgáltatója vészhelyzeti hozzáférésére) lesz szüksége.
+
+### Az ssh-agent beállítása Linuxon
+
+Ha a kulcsban van jelmondat, adja hozzá a `ssh-agent` címhez a munkamenet elején, hogy elkerülje az újbóli beírását:
+
+```bash
+# Indítsa el az ügynököt (az asztali környezet gyakran automatikusan indítja el)
+eval "$(ssh-agent -s)"
+
+# Adja meg a kulcsot (írja be egyszer a jelszót)
+ssh-add ~/.ssh/id_ed25519
+
+# Ellenőrizze a kulcsok betöltését
+ssh-add -l
+```
+
+A `ssh-agent` automatikus elindításához és a kulcs hozzáadásához a bejelentkezéskor adja hozzá a `~/.bashrc` vagy `~/.zshrc` címhez:
+
+```bash
+# Az ssh-agent automatikus indítása
+if [ -z "$SSH_AUTH_SOCK" ]; then
+  eval "$(ssh-agent -s)"
+  ssh-add ~/.ssh/id_ed25519
+fi
+```
+
+## 3. lépés: Az SSH beállítása macOS rendszeren
+
+A macOS tartalmaz egy teljes OpenSSH-ügyfelet. A kulcsalapú hitelesítés távoli kiszolgálón történő beállításának folyamata megegyezik a Linux rendszerével (lásd a fenti 2. lépést). A macOS-specifikus kiegészítések kulcslánc-integrációt tartalmaznak.
+
+### Kulcstartó integráció
+
+A macOS képes tárolni a jelszót a rendszer kulcstartójában, így soha nem kell megadnia azt az első alkalommal:
+
+```bash
+# Kulcs hozzáadása az ssh-agenthez Keychain integrációval
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+
+# Régebbi macOS verziókhoz (Monterey előtt)
+ssh-add -K ~/.ssh/id_ed25519
+```
+
+Ha azt szeretné, hogy a macOS mindig a kulcstartóból töltse be a kulcsokat, adja hozzá ezt a `~/.ssh/config` címhez:
+
+```
+Host *
+    AddKeysToAgent yes
+    UseKeychain yes
+    IdentityFile ~/.ssh/id_ed25519
+```
+
+Ezt követően a jelszó a Keychainben tárolódik, és automatikusan betöltődik – a következő rendszerindításkor nem kell újra megadni.
+
+### Ellenőrizze az SSH-kliens verzióját
+
+```bash
+ssh -V
+# OpenSSH_9.x, LibreSSL x.x.x
+```
+
+A macOS viszonylag friss OpenSSH-val érkezik, de nem mindig az abszolút legújabb. Ha újabb szolgáltatásokra van szüksége, telepítse a Homebrew segítségével: `brew install openssh`.
+
+## 4. lépés: Az SSH beállítása Windows rendszeren
+
+A Windows 10 (1809+) és a Windows 11 tartalmazza az OpenSSH-t. Íme, hogyan lehet működésbe hozni.
+
+### Az OpenSSH kliens telepítése
+
+**Ellenőrizze, hogy már telepítve van-e:**
+
+```powershell
+ssh -V
+```
+
+**Telepítés a beállításokon keresztül:**
+1. Nyissa meg a **Beállítások → Alkalmazások → Választható funkciók** lehetőséget.
+2. Keresse meg az **OpenSSH Client** kifejezést
+3. Kattintson a **Telepítés** gombra.
+
+**Telepítés PowerShell-en keresztül (rendszergazda):**
+
+```powershell
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+```
+
+### Kulcsok generálása Windows rendszeren
+
+Nyissa meg a PowerShellt, és futtassa:
+
+```powershell
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+A kulcsok a `C:\Users\YourUsername\.ssh\` címre vannak mentve.
+
+### Másolja nyilvános kulcsát egy Linux-kiszolgálóra
+
+A Windows nem tartalmazza a `ssh-copy-id` fájlt, de ezt manuálisan is megteheti a PowerShellből:
+
+```powershell
+# Jelenítse meg nyilvános kulcsát
+Get-Content ~/.ssh/id_ed25519.pub
+
+# Másolja a távoli kiszolgálóra (a rendszer kéri a szerver jelszavát)
+$pubkey = Get-Content ~/.ssh/id_ed25519.pub -Raw
+ssh user@server.example.com "mkdir -p ~/.ssh && echo '$pubkey' >> ~/.ssh/authorized_keys && chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys"
+```
+
+Vagy használja a `Add-Content`-t az átvezetéshez:
+
+```powershell
+type $env:USERPROFILE\.ssh\id_ed25519.pub | ssh user@server.example.com "cat >> ~/.ssh/authorized_keys"
+```
+
+### Az ssh-agent beállítása Windows rendszeren
+
+A jelszó ismételt beírásának elkerülése érdekében indítsa el az OpenSSH Authentication Agent szolgáltatást:
+
+```powershell
+# Indítsa el a szolgáltatást
+Start-Service ssh-agent
+
+# Állítsa be, hogy automatikusan elinduljon
+Set-Service -Name ssh-agent -StartupType Automatic
+
+# Add hozzá a kulcsodat
+ssh-add ~/.ssh/id_ed25519
+```
+
+### PuTTY mint alternatíva
+
+Ha a grafikus SSH-ügyfelet részesíti előnyben, a PuTTY egy ingyenes lehetőség a Windows számára. Használja a **PuTTYgen**-t a kulcsok generálásához (mind `.ppk` formátumban mentse el a PuTTY-t, és exportálja OpenSSH formátumba). Az új beállításoknál azonban a beépített OpenSSH-kliens egyszerűbb és együttműködik az ökoszisztéma többi részével.
+
+## SSH-kulcsok beállítása a GitHub és a GitLab számára
+
+A GitHub és a GitLab SSH-kulcs-hitelesítése hasonlóan működik – feltölti nyilvános kulcsát a szolgáltatásba, és a megfelelő privát kulcsot használja a Git-műveletek végrehajtásakor.
+
+### SSH beállítása a GitHubhoz
+
+**1. Másolja ki nyilvános kulcsát:**
+
+```bash
+# Linux
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+
+# macOS
+cat ~/.ssh/id_ed25519.pub | pbcopy
+
+# Windows PowerShell
+Get-Content ~/.ssh/id_ed25519.pub | Set-Clipboard
+```
+
+Vagy egyszerűen jelenítse meg és másolja manuálisan:
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+**2. Hozzáadás a GitHubhoz:**
+
+1. Nyissa meg a **github.com** webhelyet, és jelentkezzen be
+2. Kattintson az avatara → **Beállítások**
+3. A bal oldalsávon: **SSH és GPG billentyűk**
+4. Kattintson az **Új SSH-kulcs** lehetőségre.
+5. Adjon hozzá egy leíró **címet** (pl. „MacBook Pro” vagy „Work PC”).
+6. Állítsa a **Kulcstípus** lehetőséget **Hitelesítési kulcs** értékre.
+7. Illessze be nyilvános kulcsát
+8. Kattintson az **SSH-kulcs hozzáadása** lehetőségre.
+
+**3. Tesztelje a kapcsolatot:**
+
+```bash
+ssh -T git@github.com
+# Szia felhasználónév! Sikeresen hitelesítette, de a GitHub nem biztosít shell-hozzáférést.
+```
+
+**4. SSH használata Git műveletekhez:**
+
+```bash
+# Klónozás SSH használatával HTTPS helyett
+git clone git@github.com:username/repository.git
+
+# Ha egy meglévő tárhely HTTPS-t használ, váltson SSH-ra
+git remote set-url origin git@github.com:username/repository.git
+```
+
+### SSH beállítása a GitLab számára
+
+A folyamat azonos:
+
+1. Nyissa meg a **gitlab.com** webhelyet → kattintson az avatara → **Preferences**
+2. A bal oldalsávon: **SSH-kulcsok**
+3. Illessze be nyilvános kulcsát, adjon neki címet, és opcionálisan állítson be egy lejárati dátumot
+4. Kattintson a **Kulcs hozzáadása** lehetőségre.
+
+Tesztelje:
+
+```bash
+ssh -T git@gitlab.com
+# Üdvözöljük a GitLabban, @felhasználónév!
+```
+
+Saját üzemeltetésű GitLab-példányok esetén cserélje ki a `gitlab.com` értéket a példány gazdagépnevére.
+
+### Külön kulcs használata a GitHubhoz és más szolgáltatásokhoz
+
+Ha dedikált kulcsot szeretne a GitHubhoz (a kulcshigiéniához ajánlott), hozzon létre egy elnevezett kulcsot:
+
+```bash
+ssh-keygen -t ed25519 -C "github" -f ~/.ssh/id_ed25519_github
+```
+
+Ezután adjon hozzá egy `Host` blokkot a `~/.ssh/config` helyhez:
+
+```
+Host github.com
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519_github
+    AddKeysToAgent yes
+```
+
+Mostantól a `git clone git@github.com:...` automatikusan a GitHub-specifikus kulcsot használja.
+
+## SSH tesztelése és hibaelhárítása
+
+### Alapvető kapcsolati teszt
+
+```bash
+ssh -v user@server.example.com
+```
+
+A `-v` (bőbeszédű) jelző pontosan mutatja, mi történik az egyes lépéseknél. Keressen olyan sorokat, mint:
+- `Offering public key: ~/.ssh/id_ed25519` — Az SSH megpróbálja a kulcsot
+- `Server accepts key` — a kulcs a `authorized_keys`-ban van
+- `Authenticated to server.example.com` — siker
+
+### Gyakori hibák és javítások
+
+**"Engedély megtagadva (nyilvános kulcs)"**
+
+Ez a leggyakoribb hiba. Okok és megoldások:
+
+```bash
+# Ellenőrizze, hogy a kulcsa betöltve van-e az ssh-agentben
+ssh-add -l
+
+# Ha nincs kulcs a listán, adja hozzá a kulcsát
+ssh-add ~/.ssh/id_ed25519
+
+# A távoli kiszolgálón ellenőrizze az engedélyezett_kulcsokat
+cat ~/.ssh/authorized_keys
+# Győződjön meg róla, hogy ott van a nyilvános kulcsa
+
+# Ellenőrizze a távoli kiszolgáló engedélyeit
+ls -la ~/.ssh/
+# Az ~/.ssh-nak 700-nak kell lennie
+# Az engedélyezett_kulcsok értékének 600-nak kell lennie
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/authorized_keys
+
+# Ellenőrizze, hogy a szerver engedélyezi-e a nyilvános kulcsú hitelesítést
+sudo grep PubkeyAuthentication /etc/ssh/sshd_config
+# A következőnek kell lennie: PubkeyAuthentication igen
+```
+
+**"FIGYELEM: A TÁVOLI GAZDASÁGI AZONOSÍTÁS MEGVÁLTOZOTT"**
+
+A szerver gazdagép kulcsa megváltozott, amit az SSH potenciális biztonsági problémaként kezel. Ha tudja, hogy ez jogos (a kiszolgálót átépítették, az IP-t újra kiosztották), távolítsa el a régi bejegyzést:
+
+```bash
+# Távolítsa el az adott gazdagép bejegyzést
+ssh-keygen -R server.example.com
+
+# Vagy szerkessze az ismert_gazdagépeket manuálisan, és törölje az érintett sort
+nano ~/.ssh/known_hosts
+```
+
+**"Rossz engedélyek" vagy "Túl nyitott engedélyek"**
+
+Az SSH szigorúan szabályozza a kulcsfájl-engedélyeket:
+
+```bash
+# Javítsa ki a privát kulcs engedélyeit
+chmod 600 ~/.ssh/id_ed25519
+
+# Javítsa ki a nyilvános kulcs engedélyeit
+chmod 644 ~/.ssh/id_ed25519.pub
+
+# Javítsa ki az .ssh könyvtárengedélyeket
+chmod 700 ~/.ssh
+```
+
+Windows rendszeren a magánkulcs-engedélyek kezelése eltérően történik. Kattintson a jobb gombbal a kulcsfájlra → Tulajdonságok → Biztonság → Speciális → Öröklődés letiltása → Az összes eltávolítása a felhasználói fiók kivételével, így csak saját magának biztosíthatja a teljes irányítást.
+
+### Az ssh-agent beállítása és használata
+
+Ha a rendszer többször kéri a jelszó megadását, a `ssh-agent` nem fut, vagy a kulcsa nincs hozzáadva:
+
+```bash
+# Indítsa el az ügynököt
+eval "$(ssh-agent -s)"
+# 12345-ös ügynök
+
+# Add hozzá a kulcsodat
+ssh-add ~/.ssh/id_ed25519
+# Írja be a /home/user/.ssh/id_ed25519 jelszavát:
+# Hozzáadott azonosító: /home/user/.ssh/id_ed25519
+
+# Ellenőrizze
+ssh-add -l
+# 256 SHA256:abc123... your@email.com (ED25519)
+```
+
+### Az ismert_gazdagépek előzetes feltöltése az automatizálásban
+
+A CI/CD csővezetékekben a `ssh-keyscan` használatával adja hozzá a távoli gazdagép ujjlenyomatát a csatlakozás előtt:
+
+```bash
+ssh-keyscan -H server.example.com >> ~/.ssh/known_hosts
+ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+```
+
+Ez megakadályozza az interaktív ujjlenyomat-kéréseket az automatizált szkriptekben.
+
+## Gyakran Ismételt Kérdések
+
+### Hogyan javíthatom ki az „Engedély megtagadva (nyilvános kulcs)” hibát?
+
+Végezze el az alábbi ellenőrzőlistát: (1) Ellenőrizze, hogy kulcsa az SSH-ügynökben van: `ssh-add -l`. Ha nem, futtassa a `ssh-add ~/.ssh/id_ed25519` parancsot. (2) Ellenőrizze, hogy a nyilvános kulcsa benne van-e a szerver `~/.ssh/authorized_keys` fájljában. (3) Ellenőrizze az engedélyeket: `~/.ssh` `700`, `authorized_keys` `600`. (4) Ellenőrizze, hogy a szerveren van-e `PubkeyAuthentication yes` `/etc/ssh/sshd_config`. (5) A `ssh -vvv user@server` használatával megtudhatja, hogy pontosan hol nem sikerül a hitelesítés. A részletes kimenet megmondja, hogy mely kulcsokat próbálják ki, és hogy a szerver elfogadta-e azokat.
+
+### Hogyan adhatom hozzá az SSH-kulcsomat az ssh-agenthez?
+
+Futtassa a `ssh-add ~/.ssh/id_ed25519` (cserélje ki a kulcsfájl nevével). Ha az ügynök nem fut, először indítsa el a `eval "$(ssh-agent -s)"` karakterlánccal. MacOS rendszeren a `ssh-add --apple-use-keychain ~/.ssh/id_ed25519` használatával tárolja a jelszót a Keychainben. Windows rendszeren engedélyezze az `ssh-agent` szolgáltatást a `Start-Service ssh-agent` paraméterrel, majd futtassa a `ssh-add` parancsot. Csak egyszer kell futtatnia a `ssh-add` `ssh-add` alkalmazást munkamenetenként (vagy egyszer, macOS-en a Keychain használatával).
+
+### Lehet több SSH-kulcsom?
+
+Igen, és ez egy jó gyakorlat. Külön kulcsokat hozhat létre különböző célokra – például egyet a személyes GitHubhoz, egyet a munkahelyi GitLabhoz, egyet az éles szerverekhez. A `~/.ssh/config` használatával leképezheti az egyes gazdagépeket az adott kulcsra `IdentityFile`. A különálló kulcsok azt jelentik, hogy az egyiket visszavonják (egy szolgáltatásról vagy kiszolgálóról való eltávolításával), amely nem érinti a többit, korlátozza a kulcskompromittálódás sugárzási sugarát.
+
+### Hogyan változtathatom meg az SSH-kulcs jelmondatát?
+
+Használja `ssh-keygen -p`:
+
+```bash
+ssh-keygen -p -f ~/.ssh/id_ed25519
+```
+
+A rendszer megkéri az aktuális jelszó megadására, majd az új jelszó megadására és megerősítésére. Maga a kulcs (és így a nyilvános kulcs) nem változik – nem kell sehol frissítenie. Ez akkor hasznos, ha azt gyanítja, hogy jelszavát feltörték, vagy rutin biztonsági gyakorlatként szeretné cserélni.
+
+### Hogyan távolíthatok el egy régi SSH-kulcsot a szerverről?
+
+Nyissa meg a `~/.ssh/authorized_keys`-t a szerveren, és törölje a régi nyilvános kulcsot tartalmazó sort:
+
+```bash
+# Szerkessze az authorizált_kulcsokat a távoli kiszolgálón
+ssh user@server.example.com
+nano ~/.ssh/authorized_keys
+# Törölje az eltávolítani kívánt kulcs sorát
+# Mentés és kilépés
+```
+
+A `authorized_keys` minden sora egy nyilvános kulcs. A kulcs megjegyzése (az utolsó mező, általában `user@hostname` vagy egy e-mail) segít azonosítani, melyik kulcs melyik. Ha nem tudja, melyik sort törölje, hasonlítsa össze az ujjlenyomatot:
+
+```bash
+# A helyi gépen szerezze be az ujjlenyomatot
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+
+# A szerveren ellenőrizze az összes engedélyezett kulcs ujjlenyomatát
+ssh-keygen -lf ~/.ssh/authorized_keys
+```
+
+Párosítsa az ujjlenyomatokat a megfelelő kulcs azonosításához és törléséhez.
+
+## Ingyenes SSH-kulcsok létrehozása
+
+Ha még nem hozta létre az SSH-kulcspárt, ingyenes online generátorunk másodpercek alatt létrehozza az Ed25519 vagy RSA kulcsokat közvetlenül a böngészőjében. Nincs szükség telepítésre, semmit sem küldünk szervereinkre – a generálás teljes egészében az Ön eszközén történik.
+
+<a href="/">SSH-kulcsok létrehozása ingyenes →</a>
+
+---
+
+**További olvasnivalók:**
+- <a href="/hu/what-is-ssh">Mi az az SSH? A Secure Shell teljes útmutatója</a>
+- <a href="/hu/what-is-an-ssh-key">Mi az SSH-kulcs? Nyilvános kulcsok, privát kulcsok és kulcspárok magyarázata</a>
+- <a href="/hu/ssh-command">Az SSH-parancs: Teljes hivatkozás példákkal</a>

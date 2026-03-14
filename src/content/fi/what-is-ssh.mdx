@@ -1,0 +1,283 @@
+# Mikä on SSH? Täydellinen opas Secure Shelliin
+
+SSH, joka tulee sanoista **Secure Shell**, on kryptografinen verkkoprotokolla, jonka avulla voit turvallisesti käyttää ja hallita etätietokoneita suojaamattoman verkon kautta. Olitpa kirjautumassa Linux-palvelimelle, työntämässä koodia GitHubiin tai siirtämässä tiedostoja koneiden välillä, SSH on lähes varmasti se protokolla, joka tekee työn kulissien takana. Tämä opas selittää kaiken, mitä sinun tarvitsee tietää SSH:sta: mitä se on, miten se toimii ja miksi siitä on tullut turvallisin etäkäyttöstandardi.
+
+## Mitä SSH tarkoittaa?
+
+**SSH tarkoittaa Secure Shelliä**. Nimi kuvaa täsmälleen, mitä protokolla tekee — se tarjoaa turvallisen, salatun komentotulkkiistunnon etäkoneeseen. Ennen SSH:ta järjestelmänvalvojat käyttivät Telnetiä ja rsh:ta (remote shell) etäpalvelimien hallintaan. Nämä protokollat lähettivät kaiken selkokielisenä, mukaan lukien käyttäjänimet ja salasanat, mikä teki niistä triviaalisin keinoin salakuunneltavia jaetuissa verkoissa.
+
+SSH:n loi suomalainen tietojenkäsittelytieteilijä **Tatu Ylönen** vuonna 1995, suoraan motivoituneena yliopiston verkossa näkemästään salasanan salakuunteluyrityksestä. Hän julkaisi SSH-1:n ilmaisohjelmana, ja se otettiin nopeasti käyttöön ympäri internettiä. Protokolla standardoitiin myöhemmin IETF:n toimesta SSH-2:ksi (RFC 4251–4254), joka esitteli vahvemman kryptografian ja korjasi useita alkuperäisen suunnittelun tietoturvaheikkouksia.
+
+Nykyään ihmiset tarkoittavat lähes aina SSH-2:ta puhuessaan "SSH:sta". Eniten käytetty toteutus on **OpenSSH**, OpenBSD-tiimin ylläpitämä avoimen lähdekoodin projekti, joka toimitetaan lähes jokaisen Linux-jakelun ja macOS-asennuksen mukana.
+
+**SSH:n käytännöllinen merkitys** ulottuu pelkkää kirjautumistyökalua pidemmälle. Se on täydellinen protokollaperhe, joka muodostaa pohjan seuraavalle:
+- Turvallinen etäterminaalikäyttö
+- Salatut tiedostonsiirrot (SFTP ja SCP)
+- Git-todennus (GitHub, GitLab, Bitbucket)
+- Turvallinen porttiohjaus ja tunnelointi
+- Automatisoidut käyttöönottopipeline-linjat
+
+## Miten SSH toimii
+
+**Secure Shell -protokolla** toimii kerroksisella arkkitehtuurilla, joka käsittelee salausta, todennusta ja kanavien multipleksointia erikseen. Näiden kerrosten ymmärtäminen auttaa selventämään, miksi SSH:ta luotetaan arkaluonteisiin toimintoihin.
+
+### Kolme protokollakerrosta
+
+**1. Kuljetuskerros (RFC 4253)**
+
+Kun aloitat SSH-yhteyden, asiakas ja palvelin suorittavat ensin kättelymenettelyn neuvotellakseen salausalgoritmeista ja muodostaakseen jaetun salaisuuden. Tässä käytetään avaintenvaihtoalgoritmia — modernin SSH:n oletusarvo on Curve25519-pohjainen avaintenvaihto. Kättelyn jälkeen kaikki myöhempi viestintä on salattua. Kuljetuskerros tarjoaa myös tietojen eheyden sanomantodennuskoodien (MAC) avulla varmistaen, ettei dataa voi muokata siirron aikana.
+
+**2. Käyttäjätodennuskerros (RFC 4252)**
+
+Kun salattu kanava on muodostettu, palvelin pyytää asiakasta todentamaan itsensä. SSH tukee useita todennusmenetelmiä:
+
+- **Julkisen avaimen todennus** — Asiakas todistaa yksityisen avaimen hallussapidon lähettämättä sitä koskaan verkon yli. Tämä on turvallisin ja yleisin menetelmä.
+- **Salasanastodennus** — Käyttäjän salasana lähetetään salatun kanavan kautta. Kätevämpää, mutta altis brute force -hyökkäyksille.
+- **Näppäimistöinteraktiivinen** — Haaste/vastaus-mekanismi, jota käytetään usein monivaiheisessa todennuksessa.
+- **GSSAPI/Kerberos** — Käytetään yritysympäristöissä, joissa on keskitetty identiteetinhallinta.
+
+**3. Yhteyskerros (RFC 4254)**
+
+Todennuksen jälkeen yhteyskerros multipleksoi yksittäisen salatun yhteyden useiksi loogisiksi kanaviksi. Tämän ansiosta voit samalla kertaa käyttää interaktiivista komentotulkkia, ajaa etäkomentoja, ohjata portteja ja siirtää tiedostoja — kaikki yhden TCP-yhteyden kautta.
+
+### Avaintenvaihto yksityiskohtaisesti
+
+Kun kirjoitat `ssh user@example.com`, seuraavaa tapahtuu ensimmäisten millisekuntien aikana:
+
+1. Asiakas muodostaa yhteyden palvelimen TCP-porttiin 22.
+2. Molemmat osapuolet vaihtavat protokollaversiojonoja.
+3. Molemmat osapuolet lähettävät luettelot tuetuista algoritmeista (avaintenvaihto, salakirjoitukset, MAC:t, pakkaus).
+4. He suorittavat Diffie-Hellman- tai ECDH-avaintenvaihdon johdetun istuntoavaimen saamiseksi — tämän vuoksi vaikka joku tallentaisi salatun liikenteen, he eivät voi purkaa sitä myöhemmin.
+5. Palvelin lähettää **isäntäavaimensa** (julkinen avain), jonka asiakas tarkistaa `~/.ssh/known_hosts`-tiedostostaan.
+6. Todennus jatkuu yllä kuvatulla tavalla.
+7. Istunto alkaa.
+
+## SSH vs Telnet: Miksi SSH voitti
+
+Ennen SSH:ta **Telnet** oli etäterminaalikäytön standardiprotokolla. Telnet on yksinkertainen ja toimii edelleen, mutta siinä on yksi kohtalokas virhe: kaikki lähetetään selkokielisenä. Käyttäjänimesi, salasanasi, jokainen kirjoittamasi komento ja jokainen tulosteosa — kaikki näkyvissä kaikille, jotka voivat salakuunnella verkkoliikennettä.
+
+1990-luvulla, kun internetin ydinverkko koostui luotettavista akateemisista ja tutkimusverkoista, tätä ei pidetty vakavana ongelmana. Kun internetistä tuli kaupallinen ja vihamielinen, Dsniff- ja Ettercap-kaltaiset työkalut tekivät Telnet-tunnistetietojen sieppaamisesta triviaalia lähiverkoissa.
+
+SSH ratkaisi tämän salaamalla kaiken. Tässä on suora vertailu:
+
+| Ominaisuus | Telnet | SSH |
+|---|---|---|
+| Salaus | Ei ole | Vahva (AES, ChaCha20) |
+| Todennus | Selkokielinen salasana | Julkinen avain + salattu salasana |
+| Tietojen eheys | Ei ole | HMAC-varmennus |
+| Portti | 23 | 22 |
+| Edelleen suositeltu | Ei | Kyllä |
+
+rsh:lla (remote shell) ja rloginilla oli samanlaisia ongelmia. Ne myös luottivat IP-pohjaiseen luottamukseen, jota on triviaalia väärentää. SSH korvasi kaikki nämä protokollat ja on pysynyt kiistattomana standardina yli 25 vuoden ajan.
+
+## Mikä on SSH-avain?
+
+SSH tukee kahta ensisijaista todennusmenetelmää: salasanoja ja **SSH-avaimia**. SSH-avaimet ovat kryptografisia avainpareja — **julkinen avain** ja **yksityinen avain** — perustuen epäsymmetriseen kryptografiaan.
+
+**Yksityinen avain** pysyy paikallisella koneellasi, suojattuna valinnaisella salauslausekkeella. **Julkinen avain** sijoitetaan jokaiselle palvelimelle, jolle haluat pääsyn, tiedostoon nimeltä `~/.ssh/authorized_keys`. Kun muodostat yhteyden, palvelin antaa kryptografisen haasteen, johon vain vastaavan yksityisen avaimen haltija voi vastata. Verkossa ei lähetetä salasanaa.
+
+Tällä lähestymistavalla on useita etuja:
+- **Immuuni brute force -hyökkäyksille** — ei ole mitään arvattavaa. 256-bittisellä Ed25519-avaimella on 2²⁵⁶ mahdollista arvoa.
+- **Ei salasanaa varastettavaksi** — vaikka joku sieppaisi kättelyn, he eivät saa mitään hyödyllistä.
+- **Automatisoitavissa** — skriptit ja CI/CD-pipeline-linjat voivat todentaa ilman ihmisen vuorovaikutusta.
+- **Peruutettavissa** — julkisen avaimen poistaminen `authorized_keys`-tiedostosta peruuttaa pääsyn välittömästi.
+
+Modernein ja suositelluin avaintyyppi on **Ed25519**, joka käyttää elliptisen käyrän kryptografiaa Edwards-käyrällä. RSA-avaimia tuetaan myös laajalti, vaikka sinun tulisi käyttää vähintään 4096 bittiä.
+
+Syvällisempää tietoa avainpareista löytyy oppaastamme <a href="/fi/what-is-an-ssh-key">mikä on SSH-avain</a>.
+
+## SSH:n yleiset käyttötapaukset
+
+SSH:ta käytetään huomattavan laajassa kirjossa skenaarioita. Tässä ovat tärkeimmät.
+
+### Etäpalvelimen hallinta
+
+Perustavin käyttötapaus. Järjestelmänvalvojat kirjautuvat Linux- ja Unix-palvelimille asentaakseen ohjelmistoja, muokatakseen konfiguraatiotiedostoja, hallitakseen palveluita ja diagnosoidakseen ongelmia — kaikki SSH-terminaali-istunnon kautta.
+
+```bash
+ssh user@192.168.1.100
+ssh admin@myserver.example.com
+ssh -p 2222 deploy@staging.example.com
+```
+
+### Tiedostonsiirto SFTP:llä ja SCP:llä
+
+SSH tarjoaa kaksi tiedostonsiirtoprotokollaa samalla salatulla kanavalla:
+
+**SCP (Secure Copy Protocol)** on yksinkertainen komentorivityökalu tiedostojen kopiointiin:
+
+```bash
+# Kopioi paikallinen tiedosto etäpalvelimelle
+scp report.pdf user@server:/home/user/documents/
+
+# Kopioi etätiedosto paikalliselle koneelle
+scp user@server:/var/log/app.log ./local-copy.log
+
+# Kopioi koko hakemisto rekursiivisesti
+scp -r ./project/ user@server:/var/www/
+```
+
+**SFTP (SSH File Transfer Protocol)** tarjoaa interaktiivisen FTP-tyylisen käyttöliittymän, jossa on monipuolisemmat ominaisuudet kuin SCP:ssä, mukaan lukien jatkettavat siirrot ja hakemistoluettelot.
+
+### Git-todennus
+
+Kun lisäät SSH-avaimen GitHubiin, GitLabiin tai Bitbucketiin, jokainen `git clone`, `git push` ja `git pull` SSH:n kautta todentuu yksityisellä avaimellasi. Tämä poistaa tarpeen syöttää käyttäjänimi ja salasana jokaisen Git-operaation yhteydessä, ja se on kehittäjille suositeltu todennusmenetelmä.
+
+```bash
+# Kloonaa repositorio SSH:n avulla
+git clone git@github.com:username/repository.git
+
+# Tarkista GitHub SSH -yhteytesi
+ssh -T git@github.com
+```
+
+### Automatisoitu käyttöönotto ja CI/CD
+
+Käyttöönottoskriptit ja CI/CD-järjestelmät, kuten GitHub Actions, GitLab CI ja Jenkins, käyttävät SSH-avaimia koodin käyttöönottamiseksi tuotantopalvelimille ilman ihmisen puuttumista. Yksityinen avain tallennetaan salaisuutena CI-järjestelmään, ja vastaava julkinen avain lisätään palvelimen `authorized_keys`-tiedostoon.
+
+### Tietokantojen ja sovellusten porttiohjaus
+
+SSH-tunnelointi voi turvallisesti paljastaa etäpalveluita paikalliselle koneellesi. Esimerkiksi etä-MySQL-tietokantaan pääsemiseksi, joka ei ole paljastettuna internetiin:
+
+```bash
+ssh -L 3307:localhost:3306 user@dbserver.example.com -N
+```
+
+Tämä luo paikallisen tunnelin: yhteyden muodostaminen porttiin 3307 koneellasi ohjaa liikenteen läpinäkyvästi etäpalvelimen porttiin 3306, salattuna SSH-tunnelissa.
+
+## SSH-portti ja konfigurointivaihtoehdot
+
+### Oletusportti 22
+
+SSH kuuntelee oletuksena **TCP-porttia 22**. Tämä on IANA:n nimeämä tunnettu portti, joka on varattu SSH:lle protokollan luomisesta lähtien. Kun ajat `ssh user@host` ilman portin määrittämistä, SSH-asiakas muodostaa yhteyden porttiin 22.
+
+Jotkut järjestelmänvalvojat vaihtavat SSH-portin (esim. 2222 tai 8022) pienenä tietoturvatoimenpiteenä vähentääkseen automatisoitua skannaushälyä lokikirjoissa. Tätä kutsutaan "tietoturva hämäyksen kautta" -menetelmäksi, eikä se korvaa asianmukaista avainpohjaista todennusta, mutta voi vähentää lokien täyttymistä.
+
+```bash
+# Yhdistä ei-standardiin SSH-porttiin
+ssh -p 2222 user@example.com
+```
+
+### SSH-asiakasohjelman konfigurointitiedosto
+
+Sen sijaan, että kirjoittaisit pitkiä komentorivivalintoja joka kerta, voit konfiguroida SSH-yhteydet `~/.ssh/config`-tiedostossa. Tämä tiedosto antaa sinun määritellä aliaksia, asettaa isäntäkohtaisia vaihtoehtoja ja yksinkertaistaa merkittävästi työnkulkuasi.
+
+```
+Host myserver
+    HostName 203.0.113.10
+    User deploy
+    Port 2222
+    IdentityFile ~/.ssh/id_ed25519_prod
+
+Host bastion
+    HostName jump.example.com
+    User ec2-user
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host internal
+    HostName 10.0.1.50
+    User ubuntu
+    ProxyJump bastion
+```
+
+Tällä konfiguraatiolla `ssh myserver` muodostaa yhteyden täydelliseen isäntänimeen mukautetulla portilla käyttäen määritettyä avainta — ei tarvita lippuja.
+
+Täydellisen viitteen SSH-komennon vaihtoehdoista ja lipuista löydät <a href="/fi/ssh-command">SSH-komento-oppaastamme</a>.
+
+### Palvelinpuolen konfigurointi (sshd_config)
+
+SSH-palvelindemon (sshd) konfiguroidaan `/etc/ssh/sshd_config`-tiedoston kautta. Tärkeimmät asetukset sisältävät:
+
+```
+# Poista salasanatodennus käytöstä — vain avaimet
+ PasswordAuthentication no
+
+# Poista root-kirjautuminen käytöstä
+ PermitRootLogin no
+
+# Vaihda kuunteluporttia
+Port 2222
+
+# Rajoita tiettyihin käyttäjiin
+AllowUsers deploy admin
+
+# Ota julkisen avaimen todennus käyttöön
+PubkeyAuthentication yes
+```
+
+Muokkauksen jälkeen lataa demoni uudelleen: `sudo systemctl reload sshd`
+
+## SSH-tunnelointi
+
+SSH-tunnelointi (kutsutaan myös SSH-porttiohjauksi) mahdollistaa mielivaltaisen TCP-liikenteen reitittämisen salatun SSH-yhteyden kautta. Se on yksi SSH:n tehokkaimmista ja vähiten hyödynnetyistä ominaisuuksista.
+
+### Paikallinen porttiohjaus
+
+Paikallinen ohjaus tekee etäpalvelun saatavaksi paikallisella koneellasi. Syntaksi on `-L paikallinen_portti:etäisäntä:etäportti`.
+
+```bash
+# Käytä etä-PostgreSQL-tietokantaa paikallisesti
+ssh -L 5433:localhost:5432 user@dbserver -N
+
+# Käytä sisäistä verkkosovellusta hyppypalvelimen kautta
+ssh -L 8080:internal-app.company.com:80 user@jump.company.com -N
+```
+
+Lippu `-N` käskee SSH:ta olemaan suorittamatta etäkomentoa — hyödyllinen, kun haluat vain tunnelin.
+
+### Etäporttiohjaus
+
+Etäohjaus paljastaa paikallisen palvelun etäpalvelimella. Syntaksi on `-R etäportti:paikallinen_isäntä:paikallinen_portti`.
+
+```bash
+# Paljasta paikallinen verkkopalvelimesi etäkoneelle
+ssh -R 9090:localhost:3000 user@server -N
+```
+
+Tämä on hyödyllistä paikallisen kehityspalvelimen väliaikaiseen jakamiseen kolleegan kanssa, jolla on pääsy etäisäntään, tai asiakkaan väliaikaisen pääsyn antamiseksi keskeneräiseen työhösi.
+
+### Dynaaminen porttiohjaus (SOCKS-välityspalvelin)
+
+Lippu `-D` luo SOCKS-välityspalvelimen paikalliselle koneellesi ja reitittää kaiken SOCKS-yhteensopivan liikenteen SSH-yhteyden kautta. Tämä käyttää tehokkaasti etäpalvelinta VPN-poistumissolmuna.
+
+```bash
+# Luo SOCKS5-välityspalvelin paikalliseen porttiin 1080
+ssh -D 1080 user@remote-server -N -f
+```
+
+Konfiguroi selaimesi tai järjestelmäsi käyttämään `SOCKS5-välityspalvelin: 127.0.0.1:1080` ja kaikki verkkoliikenne reitittyy etäpalvelimen kautta. Tätä käytetään usein maantieteellisesti rajoitetun sisällön käyttämiseen tai turvalliseen selaamiseen epäluotettavasta verkosta.
+
+## Usein kysytyt kysymykset
+
+### Mitä SSH tarkoittaa?
+
+SSH tarkoittaa **Secure Shelliä**. Se on kryptografinen verkkoprotokolla verkkopalveluiden turvalliseen käyttämiseen suojaamattoman verkon kautta. Nimi viittaa sen ensisijaiseen käyttötapaukseen: turvallisen interaktiivisen komentotulkkiistunnon tarjoamiseen etätietokoneella.
+
+### Onko SSH sama kuin SSL?
+
+Ei. SSH ja SSL/TLS ovat molemmat kryptografisia protokollia, mutta ne palvelevat eri tarkoituksia. **SSL/TLS** (Secure Sockets Layer / Transport Layer Security) käytetään verkkoliikenteen (HTTPS), sähköpostin ja muiden sovellusprotokollien suojaamiseen. **SSH** on suunniteltu erityisesti turvalliseen etäkomentotulkkikäyttöön, tiedostonsiirtoon ja tunnelointiin. Ne käyttävät samanlaisia kryptografisia primitiivejä (julkisen avaimen kryptografia, symmetrinen salaus), mutta niillä on erilaiset kättelymekannismit ja käyttötapaukset. SSH ei käytä SSL/TLS:ää sisäisesti.
+
+### Mitä porttia SSH käyttää?
+
+SSH käyttää oletuksena **TCP-porttia 22**. Tämä on IANA:n nimeämä tunnettu portti. Voit konfiguroida SSH-palvelimen kuuntelemaan eri porttia `/etc/ssh/sshd_config`-tiedoston `Port`-direktiivillä ja muodostaa yhteyden ei-standardiportteihin komennolla `ssh -p PORT user@host`.
+
+### Voiko SSH:ta hakkeroida?
+
+Asianmukaisesti konfiguroitu SSH-palvelin avainpohjaisella todennuksella on erittäin vaikea murtaa. Kryptografia — Ed25519-avaimet, AES-256-salaus, SHA-2 MAC:t — katsotaan kvanttikestäväksi avaimentodennuksessa ja laskennallisesti mahdottomaksi brute force -hyökkäyksellä. Todelliset SSH-murrot sisältävät tyypillisesti: varastetut yksityiset avaintiedostot, heikot salauslausekkeet, väärin konfiguroidut palvelimet, jotka sallivat salasanatodennuksen heikoilla salasanoilla, haavoittuvat ohjelmistoversiot paikkauksettomilla CVE:illä tai sosiaalinen manipulointi pikemminkin kuin kryptografiset hyökkäykset. Pidä palvelimesi ajan tasalla, poista salasanatodennus käytöstä ja suojaa yksityinen avaintiedostosi.
+
+### Mikä on ero SSH:n ja HTTPS:n välillä?
+
+Sekä SSH että HTTPS salaavat verkkoliikenteen, mutta ne on suunniteltu eri tarkoituksiin. **HTTPS** suojaa verkkoselausta — se käyttää TLS:ää HTTP-pyyntöjen ja -vastausten salaamiseen selainten ja verkkopalvelimien välillä. **SSH** suojaa etähallintakäyttöä, tiedostonsiirtoja ja tunnelointia. Kun työnnät koodia GitHubiin, voit käyttää joko SSH:ta (portti 22, avainpohjainen todennus) tai HTTPS:ää (portti 443, tokenipohjainen todennus). Kehittäjät suosivat yleensä SSH:ta, koska se ei vaadi tunnistetietojen uudelleensyöttämistä. HTTPS:ää tuetaan yleisesti palomuurien läpi, jotka saattavat estää portin 22.
+
+## Luo SSH-avaimesi nyt
+
+SSH-avainpohjainen todennus on turvallisempaa ja kätevämpää kuin salasanat. Jos et ole vielä määrittänyt SSH-avaimia, ilmainen verkkovoimistemme luo Ed25519- tai RSA-avainparit välittömästi selaimessasi — ei asennusta tarvita, mitään ei lähetetä palvelimillemme.
+
+<a href="/">Luo SSH-avainparisi nyt →</a>
+
+---
+
+**Lisälukemista:**
+- <a href="/fi/what-is-an-ssh-key">Mikä on SSH-avain? Julkiset avaimet, yksityiset avaimet ja avainparit selitettynä</a>
+- <a href="/fi/ssh-command">SSH-komento: Täydellinen viite esimerkkeineen</a>
+- <a href="/fi/how-to-set-up-ssh">SSH:n määrittäminen: Täydellinen vaiheittainen opas</a>

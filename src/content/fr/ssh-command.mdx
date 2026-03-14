@@ -1,0 +1,430 @@
+# La commande SSH : référence complète avec exemples pour Linux, Mac et Windows
+
+La commande `ssh` est l'outil principal pour initier des connexions SSH depuis la ligne de commande. Que vous vous connectiez à un serveur Linux distant, redirigez un port pour l'accès à une base de données ou traversiez un hôte bastion pour atteindre un réseau interne, la commande `ssh` est votre point d'entrée. Ce guide couvre tout, de la syntaxe de base aux indicateurs avancés, au tunneling et aux configurations ProxyJump — avec des exemples concrets pour Linux, macOS et Windows.
+
+Avant d'exécuter des commandes SSH, vous aurez besoin de clés SSH. Consultez notre guide sur <a href="/fr/what-is-an-ssh-key">ce qu'est une clé SSH</a> ou utilisez le <a href="/">générateur gratuit en ligne</a> pour créer une paire de clés.
+
+## Syntaxe de la commande SSH
+
+La syntaxe fondamentale de la commande `ssh` est :
+
+```
+ssh [options] [utilisateur@]nomdhôte [commande]
+```
+
+En détail :
+
+- **`[options]`** — Zéro ou plusieurs indicateurs qui modifient le comportement (couverts tout au long de ce guide)
+- **`[utilisateur@]`** — Nom d'utilisateur optionnel. Si omis, SSH utilise votre nom d'utilisateur local actuel
+- **`nomdhôte`** — L'hôte distant auquel se connecter. Peut être une adresse IP, un nom de domaine ou un alias défini dans `~/.ssh/config`
+- **`[commande]`** — Commande optionnelle à exécuter sur l'hôte distant. Si omise, SSH démarre une session shell interactive
+
+**Exemples de base :**
+
+```bash
+# Se connecter avec votre nom d'utilisateur actuel
+ssh serveur.exemple.com
+
+# Se connecter en tant qu'utilisateur spécifique
+ssh alice@serveur.exemple.com
+
+# Se connecter en utilisant une adresse IP
+ssh ubuntu@192.168.1.100
+
+# Exécuter une seule commande et se déconnecter immédiatement
+ssh utilisateur@serveur.exemple.com "df -h"
+
+# Se connecter et rester connecté
+ssh utilisateur@serveur.exemple.com
+```
+
+## SSH sur Linux et macOS
+
+Les distributions Linux et macOS sont livrées avec **OpenSSH** préinstallé. Sur Linux, il fait partie du paquet `openssh-client` (Debian/Ubuntu) ou `openssh-clients` (RHEL/CentOS/Fedora). Sur macOS, il est intégré au système et disponible immédiatement depuis Terminal ou iTerm2.
+
+### Vérifier que SSH est disponible
+
+```bash
+ssh -V
+# Sortie : OpenSSH_9.6p1, LibreSSL 3.3.6
+```
+
+### Connexion de base
+
+```bash
+# Se connecter à un serveur
+ssh utilisateur@monserveur.exemple.com
+
+# SSH vérifie ~/.ssh/known_hosts lors de la première connexion et invite :
+# The authenticity of host 'monserveur.exemple.com' can't be established.
+# ED25519 key fingerprint is SHA256:abc123...
+# Are you sure you want to continue connecting (yes/no)? yes
+
+# L'empreinte de l'hôte est sauvegardée dans ~/.ssh/known_hosts
+```
+
+### Utiliser un fichier de configuration SSH pour plus de commodité
+
+Plutôt que de saisir les détails complets de connexion à chaque fois, créez `~/.ssh/config` :
+
+```
+Host monserveur
+    HostName monserveur.exemple.com
+    User alice
+    Port 22
+    IdentityFile ~/.ssh/id_ed25519
+
+Host dev
+    HostName dev.exemple.com
+    User ubuntu
+    Port 2222
+    IdentityFile ~/.ssh/id_ed25519_travail
+```
+
+Désormais `ssh monserveur` se développe en connexion complète — aucun indicateur nécessaire.
+
+## SSH sur Windows (PowerShell et OpenSSH)
+
+Windows 10 (version 1809) et Windows 11 incluent le **client OpenSSH** en tant que fonctionnalité optionnelle, rendant la commande `ssh` disponible dans PowerShell, l'invite de commandes et Windows Terminal.
+
+### Vérifier si OpenSSH est installé
+
+```powershell
+# Dans PowerShell
+ssh -V
+```
+
+Si la commande n'est pas trouvée, installez-la :
+
+**Via les Paramètres :**
+1. Ouvrez **Paramètres → Applications → Fonctionnalités facultatives**
+2. Cliquez sur **Ajouter une fonctionnalité**
+3. Trouvez **Client OpenSSH** et installez-le
+
+**Via PowerShell (Administrateur) :**
+
+```powershell
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+```
+
+### Utiliser SSH dans PowerShell
+
+Une fois installé, la syntaxe est identique à Linux et macOS :
+
+```powershell
+# Se connecter à un serveur
+ssh utilisateur@serveur.exemple.com
+
+# Se connecter sur un port personnalisé
+ssh -p 2222 utilisateur@serveur.exemple.com
+
+# Utiliser un fichier de clé spécifique
+ssh -i C:\Users\VotreNom\.ssh\id_ed25519 utilisateur@serveur.exemple.com
+```
+
+### Emplacement des clés SSH sur Windows
+
+Les clés SSH sur Windows sont stockées dans `C:\Users\VotreNomUtilisateur\.ssh\`. PowerShell reconnaît `~` comme raccourci :
+
+```powershell
+# Ces commandes sont équivalentes
+ssh -i ~/.ssh/id_ed25519 utilisateur@serveur
+ssh -i C:\Users\VotreNomUtilisateur\.ssh\id_ed25519 utilisateur@serveur
+```
+
+### PuTTY vs OpenSSH sur Windows
+
+Avant qu'OpenSSH soit disponible sur Windows, **PuTTY** était le client SSH standard. PuTTY utilise son propre format de clé (fichiers `.ppk`) et son propre générateur de clés (PuTTYgen). Si vous avez une clé `.ppk` et devez la convertir au format OpenSSH standard :
+
+```bash
+# Utilisation des outils PuTTY
+puttygen macle.ppk -O private-openssh -o id_ed25519
+```
+
+Pour les nouvelles configurations, préférez le client OpenSSH intégré à Windows — il est maintenu par le projet OpenSSH et utilise le même format de clé et le même fichier de configuration que Linux et macOS.
+
+## SSH avec authentification par clé : l'indicateur -i
+
+Par défaut, SSH recherche les fichiers de clés dans `~/.ssh/` avec des noms standard (`id_ed25519`, `id_rsa`, `id_ecdsa`, `id_dsa`). L'**indicateur `-i`** (fichier d'identité) vous permet de spécifier un fichier de clé différent explicitement.
+
+```bash
+# Utiliser un fichier de clé spécifique
+ssh -i ~/.ssh/id_ed25519_production utilisateur@prod.exemple.com
+
+# Utiliser une clé stockée dans un emplacement non standard
+ssh -i /chemin/vers/ma/cle_personnalisee deploy@serveur.exemple.com
+
+# Combiner avec d'autres options
+ssh -i ~/.ssh/cle_deploy -p 2222 -l deploy serveur.exemple.com
+```
+
+L'indicateur `-i` est essentiel dans plusieurs situations :
+- Vous avez plusieurs paires de clés pour différents serveurs ou usages
+- Votre clé n'est pas dans le répertoire par défaut `~/.ssh/`
+- Vous spécifiez une clé dans un environnement CI/CD où le chemin est explicite
+- Vous avez téléchargé un fichier `.pem` d'AWS ou d'un autre fournisseur cloud
+
+### Exemple AWS EC2
+
+AWS fournit un fichier de clé `.pem` lorsque vous lancez une instance EC2 :
+
+```bash
+# Se connecter à une instance AWS EC2 avec une clé .pem
+ssh -i ~/Téléchargements/ma-cle-aws.pem ec2-user@54.123.456.789
+
+# Corriger les permissions si nécessaire (obligatoire — SSH rejette les clés lisibles par tous)
+chmod 400 ~/Téléchargements/ma-cle-aws.pem
+```
+
+## Options et indicateurs essentiels de la commande SSH
+
+La commande `ssh` possède des dizaines d'options. Voici celles que vous utiliserez réellement.
+
+| Indicateur | Description | Exemple |
+|---|---|---|
+| `-p PORT` | Se connecter sur un port non standard | `ssh -p 2222 utilisateur@hôte` |
+| `-i FICHIER` | Utiliser un fichier d'identité (clé) spécifique | `ssh -i ~/.ssh/macle utilisateur@hôte` |
+| `-l UTILISATEUR` | Spécifier le nom d'utilisateur de connexion (alternative à `utilisateur@`) | `ssh -l alice hôte` |
+| `-L local:hôte:distant` | Redirection de port locale | `ssh -L 8080:localhost:80 hôte` |
+| `-R distant:hôte:local` | Redirection de port distante | `ssh -R 9090:localhost:3000 hôte` |
+| `-D port` | Proxy dynamique (SOCKS) | `ssh -D 1080 hôte` |
+| `-N` | Ne pas exécuter de commande distante (tunneling uniquement) | `ssh -N -L 3307:db:3306 hôte` |
+| `-f` | Passer en arrière-plan après l'authentification | `ssh -f -N -D 1080 hôte` |
+| `-v` | Sortie verbeuse (débogage) | `ssh -v utilisateur@hôte` |
+| `-vv` ou `-vvv` | Sortie encore plus verbeuse | `ssh -vvv utilisateur@hôte` |
+| `-A` | Activer le transfert d'agent SSH | `ssh -A utilisateur@hôte-bastion` |
+| `-X` | Activer le transfert X11 | `ssh -X utilisateur@hôte xclock` |
+| `-C` | Activer la compression | `ssh -C utilisateur@hôte` |
+| `-T` | Désactiver l'allocation de pseudo-terminal | `ssh -T git@github.com` |
+| `-q` | Mode silencieux (supprimer les avertissements) | `ssh -q utilisateur@hôte` |
+| `-o OPTION=VALEUR` | Définir une option de configuration en ligne | `ssh -o StrictHostKeyChecking=no hôte` |
+| `-J SAUT` | ProxyJump via un hôte bastion | `ssh -J hôte.saut utilisateur@interne` |
+| `-W hôte:port` | Transférer stdio vers un hôte:port (pour ProxyJump) | Utilisé en interne par `-J` |
+
+### Mode verbeux pour le débogage
+
+Quand SSH échoue, `-v` (ou `-vv` ou `-vvv`) révèle exactement ce qui se passe :
+
+```bash
+ssh -v utilisateur@serveur.exemple.com
+# Affiche : quelles clés sont essayées, quelles méthodes d'auth le serveur accepte,
+# si l'agent est impliqué, et où la connexion échoue
+
+ssh -vvv utilisateur@serveur.exemple.com
+# Verbosité maximale — affiche la négociation cryptographique détaillée
+```
+
+### Contourner la vérification de la clé d'hôte (à utiliser avec précaution)
+
+Dans les environnements d'automatisation et de test où la vérification de la clé d'hôte est gênante :
+
+```bash
+ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null utilisateur@hôte
+```
+
+**N'utilisez pas cela en production.** Cela désactive la protection contre les attaques de l'homme du milieu. À la place, prépopulez `known_hosts` en utilisant `ssh-keyscan` dans vos scripts de provisionnement.
+
+### Transfert d'agent
+
+```bash
+# Transférer votre agent SSH local vers le serveur distant
+ssh -A utilisateur@serveur-bastion
+
+# Depuis le serveur bastion, vous pouvez maintenant vous connecter via SSH aux hôtes internes en utilisant vos clés locales
+# Pas besoin de copier les clés privées sur le serveur bastion
+ssh serveur-interne.prive
+```
+
+Le transfert d'agent est utile mais présente des implications de sécurité : toute personne ayant un accès root sur le serveur intermédiaire peut utiliser votre agent transféré. Utilisez-le uniquement avec des serveurs de confiance, et préférez **ProxyJump** lorsque c'est possible (il n'expose pas votre agent aux hôtes intermédiaires).
+
+## Commandes de tunneling SSH
+
+Le tunneling SSH route les connexions TCP via un canal SSH chiffré. Pour des informations générales sur le tunneling, consultez la <a href="/fr/what-is-ssh">section tunneling de notre guide SSH</a>.
+
+### Redirection de port locale
+
+Rend un service distant accessible sur votre machine locale.
+
+```bash
+# Accéder à une base de données MySQL distante sur le port local 3307
+ssh -L 3307:localhost:3306 utilisateur@serveur-db.exemple.com -N
+
+# Se connecter à un serveur web distant uniquement accessible depuis l'hôte SSH
+ssh -L 8080:intranet.entreprise.com:80 utilisateur@vpn.entreprise.com -N
+
+# Accéder à une instance Redis sur un réseau privé
+ssh -L 6380:10.0.1.50:6379 utilisateur@bastion.exemple.com -N
+```
+
+Après avoir exécuté l'une des commandes ci-dessus, connectez votre application locale à `127.0.0.1:PORT_LOCAL`.
+
+### Redirection de port distante
+
+Expose un service local sur le serveur distant.
+
+```bash
+# Exposer votre serveur de développement local (port 3000) sur le port 9090 du serveur distant
+ssh -R 9090:localhost:3000 utilisateur@distant.exemple.com -N
+
+# Permettre à n'importe quelle interface sur le serveur distant de se connecter (nécessite GatewayPorts yes dans sshd_config)
+ssh -R 0.0.0.0:9090:localhost:3000 utilisateur@distant.exemple.com -N
+```
+
+### Redirection de port dynamique (Proxy SOCKS)
+
+```bash
+# Créer un proxy SOCKS5 sur le port local 1080, s'exécutant en arrière-plan
+ssh -D 1080 -N -f utilisateur@distant.exemple.com
+
+# Configurez maintenant votre navigateur ou système pour utiliser le proxy SOCKS5 : 127.0.0.1:1080
+# Tout le trafic est routé via le serveur distant
+```
+
+Pour utiliser avec curl :
+
+```bash
+curl --socks5 127.0.0.1:1080 https://api.exemple.com/
+```
+
+### Exécuter le tunnel en arrière-plan
+
+```bash
+# -f envoie SSH en arrière-plan, -N signifie aucune commande distante
+ssh -f -N -L 3307:localhost:3306 utilisateur@serveur-db
+
+# Trouver le processus SSH en arrière-plan
+ps aux | grep ssh
+
+# Le tuer
+kill PID
+```
+
+## SSH ProxyJump et hôtes bastions
+
+Dans de nombreuses organisations, les serveurs de production se trouvent sur des réseaux privés non directement accessibles depuis Internet. Un **hôte bastion** (ou hôte de saut) est un serveur renforcé sur le périmètre du réseau auquel vous vous connectez d'abord via SSH, puis vous accédez aux serveurs internes. L'indicateur `ssh -J` (ProxyJump, ajouté dans OpenSSH 7.3) rend cela transparent.
+
+### ProxyJump de base
+
+```bash
+# Passer par un bastion pour atteindre un serveur interne
+ssh -J ec2-user@bastion.exemple.com ubuntu@10.0.1.50
+
+# Forme abrégée
+ssh -J utilisateur@hôte-saut utilisateur@serveur-interne
+```
+
+Cela crée deux connexions SSH : d'abord vers le bastion, puis du bastion vers le serveur interne — le tout en une seule commande, avec un chiffrement de bout en bout. Votre agent SSH local gère l'authentification auprès des deux hôtes.
+
+### Chaîner plusieurs sauts
+
+```bash
+# Passer par deux hôtes intermédiaires
+ssh -J utilisateur@saut1.exemple.com,utilisateur@saut2.exemple.com utilisateur@destination-finale
+```
+
+### ProxyJump dans le fichier de configuration SSH
+
+Pour les serveurs fréquemment accessibles, placez la configuration ProxyJump dans `~/.ssh/config` :
+
+```
+Host bastion
+    HostName bastion.exemple.com
+    User ec2-user
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host prod-web
+    HostName 10.0.1.100
+    User ubuntu
+    ProxyJump bastion
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host prod-db
+    HostName 10.0.2.50
+    User postgres
+    ProxyJump bastion
+    IdentityFile ~/.ssh/id_ed25519_aws
+```
+
+Désormais `ssh prod-web` se connecte automatiquement via le bastion. Aucun indicateur `-J` manuel nécessaire.
+
+### ProxyJump vs transfert d'agent
+
+ProxyJump est préféré au transfert d'agent (`-A`) car :
+- Votre clé privée n'est jamais transférée vers l'hôte intermédiaire
+- L'hôte bastion ne peut pas utiliser vos identifiants pour s'authentifier ailleurs
+- La connexion est authentifiée de bout en bout — le serveur de destination vous vérifie directement
+
+Pour plus de détails sur la configuration, consultez notre guide complet sur <a href="/fr/how-to-set-up-ssh">comment configurer SSH</a>.
+
+## Foire aux questions
+
+### Comment exécuter une commande SSH sans mot de passe ?
+
+Configurez l'authentification par clé SSH. Générez une paire de clés (`ssh-keygen -t ed25519`), copiez la clé publique dans le fichier `~/.ssh/authorized_keys` du serveur en utilisant `ssh-copy-id utilisateur@hôte`, et les connexions suivantes utiliseront votre clé sans demande de mot de passe. Si votre clé a une phrase secrète, utilisez `ssh-agent` et `ssh-add` pour la mettre en cache afin de ne la saisir qu'une fois par session.
+
+### Comment quitter une session SSH ?
+
+Tapez `exit` ou appuyez sur **Ctrl+D** pour fermer le shell distant et vous déconnecter. Si la session est bloquée (par ex., réseau coupé), utilisez la séquence d'échappement SSH : appuyez sur **Entrée**, puis tapez `~.` (tilde suivi d'un point). SSH met immédiatement fin à la connexion. Autres séquences d'échappement : `~^Z` suspend SSH en arrière-plan, `~?` liste toutes les séquences d'échappement.
+
+### Comment exécuter une commande sur un serveur distant via SSH ?
+
+Ajoutez la commande après le nom d'hôte :
+
+```bash
+ssh utilisateur@serveur "commande à exécuter"
+ssh utilisateur@serveur "ls -la /var/log/"
+ssh utilisateur@serveur "sudo systemctl status nginx"
+```
+
+Pour les commandes ou scripts multi-lignes, utilisez un heredoc :
+
+```bash
+ssh utilisateur@serveur << 'EOF'
+cd /var/www/html
+git pull origin main
+systemctl reload nginx
+EOF
+```
+
+Pour les commandes interactives (comme celles nécessitant un terminal), ajoutez l'indicateur `-t` pour allouer un pseudo-terminal : `ssh -t utilisateur@serveur sudo apt upgrade`.
+
+### Quelle est la différence entre ssh et scp ?
+
+`ssh` ouvre une session terminal (ou exécute une seule commande) sur une machine distante. `scp` (Secure Copy Protocol) copie des fichiers entre votre machine locale et une machine distante, ou entre deux machines distantes, en utilisant SSH pour le chiffrement et l'authentification. Les deux utilisent le même protocole SSH et la même infrastructure de clés. Pour les transferts de fichiers, `scp` est l'outil dédié :
+
+```bash
+# scp local vers distant
+scp fichier.txt utilisateur@serveur:/chemin/destination/
+
+# scp distant vers local
+scp utilisateur@serveur:/fichier/distant.txt ./copie-locale.txt
+```
+
+Pour des transferts de fichiers plus avancés (récursifs, reprenables, navigation dans les répertoires), utilisez `sftp`. Pour les transferts à grande échelle, `rsync -avz -e ssh` est encore plus efficace.
+
+### Comment utiliser SSH avec un fichier de configuration ?
+
+Créez `~/.ssh/config` et ajoutez des entrées d'hôte. Chaque bloc `Host` définit un alias de connexion avec tous ses paramètres :
+
+```
+Host nom-alias
+    HostName serveur.reel.com
+    User nomutilisateur
+    Port 22
+    IdentityFile ~/.ssh/cle_specifique
+```
+
+Ensuite `ssh nom-alias` utilise automatiquement tous les paramètres définis. Le fichier de configuration prend en charge les caractères génériques : `Host *.exemple.com` applique les paramètres à tous les hôtes correspondants. `Host *` à la fin applique les paramètres par défaut à toutes les connexions. Les options dans un bloc `Host` spécifique remplacent les paramètres par défaut globaux.
+
+## Besoin de clés SSH ? Générez-les gratuitement
+
+Pour utiliser l'authentification SSH par clé — qui élimine le besoin de mots de passe — vous avez besoin d'une paire de clés. Générez des clés Ed25519 ou RSA instantanément dans votre navigateur, sans rien envoyer à nos serveurs.
+
+<a href="/">Générez vos clés SSH gratuitement →</a>
+
+---
+
+**Lectures complémentaires :**
+- <a href="/fr/what-is-ssh">Qu'est-ce que SSH ? Le guide complet du Secure Shell</a>
+- <a href="/fr/what-is-an-ssh-key">Qu'est-ce qu'une clé SSH ? Clés publiques, clés privées et paires de clés expliquées</a>
+- <a href="/fr/how-to-set-up-ssh">Comment configurer SSH : un guide complet étape par étape</a>

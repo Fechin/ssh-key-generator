@@ -1,0 +1,394 @@
+# SSH 命令完整参考：Linux、Mac 和 Windows 示例
+
+`ssh` 命令是使用 Secure Shell 协议连接远程计算机的标准工具。无论是登录云服务器、向 GitHub 推送代码，还是建立安全隧道，都需要掌握 SSH 命令的用法。
+
+本文涵盖了从基础语法到高级技巧的完整 SSH 命令参考，适用于 Linux、macOS 和 Windows 系统，附有大量实际示例。
+
+## SSH 命令语法
+
+SSH 命令的基本语法如下：
+
+```bash
+ssh [选项] [用户名@]主机名 [命令]
+```
+
+各部分说明：
+
+- **选项**：以 `-` 开头的标志，用于控制 SSH 的行为（如 `-p` 指定端口、`-i` 指定密钥文件）
+- **用户名**：远程系统上的账户名；如省略，则使用当前本地用户名
+- **主机名**：远程主机的 IP 地址或域名
+- **命令**：可选，在远程主机上执行的命令；省略则进入交互式 shell
+
+### 基础连接示例
+
+```bash
+# 使用当前用户名连接（用户名与本地相同时可省略）
+ssh example.com
+
+# 指定用户名
+ssh username@example.com
+
+# 指定 IP 地址
+ssh username@192.168.1.100
+
+# 指定非默认端口
+ssh -p 2222 username@example.com
+
+# 连接后立即执行命令并退出
+ssh username@example.com "ls -la /var/log"
+```
+
+## Linux 和 macOS 上的 SSH
+
+Linux 和 macOS 系统内置了 OpenSSH 客户端，开箱即用，无需额外安装。
+
+### 验证 SSH 已安装
+
+```bash
+ssh -V
+# 输出示例：OpenSSH_9.0p1, LibreSSL 3.3.6
+```
+
+### 首次连接服务器
+
+第一次连接新服务器时，会看到主机密钥验证提示：
+
+```
+The authenticity of host 'example.com (203.0.113.1)' can't be established.
+ED25519 key fingerprint is SHA256:abc123xyz...
+Are you sure you want to continue connecting (yes/no/[fingerprint])?
+```
+
+输入 `yes` 接受后，服务器指纹会保存到 `~/.ssh/known_hosts`，以后连接时自动验证，防止中间人攻击。
+
+### 常用 Linux/macOS SSH 示例
+
+```bash
+# 以密码认证连接（系统会提示输入密码）
+ssh user@server.example.com
+
+# 连接后切换到其他用户
+ssh admin@server.example.com
+sudo su - appuser
+
+# 获取远程服务器基础信息
+ssh user@server.example.com "uname -a && df -h && free -m"
+
+# 使用 SSH 配置文件中定义的别名连接
+ssh myserver
+
+# 详细输出模式（调试连接问题）
+ssh -v user@server.example.com
+
+# 极详细输出（更多调试信息）
+ssh -vvv user@server.example.com
+```
+
+## Windows 上的 SSH（PowerShell 和 OpenSSH）
+
+从 Windows 10 版本 1809 开始，Windows 内置了 OpenSSH 客户端，可以直接在 PowerShell 或命令提示符中使用 `ssh` 命令。
+
+### 验证 OpenSSH 是否已安装
+
+```powershell
+# 在 PowerShell 中运行
+Get-WindowsCapability -Online | Where-Object Name -like 'OpenSSH*'
+```
+
+如未安装，可通过以下方式安装：
+
+```powershell
+# 安装 OpenSSH 客户端
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+```
+
+或前往 **设置 → 应用 → 可选功能 → 添加可选功能 → OpenSSH 客户端**。
+
+### Windows 下的 SSH 连接
+
+```powershell
+# 基本连接（PowerShell 或 cmd）
+ssh username@server.example.com
+
+# 指定端口
+ssh -p 2222 username@server.example.com
+
+# 使用私钥文件
+ssh -i C:\Users\YourName\.ssh\id_ed25519 username@server.example.com
+
+# 在远程服务器上执行命令
+ssh username@server.example.com "systemctl status nginx"
+```
+
+### Windows 下的 SSH 密钥路径
+
+Windows 下 SSH 密钥存储在：
+
+```
+C:\Users\YourUsername\.ssh\id_ed25519
+C:\Users\YourUsername\.ssh\id_ed25519.pub
+```
+
+等价的波浪号路径也适用：
+
+```powershell
+ssh -i ~/.ssh/id_ed25519 username@server.example.com
+```
+
+### Git Bash 和 WSL
+
+如果您使用 **Git Bash** 或 **WSL（适用于 Linux 的 Windows 子系统）**，SSH 命令的用法与 Linux 完全相同，密钥路径遵循 Unix 约定（`~/.ssh/`）。
+
+## 使用密钥认证：-i 标志
+
+`-i` 标志（identity file，身份文件）用于指定认证时使用的私钥文件。
+
+```bash
+# 使用指定密钥文件连接
+ssh -i ~/.ssh/id_ed25519 username@server.example.com
+
+# 使用为特定服务创建的专用密钥
+ssh -i ~/.ssh/github_key git@github.com
+
+# 使用 RSA 密钥连接旧系统
+ssh -i ~/.ssh/id_rsa -p 22 admin@legacy-server.example.com
+```
+
+### 使用 SSH 配置文件替代 -i 标志
+
+每次都输入 `-i` 标志很麻烦。您可以在 `~/.ssh/config` 中配置默认密钥：
+
+```
+Host production
+    HostName prod.example.com
+    User deploy
+    IdentityFile ~/.ssh/prod_key
+    Port 22
+
+Host github.com
+    User git
+    IdentityFile ~/.ssh/github_ed25519
+    AddKeysToAgent yes
+```
+
+配置完成后，直接输入 `ssh production` 即可，无需任何额外参数。
+
+了解更多 SSH 密钥相关知识，请参阅<a href="/zh-Hans/what-is-an-ssh-key">SSH 密钥是什么？</a>
+
+## 常用 SSH 命令选项和标志
+
+下表列出了最常用的 SSH 命令选项：
+
+| 选项 | 说明 | 示例 |
+|------|------|------|
+| `-p <端口>` | 指定远程端口（默认 22） | `ssh -p 2222 user@host` |
+| `-i <文件>` | 指定身份（私钥）文件 | `ssh -i ~/.ssh/key user@host` |
+| `-l <用户名>` | 指定登录用户名 | `ssh -l admin host` |
+| `-v` | 详细输出（调试） | `ssh -v user@host` |
+| `-vvv` | 极详细输出 | `ssh -vvv user@host` |
+| `-q` | 静默模式（抑制警告） | `ssh -q user@host` |
+| `-N` | 不执行远程命令（用于隧道） | `ssh -N -L ...` |
+| `-f` | 后台运行 | `ssh -f -N -L ...` |
+| `-T` | 禁用伪终端分配 | `ssh -T git@github.com` |
+| `-A` | 启用 SSH agent 转发 | `ssh -A user@jump-host` |
+| `-X` | 启用 X11 转发（图形界面） | `ssh -X user@host` |
+| `-C` | 启用数据压缩 | `ssh -C user@host` |
+| `-o <选项>` | 传递配置选项 | `ssh -o StrictHostKeyChecking=no user@host` |
+| `-L <端口转发>` | 本地端口转发 | `ssh -L 8080:localhost:80 user@host` |
+| `-R <端口转发>` | 远程端口转发 | `ssh -R 9090:localhost:3000 user@host` |
+| `-D <端口>` | 动态端口转发（SOCKS 代理） | `ssh -D 1080 user@host` |
+| `-J <跳板机>` | 通过跳板机连接 | `ssh -J jump user@target` |
+| `-W <主机:端口>` | 将 stdio 转发到远程主机 | `ssh -W target:22 jump` |
+
+### 常用组合示例
+
+```bash
+# 后台创建 SOCKS 代理，静默模式，不执行命令
+ssh -fNqD 1080 user@proxy-server.example.com
+
+# 通过跳板机连接，启用 agent 转发
+ssh -A -J user@jump.example.com user@internal.example.com
+
+# 连接时指定加密算法（兼容旧系统）
+ssh -o "KexAlgorithms diffie-hellman-group14-sha256" user@legacy-host
+
+# 忽略主机密钥验证（不推荐用于生产环境）
+ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null user@host
+```
+
+## SSH 隧道命令
+
+SSH 隧道让您可以通过加密的 SSH 连接安全地传输其他协议的流量。
+
+### 本地端口转发
+
+将远程服务引入本地：
+
+```bash
+# 语法
+ssh -L [本地地址:]本地端口:目标主机:目标端口 [用户@]SSH服务器
+
+# 示例：访问远程数据库（PostgreSQL）
+ssh -L 5432:localhost:5432 user@db-server.example.com
+
+# 示例：访问内网 Web 服务
+ssh -L 8080:internal-web:80 user@gateway.example.com
+
+# 后台运行隧道（不打开交互式 shell）
+ssh -fN -L 3306:db.internal:3306 user@gateway.example.com
+```
+
+建立隧道后，`localhost:5432` 就等同于访问 `db-server.example.com:5432`，即使数据库服务器不对外网开放。
+
+### 远程端口转发
+
+将本地服务暴露到远程服务器：
+
+```bash
+# 语法
+ssh -R [远程地址:]远程端口:本地主机:本地端口 [用户@]SSH服务器
+
+# 示例：将本地开发服务器（3000 端口）暴露到公网服务器的 8080 端口
+ssh -R 8080:localhost:3000 user@public-server.example.com
+
+# 示例：让远程服务器访问本地 MySQL
+ssh -R 3306:localhost:3306 user@remote-server.example.com
+```
+
+> **注意**：远程端口转发默认只监听 `127.0.0.1`。要让远程服务器的其他接口也能访问，需要在 `/etc/ssh/sshd_config` 中设置 `GatewayPorts yes`。
+
+### 动态端口转发（SOCKS 代理）
+
+```bash
+# 在本地 1080 端口创建 SOCKS5 代理
+ssh -D 1080 user@proxy-server.example.com
+
+# 后台运行
+ssh -fND 1080 user@proxy-server.example.com
+```
+
+配置浏览器或系统代理使用 `localhost:1080` 作为 SOCKS5 代理后，所有流量将通过 SSH 服务器路由。
+
+## SSH ProxyJump 与跳板主机
+
+在企业环境或多层网络架构中，通常需要通过跳板机（堡垒机）才能访问内网服务器。
+
+### 使用 -J 选项（ProxyJump）
+
+```bash
+# 通过跳板机连接内网服务器（推荐方式）
+ssh -J jump-user@jump.example.com target-user@internal-server
+
+# 多级跳转
+ssh -J user@jump1.example.com,user@jump2.example.com user@final-server
+
+# 组合使用：指定密钥 + 跳板机
+ssh -i ~/.ssh/internal_key -J jump.example.com user@internal-server
+```
+
+### 在 SSH 配置文件中配置跳板机
+
+将 ProxyJump 配置写入 `~/.ssh/config`，一劳永逸：
+
+```
+Host jump-host
+    HostName jump.example.com
+    User jumpuser
+    IdentityFile ~/.ssh/jump_key
+
+Host internal-server
+    HostName 10.0.0.50
+    User appuser
+    ProxyJump jump-host
+    IdentityFile ~/.ssh/internal_key
+```
+
+配置后直接执行 `ssh internal-server` 即可，SSH 自动通过跳板机中转。
+
+### Agent 转发（-A 选项）
+
+在使用跳板机时，经常需要从跳板机再连接内网服务器，但又不想把私钥存在跳板机上。SSH Agent 转发解决了这个问题：
+
+```bash
+# 启用 agent 转发
+ssh -A user@jump-host.example.com
+
+# 然后从跳板机上可以直接连接内网服务器，使用本地的私钥
+# （在跳板机的 shell 中执行）
+ssh user@internal-server
+```
+
+> **安全提示**：只在受信任的跳板机上使用 `-A`。Agent 转发会将本地 SSH agent 暴露给跳板机上的 root 用户。
+
+了解更多 SSH 的工作原理，请参阅<a href="/zh-Hans/what-is-ssh">SSH 是什么？完整指南</a>。了解如何设置 SSH，请参阅<a href="/zh-Hans/how-to-set-up-ssh">如何设置 SSH</a>。
+
+## 常见问题解答
+
+### 如何在没有密码的情况下运行 SSH 命令？
+
+有两种方式：一是**使用 SSH 密钥认证**（最推荐），将公钥添加到服务器的 `~/.ssh/authorized_keys`；二是使用 `sshpass` 工具传入密码（不推荐，存在安全风险）。密钥认证不仅更安全，还支持完全自动化的脚本执行。
+
+### 如何退出 SSH 会话？
+
+有多种方式退出 SSH 会话：
+
+- 输入 `exit` 并按回车
+- 输入 `logout` 并按回车
+- 按 `Ctrl+D`（发送 EOF 信号）
+- 如果会话卡死，使用 SSH 转义序列：按 `Enter`，然后输入 `~.`（波浪号加点）
+
+### 如何通过 SSH 在远程服务器上运行命令？
+
+在 SSH 命令末尾追加命令即可：
+
+```bash
+# 执行单条命令
+ssh user@server "命令"
+
+# 执行多条命令
+ssh user@server "命令1; 命令2; 命令3"
+
+# 需要管道的命令（注意引号）
+ssh user@server "ps aux | grep nginx"
+
+# 执行 heredoc（多行脚本）
+ssh user@server << 'EOF'
+echo "当前目录：$(pwd)"
+ls -la
+df -h
+EOF
+```
+
+### SSH 和 SCP 有什么区别？
+
+`ssh` 用于远程**命令执行和交互式 shell 访问**；`scp`（安全复制）用于**文件传输**，基于 SSH 协议实现加密传输。现代系统建议使用 `rsync`（支持增量同步）或 `sftp`（支持交互式文件管理）替代 `scp`，因为 `scp` 在某些发行版中已被标注为过时。
+
+### 如何使用 SSH 配置文件？
+
+SSH 配置文件位于 `~/.ssh/config`，用于为常用连接定义默认参数：
+
+```
+Host 别名
+    HostName 实际主机名或IP
+    User 用户名
+    Port 端口号（默认22）
+    IdentityFile 私钥路径
+```
+
+创建配置后，只需 `ssh 别名` 即可连接，无需记忆繁琐的参数。配置文件需要正确的权限：`chmod 600 ~/.ssh/config`。
+
+---
+
+## 需要 SSH 密钥？免费生成
+
+掌握了 SSH 命令，接下来需要一对 SSH 密钥来进行密钥认证。使用我们的在线工具，在浏览器中安全地生成 Ed25519 或 RSA 密钥对。
+
+<a href="/">免费生成 SSH 密钥</a>
+
+---
+
+## 相关文章
+
+- <a href="/zh-Hans/what-is-ssh">SSH 是什么？Secure Shell 安全外壳协议完整指南</a>
+- <a href="/zh-Hans/what-is-an-ssh-key">SSH 密钥是什么？公钥、私钥与密钥对完整说明</a>
+- <a href="/zh-Hans/how-to-set-up-ssh">如何设置 SSH：Linux、Mac 和 Windows 完整分步指南</a>

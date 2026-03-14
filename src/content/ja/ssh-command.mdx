@@ -1,0 +1,430 @@
+# SSHコマンド：Linux・Mac・Windows向け実例付き完全リファレンス
+
+`ssh` コマンドはコマンドラインからSSH接続を開始するための主要ツールです。リモートLinuxサーバーへのログイン、データベースアクセスのためのポートフォワーディング、踏み台ホスト経由での内部ネットワークへのアクセスなど、`ssh` コマンドはすべての入り口となります。本ガイドでは基本的な構文から高度なフラグ、トンネリング、ProxyJump設定まで、Linux・macOS・Windowsでの実例とともに解説します。
+
+SSHコマンドを実行する前にSSH鍵が必要です。<a href="/ja/what-is-an-ssh-key">SSH鍵とは何か</a>のガイドを参照するか、<a href="/">無料オンラインジェネレーター</a>で鍵ペアを作成してください。
+
+## SSHコマンドの構文
+
+`ssh` コマンドの基本構文は以下の通りです：
+
+```
+ssh [options] [user@]hostname [command]
+```
+
+各要素の説明：
+
+- **`[options]`** ― 動作を変更する0個以上のフラグ（本ガイドで順番に説明）
+- **`[user@]`** ― オプションのユーザー名。省略するとSSHは現在のローカルユーザー名を使用
+- **`hostname`** ― 接続先のリモートホスト。IPアドレス、ドメイン名、または `~/.ssh/config` で定義されたエイリアスを指定可能
+- **`[command]`** ― リモートホストで実行するオプションのコマンド。省略するとSSHはインタラクティブシェルセッションを開始
+
+**基本的な例：**
+
+```bash
+# 現在のユーザー名で接続
+ssh server.example.com
+
+# 特定のユーザーとして接続
+ssh alice@server.example.com
+
+# IPアドレスで接続
+ssh ubuntu@192.168.1.100
+
+# 単一コマンドを実行してすぐに切断
+ssh user@server.example.com "df -h"
+
+# コマンドを実行して接続を維持
+ssh user@server.example.com
+```
+
+## LinuxとmacOSでのSSH
+
+LinuxディストリビューションとmacOSには **OpenSSH** がプリインストールされています。Linuxでは `openssh-client` パッケージ（Debian/Ubuntu）または `openssh-clients`（RHEL/CentOS/Fedora）の一部です。macOSではシステムに組み込まれており、ターミナルやiTerm2からすぐに利用できます。
+
+### SSHが利用可能かを確認する
+
+```bash
+ssh -V
+# 出力例：OpenSSH_9.6p1, LibreSSL 3.3.6
+```
+
+### 基本的な接続
+
+```bash
+# サーバーに接続
+ssh user@myserver.example.com
+
+# 初回接続時、SSHは ~/.ssh/known_hosts を確認してプロンプトを表示：
+# The authenticity of host 'myserver.example.com' can't be established.
+# ED25519 key fingerprint is SHA256:abc123...
+# Are you sure you want to continue connecting (yes/no)? yes
+
+# ホストフィンガープリントが ~/.ssh/known_hosts に保存される
+```
+
+### 利便性のためにSSH設定ファイルを使用する
+
+毎回フル接続情報を入力する代わりに、`~/.ssh/config` を作成します：
+
+```
+Host myserver
+    HostName myserver.example.com
+    User alice
+    Port 22
+    IdentityFile ~/.ssh/id_ed25519
+
+Host dev
+    HostName dev.example.com
+    User ubuntu
+    Port 2222
+    IdentityFile ~/.ssh/id_ed25519_work
+```
+
+これで `ssh myserver` がフル接続に展開されます――フラグ不要です。
+
+## WindowsでのSSH（PowerShellとOpenSSH）
+
+Windows 10（バージョン1809）とWindows 11には **OpenSSHクライアント** がオプション機能として含まれており、PowerShell、コマンドプロンプト、Windowsターミナルで `ssh` コマンドを使用できます。
+
+### OpenSSHがインストールされているか確認する
+
+```powershell
+# PowerShellで
+ssh -V
+```
+
+コマンドが見つからない場合、インストールします：
+
+**設定から：**
+1. **設定 → アプリ → オプション機能** を開く
+2. **機能の追加** をクリック
+3. **OpenSSHクライアント** を見つけてインストール
+
+**PowerShell（管理者）から：**
+
+```powershell
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+```
+
+### PowerShellでSSHを使用する
+
+インストール後、構文はLinuxとmacOSと同一です：
+
+```powershell
+# サーバーに接続
+ssh user@server.example.com
+
+# カスタムポートで接続
+ssh -p 2222 user@server.example.com
+
+# 特定の鍵ファイルを使用
+ssh -i C:\Users\YourName\.ssh\id_ed25519 user@server.example.com
+```
+
+### WindowsのSSH鍵の場所
+
+WindowsのSSH鍵は `C:\Users\YourUsername\.ssh\` に保存されます。PowerShellは `~` をショートハンドとして認識します：
+
+```powershell
+# これらは同等
+ssh -i ~/.ssh/id_ed25519 user@server
+ssh -i C:\Users\YourUsername\.ssh\id_ed25519 user@server
+```
+
+### WindowsのPuTTY対OpenSSH
+
+WindowsでOpenSSHが利用可能になる以前、**PuTTY** が標準のSSHクライアントでした。PuTTYは独自の鍵形式（`.ppk` ファイル）と独自の鍵生成ツール（PuTTYgen）を使用します。`.ppk` 鍵を持っていて標準のOpenSSH形式に変換する必要がある場合：
+
+```bash
+# PuTTYツールを使用
+puttygen mykey.ppk -O private-openssh -o id_ed25519
+```
+
+新しいセットアップには、WindowsのビルトインOpenSSHクライアントを使用することをお勧めします――OpenSSHプロジェクトによって維持管理されており、LinuxとmacOSと同じ鍵形式と設定ファイルを使用します。
+
+## 鍵認証でSSHを使用する：-iフラグ
+
+デフォルトでは、SSHは `~/.ssh/` 内の標準的な名前の鍵ファイル（`id_ed25519`、`id_rsa`、`id_ecdsa`、`id_dsa`）を検索します。**`-i` フラグ**（アイデンティティファイル）を使用すると、異なる鍵ファイルを明示的に指定できます。
+
+```bash
+# 特定の鍵ファイルを使用
+ssh -i ~/.ssh/id_ed25519_production user@prod.example.com
+
+# 非標準の場所に保存された鍵を使用
+ssh -i /path/to/my/custom_key deploy@server.example.com
+
+# 他のオプションと組み合わせる
+ssh -i ~/.ssh/deploy_key -p 2222 -l deploy server.example.com
+```
+
+`-i` フラグが不可欠な場面：
+- 異なるサーバーや目的のために複数の鍵ペアがある場合
+- 鍵がデフォルトの `~/.ssh/` ディレクトリにない場合
+- CI/CD環境でパスが明示的に指定されている場合
+- AWSや他のクラウドプロバイダーから `.pem` 鍵をダウンロードした場合
+
+### AWS EC2の例
+
+AWSはEC2インスタンスを起動するとき `.pem` 鍵ファイルを提供します：
+
+```bash
+# .pem鍵でAWS EC2インスタンスに接続
+ssh -i ~/Downloads/my-aws-key.pem ec2-user@54.123.456.789
+
+# 必要に応じてパーミッションを修正（必須――SSHは全員が読めるキーを拒否する）
+chmod 400 ~/Downloads/my-aws-key.pem
+```
+
+## 必須SSHコマンドオプションとフラグ
+
+`ssh` コマンドには数十のオプションがあります。実際に使用するものを紹介します。
+
+| フラグ | 説明 | 例 |
+|---|---|---|
+| `-p PORT` | 非標準ポートで接続 | `ssh -p 2222 user@host` |
+| `-i FILE` | 特定のアイデンティティ（鍵）ファイルを使用 | `ssh -i ~/.ssh/mykey user@host` |
+| `-l USER` | ログインユーザー名を指定（`user@` の代替） | `ssh -l alice host` |
+| `-L local:host:remote` | ローカルポートフォワーディング | `ssh -L 8080:localhost:80 host` |
+| `-R remote:host:local` | リモートポートフォワーディング | `ssh -R 9090:localhost:3000 host` |
+| `-D port` | 動的（SOCKS）プロキシ | `ssh -D 1080 host` |
+| `-N` | リモートコマンドを実行しない（トンネリングのみ） | `ssh -N -L 3307:db:3306 host` |
+| `-f` | 認証後バックグラウンドに移行 | `ssh -f -N -D 1080 host` |
+| `-v` | 詳細（デバッグ）出力 | `ssh -v user@host` |
+| `-vv` または `-vvv` | より詳細な出力 | `ssh -vvv user@host` |
+| `-A` | SSHエージェント転送を有効化 | `ssh -A user@jump-host` |
+| `-X` | X11転送を有効化 | `ssh -X user@host xclock` |
+| `-C` | 圧縮を有効化 | `ssh -C user@host` |
+| `-T` | 仮想端末の割り当てを無効化 | `ssh -T git@github.com` |
+| `-q` | 静音モード（警告を抑制） | `ssh -q user@host` |
+| `-o OPTION=VALUE` | 設定オプションをインラインで設定 | `ssh -o StrictHostKeyChecking=no host` |
+| `-J JUMP` | 踏み台ホスト経由のProxyJump | `ssh -J jump.host user@internal` |
+| `-W host:port` | stdioをhost:portに転送（ProxyJump用） | `-J` が内部的に使用 |
+
+### デバッグのための詳細モード
+
+SSHが失敗するとき、`-v`（または `-vv`・`-vvv`）で正確に何が起きているかがわかります：
+
+```bash
+ssh -v user@server.example.com
+# 表示内容：どの鍵が試されているか、サーバーが受け入れる認証方式、
+# エージェントが関与しているか、どこで接続が失敗しているか
+
+ssh -vvv user@server.example.com
+# 最大詳細度――暗号ネゴシエーションの詳細を表示
+```
+
+### ホスト鍵チェックのバイパス（注意して使用）
+
+ホスト鍵検証が不便な自動化・テスト環境では：
+
+```bash
+ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null user@host
+```
+
+**本番環境ではこれを使用しないでください。** 中間者攻撃に対する保護が無効になります。代わりに、プロビジョニングスクリプトで `ssh-keyscan` を使用して `known_hosts` を事前に入力してください。
+
+### エージェント転送
+
+```bash
+# ローカルSSHエージェントをリモートサーバーに転送
+ssh -A user@jump-server
+
+# jump-serverからローカル鍵を使って内部ホストにSSHできる
+# 踏み台サーバーに秘密鍵をコピーする必要がない
+ssh internal-server.private
+```
+
+エージェント転送は便利ですがセキュリティ上の注意が必要です：中間サーバーのroot権限を持つ人なら誰でも転送されたエージェントを使用できます。信頼できるサーバーのみで使用し、可能な限り **ProxyJump** を優先してください（ProxyJumpは中間ホストにエージェントを公開しません）。
+
+## SSHトンネリングコマンド
+
+SSHトンネリングは暗号化されたSSHチャネル経由でTCP接続をルーティングします。トンネリングの背景については、<a href="/ja/what-is-ssh">SSHガイドのトンネリングセクション</a>をご覧ください。
+
+### ローカルポートフォワーディング
+
+リモートサービスをローカルマシンでアクセス可能にします。
+
+```bash
+# リモートMySQLデータベースにローカルポート3307でアクセス
+ssh -L 3307:localhost:3306 user@db-server.example.com -N
+
+# SSHホストからのみアクセス可能なリモートWebサーバーに接続
+ssh -L 8080:intranet.company.com:80 user@vpn.company.com -N
+
+# プライベートネットワーク上のRedisインスタンスにアクセス
+ssh -L 6380:10.0.1.50:6379 user@bastion.example.com -N
+```
+
+上記のいずれかを実行後、ローカルアプリケーションを `127.0.0.1:ローカルポート` に接続します。
+
+### リモートポートフォワーディング
+
+リモートサーバーでローカルサービスを公開します。
+
+```bash
+# ローカル開発サーバー（ポート3000）をリモートサーバーのポート9090に公開
+ssh -R 9090:localhost:3000 user@remote.example.com -N
+
+# リモートサーバーの任意のインターフェースが接続できるようにする（sshd_configでGatewayPorts yesが必要）
+ssh -R 0.0.0.0:9090:localhost:3000 user@remote.example.com -N
+```
+
+### 動的ポートフォワーディング（SOCKSプロキシ）
+
+```bash
+# ローカルポート1080にSOCKS5プロキシを作成し、バックグラウンドで実行
+ssh -D 1080 -N -f user@remote.example.com
+
+# ブラウザやシステムをSOCKS5プロキシ：127.0.0.1:1080に設定
+# すべてのトラフィックがリモートサーバー経由でルーティングされる
+```
+
+curlで使用するには：
+
+```bash
+curl --socks5 127.0.0.1:1080 https://api.example.com/
+```
+
+### バックグラウンドでトンネルを実行する
+
+```bash
+# -fはSSHをバックグラウンドに送る、-Nはリモートコマンドなしを意味する
+ssh -f -N -L 3307:localhost:3306 user@db-server
+
+# バックグラウンドのSSHプロセスを見つける
+ps aux | grep ssh
+
+# 終了させる
+kill PID
+```
+
+## SSH ProxyJumpと踏み台ホスト
+
+多くの組織では、本番サーバーはインターネットから直接アクセスできないプライベートネットワーク上にあります。**踏み台ホスト**（ジャンプホスト）はネットワーク境界上の堅牢化されたサーバーで、最初にそこにSSHしてから内部サーバーに移動します。`ssh -J` フラグ（ProxyJump、OpenSSH 7.3で追加）でこれをシームレスに行えます。
+
+### 基本的なProxyJump
+
+```bash
+# 1つの踏み台を経由して内部サーバーに到達
+ssh -J ec2-user@bastion.example.com ubuntu@10.0.1.50
+
+# 短縮形
+ssh -J user@jump-host user@internal-server
+```
+
+これにより2つのSSH接続が作成されます：まず踏み台へ、次に踏み台から内部サーバーへ――単一のコマンドで、エンドツーエンドの暗号化で。ローカルSSHエージェントが両方のホストへの認証を処理します。
+
+### 複数ジャンプの連鎖
+
+```bash
+# 2つの中間ホストを経由してジャンプ
+ssh -J user@jump1.example.com,user@jump2.example.com user@final-destination
+```
+
+### SSH設定ファイルでのProxyJump
+
+頻繁にアクセスするサーバーには、`~/.ssh/config` にProxyJump設定を記述します：
+
+```
+Host bastion
+    HostName bastion.example.com
+    User ec2-user
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host prod-web
+    HostName 10.0.1.100
+    User ubuntu
+    ProxyJump bastion
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host prod-db
+    HostName 10.0.2.50
+    User postgres
+    ProxyJump bastion
+    IdentityFile ~/.ssh/id_ed25519_aws
+```
+
+これで `ssh prod-web` が自動的に踏み台を経由して接続します。手動で `-J` フラグを指定する必要はありません。
+
+### ProxyJump対エージェント転送
+
+ProxyJumpはエージェント転送（`-A`）より優れています：
+- 秘密鍵が中間ホストに転送されることはない
+- 踏み台ホストがあなたの認証情報を他の場所での認証に使用できない
+- 接続はエンドツーエンドで認証される――目的地サーバーが直接あなたを確認する
+
+セットアップの詳細は、<a href="/ja/how-to-set-up-ssh">SSHのセットアップ方法</a>の完全なガイドをご覧ください。
+
+## よくある質問
+
+### パスワードなしでSSHコマンドを実行するには？
+
+SSH鍵認証をセットアップします。鍵ペアを生成し（`ssh-keygen -t ed25519`）、`ssh-copy-id user@host` を使用してサーバーの `~/.ssh/authorized_keys` ファイルに公開鍵をコピーすると、以降の接続ではパスワードを求めずに鍵を使用します。鍵にパスフレーズがある場合は、`ssh-agent` と `ssh-add` を使ってキャッシュすると、セッションごとに1回だけ入力すれば済みます。
+
+### SSHセッションを終了するには？
+
+`exit` と入力するか **Ctrl+D** を押してリモートシェルを閉じて切断します。セッションがフリーズしている場合（ネットワークが切れたなど）は、SSHエスケープシーケンスを使用します：**Enter** を押し、次に `~.`（チルダとピリオド）と入力します。SSHはただちに接続を終了します。他のエスケープシーケンス：`~^Z` でSSHをバックグラウンドに一時停止、`~?` ですべてのエスケープシーケンスを表示。
+
+### SSHでリモートサーバー上のコマンドを実行するには？
+
+ホスト名の後にコマンドを追加します：
+
+```bash
+ssh user@server "command to run"
+ssh user@server "ls -la /var/log/"
+ssh user@server "sudo systemctl status nginx"
+```
+
+複数行のコマンドやスクリプトにはヒアドキュメントを使用します：
+
+```bash
+ssh user@server << 'EOF'
+cd /var/www/html
+git pull origin main
+systemctl reload nginx
+EOF
+```
+
+インタラクティブなコマンド（端末を必要とするコマンドなど）には、仮想端末を割り当てるために `-t` フラグを追加します：`ssh -t user@server sudo apt upgrade`。
+
+### sshとscpの違いは何ですか？
+
+`ssh` はリモートマシンでターミナルセッションを開く（または単一コマンドを実行する）コマンドです。`scp`（セキュアコピープロトコル）は暗号化と認証にSSHを使用して、ローカルマシンとリモートマシン間、または2つのリモートマシン間でファイルをコピーします。どちらも同じSSHプロトコルと鍵インフラを使用します。ファイル転送には `scp` が専用ツールです：
+
+```bash
+# ローカルからリモートにscpでコピー
+scp file.txt user@server:/destination/path/
+
+# リモートからローカルにscpでコピー
+scp user@server:/remote/file.txt ./local-copy.txt
+```
+
+より高度なファイル転送（再帰的、再開可能、ディレクトリ閲覧）には `sftp` を使用します。大規模な転送には `rsync -avz -e ssh` がさらに効率的です。
+
+### 設定ファイルでSSHを使用するには？
+
+`~/.ssh/config` を作成してホストエントリを追加します。各 `Host` ブロックはフル設定付きの接続エイリアスを定義します：
+
+```
+Host alias-name
+    HostName actual.server.com
+    User username
+    Port 22
+    IdentityFile ~/.ssh/specific_key
+```
+
+`ssh alias-name` とすると、定義されたすべての設定が自動的に使用されます。設定ファイルはワイルドカードをサポートします：`Host *.example.com` はすべてのマッチするホストに設定を適用します。末尾の `Host *` はすべての接続にデフォルトを適用します。特定の `Host` ブロックのオプションはグローバルデフォルトを上書きします。
+
+## SSH鍵が必要ですか？無料で生成する
+
+パスワードの必要性をなくすSSH鍵認証を使用するには、鍵ペアが必要です。ブラウザ上で即座にEd25519またはRSA鍵を生成でき、サーバーに何も送信されません。
+
+<a href="/">SSH鍵を無料で生成する →</a>
+
+---
+
+**さらに詳しく：**
+- <a href="/ja/what-is-ssh">SSHとは何か？セキュアシェル完全ガイド</a>
+- <a href="/ja/what-is-an-ssh-key">SSH鍵とは？公開鍵・秘密鍵・鍵ペアを解説</a>
+- <a href="/ja/how-to-set-up-ssh">SSHのセットアップ方法：ステップバイステップ完全ガイド</a>

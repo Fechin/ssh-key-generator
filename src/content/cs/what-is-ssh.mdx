@@ -1,0 +1,283 @@
+# Co je SSH? Kompletní průvodce protokolem Secure Shell
+
+SSH, zkratka pro **Secure Shell**, je kryptografický síťový protokol umožňující bezpečný přístup ke vzdáleným počítačům a jejich správu přes nezabezpečenou síť. Ať už se přihlašujete na linuxový server, pushujete kód na GitHub nebo přenášíte soubory mezi stroji, SSH je s největší pravděpodobností protokol, který odvádí práci v zákulisí. Tento průvodce vysvětluje vše, co potřebujete o SSH vědět: co to je, jak to funguje a proč se stalo univerzálním standardem pro bezpečný vzdálený přístup.
+
+## Co SSH znamená?
+
+**SSH je zkratka pro Secure Shell**. Název přesně popisuje, co protokol dělá — poskytuje zabezpečenou, šifrovanou shellovou relaci na vzdáleném stroji. Před existencí SSH používali správci nástroje jako Telnet a rsh (remote shell) ke správě vzdálených serverů. Tyto protokoly přenášely vše v otevřeném textu, včetně uživatelských jmen a hesel, což umožňovalo triviální zachycení na jakékoli sdílené síti.
+
+SSH vytvořil finský informatik **Tatu Ylönen** v roce 1995, bezprostředně motivován útokem na čichání hesel, jehož byl svědkem ve své univerzitní síti. Vydal SSH-1 jako svobodný software, který byl rychle přijat napříč internetem. Protokol byl následně standardizován organizací IETF jako SSH-2 (RFC 4251–4254), který zavedl silnější kryptografii a opravil několik bezpečnostních slabin původního návrhu.
+
+Dnes, když lidé říkají „SSH", téměř vždy myslí SSH-2. Nejrozšířenější implementací je **OpenSSH**, open-source projekt spravovaný týmem OpenBSD, který je součástí prakticky každé linuxové distribuce a instalace macOS.
+
+**Praktický význam SSH** přesahuje roli pouhého přihlašovacího nástroje. Je to kompletní sada protokolů, která tvoří základ pro:
+- Bezpečný vzdálený přístup k terminálu
+- Šifrované přenosy souborů (SFTP a SCP)
+- Autentizaci Git (GitHub, GitLab, Bitbucket)
+- Bezpečné přesměrování portů a tunelování
+- Automatizované deployment pipeline
+
+## Jak SSH funguje
+
+**Protokol Secure Shell** funguje na vrstvené architektuře, která odděluje šifrování, autentizaci a multiplexování kanálů. Pochopení těchto vrstev pomáhá demystifikovat, proč SSH je důvěryhodný pro citlivé operace.
+
+### Tři protokolové vrstvy
+
+**1. Transportní vrstva (RFC 4253)**
+
+Při zahájení SSH spojení klient a server nejprve provedou handshake k vyjednání šifrovacích algoritmů a vytvoření sdíleného tajemství. Používá se algoritmus výměny klíčů — moderní SSH standardně využívá výměnu klíčů na bázi Curve25519. Po handshaku je veškerá následná komunikace šifrována. Transportní vrstva také zajišťuje integritu dat pomocí kódů pro ověřování zpráv (MAC), čímž zabraňuje neoprávněné úpravě dat při přenosu.
+
+**2. Vrstva autentizace uživatele (RFC 4252)**
+
+Jakmile je šifrovaný kanál vytvořen, server vyzve klienta k autentizaci. SSH podporuje více metod autentizace:
+
+- **Autentizace veřejným klíčem** — Klient prokáže vlastnictví soukromého klíče, aniž by ho kdy odeslal po síti. Jedná se o nejbezpečnější a nejběžnější metodu.
+- **Autentizace heslem** — Heslo uživatele je odesíláno přes šifrovaný kanál. Pohodlnější, ale zranitelné vůči útokům hrubou silou.
+- **Keyboard-interactive** — Mechanismus výzva/odpověď, často používaný pro vícefaktorovou autentizaci.
+- **GSSAPI/Kerberos** — Používá se v podnikových prostředích s centralizovanou správou identit.
+
+**3. Vrstva připojení (RFC 4254)**
+
+Po autentizaci multiplexuje vrstva připojení jediné šifrované spojení do více logických kanálů. To umožňuje mít interaktivní shell, spouštět vzdálené příkazy, přesměrovávat porty a přenášet soubory, vše přes jedno TCP spojení.
+
+### Výměna klíčů v detailu
+
+Když napíšete `ssh user@example.com`, v prvních několika milisekundách se odehraje toto:
+
+1. Klient se připojí k portu TCP 22 na serveru.
+2. Obě strany si vymění řetězce verze protokolu.
+3. Obě strany odešlou seznamy podporovaných algoritmů (výměna klíčů, šifry, MAC, komprese).
+4. Provedou výměnu klíčů Diffie-Hellman nebo ECDH k odvození sdíleného klíče relace — proto i když někdo zaznamená šifrovaný provoz, nemůže ho později dešifrovat.
+5. Server odešle svůj **hostitelský klíč** (veřejný klíč), který klient ověří vůči souboru `~/.ssh/known_hosts`.
+6. Autentizace probíhá, jak je popsáno výše.
+7. Relace začíná.
+
+## SSH vs Telnet: Proč SSH zvítězil
+
+Před SSH byl **Telnet** standardním protokolem pro vzdálený přístup k terminálu. Telnet je jednoduchý a stále funguje, ale má jednu fatální vadu: vše se přenáší v otevřeném textu. Vaše uživatelské jméno, heslo, každý příkaz, který napíšete, a každý kousek výstupu — vše je viditelné komukoli, kdo může zachytit síťový provoz.
+
+V 90. letech, kdy byl páteřní internet důvěryhodnou akademickou a výzkumnou sítí, to nebylo považováno za vážný problém. Jak se internet stal komerčním a nepřátelským prostředím, nástroje jako Dsniff a Ettercap umožnily triviálně zachytit přihlašovací údaje Telnetu v místních sítích.
+
+SSH to vyřešilo šifrováním všeho. Zde je přímé srovnání:
+
+| Funkce | Telnet | SSH |
+|---|---|---|
+| Šifrování | Žádné | Silné (AES, ChaCha20) |
+| Autentizace | Heslo v otevřeném textu | Veřejný klíč + šifrované heslo |
+| Integrita dat | Žádná | Ověření HMAC |
+| Port | 23 | 22 |
+| Stále doporučeno | Ne | Ano |
+
+rsh (remote shell) a rlogin měly podobné problémy. Spoléhaly také na důvěru na základě IP, kterou lze triviálně zfalšovat. SSH nahradilo všechny tyto protokoly a zůstalo nesporným standardem po více než 25 let.
+
+## Co je SSH klíč?
+
+SSH podporuje dvě primární metody autentizace: hesla a **SSH klíče**. SSH klíče jsou kryptografické páry klíčů — **veřejný klíč** a **soukromý klíč** — založené na asymetrické kryptografii.
+
+**Soukromý klíč** zůstává na vašem lokálním stroji, chráněn volitelným heslem (passphrase). **Veřejný klíč** je umístěn na libovolném serveru, ke kterému chcete přistupovat, do souboru `~/.ssh/authorized_keys`. Při připojení server vydá kryptografickou výzvu, na kterou může odpovědět pouze držitel odpovídajícího soukromého klíče. Žádné heslo není odesíláno po síti.
+
+Tento přístup má několik výhod:
+- **Imunní vůči útokům hrubou silou** — není co hádat. 256bitový Ed25519 klíč má 2²⁵⁶ možných hodnot.
+- **Žádné heslo ke krádeži** — i když někdo zachytí handshake, nezíská nic užitečného.
+- **Automatizovatelné** — skripty a CI/CD pipeline se mohou autentizovat bez lidské interakce.
+- **Odvolatelné** — odebrání veřejného klíče z `authorized_keys` okamžitě odvolá přístup.
+
+Nejmodernějším a doporučeným typem klíče je **Ed25519**, který používá kryptografii na eliptických křivkách nad Edwardsovou křivkou. RSA klíče jsou také široce podporovány, ačkoli byste měli používat alespoň 4096 bitů.
+
+Podrobný průvodce páry klíčů najdete v našem průvodci <a href="/cs/what-is-an-ssh-key">co je SSH klíč</a>.
+
+## Běžné případy použití SSH
+
+SSH se používá v pozoruhodně širokém spektru scénářů. Zde jsou ty nejdůležitější.
+
+### Vzdálená správa serveru
+
+Nejzákladnější případ použití. Systémoví administrátoři se přihlašují na linuxové a unixové servery pro instalaci softwaru, úpravu konfiguračních souborů, správu služeb a diagnostiku problémů — vše prostřednictvím SSH relace terminálu.
+
+```bash
+ssh user@192.168.1.100
+ssh admin@myserver.example.com
+ssh -p 2222 deploy@staging.example.com
+```
+
+### Přenos souborů pomocí SFTP a SCP
+
+SSH poskytuje dva protokoly pro přenos souborů postavené na stejném šifrovaném kanálu:
+
+**SCP (Secure Copy Protocol)** je jednoduchý nástroj příkazové řádky pro kopírování souborů:
+
+```bash
+# Kopírování lokálního souboru na vzdálený server
+scp report.pdf user@server:/home/user/documents/
+
+# Kopírování vzdáleného souboru na lokální stroj
+scp user@server:/var/log/app.log ./local-copy.log
+
+# Rekurzivní kopírování celého adresáře
+scp -r ./project/ user@server:/var/www/
+```
+
+**SFTP (SSH File Transfer Protocol)** poskytuje interaktivní rozhraní podobné FTP s bohatší sadou funkcí než SCP, včetně obnovitelných přenosů a výpisů adresářů.
+
+### Autentizace Git
+
+Když přidáte SSH klíč na GitHub, GitLab nebo Bitbucket, každý `git clone`, `git push` a `git pull` přes SSH je autentizován pomocí vašeho soukromého klíče. Tím odpadá nutnost zadávat uživatelské jméno a heslo při každé Git operaci a jedná se o doporučenou metodu autentizace pro vývojáře.
+
+```bash
+# Klonování repozitáře pomocí SSH
+git clone git@github.com:username/repository.git
+
+# Ověření SSH připojení k GitHubu
+ssh -T git@github.com
+```
+
+### Automatizované nasazení a CI/CD
+
+Deployment skripty a CI/CD systémy jako GitHub Actions, GitLab CI a Jenkins používají SSH klíče k nasazení kódu na produkční servery bez lidského zásahu. Soukromý klíč je uložen jako tajný klíč (secret) v CI systému a odpovídající veřejný klíč je přidán do souboru `authorized_keys` na serveru.
+
+### Přesměrování portů pro databáze a aplikace
+
+SSH tunelování může bezpečně zpřístupnit vzdálené služby na vašem lokálním stroji. Například pro přístup ke vzdálené MySQL databázi, která není vystavena internetu:
+
+```bash
+ssh -L 3307:localhost:3306 user@dbserver.example.com -N
+```
+
+Tím se vytvoří lokální tunel: připojení na port 3307 vašeho stroje transparentně přesměruje provoz na port 3306 vzdáleného serveru, šifrovaný v SSH tunelu.
+
+## Port SSH a možnosti konfigurace
+
+### Výchozí port 22
+
+SSH ve výchozím nastavení naslouchá na **TCP portu 22**. Jedná se o dobře známý port přidělený IANA, který byl vyhrazen pro SSH od vzniku protokolu. Když spustíte `ssh user@host` bez zadání portu, SSH klient se připojí na port 22.
+
+Někteří administrátoři mění SSH port (např. na 2222 nebo 8022) jako menší bezpečnostní opatření ke snížení šumu automatického skenování v logu. Toto se nazývá „bezpečnost skrze neznámost" a nenahrazuje řádnou autentizaci pomocí klíčů, ale může snížit zaplnění logů.
+
+```bash
+# Připojení na nestandardní SSH port
+ssh -p 2222 user@example.com
+```
+
+### Konfigurační soubor SSH klienta
+
+Místo opakovaného zadávání dlouhých možností příkazové řádky můžete nakonfigurovat SSH připojení v `~/.ssh/config`. Tento soubor vám umožňuje definovat aliasy, nastavit možnosti pro každý host a výrazně zjednodušit pracovní postup.
+
+```
+Host myserver
+    HostName 203.0.113.10
+    User deploy
+    Port 2222
+    IdentityFile ~/.ssh/id_ed25519_prod
+
+Host bastion
+    HostName jump.example.com
+    User ec2-user
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host internal
+    HostName 10.0.1.50
+    User ubuntu
+    ProxyJump bastion
+```
+
+S touto konfigurací se `ssh myserver` připojí k plnému hostname na vlastním portu pomocí zadaného klíče — žádné příznaky nejsou potřeba.
+
+Kompletní přehled voleb a příznaků příkazu SSH najdete v našem <a href="/cs/ssh-command">průvodci příkazem SSH</a>.
+
+### Konfigurace na straně serveru (sshd_config)
+
+SSH serverový démon (sshd) je konfigurován přes `/etc/ssh/sshd_config`. Klíčová nastavení zahrnují:
+
+```
+# Zakázat autentizaci heslem — pouze klíče
+ PasswordAuthentication no
+
+# Zakázat přihlášení jako root
+ PermitRootLogin no
+
+# Změnit naslouchající port
+Port 2222
+
+# Omezit na konkrétní uživatele
+AllowUsers deploy admin
+
+# Povolit autentizaci veřejným klíčem
+PubkeyAuthentication yes
+```
+
+Po úpravě znovu načtěte démona: `sudo systemctl reload sshd`
+
+## SSH tunelování
+
+SSH tunelování (také nazývané přesměrování portů SSH) umožňuje směrovat libovolný TCP provoz přes šifrované SSH spojení. Je to jedna z nejmocnějších a nejméně využívaných funkcí SSH.
+
+### Přesměrování lokálního portu
+
+Lokální přesměrování zpřístupní vzdálenou službu na vašem lokálním stroji. Syntaxe je `-L lokální_port:vzdálený_host:vzdálený_port`.
+
+```bash
+# Lokální přístup ke vzdálené PostgreSQL databázi
+ssh -L 5433:localhost:5432 user@dbserver -N
+
+# Přístup k interní webové aplikaci přes jump server
+ssh -L 8080:internal-app.company.com:80 user@jump.company.com -N
+```
+
+Příznak `-N` říká SSH, aby nespouštěl vzdálený příkaz — užitečné, když chcete pouze tunel.
+
+### Přesměrování vzdáleného portu
+
+Vzdálené přesměrování zpřístupní lokální službu na vzdáleném serveru. Syntaxe je `-R vzdálený_port:lokální_host:lokální_port`.
+
+```bash
+# Zpřístupnění lokálního webového serveru vzdálenému stroji
+ssh -R 9090:localhost:3000 user@server -N
+```
+
+Toto je užitečné pro dočasné sdílení lokálního vývojového serveru s kolegou, který má přístup ke vzdálenému hostu, nebo pro poskytnutí dočasného přístupu klientovi k vaší práci.
+
+### Dynamické přesměrování portů (SOCKS proxy)
+
+Příznak `-D` vytvoří SOCKS proxy na vašem lokálním stroji, která směruje veškerý SOCKS-kompatibilní provoz přes SSH spojení. Vzdálený server tak efektivně slouží jako výstupní uzel VPN.
+
+```bash
+# Vytvoření SOCKS5 proxy na lokálním portu 1080
+ssh -D 1080 user@remote-server -N -f
+```
+
+Nastavte prohlížeč nebo systém tak, aby používal `SOCKS5 proxy: 127.0.0.1:1080` a veškerý webový provoz bude směrován přes vzdálený server. Toto se často používá pro přístup k geograficky omezenému obsahu nebo pro bezpečné procházení z nedůvěryhodné sítě.
+
+## Často kladené otázky
+
+### Co SSH znamená?
+
+SSH je zkratka pro **Secure Shell**. Je to kryptografický síťový protokol pro bezpečný provoz síťových služeb přes nezabezpečenou síť. Název odkazuje na jeho primární případ použití: poskytování bezpečné interaktivní shellové relace na vzdáleném počítači.
+
+### Je SSH totéž co SSL?
+
+Ne. SSH a SSL/TLS jsou oba kryptografické protokoly, ale slouží různým účelům. **SSL/TLS** (Secure Sockets Layer / Transport Layer Security) se používá k zabezpečení webového provozu (HTTPS), e-mailu a dalších aplikačních protokolů. **SSH** je speciálně navrženo pro bezpečný vzdálený přístup k shellu, přenos souborů a tunelování. Používají podobné kryptografické primitiva (kryptografie s veřejným klíčem, symetrické šifrování), ale mají různé mechanismy handshaku a případy použití. SSH interně nepoužívá SSL/TLS.
+
+### Jaký port SSH používá?
+
+SSH ve výchozím nastavení používá **TCP port 22**. Jedná se o dobře známý port přidělený IANA. SSH server můžete nakonfigurovat tak, aby naslouchal na jiném portu pomocí direktivy `Port` v `/etc/ssh/sshd_config`, a připojovat se na nestandardní porty pomocí `ssh -p PORT user@host`.
+
+### Může být SSH hackováno?
+
+Správně nakonfigurovaný SSH server s autentizací pomocí klíčů je extrémně obtížné kompromitovat. Kryptografie — Ed25519 klíče, šifrování AES-256, SHA-2 MAC — je považována za odolnou vůči kvantovým počítačům pro autentizaci klíčů a výpočetně neproveditelnou pro útoky hrubou silou. Skutečné kompromitace SSH obvykle zahrnují: odcizené soubory soukromých klíčů, slabá hesla passphrase, špatně nakonfigurované servery umožňující autentizaci heslem se slabými hesly, zranitelné verze softwaru s neopravenými CVE, nebo sociální inženýrství spíše než kryptografické útoky. Udržujte server aktualizovaný, zakažte autentizaci heslem a chraňte svůj soubor soukromého klíče.
+
+### Jaký je rozdíl mezi SSH a HTTPS?
+
+SSH i HTTPS šifrují síťový provoz, ale jsou navrženy pro různé účely. **HTTPS** zabezpečuje prohlížení webu — používá TLS k šifrování HTTP požadavků a odpovědí mezi prohlížeči a webovými servery. **SSH** zabezpečuje vzdálený administrativní přístup, přenosy souborů a tunelování. Když pushujete kód na GitHub, můžete použít buď SSH (port 22, autentizace pomocí klíče) nebo HTTPS (port 443, autentizace pomocí tokenu). SSH je obecně preferováno vývojáři, protože nevyžaduje opětovné zadávání přihlašovacích údajů. HTTPS je univerzálně podporováno přes firewally, které mohou blokovat port 22.
+
+## Vygenerujte si SSH klíče nyní
+
+Autentizace SSH pomocí klíčů je bezpečnější a pohodlnější než hesla. Pokud jste si ještě nenastavili SSH klíče, náš bezplatný online generátor vytvoří páry klíčů Ed25519 nebo RSA okamžitě ve vašem prohlížeči — není nutná žádná instalace, nic se neodesílá na naše servery.
+
+<a href="/">Vygenerujte si pár SSH klíčů nyní →</a>
+
+---
+
+**Další čtení:**
+- <a href="/cs/what-is-an-ssh-key">Co je SSH klíč? Veřejné klíče, soukromé klíče a páry klíčů vysvětleny</a>
+- <a href="/cs/ssh-command">Příkaz SSH: Kompletní přehled s příklady</a>
+- <a href="/cs/how-to-set-up-ssh">Jak nastavit SSH: Kompletní průvodce krok za krokem</a>

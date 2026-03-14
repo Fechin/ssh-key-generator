@@ -1,0 +1,337 @@
+# SSH Key Là Gì? Khóa Công Khai, Khóa Riêng Tư và Cặp Khóa Được Giải Thích
+
+**SSH key** là thông tin xác thực mật mã dùng để xác thực với SSH server mà không cần mật khẩu. SSH key đi theo cặp — **khóa công khai** và **khóa riêng tư** — và cùng nhau làm cho truy cập từ xa an toàn hơn và tiện lợi hơn so với xác thực mật khẩu truyền thống. Hướng dẫn này giải thích SSH key là gì, hệ thống cặp khóa hoạt động như thế nào, chọn loại khóa nào và cách sử dụng SSH key với các dịch vụ như GitHub và GitLab.
+
+## SSH Key Hoạt Động Như Thế Nào
+
+SSH key dựa trên **mật mã học bất đối xứng**, còn gọi là mật mã học khóa công khai. Khác với mật mã học đối xứng (nơi một khóa bí mật duy nhất vừa mã hóa vừa giải mã dữ liệu), các hệ thống bất đối xứng dùng cặp khóa liên kết về mặt toán học trong đó dữ liệu được mã hóa bằng một khóa chỉ có thể giải mã bằng khóa kia.
+
+Đây là luồng xác thực khi bạn dùng SSH key để đăng nhập vào server:
+
+1. Bạn chạy `ssh user@server.example.com`.
+2. Server tra cứu khóa công khai của bạn trong `~/.ssh/authorized_keys`.
+3. Server tạo một thử thách ngẫu nhiên và mã hóa nó bằng khóa công khai của bạn.
+4. SSH client của bạn giải mã thử thách bằng khóa riêng tư của bạn.
+5. Client gửi bằng chứng mật mã (được tạo từ thử thách đã giải mã và ID phiên) trở lại server.
+6. Server xác minh bằng chứng. Chỉ người sở hữu khóa riêng tư mới có thể tạo ra nó.
+7. Xác thực thành công. Không có mật khẩu nào rời khỏi máy của bạn.
+
+Đây là điểm mấu chốt: **khóa riêng tư của bạn không bao giờ đi qua mạng**. Server chỉ thấy khóa công khai của bạn và các bằng chứng mật mã bạn tạo ra. Ngay cả khi ai đó chặn mọi gói tin trong phiên SSH của bạn, họ không thu được gì giúp họ mạo danh bạn.
+
+Để tìm hiểu nền tảng về giao thức SSH rộng hơn, xem hướng dẫn của chúng tôi về <a href="/vi/what-is-ssh">SSH là gì</a>.
+
+## Khóa Công Khai vs. Khóa Riêng Tư: Sự Khác Biệt Là Gì?
+
+Hiểu sự khác biệt giữa hai khóa là điều cần thiết để sử dụng SSH đúng cách.
+
+### Khóa Công Khai — Ổ Khóa Của Bạn
+
+**Khóa công khai** được thiết kế để chia sẻ tự do. Hãy coi nó như ổ khóa: bạn phân phát bản sao cho tất cả những người có hệ thống bạn muốn truy cập. Khi server có khóa công khai của bạn trong file `authorized_keys`, server có thể xác minh danh tính của bạn mà không cần biết khóa riêng tư của bạn.
+
+Khóa công khai:
+- An toàn để chia sẻ — không thể dùng để mạo danh bạn
+- Được đặt trên server trong `~/.ssh/authorized_keys`
+- Được tải lên GitHub, GitLab và các dịch vụ khác
+- Thường có phần mở rộng `.pub` (ví dụ `id_ed25519.pub`)
+- Trông như: `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAA... user@hostname`
+
+### Khóa Riêng Tư — Chìa Khóa Của Bạn
+
+**Khóa riêng tư** là phần bí mật của cặp. Nó không bao giờ được rời khỏi máy của bạn và không bao giờ được chia sẻ với bất kỳ ai — kể cả quản trị viên, nhà cung cấp đám mây hay nhân viên hỗ trợ. Nếu khóa riêng tư của bạn bị xâm phạm, bất kỳ ai có được nó đều có thể mạo danh bạn trên mọi server nơi khóa công khai của bạn được cài đặt.
+
+Khóa riêng tư:
+- Phải được giữ bí mật và an toàn
+- Được lưu trữ cục bộ trong `~/.ssh/` với quyền hạn chế (600)
+- Tùy chọn được mã hóa bằng passphrase
+- Không có phần mở rộng hoặc có phần mở rộng cụ thể (ví dụ `id_ed25519`)
+
+### File `authorized_keys`
+
+Ở phía server, khóa công khai của mỗi người dùng được lưu trong `~/.ssh/authorized_keys`. Đây là file văn bản thuần túy trong đó mỗi dòng chứa một khóa công khai. Khi SSH client cố xác thực, server kiểm tra xem client có thể chứng minh sở hữu khóa riêng tư tương ứng với bất kỳ mục nào trong file này không.
+
+```
+# Định dạng ~/.ssh/authorized_keys
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGq... alice@laptop
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHr... alice@workstation
+ssh-rsa AAAAB3NzaC1yc2EAAAA... backup-deploy-key
+```
+
+Bạn có thể có nhiều khóa công khai tùy ý trong file này, cho phép nhiều thiết bị hoặc hệ thống tự động hóa xác thực với cùng một server.
+
+## Thuật Toán SSH Key: Ed25519 vs RSA
+
+Khi bạn tạo cặp SSH key, bạn chọn một thuật toán. Hai lựa chọn phổ biến nhất hiện nay là **Ed25519** và **RSA**. Cũng có ECDSA và DSA, nhưng DSA đã bị deprecated và ECDSA có cạm bẫy triển khai, vì vậy chúng ta sẽ tập trung vào hai tùy chọn được khuyến nghị.
+
+### Ed25519 — Lựa Chọn Hiện Đại
+
+Ed25519 được giới thiệu vào OpenSSH phiên bản 6.5 (2014) và hiện là mặc định được khuyến nghị. Nó sử dụng mật mã học đường cong elliptic trên đường cong Twisted Edwards (Curve25519), được thiết kế bởi Daniel J. Bernstein.
+
+**Ưu điểm của Ed25519:**
+- **Nhỏ gọn** — khóa chỉ 68 ký tự (khóa công khai) và tệp rất nhỏ
+- **Nhanh** — tạo và xác minh chữ ký cực kỳ nhanh
+- **Bảo mật theo thiết kế** — không dễ bị tấn công side-channel ảnh hưởng đến một số triển khai RSA
+- **Kích thước khóa cố định** — mức bảo mật 256-bit, không cần chọn kích thước khóa
+- **Xác định** — chữ ký mang tính xác định, loại bỏ một lớp lỗi của bộ tạo số ngẫu nhiên
+
+```bash
+# Tạo cặp khóa Ed25519
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+### RSA — Tùy Chọn Phổ Quát
+
+RSA là thuật toán cũ hơn (phát minh năm 1977), và mặc dù vẫn an toàn ở 4096 bit, nhưng chậm hơn và tạo ra khóa lớn hơn Ed25519. Tuy nhiên, RSA có tính tương thích rộng hơn nhiều — hoạt động với các SSH server rất cũ, hệ thống kế thừa và một số khóa bảo mật phần cứng.
+
+**Khi nào dùng RSA:**
+- Bạn cần kết nối với các hệ thống kế thừa chạy phiên bản OpenSSH cũ (trước 6.5)
+- Bạn đang dùng smartcard hoặc HSM không hỗ trợ Ed25519
+- Cần tương thích với các công cụ cũ hơn
+
+```bash
+# Tạo cặp khóa RSA 4096-bit
+ssh-keygen -t rsa -b 4096 -C "your@email.com"
+```
+
+**Không bao giờ dùng RSA với ít hơn 4096 bit.** RSA-1024 và RSA-2048 ngày càng được coi là không đủ khi sức mạnh tính toán tăng lên. Ed25519 ở 256 bit cung cấp bảo mật tương đương hoặc tốt hơn với phần nhỏ của kích thước khóa.
+
+### Bảng So Sánh Tóm Tắt
+
+| Tính năng | Ed25519 | RSA 4096 |
+|---|---|---|
+| Kích thước khóa (công khai) | ~68 ký tự | ~725 ký tự |
+| Mức bảo mật | 128-bit (cấu trúc kháng hậu lượng tử) | ~140-bit cổ điển |
+| Tốc độ | Rất nhanh | Chậm hơn |
+| Tính tương thích | SSH hiện đại (OpenSSH 6.5+) | Phổ quát |
+| Khuyến nghị cho | Tất cả khóa mới | Chỉ hệ thống kế thừa |
+
+**Kết luận: tạo khóa Ed25519 cho mọi trường hợp sử dụng hiện đại.** Chỉ dùng RSA khi bị buộc bởi yêu cầu tương thích.
+
+## Cách Thêm SSH Key vào GitHub
+
+Thêm khóa công khai SSH vào GitHub cho phép bạn push và pull qua SSH mà không cần nhập tên người dùng và mật khẩu ở mỗi thao tác. Đây là quy trình từng bước.
+
+### Bước 1: Tạo Cặp Khóa Của Bạn
+
+Nếu bạn chưa có cặp SSH key, hãy tạo một cái. Bạn có thể dùng <a href="/">trình tạo SSH key trực tuyến miễn phí</a> của chúng tôi hoặc chạy:
+
+```bash
+ssh-keygen -t ed25519 -C "your-github-email@example.com"
+```
+
+Chấp nhận vị trí file mặc định (`~/.ssh/id_ed25519`) và tùy chọn đặt passphrase.
+
+### Bước 2: Sao Chép Khóa Công Khai Của Bạn
+
+Hiển thị khóa công khai và sao chép vào clipboard:
+
+```bash
+# Linux
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+
+# macOS
+cat ~/.ssh/id_ed25519.pub | pbcopy
+
+# Windows (PowerShell)
+Get-Content ~/.ssh/id_ed25519.pub | Set-Clipboard
+```
+
+Hoặc chỉ hiển thị và sao chép thủ công:
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+### Bước 3: Thêm Khóa vào GitHub
+
+1. Đăng nhập vào **GitHub.com**
+2. Nhấp ảnh đại diện → **Settings**
+3. Trong thanh bên trái, nhấp **SSH and GPG keys**
+4. Nhấp **New SSH key**
+5. Đặt tiêu đề mô tả (ví dụ "MacBook Pro 2024" hoặc "Laptop Công Việc")
+6. Dán khóa công khai vào trường **Key**
+7. Nhấp **Add SSH key**
+
+### Bước 4: Kiểm Tra Kết Nối
+
+```bash
+ssh -T git@github.com
+```
+
+Bạn sẽ thấy: `Hi username! You've successfully authenticated, but GitHub does not provide shell access.`
+
+### Chuyển Đổi Repository Hiện Có sang SSH
+
+Nếu bạn đã clone repository dùng HTTPS và muốn chuyển sang SSH:
+
+```bash
+# Kiểm tra URL remote hiện tại
+git remote -v
+
+# Cập nhật sang SSH
+git remote set-url origin git@github.com:username/repository.git
+```
+
+Đối với GitLab, quy trình hoàn toàn giống nhau — điều hướng đến **Preferences → SSH Keys** và làm theo các bước tương tự.
+
+## SSH Key Được Lưu Ở Đâu?
+
+SSH key được lưu trong thư mục tên `.ssh` trong thư mục home của người dùng. Vị trí thay đổi tùy theo hệ điều hành.
+
+### Linux và macOS
+
+```
+~/.ssh/
+├── id_ed25519          # Khóa riêng tư của bạn (quyền: 600)
+├── id_ed25519.pub      # Khóa công khai của bạn (quyền: 644)
+├── id_rsa              # Khóa riêng tư RSA (nếu có)
+├── id_rsa.pub          # Khóa công khai RSA
+├── authorized_keys     # Khóa công khai được phép đăng nhập vào máy này
+├── known_hosts         # Dấu vân tay của server bạn đã kết nối
+└── config              # File cấu hình client
+```
+
+Thư mục `~/.ssh/` phải có quyền **700** (chỉ chủ sở hữu đọc/ghi/thực thi). File khóa riêng tư phải có quyền **600** (chỉ chủ sở hữu đọc/ghi). SSH sẽ từ chối sử dụng khóa có quyền quá rộng.
+
+```bash
+# Sửa quyền nếu cần
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/id_ed25519
+chmod 644 ~/.ssh/id_ed25519.pub
+```
+
+### Windows
+
+Trên Windows 10 và 11 có OpenSSH được cài đặt, SSH key được lưu tại:
+
+```
+C:\Users\YourUsername\.ssh\
+├── id_ed25519
+├── id_ed25519.pub
+├── authorized_keys
+├── known_hosts
+└── config
+```
+
+Trên Windows, bạn có thể truy cập thư mục `.ssh` từ File Explorer (có thể cần bật "Hiển thị tệp ẩn") hoặc từ PowerShell dùng `~\.ssh\`.
+
+### Nhiều File Khóa
+
+Nếu bạn có khóa cho các mục đích khác nhau (GitHub cá nhân, GitLab công việc, server sản xuất), dùng file `~/.ssh/config` để ánh xạ mỗi host với khóa của nó:
+
+```
+Host github.com
+    IdentityFile ~/.ssh/id_ed25519_github
+
+Host gitlab.work.com
+    IdentityFile ~/.ssh/id_ed25519_work
+
+Host prod-server
+    HostName 203.0.113.10
+    User deploy
+    IdentityFile ~/.ssh/id_ed25519_production
+```
+
+## Passphrase của SSH Key
+
+Khi bạn tạo cặp SSH key, `ssh-keygen` hỏi bạn có muốn đặt **passphrase** không. Đây là mật khẩu tùy chọn mã hóa file khóa riêng tư trên đĩa.
+
+### Tại Sao Dùng Passphrase?
+
+Nếu file khóa riêng tư của bạn được bảo vệ bằng passphrase mạnh, việc đánh cắp file không đủ để mạo danh bạn — kẻ tấn công cũng cần phải bẻ khóa passphrase. Điều này cung cấp một lớp bảo mật thứ hai quan trọng, đặc biệt trên laptop có thể bị đánh cắp vật lý.
+
+Không có passphrase, khóa riêng tư của bạn được lưu trữ ở dạng văn bản thuần túy trên đĩa. Bất kỳ ai có thể đọc file (qua phần mềm độc hại, truy cập vật lý hoặc bản sao lưu không được bảo mật đúng cách) đều có thể dùng ngay lập tức.
+
+### Cách Passphrase Tương Tác với ssh-agent
+
+Nhược điểm của passphrase là phải gõ mỗi khi dùng khóa. **ssh-agent** giải quyết điều này bằng cách giữ các khóa đã giải mã trong bộ nhớ trong suốt phiên làm việc.
+
+```bash
+# Khởi động ssh-agent và thêm khóa của bạn
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+# Nhập passphrase một lần — được cache cho phiên này
+```
+
+Trên macOS, Keychain hệ thống tích hợp với ssh-agent. Thêm `-K` để duy trì sau khi khởi động lại:
+
+```bash
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+```
+
+### Thay Đổi Passphrase
+
+Bạn có thể thay đổi passphrase trên khóa hiện có mà không cần tạo lại cặp khóa:
+
+```bash
+ssh-keygen -p -f ~/.ssh/id_ed25519
+```
+
+Lệnh này hỏi passphrase cũ, sau đó để bạn đặt passphrase mới. Khóa công khai không thay đổi, vì vậy bạn không cần cập nhật nó trên bất kỳ server nào.
+
+## Dấu Vân Tay SSH Key
+
+Mỗi cặp SSH key có **dấu vân tay** — hash ngắn của khóa công khai giúp nhận dạng duy nhất. Dấu vân tay phục vụ một số mục đích:
+
+- **Xác minh danh tính host** — Khi bạn kết nối lần đầu đến server, SSH hiển thị dấu vân tay của host key. Nếu bạn xác nhận nó khớp với những gì bạn mong đợi (ví dụ được nhà cung cấp hosting cung cấp), bạn biết mình đang kết nối đúng server.
+- **Nhận dạng khóa** — Khi quản lý nhiều khóa, dấu vân tay giúp bạn xác định khóa vật lý nào tương ứng với mục nào trong `authorized_keys` hoặc trên một dịch vụ như GitHub.
+- **Kiểm toán và thu hồi** — Log kiểm toán thường ghi dấu vân tay thay vì khóa đầy đủ. Biết dấu vân tay của khóa giúp bạn tìm và xóa nó nếu cần.
+
+### Xem Dấu Vân Tay Của Khóa
+
+```bash
+# Xem dấu vân tay của khóa công khai của bạn
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+# Output: 256 SHA256:abcdef1234567890... your@email.com (ED25519)
+
+# Xem dấu vân tay của host key server
+ssh-keyscan server.example.com | ssh-keygen -lf -
+```
+
+GitHub hiển thị dấu vân tay của tất cả SSH key được thêm vào trong **Settings → SSH and GPG keys**, cho phép bạn xác minh rằng khóa bạn thấy ở đó khớp với khóa trên máy của bạn.
+
+### File `known_hosts`
+
+Lần đầu tiên bạn kết nối đến SSH server mới, bạn thấy thông báo như:
+
+```
+The authenticity of host 'example.com (203.0.113.10)' can't be established.
+ED25519 key fingerprint is SHA256:abcdef1234567890...
+Are you sure you want to continue connecting (yes/no/[fingerprint])?
+```
+
+Gõ `yes` và dấu vân tay của server được thêm vào `~/.ssh/known_hosts`. Ở các kết nối tiếp theo, SSH âm thầm xác minh rằng khóa của server khớp với dấu vân tay đã lưu. Nếu không khớp — điều này có thể chỉ ra cấu hình sai hoặc tấn công man-in-the-middle — SSH cảnh báo mạnh mẽ và từ chối kết nối.
+
+## Câu Hỏi Thường Gặp
+
+### SSH key dùng để làm gì?
+
+SSH key xác thực bạn với server từ xa mà không cần mật khẩu. Các trường hợp sử dụng phổ biến nhất là: đăng nhập vào server Linux/Unix để quản trị, xác thực với các dịch vụ lưu trữ Git (GitHub, GitLab, Bitbucket) để truy cập push/pull, script triển khai tự động cần truy cập server không mật khẩu, và pipeline CI/CD triển khai code lên sản xuất. SSH key được ưa chuộng hơn mật khẩu vì chúng miễn nhiễm với brute force, không thể tái sử dụng qua các vụ vi phạm và có thể dùng mà không cần tương tác của con người.
+
+### Tôi nên có bao nhiêu SSH key?
+
+Không có câu trả lời duy nhất đúng, nhưng thực hành tốt phổ biến là **một khóa mỗi thiết bị** (không phải mỗi dịch vụ). Laptop của bạn có một cặp khóa; máy tính để bàn có cặp khác; server CI có cặp khác. Theo cách này, nếu một thiết bị bị đánh cắp hoặc xâm phạm, bạn chỉ thu hồi khóa của thiết bị đó. Một số người chia nhỏ hơn theo ngữ cảnh (cá nhân vs. công việc), dẫn đến hai khóa mỗi thiết bị. Tránh chia sẻ một khóa duy nhất trên nhiều máy — nếu khóa đó bị xâm phạm, tất cả quyền truy cập của bạn đều có nguy cơ cùng lúc.
+
+### Tôi có thể chia sẻ khóa công khai SSH của mình không?
+
+Có. Khóa công khai được thiết kế để chia sẻ. An toàn khi gửi qua email, đăng trong tài liệu GitHub hoặc đưa vào ticket yêu cầu quyền truy cập server. Khóa công khai một mình không thể dùng để xác thực với tư cách là bạn — điều đó đòi hỏi khóa riêng tư tương ứng mà chỉ bạn có. Đây là thuộc tính cơ bản của mật mã học bất đối xứng. Không bao giờ chia sẻ khóa **riêng tư** của bạn với bất kỳ ai.
+
+### Điều gì xảy ra nếu tôi mất khóa riêng tư SSH?
+
+Nếu bạn mất khóa riêng tư và không có bản sao lưu, bạn mất khả năng xác thực với nó. Khóa công khai của bạn, vẫn được cài đặt trên server và dịch vụ, trở thành mồ côi. Bạn sẽ cần một cách thay thế để truy cập server (xác thực mật khẩu nếu được bật, truy cập console, cơ chế truy cập khẩn cấp của nhà cung cấp hosting) để xóa khóa công khai cũ khỏi `authorized_keys` và thêm khóa mới. Đây là lý do tại sao sao lưu khóa riêng tư (trong trình quản lý mật khẩu hoặc bản sao lưu được mã hóa) là quan trọng. Khóa riêng tư không thể được tái tạo từ khóa công khai.
+
+### Ed25519 hay RSA tốt hơn?
+
+**Ed25519 tốt hơn cho mọi việc tạo khóa mới.** Nó nhanh hơn, tạo ra khóa nhỏ hơn, không dễ bị một số điểm yếu triển khai ảnh hưởng đến RSA, và cung cấp bảo mật tương đương hoặc vượt trội với khóa 256-bit so với RSA-4096. Lý do duy nhất để dùng RSA ngày nay là tương thích với phần mềm SSH server rất cũ (OpenSSH trước phiên bản 6.5, phát hành năm 2014) hoặc các module bảo mật phần cứng kế thừa. Nếu bạn đang truy cập bất kỳ server hiện đại hay dịch vụ nào như GitHub, hãy dùng Ed25519.
+
+## Tạo Cặp SSH Key Của Bạn
+
+Sẵn sàng tạo SSH key của bạn? Trình tạo trực tuyến miễn phí của chúng tôi tạo cặp khóa Ed25519 hoặc RSA trực tiếp trong trình duyệt của bạn. Khóa riêng tư được tạo cục bộ và không bao giờ được gửi đến server của chúng tôi.
+
+<a href="/">Tạo cặp SSH key của bạn ngay bây giờ →</a>
+
+---
+
+**Đọc thêm:**
+- <a href="/vi/what-is-ssh">SSH Là Gì? Hướng Dẫn Đầy Đủ về Secure Shell</a>
+- <a href="/vi/ssh-command">Lệnh SSH: Tài Liệu Tham Khảo Đầy Đủ với Ví Dụ</a>
+- <a href="/vi/how-to-set-up-ssh">Cách Thiết Lập SSH: Hướng Dẫn Từng Bước Đầy Đủ</a>

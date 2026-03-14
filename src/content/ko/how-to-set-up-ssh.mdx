@@ -1,0 +1,563 @@
+# SSH 설정 방법: Linux, Mac, Windows 단계별 완전 가이드
+
+SSH를 올바르게 설정하는 데는 약 10분이 걸리지만 그 효과는 수년간 지속됩니다. 일단 설정하면 비밀번호 없이 서버에 로그인하고, 매번 자격 증명을 입력하지 않고 GitHub에 코드를 푸시하며, 자신 있게 배포를 자동화할 수 있습니다. 이 가이드는 Linux, macOS, Windows에서 키 쌍 생성부터 일반적인 오류 해결까지 전체 과정을 안내합니다.
+
+기반이 되는 기술을 먼저 이해하고 싶다면 <a href="/ko/what-is-ssh">SSH란 무엇인가</a>와 <a href="/ko/what-is-an-ssh-key">SSH 키란 무엇인가</a> 가이드를 읽어보세요.
+
+## 사전 준비사항
+
+시작하기 전에 다음을 확인하세요:
+
+**서버 접속의 경우:**
+- 터미널 애플리케이션(macOS/Linux의 터미널, Windows의 Windows 터미널 또는 PowerShell)
+- SSH 서버 소프트웨어(sshd)가 설치된 Linux/Unix 원격 서버
+- 해당 서버의 사용자 계정(또는 계정 생성을 위한 root 접근)
+- 서버의 IP 주소 또는 호스트명
+
+**GitHub/GitLab 접속의 경우:**
+- GitHub 또는 GitLab 계정
+- `ssh`를 사용할 수 있는 터미널
+- 선택 사항: 로컬에 설치된 git
+
+**운영체제 요구사항:**
+- **Linux**: SSH 클라이언트는 거의 모든 배포판에 사전 설치됨
+- **macOS**: SSH 클라이언트는 내장되어 있으며 터미널에서 접근 가능
+- **Windows 10 버전 1809 이상 / Windows 11**: OpenSSH 클라이언트는 선택적 기능으로 사용 가능
+
+Linux나 macOS에서는 아무것도 설치할 필요가 없습니다. Windows에서는 PowerShell을 열고 `ssh -V`를 실행하여 OpenSSH 설치 여부를 확인합니다. 버전 문자열이 나오면 준비된 것입니다. 그렇지 않으면 4단계의 설치 지침을 참조하세요.
+
+## 1단계: SSH 키 쌍 생성
+
+다른 어떤 것을 하기 전에 키 쌍이 필요합니다. 키 쌍은 **개인키**(머신에 보관)와 **공개키**(서버나 GitHub 같은 서비스에 배치)로 구성됩니다.
+
+### 옵션 A: 온라인 생성기 사용
+
+그래픽 인터페이스를 선호한다면, <a href="/">무료 온라인 SSH 키 생성기</a>가 브라우저에서 Ed25519 또는 RSA 키 쌍을 생성합니다. 개인키는 Web Crypto API를 사용하여 로컬에서 생성됩니다—서버에는 아무것도 전송되지 않습니다. 두 파일을 다운로드하여 `~/.ssh/`(Linux/macOS) 또는 `C:\Users\YourName\.ssh\`(Windows)에 저장합니다.
+
+### 옵션 B: 커맨드라인에서 ssh-keygen 사용
+
+`ssh-keygen` 명령어는 Linux, macOS, OpenSSH가 있는 Windows에서 사용 가능합니다:
+
+```bash
+# Ed25519 키 쌍 생성(권장)
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+**각 플래그의 의미:**
+- `-t ed25519` — 키 유형(Ed25519는 현대적이고 빠르고 안전함)
+- `-C "comment"` — 공개키에 포함되는 레이블, 보통 이메일 주소
+
+다음과 같은 프롬프트가 표시됩니다:
+
+```
+Generating public/private ed25519 key pair.
+Enter file in which to save the key (/home/user/.ssh/id_ed25519):
+```
+
+**Enter**를 눌러 기본 위치를 수락합니다. 여러 키가 있다면 설명적인 이름을 지정할 수 있습니다(예: `/home/user/.ssh/id_ed25519_github`).
+
+```
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+```
+
+강력한 패스프레이즈를 입력합니다. 이것은 디스크의 개인키 파일을 암호화합니다—머신이 도난당해도 패스프레이즈 없이는 키를 사용할 수 없습니다. 사람의 개입이 불가능한 자동화 사용 사례에서는 비워둘 수 있지만, 개인 키에는 항상 패스프레이즈를 사용하세요.
+
+**출력:**
+
+```
+Your identification has been saved in /home/user/.ssh/id_ed25519
+Your public key has been saved in /home/user/.ssh/id_ed25519.pub
+The key fingerprint is:
+SHA256:abc123defghijk... your@email.com
+The key's randomart image is:
++--[ED25519 256]--+
+...
+```
+
+두 파일이 생성됩니다:
+- `~/.ssh/id_ed25519` — **개인키**(절대 공유하지 않음)
+- `~/.ssh/id_ed25519.pub` — **공개키**(안전하게 공유 가능)
+
+### RSA의 경우(레거시 호환성)
+
+Ed25519를 지원하지 않는 매우 오래된 시스템에 연결해야 하는 경우:
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "your@email.com"
+```
+
+최소 4096비트를 사용합니다. 4096비트 미만의 RSA 키는 더 이상 적절한 보안이라 여겨지지 않습니다.
+
+## 2단계: Linux에서 SSH 설정
+
+이 섹션은 비밀번호 없이 인증할 수 있도록 공개키를 Linux 서버에 복사하는 방법을 다룹니다.
+
+### 방법 1: ssh-copy-id(가장 쉬운 방법)
+
+`ssh-copy-id`는 원격 서버에 공개키를 설치하는 가장 간단한 방법입니다. 비밀번호 인증을 사용하여 연결하고, 공개키를 서버의 `~/.ssh/authorized_keys`에 추가하고, 올바른 권한을 설정합니다.
+
+```bash
+ssh-copy-id user@server.example.com
+
+# 키 파일을 명시적으로 지정
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server.example.com
+
+# 비표준 포트로 연결
+ssh-copy-id -p 2222 user@server.example.com
+```
+
+서버 비밀번호를 마지막으로 한 번 입력하라는 메시지가 표시됩니다. 이후 `ssh user@server.example.com`으로 키를 사용하여 연결할 수 있습니다.
+
+### 방법 2: 수동 복사
+
+`ssh-copy-id`를 사용할 수 없는 경우(일부 BSD 시스템이나 최소 Linux 설치에서 일반적):
+
+```bash
+# 공개키를 표시하고 출력을 복사
+cat ~/.ssh/id_ed25519.pub
+
+# 그런 다음 서버에 비밀번호로 SSH하여 실행:
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+echo "PASTE_YOUR_PUBLIC_KEY_HERE" >> ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+```
+
+또는 하나의 파이프라인으로 모두 처리:
+
+```bash
+cat ~/.ssh/id_ed25519.pub | ssh user@server.example.com \
+  "mkdir -p ~/.ssh && chmod 700 ~/.ssh && \
+   cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+```
+
+### 키 설치 확인
+
+```bash
+ssh user@server.example.com
+# 비밀번호 없이 연결되어야 함(패스프레이즈를 설정한 경우에만 패스프레이즈 요청)
+```
+
+### SSH 서버(sshd) 설정
+
+원격 서버에서 SSH 데몬 설정은 `/etc/ssh/sshd_config`에 있습니다. 안전한 설정을 위해:
+
+```bash
+sudo nano /etc/ssh/sshd_config
+```
+
+권장 설정:
+
+```
+# 공개키 인증 활성화
+PubkeyAuthentication yes
+
+# 비밀번호 인증 비활성화(키 작동 확인 후!)
+PasswordAuthentication no
+
+# SSH를 통한 root 로그인 비활성화
+PermitRootLogin no
+
+# 특정 사용자만 허용
+AllowUsers alice bob deploy
+
+# 세션 유지
+ClientAliveInterval 60
+ClientAliveCountMax 3
+```
+
+편집 후 SSH 데몬 재로드:
+
+```bash
+sudo systemctl reload sshd
+# 또는 이전 시스템에서:
+sudo service ssh reload
+```
+
+**중요**: 키 기반 인증이 작동하는 것을 확인하기 전까지 `PasswordAuthentication`을 비활성화하지 마세요. 잠겨버리면 복구를 위해 콘솔 접근(또는 호스팅 제공업체의 긴급 접근)이 필요합니다.
+
+### Linux에서 ssh-agent 설정
+
+키에 패스프레이즈가 있다면 세션 시작 시 `ssh-agent`에 추가하여 반복 입력을 피합니다:
+
+```bash
+# 에이전트 시작(데스크탑 환경에서 자동으로 시작되는 경우가 많음)
+eval "$(ssh-agent -s)"
+
+# 키 추가(패스프레이즈를 한 번 입력)
+ssh-add ~/.ssh/id_ed25519
+
+# 로드된 키 확인
+ssh-add -l
+```
+
+로그인 시 `ssh-agent`를 자동으로 시작하고 키를 추가하려면 `~/.bashrc` 또는 `~/.zshrc`에 추가합니다:
+
+```bash
+# ssh-agent 자동 시작
+if [ -z "$SSH_AUTH_SOCK" ]; then
+  eval "$(ssh-agent -s)"
+  ssh-add ~/.ssh/id_ed25519
+fi
+```
+
+## 3단계: macOS에서 SSH 설정
+
+macOS에는 완전한 OpenSSH 클라이언트가 포함되어 있습니다. 원격 서버에 키 기반 인증을 설정하는 과정은 Linux와 동일합니다(위의 2단계 참조). macOS 특유의 추가 사항은 키체인 통합에 관한 것입니다.
+
+### 키체인 통합
+
+macOS는 시스템 키체인에 패스프레이즈를 저장하여 처음 입력 후 다시는 입력하지 않아도 됩니다:
+
+```bash
+# 키체인 통합으로 ssh-agent에 키 추가
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+
+# 이전 macOS 버전(Monterey 이전)
+ssh-add -K ~/.ssh/id_ed25519
+```
+
+macOS가 항상 키체인에서 키를 로드하도록 `~/.ssh/config`에 추가합니다:
+
+```
+Host *
+    AddKeysToAgent yes
+    UseKeychain yes
+    IdentityFile ~/.ssh/id_ed25519
+```
+
+이후 패스프레이즈는 키체인에 저장되어 자동으로 로드됩니다—이후 재부팅 시 다시 묻지 않습니다.
+
+### SSH 클라이언트 버전 확인
+
+```bash
+ssh -V
+# OpenSSH_9.x, LibreSSL x.x.x
+```
+
+macOS에는 비교적 최신 OpenSSH가 제공되지만 항상 최신 버전은 아닙니다. 더 새로운 기능이 필요하면 Homebrew를 통해 설치합니다: `brew install openssh`.
+
+## 4단계: Windows에서 SSH 설정
+
+Windows 10(1809 이상)과 Windows 11에는 OpenSSH가 포함되어 있습니다. 사용 방법을 안내합니다.
+
+### OpenSSH 클라이언트 설치
+
+**이미 설치되어 있는지 확인:**
+
+```powershell
+ssh -V
+```
+
+**설정에서 설치:**
+1. **설정 → 앱 → 선택적 기능** 열기
+2. **OpenSSH 클라이언트** 검색
+3. **설치** 클릭
+
+**PowerShell(관리자)에서 설치:**
+
+```powershell
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+```
+
+### Windows에서 키 생성
+
+PowerShell을 열고 실행합니다:
+
+```powershell
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+키는 `C:\Users\YourUsername\.ssh\`에 저장됩니다.
+
+### Linux 서버에 공개키 복사
+
+Windows에는 `ssh-copy-id`가 없지만 PowerShell에서 수동으로 할 수 있습니다:
+
+```powershell
+# 공개키 표시
+Get-Content ~/.ssh/id_ed25519.pub
+
+# 원격 서버에 복사(서버 비밀번호를 입력하라는 메시지가 표시됨)
+$pubkey = Get-Content ~/.ssh/id_ed25519.pub -Raw
+ssh user@server.example.com "mkdir -p ~/.ssh && echo '$pubkey' >> ~/.ssh/authorized_keys && chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys"
+```
+
+또는 `Add-Content`를 사용하여 파이프합니다:
+
+```powershell
+type $env:USERPROFILE\.ssh\id_ed25519.pub | ssh user@server.example.com "cat >> ~/.ssh/authorized_keys"
+```
+
+### Windows에서 ssh-agent 설정
+
+패스프레이즈를 반복적으로 입력하지 않으려면 OpenSSH 인증 에이전트 서비스를 시작합니다:
+
+```powershell
+# 서비스 시작
+Start-Service ssh-agent
+
+# 자동 시작으로 설정
+Set-Service -Name ssh-agent -StartupType Automatic
+
+# 키 추가
+ssh-add ~/.ssh/id_ed25519
+```
+
+### PuTTY 대안
+
+그래픽 SSH 클라이언트를 선호한다면 PuTTY가 Windows의 무료 옵션입니다. **PuTTYgen**으로 키를 생성합니다(PuTTY용 `.ppk` 형식으로 저장하고 OpenSSH 형식으로 내보내기). 그러나 새 설정에는 내장 OpenSSH 클라이언트가 더 간단하고 나머지 에코시스템과 상호 운용됩니다.
+
+## GitHub와 GitLab을 위한 SSH 키 설정 방법
+
+GitHub와 GitLab에 대한 SSH 키 인증은 유사하게 작동합니다—공개키를 서비스에 업로드하고 Git 작업 시 대응하는 개인키를 사용합니다.
+
+### GitHub SSH 설정
+
+**1. 공개키 복사:**
+
+```bash
+# Linux
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+
+# macOS
+cat ~/.ssh/id_ed25519.pub | pbcopy
+
+# Windows PowerShell
+Get-Content ~/.ssh/id_ed25519.pub | Set-Clipboard
+```
+
+또는 단순히 표시하고 수동으로 복사합니다:
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+**2. GitHub에 추가:**
+
+1. **github.com**에 접속하여 로그인
+2. 아바타 클릭 → **Settings(설정)**
+3. 왼쪽 사이드바: **SSH and GPG keys**
+4. **New SSH key** 클릭
+5. 설명적인 **Title** 입력(예: "MacBook Pro" 또는 "Work PC")
+6. **Key type**을 **Authentication Key**로 설정
+7. 공개키 붙여넣기
+8. **Add SSH key** 클릭
+
+**3. 연결 테스트:**
+
+```bash
+ssh -T git@github.com
+# Hi username! You've successfully authenticated, but GitHub does not provide shell access.
+```
+
+**4. Git 작업에 SSH 사용:**
+
+```bash
+# HTTPS 대신 SSH로 클론
+git clone git@github.com:username/repository.git
+
+# 기존 저장소가 HTTPS를 사용하는 경우 SSH로 전환
+git remote set-url origin git@github.com:username/repository.git
+```
+
+### GitLab SSH 설정
+
+과정이 동일합니다:
+
+1. **gitlab.com** → 아바타 클릭 → **Preferences(설정)**
+2. 왼쪽 사이드바: **SSH Keys**
+3. 공개키 붙여넣기, 제목 입력, 선택적으로 만료일 설정
+4. **Add key** 클릭
+
+다음으로 테스트합니다:
+
+```bash
+ssh -T git@gitlab.com
+# Welcome to GitLab, @username!
+```
+
+자체 호스팅 GitLab 인스턴스의 경우 `gitlab.com`을 인스턴스 호스트명으로 교체합니다.
+
+### GitHub와 다른 서비스에 별도 키 사용
+
+GitHub에 전용 키를 사용하고 싶다면(키 위생 관리를 위해 권장), 이름이 지정된 키를 생성합니다:
+
+```bash
+ssh-keygen -t ed25519 -C "github" -f ~/.ssh/id_ed25519_github
+```
+
+`~/.ssh/config`에 `Host` 블록을 추가합니다:
+
+```
+Host github.com
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519_github
+    AddKeysToAgent yes
+```
+
+이제 `git clone git@github.com:...`이 자동으로 GitHub 전용 키를 사용합니다.
+
+## SSH 테스트와 문제 해결
+
+### 기본 연결 테스트
+
+```bash
+ssh -v user@server.example.com
+```
+
+`-v`(상세) 플래그로 각 단계에서 무슨 일이 일어나는지 정확히 알 수 있습니다. 다음과 같은 줄을 찾습니다:
+- `Offering public key: ~/.ssh/id_ed25519` — SSH가 키를 시도하는 중
+- `Server accepts key` — 키가 `authorized_keys`에 있음
+- `Authenticated to server.example.com` — 성공
+
+### 일반적인 오류와 수정 방법
+
+**"Permission denied (publickey)"**
+
+가장 일반적인 오류입니다. 원인과 수정 방법:
+
+```bash
+# 키가 ssh-agent에 로드되어 있는지 확인
+ssh-add -l
+
+# 키가 나열되지 않으면 추가
+ssh-add ~/.ssh/id_ed25519
+
+# 원격 서버에서 authorized_keys 확인
+cat ~/.ssh/authorized_keys
+# 공개키가 있는지 확인
+
+# 원격 서버에서 권한 확인
+ls -la ~/.ssh/
+# ~/.ssh는 700이어야 함
+# authorized_keys는 600이어야 함
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/authorized_keys
+
+# 서버가 공개키 인증을 허용하는지 확인
+sudo grep PubkeyAuthentication /etc/ssh/sshd_config
+# 반드시: PubkeyAuthentication yes
+```
+
+**"WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED"**
+
+서버의 호스트 키가 변경되었으며 SSH는 이것을 잠재적 보안 문제로 취급합니다. 이것이 합법적인 변경(서버 재구성, IP 재할당)임을 안다면 이전 항목을 제거합니다:
+
+```bash
+# 특정 호스트 항목 제거
+ssh-keygen -R server.example.com
+
+# 또는 known_hosts를 수동으로 편집하고 영향을 받는 줄 삭제
+nano ~/.ssh/known_hosts
+```
+
+**"Bad permissions" 또는 "Permissions too open"**
+
+SSH는 키 파일 권한에 엄격합니다:
+
+```bash
+# 개인키 권한 수정
+chmod 600 ~/.ssh/id_ed25519
+
+# 공개키 권한 수정
+chmod 644 ~/.ssh/id_ed25519.pub
+
+# .ssh 디렉토리 권한 수정
+chmod 700 ~/.ssh
+```
+
+Windows에서는 개인키 권한 관리가 다릅니다. 키 파일 우클릭 → 속성 → 보안 → 고급 → 상속 비활성화 → 자신의 사용자 계정에만 모든 권한 부여하고 나머지 모두 제거합니다.
+
+### ssh-agent 설정 및 사용
+
+패스프레이즈를 반복적으로 요청받는다면 `ssh-agent`가 실행되지 않거나 키가 추가되지 않은 것입니다:
+
+```bash
+# 에이전트 시작
+eval "$(ssh-agent -s)"
+# Agent pid 12345
+
+# 키 추가
+ssh-add ~/.ssh/id_ed25519
+# Enter passphrase for /home/user/.ssh/id_ed25519:
+# Identity added: /home/user/.ssh/id_ed25519
+
+# 확인
+ssh-add -l
+# 256 SHA256:abc123... your@email.com (ED25519)
+```
+
+### 자동화에서 known_hosts 사전 채우기
+
+CI/CD 파이프라인에서는 연결 전에 `ssh-keyscan`을 사용하여 원격 호스트 핑거프린트를 추가합니다:
+
+```bash
+ssh-keyscan -H server.example.com >> ~/.ssh/known_hosts
+ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+```
+
+이것은 자동화 스크립트에서 인터랙티브 핑거프린트 프롬프트를 방지합니다.
+
+## 자주 묻는 질문
+
+### "Permission denied (publickey)"를 어떻게 수정하나요?
+
+이 체크리스트를 따라 진행합니다: (1) SSH 에이전트에 키가 있는지 확인: `ssh-add -l`. 없으면 `ssh-add ~/.ssh/id_ed25519` 실행. (2) 서버의 `~/.ssh/authorized_keys` 파일에 공개키가 있는지 확인. (3) 권한 확인: `~/.ssh`는 `700`, `authorized_keys`는 `600`이어야 함. (4) 서버의 `/etc/ssh/sshd_config`에 `PubkeyAuthentication yes`가 있는지 확인. (5) `ssh -vvv user@server`로 인증이 어디서 실패하는지 확인. 상세 출력이 시도된 키와 서버가 수락했는지를 알려줍니다.
+
+### SSH 키를 ssh-agent에 추가하는 방법은?
+
+`ssh-add ~/.ssh/id_ed25519`를 실행합니다(키 파일 이름으로 교체). 에이전트가 실행되지 않으면 먼저 `eval "$(ssh-agent -s)"`로 시작합니다. macOS에서는 `ssh-add --apple-use-keychain ~/.ssh/id_ed25519`를 사용하여 패스프레이즈를 키체인에 저장합니다. Windows에서는 `Start-Service ssh-agent`로 `ssh-agent` 서비스를 활성화하고 `ssh-add`를 실행합니다. `ssh-add`는 세션당 한 번(또는 macOS 키체인을 사용하면 영구적으로 한 번)만 실행하면 됩니다.
+
+### SSH 키를 여러 개 가질 수 있나요?
+
+예, 그것이 좋은 실천입니다. 다른 목적으로 별도의 키를 생성합니다—예를 들어 개인 GitHub용, 회사 GitLab용, 프로덕션 서버용. `~/.ssh/config`에서 `IdentityFile`로 각 호스트를 특정 키에 매핑합니다. 별도의 키를 가지면 하나를 폐기(서비스나 서버에서 제거)해도 다른 것에 영향을 주지 않아 키 침해의 영향 범위를 제한합니다.
+
+### SSH 키의 패스프레이즈를 변경하는 방법은?
+
+`ssh-keygen -p`를 사용합니다:
+
+```bash
+ssh-keygen -p -f ~/.ssh/id_ed25519
+```
+
+현재 패스프레이즈를 요청한 다음 새것을 입력하고 확인하라고 합니다. 키 자체(따라서 공개키도)는 변경되지 않습니다—어디서도 업데이트할 필요가 없습니다. 패스프레이즈가 유출된 것으로 의심되거나 정기적인 보안 조치로 교체하고 싶을 때 유용합니다.
+
+### 서버에서 이전 SSH 키를 제거하는 방법은?
+
+서버의 `~/.ssh/authorized_keys`를 열고 이전 공개키가 포함된 줄을 삭제합니다:
+
+```bash
+# 원격 서버에서 authorized_keys 편집
+ssh user@server.example.com
+nano ~/.ssh/authorized_keys
+# 제거하려는 키의 줄 삭제
+# 저장하고 종료
+```
+
+`authorized_keys`의 각 줄은 하나의 공개키입니다. 키의 주석(마지막 필드, 보통 `user@hostname` 또는 이메일)이 어떤 키가 어떤 것인지 식별하는 데 도움이 됩니다. 어떤 줄을 삭제해야 할지 모른다면 핑거프린트를 비교합니다:
+
+```bash
+# 로컬 머신에서 핑거프린트 확인
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+
+# 서버에서 모든 승인된 키의 핑거프린트 확인
+ssh-keygen -lf ~/.ssh/authorized_keys
+```
+
+핑거프린트를 일치시켜 올바른 키를 식별하고 삭제합니다.
+
+## SSH 키 무료로 생성하기
+
+아직 SSH 키 쌍을 생성하지 않았다면, 저희 무료 온라인 생성기가 몇 초 만에 브라우저에서 직접 Ed25519 또는 RSA 키를 생성합니다. 설치 불필요, 서버에 아무것도 전송되지 않음—생성이 전적으로 기기에서 이루어집니다.
+
+<a href="/">SSH 키 무료로 생성하기 →</a>
+
+---
+
+**더 읽어보기:**
+- <a href="/ko/what-is-ssh">SSH란 무엇인가? 시큐어 셸 완전 가이드</a>
+- <a href="/ko/what-is-an-ssh-key">SSH 키란? 공개키, 개인키, 키 쌍 완전 해설</a>
+- <a href="/ko/ssh-command">SSH 명령어: 예제가 포함된 완전 참조 가이드</a>

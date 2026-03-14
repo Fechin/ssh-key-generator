@@ -188,6 +188,7 @@
     "sshKeyGuide": "GitHub SSH Docs",
     "githubSetup": "GitLab SSH Docs",
     "bestPractices": "SSH Academy",
+    "sshCheatSheet": "SSH Cheat Sheet",
     "madeWith": "Made with",
     "forDevelopers": "for developers worldwide",
     "copyright": "© {year} SSH Key Generator. Open source under MIT License."

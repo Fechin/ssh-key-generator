@@ -1,0 +1,337 @@
+# What Is an SSH Key? Public Keys, Private Keys, and Key Pairs Explained
+
+An **SSH key** is a cryptographic credential used to authenticate to SSH servers without a password. SSH keys come in pairs — a **public key** and a **private key** — and together they make remote access more secure and more convenient than traditional password authentication. This guide explains what an SSH key is, how the key pair system works, which key types to choose, and how to use SSH keys with services like GitHub and GitLab.
+
+## How SSH Keys Work
+
+SSH keys are based on **asymmetric cryptography**, also called public-key cryptography. Unlike symmetric cryptography (where a single secret key both encrypts and decrypts data), asymmetric systems use mathematically linked key pairs where data encrypted with one key can only be decrypted with the other.
+
+Here is the authentication flow when you use an SSH key to log into a server:
+
+1. You run `ssh user@server.example.com`.
+2. The server looks up your public key in `~/.ssh/authorized_keys`.
+3. The server generates a random challenge and encrypts it with your public key.
+4. Your SSH client decrypts the challenge using your private key.
+5. The client sends a cryptographic proof (derived from the decrypted challenge and the session ID) back to the server.
+6. The server verifies the proof. Only the holder of the private key could have produced it.
+7. Authentication succeeds. No password ever leaves your machine.
+
+This is the key insight: **your private key never travels over the network**. The server only ever sees your public key and the cryptographic proofs you produce. Even if someone intercepts every packet in your SSH session, they gain nothing that helps them impersonate you.
+
+For background on the broader SSH protocol, see our guide on <a href="/what-is-ssh">what is SSH</a>.
+
+## Public Key vs. Private Key: What's the Difference?
+
+Understanding the distinction between the two keys is essential for using SSH correctly.
+
+### The Public Key — Your Lock
+
+The **public key** is designed to be shared freely. Think of it as a padlock: you hand out copies to everyone whose systems you want to access. When a server has your public key in its `authorized_keys` file, it can verify your identity without knowing your private key.
+
+Public keys:
+- Are safe to share — they cannot be used to impersonate you
+- Are placed on servers in `~/.ssh/authorized_keys`
+- Are uploaded to GitHub, GitLab, and other services
+- Typically have a `.pub` extension (e.g., `id_ed25519.pub`)
+- Look like: `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAA... user@hostname`
+
+### The Private Key — Your Key
+
+The **private key** is the secret half of the pair. It must never leave your machine and should never be shared with anyone — not even administrators, not cloud providers, not support staff. If your private key is compromised, anyone who obtains it can impersonate you on every server where your public key is installed.
+
+Private keys:
+- Must be kept secret and secure
+- Are stored locally in `~/.ssh/` with restricted permissions (600)
+- Are optionally encrypted with a passphrase
+- Have no extension or a language-specific extension (e.g., `id_ed25519`)
+
+### The `authorized_keys` File
+
+On the server side, each user's public keys are stored in `~/.ssh/authorized_keys`. This is a plain text file where each line contains one public key. When an SSH client attempts to authenticate, the server checks whether the client can prove possession of the private key corresponding to any entry in this file.
+
+```
+# ~/.ssh/authorized_keys format
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGq... alice@laptop
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHr... alice@workstation
+ssh-rsa AAAAB3NzaC1yc2EAAAA... backup-deploy-key
+```
+
+You can have as many public keys as you need in this file, allowing multiple devices or automation systems to authenticate to the same server.
+
+## SSH Key Algorithms: Ed25519 vs RSA
+
+When you generate an SSH key pair, you choose an algorithm. The two most common options today are **Ed25519** and **RSA**. There are also ECDSA and DSA, but DSA is deprecated and ECDSA has implementation pitfalls, so we will focus on the two recommended options.
+
+### Ed25519 — The Modern Choice
+
+Ed25519 was introduced to OpenSSH in version 6.5 (2014) and is now the recommended default. It uses elliptic curve cryptography on the Twisted Edwards curve (Curve25519), designed by Daniel J. Bernstein.
+
+**Advantages of Ed25519:**
+- **Compact** — keys are only 68 characters (public key) and files are tiny
+- **Fast** — signature generation and verification are extremely fast
+- **Secure by design** — not vulnerable to side-channel attacks that affect some RSA implementations
+- **Fixed key size** — 256-bit security level, no need to choose a key size
+- **Deterministic** — signatures are deterministic, eliminating a class of random number generator failures
+
+```bash
+# Generate an Ed25519 key pair
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+### RSA — The Universal Option
+
+RSA is the older algorithm (invented 1977), and while it is still secure at 4096 bits, it is slower and produces larger keys than Ed25519. However, RSA has much broader compatibility — it works with very old SSH servers, legacy systems, and some hardware security keys.
+
+**When to use RSA:**
+- You need to connect to legacy systems running old versions of OpenSSH (before 6.5)
+- You are using a smartcard or HSM that does not support Ed25519
+- Compatibility with older tools is required
+
+```bash
+# Generate an RSA 4096-bit key pair
+ssh-keygen -t rsa -b 4096 -C "your@email.com"
+```
+
+**Never use RSA with fewer than 4096 bits.** RSA-1024 and RSA-2048 are increasingly considered insufficient as computational power grows. Ed25519 at 256 bits provides equivalent or better security with a fraction of the key size.
+
+### Summary Comparison
+
+| Feature | Ed25519 | RSA 4096 |
+|---|---|---|
+| Key size (public) | ~68 chars | ~725 chars |
+| Security level | 128-bit (post-quantum resistant structure) | ~140-bit classical |
+| Speed | Very fast | Slower |
+| Compatibility | Modern SSH (OpenSSH 6.5+) | Universal |
+| Recommended for | All new keys | Legacy systems only |
+
+**Bottom line: generate Ed25519 keys for any modern use case.** Use RSA only when forced by compatibility requirements.
+
+## How to Add an SSH Key to GitHub
+
+Adding your SSH public key to GitHub allows you to push and pull over SSH without entering your username and password on every operation. Here is the step-by-step process.
+
+### Step 1: Generate Your Key Pair
+
+If you do not already have an SSH key pair, generate one. You can use our <a href="/">free online SSH key generator</a> or run:
+
+```bash
+ssh-keygen -t ed25519 -C "your-github-email@example.com"
+```
+
+Accept the default file location (`~/.ssh/id_ed25519`) and optionally set a passphrase.
+
+### Step 2: Copy Your Public Key
+
+Display your public key and copy it to your clipboard:
+
+```bash
+# Linux
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+
+# macOS
+cat ~/.ssh/id_ed25519.pub | pbcopy
+
+# Windows (PowerShell)
+Get-Content ~/.ssh/id_ed25519.pub | Set-Clipboard
+```
+
+Or simply display it and copy manually:
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+### Step 3: Add the Key to GitHub
+
+1. Log into **GitHub.com**
+2. Click your profile picture → **Settings**
+3. In the left sidebar, click **SSH and GPG keys**
+4. Click **New SSH key**
+5. Give it a descriptive title (e.g., "MacBook Pro 2024" or "Work Laptop")
+6. Paste your public key into the **Key** field
+7. Click **Add SSH key**
+
+### Step 4: Test the Connection
+
+```bash
+ssh -T git@github.com
+```
+
+You should see: `Hi username! You've successfully authenticated, but GitHub does not provide shell access.`
+
+### Switching an Existing Repository to SSH
+
+If you cloned a repository using HTTPS and want to switch to SSH:
+
+```bash
+# Check current remote URL
+git remote -v
+
+# Update to SSH
+git remote set-url origin git@github.com:username/repository.git
+```
+
+For GitLab, the process is identical — navigate to **Preferences → SSH Keys** and follow the same steps.
+
+## Where Are SSH Keys Stored?
+
+SSH keys are stored in a directory called `.ssh` in your user's home folder. The location varies by operating system.
+
+### Linux and macOS
+
+```
+~/.ssh/
+├── id_ed25519          # Your private key (permissions: 600)
+├── id_ed25519.pub      # Your public key (permissions: 644)
+├── id_rsa              # An RSA private key (if you have one)
+├── id_rsa.pub          # The RSA public key
+├── authorized_keys     # Public keys allowed to log into this machine
+├── known_hosts         # Fingerprints of servers you have connected to
+└── config              # Client configuration file
+```
+
+The `~/.ssh/` directory itself must have **700** permissions (owner read/write/execute only). Private key files must have **600** permissions (owner read/write only). SSH will refuse to use keys with overly permissive permissions.
+
+```bash
+# Fix permissions if needed
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/id_ed25519
+chmod 644 ~/.ssh/id_ed25519.pub
+```
+
+### Windows
+
+On Windows 10 and 11 with OpenSSH installed, SSH keys are stored in:
+
+```
+C:\Users\YourUsername\.ssh\
+├── id_ed25519
+├── id_ed25519.pub
+├── authorized_keys
+├── known_hosts
+└── config
+```
+
+On Windows, you can access the `.ssh` directory from File Explorer (you may need to enable "Show hidden files") or from PowerShell using `~\.ssh\`.
+
+### Multiple Key Files
+
+If you have keys for different purposes (personal GitHub, work GitLab, production servers), use the `~/.ssh/config` file to map each host to its key:
+
+```
+Host github.com
+    IdentityFile ~/.ssh/id_ed25519_github
+
+Host gitlab.work.com
+    IdentityFile ~/.ssh/id_ed25519_work
+
+Host prod-server
+    HostName 203.0.113.10
+    User deploy
+    IdentityFile ~/.ssh/id_ed25519_production
+```
+
+## SSH Key Passphrases
+
+When you generate an SSH key pair, `ssh-keygen` asks if you want to set a **passphrase**. This is an optional password that encrypts the private key file on disk.
+
+### Why Use a Passphrase?
+
+If your private key file is protected by a strong passphrase, stealing the file is not enough to impersonate you — the attacker would also need to crack the passphrase. This provides a critical second layer of security, especially on laptops that could be physically stolen.
+
+Without a passphrase, your private key is stored in plain text on disk. Anyone who can read the file (via malware, physical access, or a backup that is not properly secured) can immediately use it.
+
+### How Passphrases Interact with ssh-agent
+
+The downside of a passphrase is typing it every time you use the key. **ssh-agent** solves this by holding decrypted keys in memory for the duration of your session.
+
+```bash
+# Start ssh-agent and add your key
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+# Enter passphrase once — it is now cached for the session
+```
+
+On macOS, the system Keychain integrates with ssh-agent. Add `-K` to persist across reboots:
+
+```bash
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+```
+
+### Changing a Passphrase
+
+You can change the passphrase on an existing key without regenerating the key pair:
+
+```bash
+ssh-keygen -p -f ~/.ssh/id_ed25519
+```
+
+This prompts for the old passphrase, then lets you set a new one. The public key does not change, so you do not need to update it on any servers.
+
+## SSH Key Fingerprints
+
+Every SSH key pair has a **fingerprint** — a short hash of the public key that uniquely identifies it. Fingerprints serve several purposes:
+
+- **Verify host identity** — When you first connect to a server, SSH shows you its host key fingerprint. If you confirm it matches what you expect (e.g., provided by your hosting provider), you know you are connecting to the right server.
+- **Identify keys** — When managing many keys, fingerprints help you identify which physical key corresponds to which entry in `authorized_keys` or on a service like GitHub.
+- **Audit and revocation** — Audit logs often record fingerprints rather than full keys. Knowing a key's fingerprint helps you find and remove it if needed.
+
+### Viewing a Key's Fingerprint
+
+```bash
+# View fingerprint of your public key
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+# Output: 256 SHA256:abcdef1234567890... your@email.com (ED25519)
+
+# View fingerprint of a server's host key
+ssh-keyscan server.example.com | ssh-keygen -lf -
+```
+
+GitHub displays the fingerprints of all added SSH keys in **Settings → SSH and GPG keys**, allowing you to verify that the key you see there matches the one on your machine.
+
+### The `known_hosts` File
+
+The first time you connect to a new SSH server, you see a message like:
+
+```
+The authenticity of host 'example.com (203.0.113.10)' can't be established.
+ED25519 key fingerprint is SHA256:abcdef1234567890...
+Are you sure you want to continue connecting (yes/no/[fingerprint])?
+```
+
+Type `yes` and the server's fingerprint is added to `~/.ssh/known_hosts`. On subsequent connections, SSH silently verifies the server's key matches the stored fingerprint. If it does not match — which could indicate a misconfiguration or a man-in-the-middle attack — SSH warns you loudly and refuses to connect.
+
+## Frequently Asked Questions
+
+### What is an SSH key used for?
+
+SSH keys authenticate you to remote servers without a password. The most common uses are: logging into Linux/Unix servers for administration, authenticating with Git hosting services (GitHub, GitLab, Bitbucket) for push/pull access, automated deployment scripts that need passwordless server access, and CI/CD pipelines that deploy code to production. SSH keys are preferred over passwords because they are immune to brute force, not reusable across breaches, and can be used without human interaction.
+
+### How many SSH keys should I have?
+
+There is no single right answer, but a common best practice is **one key per device** (not per service). Your laptop has one key pair; your desktop has another; your CI server has another. This way, if a device is stolen or compromised, you revoke only that device's key. Some people further split by context (personal vs. work), resulting in two keys per device. Avoid sharing a single key across multiple machines — if that key is compromised, all your access is at risk simultaneously.
+
+### Can I share my SSH public key?
+
+Yes. The public key is designed to be shared. It is safe to email it, post it in GitHub documentation, or include it in a ticket asking for server access. The public key alone cannot be used to authenticate as you — that requires the corresponding private key, which only you have. This is the fundamental property of asymmetric cryptography. Never share your **private** key with anyone.
+
+### What happens if I lose my SSH private key?
+
+If you lose your private key and do not have a backup, you lose the ability to authenticate with it. Your public key, still installed on servers and services, becomes an orphan. You will need an alternative way to access the server (password authentication if enabled, console access, your hosting provider's emergency access mechanism) to remove the old public key from `authorized_keys` and add a new one. This is why backing up your private key (in a password manager or encrypted backup) is important. The private key cannot be reconstructed from the public key.
+
+### Is Ed25519 or RSA better?
+
+**Ed25519 is better for all new key generation.** It is faster, produces smaller keys, is not vulnerable to certain implementation weaknesses that affect RSA, and provides equivalent or superior security with a 256-bit key compared to RSA-4096. The only reason to use RSA today is compatibility with very old SSH server software (OpenSSH before version 6.5, released in 2014) or legacy hardware security modules. If you are accessing any modern server or service like GitHub, use Ed25519.
+
+## Generate Your SSH Key Pair
+
+Ready to create your SSH keys? Our free online generator creates Ed25519 or RSA key pairs directly in your browser. The private key is generated locally and never sent to our servers.
+
+<a href="/">Generate your SSH key pair now →</a>
+
+---
+
+**Further reading:**
+- <a href="/what-is-ssh">What Is SSH? The Complete Guide to Secure Shell</a>
+- <a href="/ssh-command">The SSH Command: Complete Reference with Examples</a>
+- <a href="/how-to-set-up-ssh">How to Set Up SSH: A Complete Step-by-Step Guide</a>

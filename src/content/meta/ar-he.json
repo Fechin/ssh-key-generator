@@ -1,0 +1,54 @@
+{
+  "ar": {
+    "what-is-ssh": {
+      "title": "ما هو SSH؟ الدليل الشامل للـ Secure Shell",
+      "description": "تعرّف على SSH (Secure Shell): كيف يعمل هذا البروتوكول الشبكي المشفر، وطبقات النقل والمصادقة، والأنفاق، ولماذا أصبح المعيار العالمي للوصول الآمن عن بُعد.",
+      "keywords": ["SSH", "Secure Shell", "بروتوكول SSH", "ما هو SSH", "اتصال SSH آمن", "SSH مقابل Telnet", "مفتاح SSH", "منفذ SSH", "نفق SSH", "OpenSSH"],
+      "publishDate": "2026-03-14"
+    },
+    "what-is-an-ssh-key": {
+      "title": "ما هو مفتاح SSH؟ المفاتيح العامة والخاصة وأزواج المفاتيح شرح",
+      "description": "تعلّم ما هو مفتاح SSH، وكيف تعمل أزواج المفاتيح العامة والخاصة، والفروق بين Ed25519 وRSA، وأين تُخزَّن المفاتيح، وكيفية إضافة مفتاح SSH إلى GitHub أو GitLab.",
+      "keywords": ["مفتاح SSH", "مفتاح SSH عام", "مفتاح SSH خاص", "زوج مفاتيح SSH", "Ed25519", "RSA", "authorized_keys", "ssh-keygen", "مفتاح SSH GitHub", "عبارة مرور SSH"],
+      "publishDate": "2026-03-14"
+    },
+    "ssh-command": {
+      "title": "أمر SSH: المرجع الكامل مع أمثلة لـ Linux وMac وWindows",
+      "description": "مرجع شامل لأمر SSH مع أمثلة عملية: الصيغة والخيارات والأعلام الأساسية، والأنفاق، وProxyJump، وإعادة توجيه الوكيل، والاستخدام على Linux وmacOS وWindows.",
+      "keywords": ["أمر SSH", "ssh Linux", "ssh macOS", "ssh Windows", "ssh -i", "ssh -p", "نفق SSH", "ProxyJump", "ssh-agent", "خيارات SSH"],
+      "publishDate": "2026-03-14"
+    },
+    "how-to-set-up-ssh": {
+      "title": "كيفية إعداد SSH: دليل خطوة بخطوة شامل لـ Linux وMac وWindows",
+      "description": "دليل خطوة بخطوة لإعداد SSH على Linux وmacOS وWindows: توليد زوج مفاتيح، نسخ المفتاح العام إلى الخادم، إعداد GitHub وGitLab، واستكشاف الأخطاء الشائعة وإصلاحها.",
+      "keywords": ["إعداد SSH", "تثبيت SSH", "ssh-keygen", "ssh-copy-id", "SSH GitHub", "SSH GitLab", "Permission denied publickey", "ssh-agent", "مفاتيح SSH Windows", "مصادقة مفتاح SSH"],
+      "publishDate": "2026-03-14"
+    }
+  },
+  "he": {
+    "what-is-ssh": {
+      "title": "מה זה SSH? המדריך המלא ל-Secure Shell",
+      "description": "למד על SSH (Secure Shell): כיצד פרוטוקול הרשת הקריפטוגרפי עובד, שכבות ההעברה והאימות, מנהרות SSH, ומדוע הפך לתקן העולמי לגישה מאובטחת מרחוק.",
+      "keywords": ["SSH", "Secure Shell", "פרוטוקול SSH", "מה זה SSH", "חיבור SSH מאובטח", "SSH מול Telnet", "מפתח SSH", "פורט SSH", "מנהרת SSH", "OpenSSH"],
+      "publishDate": "2026-03-14"
+    },
+    "what-is-an-ssh-key": {
+      "title": "מה זה מפתח SSH? מפתחות ציבוריים, פרטיים וזוגות מפתחות — הסבר",
+      "description": "למד מה זה מפתח SSH, כיצד זוגות מפתח ציבורי ופרטי עובדים, ההבדלים בין Ed25519 ל-RSA, היכן מאוחסנים מפתחות, וכיצד להוסיף מפתח SSH ל-GitHub או GitLab.",
+      "keywords": ["מפתח SSH", "מפתח ציבורי SSH", "מפתח פרטי SSH", "זוג מפתח SSH", "Ed25519", "RSA", "authorized_keys", "ssh-keygen", "מפתח SSH GitHub", "סיסמת SSH"],
+      "publishDate": "2026-03-14"
+    },
+    "ssh-command": {
+      "title": "פקודת SSH: עיון מלא עם דוגמאות ל-Linux, Mac ו-Windows",
+      "description": "עיון מקיף בפקודת SSH עם דוגמאות מעשיות: תחביר, אפשרויות ודגלים חיוניים, מנהרות, ProxyJump, העברת סוכן, ושימוש ב-Linux, macOS ו-Windows.",
+      "keywords": ["פקודת SSH", "ssh Linux", "ssh macOS", "ssh Windows", "ssh -i", "ssh -p", "מנהרת SSH", "ProxyJump", "ssh-agent", "אפשרויות SSH"],
+      "publishDate": "2026-03-14"
+    },
+    "how-to-set-up-ssh": {
+      "title": "כיצד להגדיר SSH: מדריך שלב-אחר-שלב מלא ל-Linux, Mac ו-Windows",
+      "description": "מדריך שלב-אחר-שלב להגדרת SSH על Linux, macOS ו-Windows: יצירת זוג מפתחות, העתקת מפתח ציבורי לשרת, הגדרת GitHub ו-GitLab, פתרון שגיאות נפוצות.",
+      "keywords": ["הגדרת SSH", "התקנת SSH", "ssh-keygen", "ssh-copy-id", "SSH GitHub", "SSH GitLab", "Permission denied publickey", "ssh-agent", "מפתחות SSH Windows", "אימות מפתח SSH"],
+      "publishDate": "2026-03-14"
+    }
+  }
+}

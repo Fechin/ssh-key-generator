@@ -1,0 +1,563 @@
+# SSHのセットアップ方法：Linux・Mac・Windows向けステップバイステップ完全ガイド
+
+SSHを正しくセットアップするには約10分かかりますが、その効果は何年にもわたって続きます。一度設定すれば、パスワードを入力せずにサーバーにログインし、すべてのGit操作で認証情報を入力せずにGitHubにコードをプッシュし、自信を持ってデプロイを自動化できます。本ガイドでは、Linux・macOS・Windowsでの鍵ペア生成から一般的なエラーのトラブルシューティングまで、全工程を解説します。
+
+まず基盤となる技術を理解したい場合は、<a href="/ja/what-is-ssh">SSHとは何か</a>と<a href="/ja/what-is-an-ssh-key">SSH鍵とは何か</a>のガイドをご覧ください。
+
+## 前提条件
+
+始める前に、以下を確認してください：
+
+**サーバーアクセスの場合：**
+- ターミナルアプリケーション（macOS/LinuxのTerminal、WindowsのWindows TerminalまたはPowerShell）
+- SSHサーバーソフトウェア（sshd）がインストールされたLinux/Unixリモートサーバー
+- そのサーバー上のユーザーアカウント（または作成するためのrootアクセス）
+- サーバーのIPアドレスまたはホスト名
+
+**GitHub/GitLabアクセスの場合：**
+- GitHubまたはGitLabアカウント
+- `ssh` が使用できるターミナル
+- オプション：ローカルにインストールされたgit
+
+**OSの要件：**
+- **Linux**：SSHクライアントはほぼすべてのディストリビューションにプリインストール済み
+- **macOS**：SSHクライアントはビルトインで、ターミナルから利用可能
+- **Windows 10バージョン1809以降 / Windows 11**：OpenSSHクライアントはオプション機能として利用可能
+
+LinuxとmacOSでは何もインストールする必要はありません。Windowsでは、PowerShellを開いて `ssh -V` を実行してOpenSSHがインストールされているか確認します。バージョン文字列が得られれば準備完了です。なければ、ステップ4のインストール手順を参照してください。
+
+## ステップ1：SSH鍵ペアを生成する
+
+他のことをする前に鍵ペアが必要です。鍵ペアは**秘密鍵**（マシン上に保管）と**公開鍵**（サーバーやGitHubなどのサービスに置く）で構成されます。
+
+### オプションA：オンラインジェネレーターを使用する
+
+グラフィカルインターフェースを好む場合、<a href="/">無料のオンラインSSH鍵ジェネレーター</a>がブラウザ上でEd25519またはRSA鍵ペアを作成します。秘密鍵はWeb Crypto APIを使用してローカルで生成されます――サーバーには何も送信されません。両方のファイルをダウンロードして `~/.ssh/`（Linux/macOS）または `C:\Users\YourName\.ssh\`（Windows）に保存します。
+
+### オプションB：コマンドラインでssh-keygenを使用する
+
+`ssh-keygen` コマンドはLinux・macOS・OpenSSHを持つWindowsで利用できます：
+
+```bash
+# Ed25519鍵ペアを生成（推奨）
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+**各フラグの意味：**
+- `-t ed25519` ― 鍵の種類（Ed25519はモダンで速くて安全）
+- `-C "comment"` ― 公開鍵に埋め込まれるラベル、通常はメールアドレス
+
+以下のプロンプトが表示されます：
+
+```
+Generating public/private ed25519 key pair.
+Enter file in which to save the key (/home/user/.ssh/id_ed25519):
+```
+
+**Enter** を押してデフォルトの場所を受け入れます。複数の鍵がある場合、わかりやすい名前をつけられます（例：`/home/user/.ssh/id_ed25519_github`）。
+
+```
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+```
+
+強いパスフレーズを入力します。これによりディスク上の秘密鍵ファイルが暗号化されます――マシンが盗まれても、パスフレーズなしに鍵は使用できません。人間の介在が不可能な自動化ユースケースでは空にできますが、個人の鍵には必ずパスフレーズを使用してください。
+
+**出力：**
+
+```
+Your identification has been saved in /home/user/.ssh/id_ed25519
+Your public key has been saved in /home/user/.ssh/id_ed25519.pub
+The key fingerprint is:
+SHA256:abc123defghijk... your@email.com
+The key's randomart image is:
++--[ED25519 256]--+
+...
+```
+
+2つのファイルが作成されます：
+- `~/.ssh/id_ed25519` ― **秘密鍵**（絶対に共有しない）
+- `~/.ssh/id_ed25519.pub` ― **公開鍵**（共有しても安全）
+
+### RSAの場合（レガシー互換性）
+
+Ed25519をサポートしない非常に古いシステムに接続する必要がある場合：
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "your@email.com"
+```
+
+最低4096ビットを使用します。4096ビット未満のRSA鍵は適切なセキュリティとは見なされなくなっています。
+
+## ステップ2：LinuxでSSHをセットアップする
+
+このセクションでは、パスワードなしで認証できるよう公開鍵をLinuxサーバーにコピーする手順を説明します。
+
+### 方法1：ssh-copy-id（最も簡単）
+
+`ssh-copy-id` はリモートサーバーに公開鍵をインストールする最も簡単な方法です。パスワード認証を使用して接続し、公開鍵をサーバーの `~/.ssh/authorized_keys` に追加して、正しいパーミッションを設定します。
+
+```bash
+ssh-copy-id user@server.example.com
+
+# 鍵ファイルを明示的に指定
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server.example.com
+
+# 非標準ポートで接続
+ssh-copy-id -p 2222 user@server.example.com
+```
+
+最後にサーバーのパスワードを求められます。これ以降は鍵を使って `ssh user@server.example.com` で接続できます。
+
+### 方法2：手動でコピー
+
+`ssh-copy-id` が利用できない場合（一部のBSDシステムや最小限のLinuxインストールでよくある）：
+
+```bash
+# 公開鍵を表示してコピー
+cat ~/.ssh/id_ed25519.pub
+
+# 次にサーバーにパスワードでSSHして実行：
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+echo "PASTE_YOUR_PUBLIC_KEY_HERE" >> ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+```
+
+または1つのパイプラインで完了：
+
+```bash
+cat ~/.ssh/id_ed25519.pub | ssh user@server.example.com \
+  "mkdir -p ~/.ssh && chmod 700 ~/.ssh && \
+   cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+```
+
+### 鍵がインストールされたか確認する
+
+```bash
+ssh user@server.example.com
+# パスワードを求めずに接続するはず（パスフレーズを設定した場合はパスフレーズのみ）
+```
+
+### SSHサーバー（sshd）を設定する
+
+リモートサーバーでは、SSHデーモンの設定は `/etc/ssh/sshd_config` にあります。セキュアなセットアップのために：
+
+```bash
+sudo nano /etc/ssh/sshd_config
+```
+
+推奨設定：
+
+```
+# 公開鍵認証を有効化
+PubkeyAuthentication yes
+
+# パスワード認証を無効化（鍵が機能することを確認してから！）
+PasswordAuthentication no
+
+# SSHでのrootログインを無効化
+PermitRootLogin no
+
+# 特定ユーザーのみ許可
+AllowUsers alice bob deploy
+
+# セッションを維持
+ClientAliveInterval 60
+ClientAliveCountMax 3
+```
+
+編集後、SSHデーモンをリロード：
+
+```bash
+sudo systemctl reload sshd
+# または古いシステムでは：
+sudo service ssh reload
+```
+
+**重要**：鍵ベース認証が機能することを確認するまで `PasswordAuthentication` を無効にしないでください。ロックアウトされた場合、コンソールアクセス（またはホスティングプロバイダの緊急アクセス）が回復に必要です。
+
+### LinuxでのSSHエージェント設定
+
+鍵にパスフレーズがある場合、セッション開始時に `ssh-agent` に追加して再入力を避けます：
+
+```bash
+# エージェントを起動（デスクトップ環境が自動起動することが多い）
+eval "$(ssh-agent -s)"
+
+# 鍵を追加（パスフレーズを1回入力）
+ssh-add ~/.ssh/id_ed25519
+
+# 読み込まれた鍵を確認
+ssh-add -l
+```
+
+ログイン時に `ssh-agent` を自動起動して鍵を追加するには、`~/.bashrc` または `~/.zshrc` に追加します：
+
+```bash
+# ssh-agentを自動起動
+if [ -z "$SSH_AUTH_SOCK" ]; then
+  eval "$(ssh-agent -s)"
+  ssh-add ~/.ssh/id_ed25519
+fi
+```
+
+## ステップ3：macOSでSSHをセットアップする
+
+macOSにはフルのOpenSSHクライアントが含まれています。リモートサーバーへの鍵ベース認証のセットアップ手順はLinuxと同一です（上記のステップ2を参照）。macOS固有の追加はキーチェーン統合に関するものです。
+
+### キーチェーン統合
+
+macOSはシステムキーチェーンにパスフレーズを保存し、最初の入力後は再度入力不要にできます：
+
+```bash
+# キーチェーン統合でssh-agentに鍵を追加
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+
+# 古いmacOSバージョン（Monterey以前）の場合
+ssh-add -K ~/.ssh/id_ed25519
+```
+
+macOSがキーチェーンから常に鍵を読み込むようにするには、`~/.ssh/config` に追加します：
+
+```
+Host *
+    AddKeysToAgent yes
+    UseKeychain yes
+    IdentityFile ~/.ssh/id_ed25519
+```
+
+これ以降、パスフレーズはキーチェーンに保存されて自動的に読み込まれます――再起動後のプロンプトは表示されません。
+
+### SSHクライアントのバージョン確認
+
+```bash
+ssh -V
+# OpenSSH_9.x, LibreSSL x.x.x
+```
+
+macOSには比較的最近のOpenSSHが同梱されていますが、常に最新ではありません。新しい機能が必要な場合は、Homebrewでインストールします：`brew install openssh`。
+
+## ステップ4：WindowsでSSHをセットアップする
+
+Windows 10（1809以降）とWindows 11にはOpenSSHが含まれています。セットアップ方法を説明します。
+
+### OpenSSHクライアントをインストールする
+
+**インストール済みか確認：**
+
+```powershell
+ssh -V
+```
+
+**設定からインストール：**
+1. **設定 → アプリ → オプション機能** を開く
+2. **OpenSSHクライアント** を検索
+3. **インストール** をクリック
+
+**PowerShell（管理者）からインストール：**
+
+```powershell
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+```
+
+### Windowsで鍵を生成する
+
+PowerShellを開いて実行：
+
+```powershell
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+鍵は `C:\Users\YourUsername\.ssh\` に保存されます。
+
+### Linuxサーバーに公開鍵をコピーする
+
+Windowsには `ssh-copy-id` が含まれていませんが、PowerShellから手動で行えます：
+
+```powershell
+# 公開鍵を表示
+Get-Content ~/.ssh/id_ed25519.pub
+
+# リモートサーバーにコピー（サーバーパスワードを求められます）
+$pubkey = Get-Content ~/.ssh/id_ed25519.pub -Raw
+ssh user@server.example.com "mkdir -p ~/.ssh && echo '$pubkey' >> ~/.ssh/authorized_keys && chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys"
+```
+
+または `Add-Content` でパイプします：
+
+```powershell
+type $env:USERPROFILE\.ssh\id_ed25519.pub | ssh user@server.example.com "cat >> ~/.ssh/authorized_keys"
+```
+
+### WindowsでのSSHエージェント設定
+
+パスフレーズの繰り返し入力を避けるには、OpenSSH認証エージェントサービスを起動します：
+
+```powershell
+# サービスを起動
+Start-Service ssh-agent
+
+# 自動起動に設定
+Set-Service -Name ssh-agent -StartupType Automatic
+
+# 鍵を追加
+ssh-add ~/.ssh/id_ed25519
+```
+
+### PuTTYの代替として
+
+グラフィカルSSHクライアントを好む場合、PuTTYはWindowsの無料オプションです。**PuTTYgen** で鍵を生成します（PuTTY用に `.ppk` 形式で保存し、OpenSSH形式でエクスポート）。ただし、新しいセットアップにはビルトインのOpenSSHクライアントの方がシンプルでエコシステムとの互換性もあります。
+
+## GitHubとGitLab向けSSH鍵のセットアップ方法
+
+GitHubとGitLabへのSSH鍵認証は同様に機能します――公開鍵をサービスにアップロードし、Git操作を行う際に対応する秘密鍵を使用します。
+
+### GitHubのSSHセットアップ
+
+**1. 公開鍵をコピーする：**
+
+```bash
+# Linux
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+
+# macOS
+cat ~/.ssh/id_ed25519.pub | pbcopy
+
+# Windows PowerShell
+Get-Content ~/.ssh/id_ed25519.pub | Set-Clipboard
+```
+
+または単に表示して手動でコピーします：
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+**2. GitHubに追加する：**
+
+1. **github.com** にアクセスしてログイン
+2. アバターをクリック → **Settings（設定）**
+3. 左サイドバー：**SSH and GPG keys**
+4. **New SSH key** をクリック
+5. わかりやすい **Title** を付ける（例：「MacBook Pro」や「Work PC」）
+6. **Key type** を **Authentication Key** に設定
+7. 公開鍵を貼り付ける
+8. **Add SSH key** をクリック
+
+**3. 接続をテストする：**
+
+```bash
+ssh -T git@github.com
+# Hi username! You've successfully authenticated, but GitHub does not provide shell access.
+```
+
+**4. SSH経由でGit操作を行う：**
+
+```bash
+# HTTPSではなくSSHでクローン
+git clone git@github.com:username/repository.git
+
+# 既存リポジトリがHTTPSを使っている場合、SSHに切り替える
+git remote set-url origin git@github.com:username/repository.git
+```
+
+### GitLabのSSHセットアップ
+
+手順は同一です：
+
+1. **gitlab.com** にアクセス → アバターをクリック → **Preferences（環境設定）**
+2. 左サイドバー：**SSH Keys**
+3. 公開鍵を貼り付け、タイトルを付け、オプションで有効期限を設定
+4. **Add key** をクリック
+
+以下でテスト：
+
+```bash
+ssh -T git@gitlab.com
+# Welcome to GitLab, @username!
+```
+
+セルフホストのGitLabインスタンスの場合は、`gitlab.com` をインスタンスのホスト名に置き換えます。
+
+### GitHubと他のサービスに別の鍵を使用する
+
+GitHubに専用の鍵を使いたい場合（鍵の衛生管理として推奨）、名前付きの鍵を生成します：
+
+```bash
+ssh-keygen -t ed25519 -C "github" -f ~/.ssh/id_ed25519_github
+```
+
+`~/.ssh/config` に `Host` ブロックを追加します：
+
+```
+Host github.com
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519_github
+    AddKeysToAgent yes
+```
+
+これで `git clone git@github.com:...` が自動的にGitHub専用の鍵を使用します。
+
+## SSHのテストとトラブルシューティング
+
+### 基本的な接続テスト
+
+```bash
+ssh -v user@server.example.com
+```
+
+`-v`（詳細）フラグで各ステップで何が起きているかが正確にわかります。以下の行を探します：
+- `Offering public key: ~/.ssh/id_ed25519` ― SSHがあなたの鍵を試している
+- `Server accepts key` ― 鍵が `authorized_keys` にある
+- `Authenticated to server.example.com` ― 成功
+
+### 一般的なエラーと修正方法
+
+**「Permission denied (publickey)」**
+
+最も一般的なエラーです。原因と修正方法：
+
+```bash
+# 鍵がssh-agentに読み込まれているか確認
+ssh-add -l
+
+# 鍵がリストされていない場合、追加する
+ssh-add ~/.ssh/id_ed25519
+
+# リモートサーバーでauthorized_keysを確認
+cat ~/.ssh/authorized_keys
+# 公開鍵がそこにあることを確認
+
+# リモートサーバーのパーミッションを確認
+ls -la ~/.ssh/
+# ~/.sshは700でなければならない
+# authorized_keysは600でなければならない
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/authorized_keys
+
+# サーバーが公開鍵認証を許可しているか確認
+sudo grep PubkeyAuthentication /etc/ssh/sshd_config
+# 次のようになっている必要がある：PubkeyAuthentication yes
+```
+
+**「WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED」**
+
+サーバーのホスト鍵が変わっており、SSHはこれを潜在的なセキュリティ問題として扱います。正当な変更（サーバーの再構築、IPの再割り当て）であることがわかっている場合は、古いエントリを削除します：
+
+```bash
+# 特定のホストエントリを削除
+ssh-keygen -R server.example.com
+
+# またはknown_hostsを手動で編集して影響を受ける行を削除
+nano ~/.ssh/known_hosts
+```
+
+**「Bad permissions」または「Permissions too open」**
+
+SSHは鍵ファイルのパーミッションについて厳格です：
+
+```bash
+# 秘密鍵のパーミッションを修正
+chmod 600 ~/.ssh/id_ed25519
+
+# 公開鍵のパーミッションを修正
+chmod 644 ~/.ssh/id_ed25519.pub
+
+# .sshディレクトリのパーミッションを修正
+chmod 700 ~/.ssh
+```
+
+Windowsでは、秘密鍵のパーミッション管理が異なります。鍵ファイルを右クリック → プロパティ → セキュリティ → 詳細 → 継承を無効化 → 自分のユーザーアカウントのみにフルコントロールを付与して他のすべてを削除。
+
+### SSHエージェントのセットアップと使用
+
+パスフレーズを繰り返し求められる場合、`ssh-agent` が実行されていないか鍵が追加されていません：
+
+```bash
+# エージェントを起動
+eval "$(ssh-agent -s)"
+# Agent pid 12345
+
+# 鍵を追加
+ssh-add ~/.ssh/id_ed25519
+# Enter passphrase for /home/user/.ssh/id_ed25519:
+# Identity added: /home/user/.ssh/id_ed25519
+
+# 確認
+ssh-add -l
+# 256 SHA256:abc123... your@email.com (ED25519)
+```
+
+### 自動化でのknown_hostsの事前入力
+
+CI/CDパイプラインでは、接続前に `ssh-keyscan` を使用してリモートホストのフィンガープリントを追加します：
+
+```bash
+ssh-keyscan -H server.example.com >> ~/.ssh/known_hosts
+ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+```
+
+これにより自動化スクリプト内でのインタラクティブなフィンガープリントプロンプトが防がれます。
+
+## よくある質問
+
+### 「Permission denied (publickey)」を修正するには？
+
+このチェックリストを順番に確認します：(1) SSHエージェントに鍵があるか確認：`ssh-add -l`。なければ `ssh-add ~/.ssh/id_ed25519` を実行。(2) サーバーの `~/.ssh/authorized_keys` ファイルに公開鍵があるか確認。(3) パーミッションを確認：`~/.ssh` は `700`、`authorized_keys` は `600` でなければならない。(4) `/etc/ssh/sshd_config` に `PubkeyAuthentication yes` があるか確認。(5) `ssh -vvv user@server` で認証のどこで失敗しているかを確認。詳細出力でどの鍵が試されているか、サーバーがそれを受け入れたかが表示されます。
+
+### SSH鍵をSSHエージェントに追加するには？
+
+`ssh-add ~/.ssh/id_ed25519`（鍵ファイル名を適宜置き換え）を実行します。エージェントが実行されていない場合は、まず `eval "$(ssh-agent -s)"` で起動します。macOSでは、`ssh-add --apple-use-keychain ~/.ssh/id_ed25519` を使用してパスフレーズをキーチェーンに保存します。Windowsでは、`Start-Service ssh-agent` で `ssh-agent` サービスを有効にしてから `ssh-add` を実行します。`ssh-add` はセッションごとに1回（macOSのキーチェーンでは永久に1回）だけ実行すれば済みます。
+
+### SSH鍵を複数持てますか？
+
+はい、それが良い実践です。異なる目的に別々の鍵を生成します――例えば、個人のGitHub用、職場のGitLab用、本番サーバー用など。`~/.ssh/config` で `IdentityFile` を使用して各ホストを特定の鍵にマッピングします。別々の鍵を持つことで、1つを失効（サービスやサーバーから削除）しても他に影響せず、鍵の侵害による被害範囲を限定できます。
+
+### SSH鍵のパスフレーズを変更するには？
+
+`ssh-keygen -p` を使用します：
+
+```bash
+ssh-keygen -p -f ~/.ssh/id_ed25519
+```
+
+現在のパスフレーズを求められ、次に新しいものを入力して確認します。鍵自体（したがって公開鍵も）は変わりません――どこかで更新する必要はありません。パスフレーズが漏洩した可能性がある場合や、定期的なセキュリティ対策として変更したい場合に便利です。
+
+### サーバーから古いSSH鍵を削除するには？
+
+サーバーの `~/.ssh/authorized_keys` を開いて古い公開鍵を含む行を削除します：
+
+```bash
+# リモートサーバーでauthorized_keysを編集
+ssh user@server.example.com
+nano ~/.ssh/authorized_keys
+# 削除したい鍵の行を削除
+# 保存して終了
+```
+
+`authorized_keys` の各行は1つの公開鍵です。鍵のコメント（最後のフィールド、通常 `user@hostname` またはメールアドレス）でどの鍵がどれかを識別できます。どの行を削除すべきかわからない場合は、フィンガープリントを比較します：
+
+```bash
+# ローカルマシンでフィンガープリントを取得
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+
+# サーバーで認証済みの全鍵のフィンガープリントを確認
+ssh-keygen -lf ~/.ssh/authorized_keys
+```
+
+フィンガープリントを照合して正しい鍵を特定・削除します。
+
+## SSH鍵を無料で生成する
+
+まだSSH鍵ペアを生成していない場合、無料のオンラインジェネレーターがブラウザ上で数秒以内にEd25519またはRSA鍵を直接作成します。インストール不要で、サーバーには何も送信されません――生成はすべてデバイス上で行われます。
+
+<a href="/">SSH鍵を無料で生成する →</a>
+
+---
+
+**さらに詳しく：**
+- <a href="/ja/what-is-ssh">SSHとは何か？セキュアシェル完全ガイド</a>
+- <a href="/ja/what-is-an-ssh-key">SSH鍵とは？公開鍵・秘密鍵・鍵ペアを解説</a>
+- <a href="/ja/ssh-command">SSHコマンド：実例付き完全リファレンス</a>

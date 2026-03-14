@@ -1,0 +1,54 @@
+{
+  "hi": {
+    "what-is-ssh": {
+      "title": "SSH क्या है? Secure Shell की सम्पूर्ण गाइड",
+      "description": "SSH (Secure Shell) क्या है, यह कैसे काम करता है, और क्यों यह सुरक्षित रिमोट एक्सेस का सार्वभौमिक मानक है — इसकी पूरी जानकारी। SSH प्रोटोकॉल, encryption, tunneling और real-world उपयोग के बारे में जानें।",
+      "keywords": ["SSH क्या है", "Secure Shell", "SSH प्रोटोकॉल", "SSH कैसे काम करता है", "SSH tunneling", "SSH बनाम Telnet", "SSH port 22", "SSH key"],
+      "publishDate": "2026-03-14"
+    },
+    "what-is-an-ssh-key": {
+      "title": "SSH Key क्या है? Public Keys, Private Keys, और Key Pairs की व्याख्या",
+      "description": "SSH key क्या है, public key और private key में क्या अंतर है, Ed25519 बनाम RSA का चुनाव कैसे करें, और GitHub पर SSH key कैसे जोड़ें — सब कुछ विस्तार से समझें।",
+      "keywords": ["SSH key क्या है", "public key", "private key", "Ed25519", "RSA key", "SSH key pair", "authorized_keys", "SSH key fingerprint", "GitHub SSH key"],
+      "publishDate": "2026-03-14"
+    },
+    "ssh-command": {
+      "title": "SSH Command: Linux, Mac और Windows के लिए उदाहरणों के साथ पूर्ण संदर्भ",
+      "description": "ssh command का पूरा reference guide — basic syntax से लेकर -i, -L, -R, -D, -J flags, ProxyJump, tunneling और Windows PowerShell तक, वास्तविक उदाहरणों के साथ।",
+      "keywords": ["ssh command", "SSH flags", "SSH tunneling", "SSH port forwarding", "ProxyJump", "SSH bastion host", "ssh -i flag", "SSH Windows PowerShell", "ssh config file"],
+      "publishDate": "2026-03-14"
+    },
+    "how-to-set-up-ssh": {
+      "title": "SSH कैसे Set Up करें: Linux, Mac और Windows के लिए सम्पूर्ण Step-by-Step गाइड",
+      "description": "SSH key pair generate करने से लेकर Linux सर्वर पर deploy करने, GitHub के साथ set up करने, और सामान्य errors troubleshoot करने तक — SSH setup की पूरी step-by-step गाइड।",
+      "keywords": ["SSH set up", "SSH key generate", "ssh-keygen", "ssh-copy-id", "GitHub SSH setup", "GitLab SSH", "SSH Windows setup", "Permission denied publickey", "ssh-agent"],
+      "publishDate": "2026-03-14"
+    }
+  },
+  "bn": {
+    "what-is-ssh": {
+      "title": "SSH কী? Secure Shell-এর সম্পূর্ণ গাইড",
+      "description": "SSH (Secure Shell) কী, কীভাবে কাজ করে, এবং কেন এটি নিরাপদ রিমোট অ্যাক্সেসের সার্বজনীন মানদণ্ড — সবকিছু বিস্তারিত জানুন। SSH প্রোটোকল, এনক্রিপশন, tunneling এবং বাস্তব ব্যবহার সম্পর্কে জানুন।",
+      "keywords": ["SSH কী", "Secure Shell", "SSH প্রোটোকল", "SSH কীভাবে কাজ করে", "SSH tunneling", "SSH বনাম Telnet", "SSH port 22", "SSH key"],
+      "publishDate": "2026-03-14"
+    },
+    "what-is-an-ssh-key": {
+      "title": "SSH Key কী? Public Key, Private Key, ও Key Pair ব্যাখ্যা",
+      "description": "SSH key কী, public key ও private key-এর মধ্যে পার্থক্য, Ed25519 বনাম RSA-র মধ্যে কোনটি বেছে নেবেন, এবং GitHub-এ SSH key কীভাবে যোগ করবেন — বিস্তারিত গাইড।",
+      "keywords": ["SSH key কী", "public key", "private key", "Ed25519", "RSA key", "SSH key pair", "authorized_keys", "SSH key fingerprint", "GitHub SSH key"],
+      "publishDate": "2026-03-14"
+    },
+    "ssh-command": {
+      "title": "SSH Command: Linux, Mac ও Windows-এর জন্য উদাহরণসহ সম্পূর্ণ রেফারেন্স",
+      "description": "ssh command-এর সম্পূর্ণ রেফারেন্স গাইড — basic syntax থেকে -i, -L, -R, -D, -J flag, ProxyJump, tunneling এবং Windows PowerShell পর্যন্ত, বাস্তব উদাহরণসহ।",
+      "keywords": ["ssh command", "SSH flag", "SSH tunneling", "SSH port forwarding", "ProxyJump", "SSH bastion host", "ssh -i flag", "SSH Windows PowerShell", "ssh config file"],
+      "publishDate": "2026-03-14"
+    },
+    "how-to-set-up-ssh": {
+      "title": "SSH কীভাবে সেট আপ করবেন: Linux, Mac ও Windows-এর জন্য সম্পূর্ণ ধাপে ধাপে গাইড",
+      "description": "SSH key pair তৈরি থেকে Linux সার্ভারে deploy করা, GitHub-এর সাথে সেট আপ করা, এবং সাধারণ ত্রুটি troubleshoot করা পর্যন্ত — SSH setup-এর সম্পূর্ণ ধাপে ধাপে গাইড।",
+      "keywords": ["SSH সেট আপ", "SSH key তৈরি", "ssh-keygen", "ssh-copy-id", "GitHub SSH setup", "GitLab SSH", "SSH Windows setup", "Permission denied publickey", "ssh-agent"],
+      "publishDate": "2026-03-14"
+    }
+  }
+}

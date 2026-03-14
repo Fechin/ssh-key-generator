@@ -1,0 +1,430 @@
+# פקודת SSH: עיון מלא עם דוגמאות ל-Linux, Mac ו-Windows
+
+פקודת `ssh` היא הכלי הראשי לאתחול חיבורי SSH משורת הפקודה. בין אם אתה מתחבר לשרת Linux מרוחק, מעביר פורט לגישה לבסיס נתונים, או קופץ דרך שרת bastion להגיע לרשת פנימית, פקודת `ssh` היא נקודת הכניסה שלך. המדריך הזה מכסה הכל מהתחביר הבסיסי ועד לדגלים מתקדמים, מנהרות ותצורות ProxyJump — עם דוגמאות אמיתיות ל-Linux, macOS ו-Windows.
+
+לפני הרצת פקודות SSH, תצטרך מפתחות SSH. ראה את המדריך שלנו על <a href="/he/what-is-an-ssh-key">מה זה מפתח SSH</a> או השתמש ב<a href="/">מחולל המקוון החינמי</a> כדי ליצור זוג מפתחות.
+
+## תחביר פקודת SSH
+
+התחביר הבסיסי של פקודת `ssh` הוא:
+
+```
+ssh [options] [user@]hostname [command]
+```
+
+פירוק זה:
+
+- **`[options]`** — אפס או יותר דגלים המשנים את ההתנהגות (מכוסים לאורך המדריך הזה)
+- **`[user@]`** — שם משתמש אופציונלי. אם הושמט, SSH משתמש בשם המשתמש המקומי הנוכחי שלך
+- **`hostname`** — המארח המרוחק להתחבר אליו. יכול להיות כתובת IP, שם דומיין, או כינוי מוגדר ב-`~/.ssh/config`
+- **`[command]`** — פקודה אופציונלית להריץ במארח המרוחק. אם הושמט, SSH מתחיל סשן shell אינטראקטיבי
+
+**דוגמאות בסיסיות:**
+
+```bash
+# התחבר עם שם המשתמש הנוכחי שלך
+ssh server.example.com
+
+# התחבר כמשתמש ספציפי
+ssh alice@server.example.com
+
+# התחבר עם כתובת IP
+ssh ubuntu@192.168.1.100
+
+# הרץ פקודה אחת והתנתק מיד
+ssh user@server.example.com "df -h"
+
+# הרץ פקודה והישאר מחובר
+ssh user@server.example.com
+```
+
+## SSH על Linux ו-macOS
+
+הפצות Linux ו-macOS מגיעות עם **OpenSSH** מותקן מראש. על Linux, הוא חלק מחבילת `openssh-client` (Debian/Ubuntu) או `openssh-clients` (RHEL/CentOS/Fedora). על macOS, הוא מגיע עם המערכת ומוכן מיידית מ-Terminal או iTerm2.
+
+### אמת שה-SSH זמין
+
+```bash
+ssh -V
+# פלט: OpenSSH_9.6p1, LibreSSL 3.3.6
+```
+
+### חיבור בסיסי
+
+```bash
+# התחבר לשרת
+ssh user@myserver.example.com
+
+# SSH בודק את ~/.ssh/known_hosts בחיבור הראשון ומנחה:
+# The authenticity of host 'myserver.example.com' can't be established.
+# ED25519 key fingerprint is SHA256:abc123...
+# Are you sure you want to continue connecting (yes/no)? yes
+
+# טביעת האצבע של המארח נשמרת ב-~/.ssh/known_hosts
+```
+
+### שימוש בקובץ תצורת SSH לנוחות
+
+במקום להקליד פרטי חיבור מלאים בכל פעם, צור `~/.ssh/config`:
+
+```
+Host myserver
+    HostName myserver.example.com
+    User alice
+    Port 22
+    IdentityFile ~/.ssh/id_ed25519
+
+Host dev
+    HostName dev.example.com
+    User ubuntu
+    Port 2222
+    IdentityFile ~/.ssh/id_ed25519_work
+```
+
+עכשיו `ssh myserver` מתפשט לחיבור המלא — ללא צורך בדגלים.
+
+## SSH על Windows (PowerShell ו-OpenSSH)
+
+Windows 10 (גרסה 1809) ו-Windows 11 כוללים **לקוח OpenSSH** כתכונה אופציונלית, מה שהופך את פקודת `ssh` לזמינה ב-PowerShell, Command Prompt ו-Windows Terminal.
+
+### בדוק אם OpenSSH מותקן
+
+```powershell
+# ב-PowerShell
+ssh -V
+```
+
+אם הפקודה לא נמצאה, התקן אותה:
+
+**דרך הגדרות:**
+1. פתח **Settings → Apps → Optional Features**
+2. לחץ **Add a feature**
+3. מצא **OpenSSH Client** והתקן אותו
+
+**דרך PowerShell (מנהל מערכת):**
+
+```powershell
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+```
+
+### שימוש ב-SSH ב-PowerShell
+
+לאחר התקנה, התחביר זהה ל-Linux ו-macOS:
+
+```powershell
+# התחבר לשרת
+ssh user@server.example.com
+
+# התחבר בפורט מותאם אישית
+ssh -p 2222 user@server.example.com
+
+# השתמש בקובץ מפתח ספציפי
+ssh -i C:\Users\YourName\.ssh\id_ed25519 user@server.example.com
+```
+
+### מיקום מפתחות SSH ב-Windows
+
+מפתחות SSH ב-Windows מאוחסנים ב-`C:\Users\YourUsername\.ssh\`. PowerShell מכירה ב-`~` כקיצור:
+
+```powershell
+# אלה שקולות
+ssh -i ~/.ssh/id_ed25519 user@server
+ssh -i C:\Users\YourUsername\.ssh\id_ed25519 user@server
+```
+
+### PuTTY מול OpenSSH ב-Windows
+
+לפני ש-OpenSSH היה זמין ב-Windows, **PuTTY** היה לקוח SSH הסטנדרטי. PuTTY משתמש בפורמט מפתח משלו (קבצי `.ppk`) ובמחולל מפתחות משלו (PuTTYgen). אם יש לך מפתח `.ppk` וצריך להמיר אותו לפורמט OpenSSH הסטנדרטי:
+
+```bash
+# שימוש בכלי PuTTY
+puttygen mykey.ppk -O private-openssh -o id_ed25519
+```
+
+להגדרות חדשות, העדף את לקוח OpenSSH המובנה ב-Windows — הוא מתוחזק על ידי פרויקט OpenSSH ומשתמש באותו פורמט מפתח וקובץ תצורה כמו Linux ו-macOS.
+
+## SSH עם אימות מפתח: הדגל -i
+
+כברירת מחדל, SSH מחפש קבצי מפתח ב-`~/.ssh/` עם שמות סטנדרטיים (`id_ed25519`, `id_rsa`, `id_ecdsa`, `id_dsa`). **הדגל `-i`** (קובץ זהות) מאפשר לך לציין קובץ מפתח שונה במפורש.
+
+```bash
+# השתמש בקובץ מפתח ספציפי
+ssh -i ~/.ssh/id_ed25519_production user@prod.example.com
+
+# השתמש במפתח המאוחסן במיקום לא-סטנדרטי
+ssh -i /path/to/my/custom_key deploy@server.example.com
+
+# שלב עם אפשרויות אחרות
+ssh -i ~/.ssh/deploy_key -p 2222 -l deploy server.example.com
+```
+
+הדגל `-i` חיוני במספר מצבים:
+- יש לך זוגות מפתח מרובים לשרתים או מטרות שונות
+- המפתח שלך אינו בתיקיית `~/.ssh/` הברירת מחדל
+- אתה מציין מפתח בסביבת CI/CD שבה המסלול הוא מפורש
+- הורדת קובץ `.pem` מ-AWS או ספק ענן אחר
+
+### דוגמת AWS EC2
+
+AWS מספקת קובץ מפתח `.pem` כשאתה מפעיל מופע EC2:
+
+```bash
+# התחבר למופע AWS EC2 עם מפתח .pem
+ssh -i ~/Downloads/my-aws-key.pem ec2-user@54.123.456.789
+
+# תקן הרשאות אם צריך (נדרש — SSH דוחה מפתחות קריאים לכלל)
+chmod 400 ~/Downloads/my-aws-key.pem
+```
+
+## אפשרויות ודגלים חיוניים של פקודת SSH
+
+לפקודת `ssh` עשרות אפשרויות. הנה אלה שתשתמש בהן בפועל.
+
+| דגל | תיאור | דוגמה |
+|---|---|---|
+| `-p PORT` | התחבר בפורט לא-סטנדרטי | `ssh -p 2222 user@host` |
+| `-i FILE` | השתמש בקובץ זהות (מפתח) ספציפי | `ssh -i ~/.ssh/mykey user@host` |
+| `-l USER` | ציין שם משתמש כניסה | `ssh -l alice host` |
+| `-L local:host:remote` | העברת פורט מקומית | `ssh -L 8080:localhost:80 host` |
+| `-R remote:host:local` | העברת פורט מרוחקת | `ssh -R 9090:localhost:3000 host` |
+| `-D port` | פרוקסי דינמי (SOCKS) | `ssh -D 1080 host` |
+| `-N` | אל תבצע פקודה מרוחקת (למנהרות בלבד) | `ssh -N -L 3307:db:3306 host` |
+| `-f` | עבור לרקע לאחר אימות | `ssh -f -N -D 1080 host` |
+| `-v` | פלט מילולי (דיבוג) | `ssh -v user@host` |
+| `-vv` או `-vvv` | פלט מילולי יותר | `ssh -vvv user@host` |
+| `-A` | הפעל העברת סוכן SSH | `ssh -A user@jump-host` |
+| `-X` | הפעל העברת X11 | `ssh -X user@host xclock` |
+| `-C` | הפעל דחיסה | `ssh -C user@host` |
+| `-T` | בטל הקצאת pseudo-terminal | `ssh -T git@github.com` |
+| `-q` | מצב שקט (דכא אזהרות) | `ssh -q user@host` |
+| `-o OPTION=VALUE` | הגדר אפשרות תצורה מובנית | `ssh -o StrictHostKeyChecking=no host` |
+| `-J JUMP` | ProxyJump דרך שרת bastion | `ssh -J jump.host user@internal` |
+| `-W host:port` | העבר stdio ל-host:port | משמש פנימית על ידי `-J` |
+
+### מצב מילולי לדיבוג
+
+כש-SSH נכשל, `-v` (או `-vv` או `-vvv`) חושף בדיוק מה קורה:
+
+```bash
+ssh -v user@server.example.com
+# מציג: אילו מפתחות מנוסים, אילו שיטות אימות השרת מקבל,
+# האם הסוכן מעורב, ואיפה החיבור נכשל
+
+ssh -vvv user@server.example.com
+# מרבית המילוליות — מציג משא ומתן קריפטוגרפי מפורט
+```
+
+### עקיפת בדיקת מפתח מארח (השתמש בזהירות)
+
+בסביבות אוטומציה ובדיקות שבהן אימות מפתח מארח אינו נוח:
+
+```bash
+ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null user@host
+```
+
+**אל תשתמש בזה בייצור.** זה מבטל את ההגנה מפני מתקפות איש-באמצע. במקום זאת, מלא מראש `known_hosts` באמצעות `ssh-keyscan` בסקריפטים לפרוביזיה שלך.
+
+### העברת סוכן
+
+```bash
+# העבר את סוכן ה-SSH המקומי שלך לשרת המרוחק
+ssh -A user@jump-server
+
+# משרת ה-jump, ניתן כעת לבצע SSH למארחים פנימיים עם המפתחות המקומיים שלך
+# אין צורך להעתיק מפתחות פרטיים לשרת ה-jump
+ssh internal-server.private
+```
+
+העברת סוכן שימושית אך יש לה השלכות אבטחה: כל מי שיש לו גישת root בשרת הביניים יכול להשתמש בסוכן המועבר שלך. השתמש בה רק עם שרתים מהימנים, ועדיף **ProxyJump** כשאפשר (הוא לא חושף את הסוכן שלך למארחים ביניים).
+
+## פקודות מנהרת SSH
+
+מנהרות SSH מנתבות חיבורי TCP דרך ערוץ SSH מוצפן. לרקע על מה הן מנהרות, ראה את <a href="/he/what-is-ssh">קטע המנהרות במדריך ה-SSH</a>.
+
+### העברת פורטים מקומית
+
+הופכת שירות מרוחק לנגיש במכונה המקומית שלך.
+
+```bash
+# גישה לבסיס נתונים MySQL מרוחק בפורט מקומי 3307
+ssh -L 3307:localhost:3306 user@db-server.example.com -N
+
+# חיבור לשרת ווב מרוחק נגיש רק מהמארח SSH
+ssh -L 8080:intranet.company.com:80 user@vpn.company.com -N
+
+# גישה למופע Redis ברשת פרטית
+ssh -L 6380:10.0.1.50:6379 user@bastion.example.com -N
+```
+
+לאחר הרצת אחת מהפקודות לעיל, חבר את היישום המקומי שלך ל-`127.0.0.1:LOCAL_PORT`.
+
+### העברת פורטים מרוחקת
+
+חושפת שירות מקומי בשרת המרוחק.
+
+```bash
+# חשוף את שרת הפיתוח המקומי שלך (פורט 3000) בפורט 9090 של השרת המרוחק
+ssh -R 9090:localhost:3000 user@remote.example.com -N
+
+# אפשר לכל ממשק בשרת המרוחק להתחבר (דורש GatewayPorts yes ב-sshd_config)
+ssh -R 0.0.0.0:9090:localhost:3000 user@remote.example.com -N
+```
+
+### העברת פורטים דינמית (פרוקסי SOCKS)
+
+```bash
+# צור פרוקסי SOCKS5 בפורט מקומי 1080, רץ ברקע
+ssh -D 1080 -N -f user@remote.example.com
+
+# כעת הגדר את הדפדפן או המערכת שלך לשימוש בפרוקסי SOCKS5: 127.0.0.1:1080
+# כל התנועה מנותבת דרך השרת המרוחק
+```
+
+לשימוש עם curl:
+
+```bash
+curl --socks5 127.0.0.1:1080 https://api.example.com/
+```
+
+### הרצת המנהרה ברקע
+
+```bash
+# -f שולח את SSH לרקע, -N אומר ללא פקודה מרוחקת
+ssh -f -N -L 3307:localhost:3306 user@db-server
+
+# מצא את תהליך ה-SSH ברקע
+ps aux | grep ssh
+
+# הרוג אותו
+kill PID
+```
+
+## SSH ProxyJump ושרתי Bastion
+
+בארגונים רבים, שרתי ייצור נמצאים ברשתות פרטיות שאינן נגישות ישירות מהאינטרנט. **שרת bastion** (או שרת קפיצה) הוא שרת מוקשח בהיקף הרשת שאליו אתה מבצע SSH תחילה, ואז קופץ לשרתים פנימיים. הדגל `ssh -J` (ProxyJump, שנוסף ב-OpenSSH 7.3) הופך זאת לחלק.
+
+### ProxyJump בסיסי
+
+```bash
+# קפיצה דרך bastion אחד להגיע לשרת פנימי
+ssh -J ec2-user@bastion.example.com ubuntu@10.0.1.50
+
+# צורה קצרה
+ssh -J user@jump-host user@internal-server
+```
+
+זה יוצר שני חיבורי SSH: תחילה ל-bastion, ואז מה-bastion לשרת הפנימי — הכל בפקודה אחת, עם הצפנה מקצה לקצה. סוכן ה-SSH המקומי שלך מטפל באימות לשני המארחים.
+
+### שרשור קפיצות מרובות
+
+```bash
+# קפיצה דרך שני מארחים ביניים
+ssh -J user@jump1.example.com,user@jump2.example.com user@final-destination
+```
+
+### ProxyJump בקובץ תצורת SSH
+
+לשרתים הנגשים בתכיפות, שים את תצורת ה-ProxyJump ב-`~/.ssh/config`:
+
+```
+Host bastion
+    HostName bastion.example.com
+    User ec2-user
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host prod-web
+    HostName 10.0.1.100
+    User ubuntu
+    ProxyJump bastion
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host prod-db
+    HostName 10.0.2.50
+    User postgres
+    ProxyJump bastion
+    IdentityFile ~/.ssh/id_ed25519_aws
+```
+
+עכשיו `ssh prod-web` מתחבר אוטומטית דרך ה-bastion. אין צורך בדגלי `-J` ידניים.
+
+### ProxyJump מול העברת סוכן
+
+ProxyJump מועדף על פני העברת סוכן (`-A`) מכיוון:
+- המפתח הפרטי שלך לעולם לא מועבר למארח הביניים
+- שרת ה-bastion לא יכול להשתמש בפרטי הגישה שלך לאימות במקומות אחרים
+- החיבור מאומת מקצה לקצה — שרת היעד מאמת אותך ישירות
+
+לפרטי הגדרה נוספים, ראה את המדריך המלא שלנו על <a href="/he/how-to-set-up-ssh">כיצד להגדיר SSH</a>.
+
+## שאלות נפוצות
+
+### כיצד אריץ פקודת SSH ללא סיסמה?
+
+הגדר אימות מפתח SSH. צור זוג מפתחות (`ssh-keygen -t ed25519`), העתק את המפתח הציבורי לקובץ `~/.ssh/authorized_keys` של השרת באמצעות `ssh-copy-id user@host`, וחיבורים עוקבים ישתמשו במפתח שלך ללא בקשת סיסמה. אם למפתח שלך יש סיסמה, השתמש ב-`ssh-agent` ו-`ssh-add` כדי לשמור אותה במטמון כך שתזין אותה רק פעם אחת בסשן.
+
+### כיצד אצא מסשן SSH?
+
+הקלד `exit` או לחץ **Ctrl+D** כדי לסגור את ה-shell המרוחק ולהתנתק. אם הסשן קפוא (למשל, הרשת הפסיקה), השתמש ברצף הבריחה של SSH: לחץ **Enter**, ואז הקלד `~.` (טילדה ואחריה נקודה). SSH יסיים את החיבור מיד. רצפי בריחה אחרים: `~^Z` משהה את SSH לרקע, `~?` מציג את כל רצפי הבריחה.
+
+### כיצד אריץ פקודה בשרת מרוחק דרך SSH?
+
+הוסף את הפקודה אחרי שם המארח:
+
+```bash
+ssh user@server "command to run"
+ssh user@server "ls -la /var/log/"
+ssh user@server "sudo systemctl status nginx"
+```
+
+לפקודות מרובות שורות או סקריפטים, השתמש ב-heredoc:
+
+```bash
+ssh user@server << 'EOF'
+cd /var/www/html
+git pull origin main
+systemctl reload nginx
+EOF
+```
+
+לפקודות אינטראקטיביות (כמו אלה הדורשות טרמינל), הוסף את הדגל `-t` להקצאת pseudo-terminal: `ssh -t user@server sudo apt upgrade`.
+
+### מה ההבדל בין ssh ל-scp?
+
+`ssh` פותח סשן טרמינל (או מריץ פקודה אחת) במכונה מרוחקת. `scp` (Secure Copy Protocol) מעתיק קבצים בין המכונה המקומית שלך למכונה מרוחקת, או בין שתי מכונות מרוחקות, תוך שימוש ב-SSH להצפנה ואימות. שניהם משתמשים באותו פרוטוקול SSH ותשתית מפתחות. להעברות קבצים, `scp` הוא הכלי המיועד:
+
+```bash
+# scp מקומי לשרת
+scp file.txt user@server:/destination/path/
+
+# scp שרת לשרת מקומי
+scp user@server:/remote/file.txt ./local-copy.txt
+```
+
+להעברות קבצים מתקדמות יותר (רקורסיבי, ניתן לחידוש, עיון בתיקיות), השתמש ב-`sftp`. להעברות גדולות, `rsync -avz -e ssh` יעיל עוד יותר.
+
+### כיצד אשתמש ב-SSH עם קובץ תצורה?
+
+צור `~/.ssh/config` והוסף רשומות מארח. כל בלוק `Host` מגדיר כינוי חיבור עם כל ההגדרות שלו:
+
+```
+Host alias-name
+    HostName actual.server.com
+    User username
+    Port 22
+    IdentityFile ~/.ssh/specific_key
+```
+
+ואז `ssh alias-name` משתמש בכל ההגדרות המוגדרות אוטומטית. קובץ התצורה תומך בתווים כלליים: `Host *.example.com` מחיל הגדרות על כל המארחים התואמים. `Host *` בסוף מחיל ברירות מחדל על כל החיבורים. אפשרויות בבלוק `Host` ספציפי עוקפות ברירות מחדל גלובליות.
+
+## צריך מפתחות SSH? צור אותם בחינם
+
+לשימוש באימות מפתח SSH — שמסיר את הצורך בסיסמאות — תצטרך זוג מפתחות. צור מפתחות Ed25519 או RSA מיידית בדפדפן שלך, ללא שום שליחה לשרתים שלנו.
+
+<a href="/">צור את מפתחות ה-SSH שלך בחינם ←</a>
+
+---
+
+**קריאה נוספת:**
+- <a href="/he/what-is-ssh">מה זה SSH? המדריך המלא ל-Secure Shell</a>
+- <a href="/he/what-is-an-ssh-key">מה זה מפתח SSH? מפתחות ציבוריים, פרטיים וזוגות מפתחות — הסבר</a>
+- <a href="/he/how-to-set-up-ssh">כיצד להגדיר SSH: מדריך שלב-אחר-שלב מלא</a>

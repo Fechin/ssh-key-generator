@@ -1,0 +1,283 @@
+# SSH কী? Secure Shell-এর সম্পূর্ণ গাইড
+
+SSH, যার পূর্ণরূপ হলো **Secure Shell**, একটি ক্রিপ্টোগ্রাফিক নেটওয়ার্ক প্রোটোকল যা আপনাকে অনিরাপদ নেটওয়ার্কের মাধ্যমে দূরবর্তী কম্পিউটার নিরাপদে অ্যাক্সেস ও পরিচালনা করতে দেয়। আপনি কোনো Linux সার্ভারে লগ ইন করছেন, GitHub-এ কোড push করছেন, বা মেশিনের মধ্যে ফাইল ট্রান্সফার করছেন — SSH প্রায় সবসময়ই পর্দার আড়ালে কাজ করে। এই গাইডটি SSH সম্পর্কে আপনার জানা দরকার এমন সব কিছু ব্যাখ্যা করে: এটি কী, কীভাবে কাজ করে, এবং কেন এটি নিরাপদ রিমোট অ্যাক্সেসের সার্বজনীন মানদণ্ড হয়ে উঠেছে।
+
+## SSH-এর পূর্ণরূপ কী?
+
+**SSH-এর পূর্ণরূপ হলো Secure Shell।** নামটি ঠিক বর্ণনা করে যে প্রোটোকলটি কী করে — এটি একটি দূরবর্তী মেশিনে একটি নিরাপদ, এনক্রিপ্টেড shell সেশন প্রদান করে। SSH আসার আগে, administrators রিমোট সার্ভার পরিচালনায় Telnet এবং rsh (remote shell)-এর মতো টুল ব্যবহার করতেন। সেই প্রোটোকলগুলি সবকিছু plain text-এ পাঠাত — ব্যবহারকারীর নাম এবং পাসওয়ার্ড সহ — যা যেকোনো শেয়ার করা নেটওয়ার্কে সহজেই ইন্টারসেপ্ট করা যেত।
+
+SSH তৈরি করেছিলেন ফিনিশ কম্পিউটার বিজ্ঞানী **Tatu Ylönen** ১৯৯৫ সালে, তাঁর বিশ্ববিদ্যালয় নেটওয়ার্কে একটি password-sniffing আক্রমণ প্রত্যক্ষ করার পর। তিনি SSH-1 free software হিসেবে প্রকাশ করেন এবং এটি দ্রুত ইন্টারনেটে গৃহীত হয়। পরে IETF এটিকে SSH-2 (RFC 4251–4254) হিসেবে মানসম্পন্ন করে, যা শক্তিশালী ক্রিপ্টোগ্রাফি এবং মূল ডিজাইনের বেশ কিছু নিরাপত্তা দুর্বলতা সংশোধন করে।
+
+আজকে যখন মানুষ "SSH" বলে, তখন প্রায় সবসময়ই তারা SSH-2 বোঝায়। সবচেয়ে বেশি ব্যবহৃত implementation হলো **OpenSSH** — একটি open-source প্রকল্প যা OpenBSD টিম রক্ষণাবেক্ষণ করে এবং প্রায় প্রতিটি Linux distribution ও macOS ইনস্টলেশনের সাথে বান্ডেল করা থাকে।
+
+ব্যবহারিক অর্থে **SSH-এর মানে** শুধু একটি লগইন টুলের চেয়ে অনেক বেশি। এটি একটি সম্পূর্ণ প্রোটোকল suite যা এগুলিকে সম্ভব করে:
+- নিরাপদ রিমোট terminal অ্যাক্সেস
+- এনক্রিপ্টেড ফাইল ট্রান্সফার (SFTP ও SCP)
+- Git authentication (GitHub, GitLab, Bitbucket)
+- নিরাপদ port forwarding ও tunneling
+- স্বয়ংক্রিয় deployment pipeline
+
+## SSH কীভাবে কাজ করে
+
+**Secure Shell প্রোটোকল** একটি স্তরবিন্যাসিত আর্কিটেকচারে চলে যা encryption, authentication, এবং channel multiplexing আলাদাভাবে পরিচালনা করে। এই স্তরগুলি বোঝা ব্যাখ্যা করে কেন SSH সংবেদনশীল কার্যক্রমের জন্য বিশ্বস্ত।
+
+### তিনটি প্রোটোকল স্তর
+
+**১. Transport Layer (RFC 4253)**
+
+আপনি যখন SSH সংযোগ শুরু করেন, তখন client ও server প্রথমে একটি handshake করে encryption algorithm নির্ধারণ করতে এবং একটি shared secret প্রতিষ্ঠা করতে। এটি একটি key exchange algorithm ব্যবহার করে — আধুনিক SSH ডিফল্টরূপে Curve25519-ভিত্তিক key exchange ব্যবহার করে। handshake-এর পর, সমস্ত যোগাযোগ এনক্রিপ্ট হয়। transport layer message authentication codes (MACs)-এর মাধ্যমে data integrity-ও নিশ্চিত করে, নিশ্চিত করে যে transit-এ data টেম্পার করা যাবে না।
+
+**২. User Authentication Layer (RFC 4252)**
+
+একটি এনক্রিপ্টেড চ্যানেল প্রতিষ্ঠার পর, সার্ভার client-কে authenticate করতে বলে। SSH একাধিক authentication পদ্ধতি সমর্থন করে:
+
+- **Public key authentication** — Client নেটওয়ার্কে private key না পাঠিয়েই তার possession প্রমাণ করে। এটি সবচেয়ে নিরাপদ ও সবচেয়ে সাধারণ পদ্ধতি।
+- **Password authentication** — ব্যবহারকারীর পাসওয়ার্ড এনক্রিপ্টেড চ্যানেলে পাঠানো হয়। আরও সুবিধাজনক কিন্তু brute force আক্রমণের প্রতি দুর্বল।
+- **Keyboard-interactive** — একটি challenge/response mechanism, প্রায়ই multi-factor authentication-এর জন্য ব্যবহৃত।
+- **GSSAPI/Kerberos** — কেন্দ্রীভূত identity management সহ enterprise পরিবেশে ব্যবহৃত।
+
+**৩. Connection Layer (RFC 4254)**
+
+Authentication-এর পর, connection layer একক এনক্রিপ্টেড সংযোগকে একাধিক logical channel-এ multiplex করে। এটিই আপনাকে একক TCP সংযোগের মাধ্যমে interactive shell, remote commands, port forwarding, এবং file transfer সবকিছু করতে দেয়।
+
+### Key Exchange-এর বিস্তারিত
+
+আপনি যখন `ssh user@example.com` টাইপ করেন, তখন প্রথম কয়েক millisecond-এ এটি ঘটে:
+
+১. Client সার্ভারের TCP port 22-এ সংযোগ করে।
+২. উভয় পক্ষ protocol version string বিনিময় করে।
+৩. উভয় পক্ষ সমর্থিত algorithm-এর তালিকা পাঠায় (key exchange, cipher, MACs, compression)।
+৪. তারা একটি shared session key তৈরিতে Diffie-Hellman বা ECDH key exchange করে — এই কারণেই কেউ এনক্রিপ্টেড ট্র্যাফিক রেকর্ড করলেও পরে decrypt করতে পারে না।
+৫. সার্ভার তার **host key** (public key) পাঠায়, যা client তার `~/.ssh/known_hosts` ফাইলের বিপরীতে verify করে।
+৬. Authentication উপরে বর্ণিতভাবে এগিয়ে চলে।
+৭. সেশন শুরু হয়।
+
+## SSH বনাম Telnet: কেন SSH জিতেছে
+
+SSH-এর আগে, **Telnet** ছিল রিমোট terminal অ্যাক্সেসের মানক প্রোটোকল। Telnet সহজ এবং এখনও কাজ করে, কিন্তু এতে একটি মারাত্মক ত্রুটি আছে: সবকিছু plain text-এ পাঠানো হয়। আপনার username, পাসওয়ার্ড, আপনার টাইপ করা প্রতিটি কমান্ড, এবং প্রতিটি আউটপুট — সবকিছু নেটওয়ার্ক ট্র্যাফিক ইন্টারসেপ্ট করতে পারে এমন যে কারো কাছে দৃশ্যমান।
+
+১৯৯০-এর দশকে, যখন ইন্টারনেট backbone ছিল বিশ্বস্ত academia ও research network, এটি গুরুতর সমস্যা হিসেবে বিবেচিত হতো না। ইন্টারনেট বাণিজ্যিক ও প্রতিকূল হওয়ার সাথে সাথে, Dsniff ও Ettercap-এর মতো টুল local area network-এ Telnet credentials ক্যাপচার করা তুচ্ছ করে দিয়েছিল।
+
+SSH সবকিছু এনক্রিপ্ট করে এই সমস্যার সমাধান করেছিল। এখানে একটি সরাসরি তুলনা:
+
+| বৈশিষ্ট্য | Telnet | SSH |
+|---|---|---|
+| Encryption | নেই | শক্তিশালী (AES, ChaCha20) |
+| Authentication | Plain text পাসওয়ার্ড | Public key + encrypted পাসওয়ার্ড |
+| Data integrity | নেই | HMAC verification |
+| Port | 23 | 22 |
+| এখনও প্রস্তাবিত | না | হ্যাঁ |
+
+rsh (remote shell) ও rlogin-এও একই ধরনের সমস্যা ছিল। তারা IP-ভিত্তিক trust-এর উপরও নির্ভর করত, যা সহজেই spoof করা যায়। SSH এই সমস্ত প্রোটোকল প্রতিস্থাপন করেছে এবং ২৫ বছরেরও বেশি সময় ধরে নির্বিরোধ মানক হিসেবে রয়ে গেছে।
+
+## SSH Key কী?
+
+SSH দুটি প্রাথমিক authentication পদ্ধতি সমর্থন করে: পাসওয়ার্ড এবং **SSH key**। SSH keys হলো ক্রিপ্টোগ্রাফিক key pair — একটি **public key** এবং একটি **private key** — asymmetric cryptography-র উপর ভিত্তি করে।
+
+**Private key** আপনার local মেশিনে থাকে, একটি ঐচ্ছিক passphrase দিয়ে সুরক্ষিত। **Public key** আপনি যে সার্ভার অ্যাক্সেস করতে চান সেখানে রাখা হয়, `~/.ssh/authorized_keys` নামক ফাইলে। আপনি সংযোগ করলে, সার্ভার একটি ক্রিপ্টোগ্রাফিক challenge জারি করে যার উত্তর কেবল সংশ্লিষ্ট private key-এর ধারক দিতে পারেন। নেটওয়ার্কে কোনো পাসওয়ার্ড পাঠানো হয় না।
+
+এই পদ্ধতির বেশ কিছু সুবিধা আছে:
+- **Brute force-এর বিপরীতে প্রতিরোধী** — অনুমান করার কিছু নেই। একটি 256-bit Ed25519 key-এ 2²⁵⁶টি সম্ভাব্য মান থাকে।
+- **চুরি করার পাসওয়ার্ড নেই** — কেউ handshake ইন্টারসেপ্ট করলেও কিছু উপকারী পায় না।
+- **Automatable** — স্ক্রিপ্ট ও CI/CD pipeline মানুষের হস্তক্ষেপ ছাড়াই authenticate করতে পারে।
+- **Revocable** — `authorized_keys` থেকে একটি public key সরালে তাৎক্ষণিকভাবে অ্যাক্সেস বাতিল হয়।
+
+সবচেয়ে আধুনিক ও প্রস্তাবিত key type হলো **Ed25519**, যা Edwards curve-এ elliptic curve cryptography ব্যবহার করে। RSA key-ও ব্যাপকভাবে সমর্থিত, তবে কমপক্ষে 4096 bits ব্যবহার করা উচিত।
+
+Key pair সম্পর্কে বিস্তারিত জানতে আমাদের গাইড দেখুন: <a href="/bn/what-is-an-ssh-key">SSH key কী</a>।
+
+## SSH-এর সাধারণ ব্যবহারের ক্ষেত্র
+
+SSH অত্যন্ত বিস্তৃত পরিস্থিতিতে ব্যবহৃত হয়। এখানে সবচেয়ে গুরুত্বপূর্ণগুলি।
+
+### রিমোট সার্ভার Administration
+
+সবচেয়ে মৌলিক ব্যবহার। System administrator-রা SSH terminal সেশনের মাধ্যমে Linux ও Unix সার্ভারে লগ ইন করে software ইনস্টল করা, configuration ফাইল সম্পাদনা, সার্ভিস পরিচালনা এবং সমস্যা নির্ণয় করেন।
+
+```bash
+ssh user@192.168.1.100
+ssh admin@myserver.example.com
+ssh -p 2222 deploy@staging.example.com
+```
+
+### SFTP ও SCP দিয়ে ফাইল ট্রান্সফার
+
+SSH একই এনক্রিপ্টেড চ্যানেলে নির্মিত দুটি file transfer প্রোটোকল প্রদান করে:
+
+**SCP (Secure Copy Protocol)** ফাইল কপি করার জন্য একটি সহজ command-line টুল:
+
+```bash
+# Local ফাইল remote সার্ভারে কপি করুন
+scp report.pdf user@server:/home/user/documents/
+
+# Remote ফাইল local মেশিনে কপি করুন
+scp user@server:/var/log/app.log ./local-copy.log
+
+# সম্পূর্ণ directory recursively কপি করুন
+scp -r ./project/ user@server:/var/www/
+```
+
+**SFTP (SSH File Transfer Protocol)** SCP-এর চেয়ে সমৃদ্ধ feature সেট সহ একটি interactive FTP-এর মতো ইন্টারফেস প্রদান করে, যেমন resumable transfer ও directory listing।
+
+### Git Authentication
+
+আপনি যখন GitHub, GitLab, বা Bitbucket-এ SSH key যোগ করেন, তখন SSH-এর মাধ্যমে প্রতিটি `git clone`, `git push`, এবং `git pull` আপনার private key ব্যবহার করে authenticate হয়। এটি প্রতিটি Git অপারেশনে username ও পাসওয়ার্ড দেওয়ার প্রয়োজন দূর করে এবং developer-দের জন্য প্রস্তাবিত authentication পদ্ধতি।
+
+```bash
+# SSH ব্যবহার করে repository clone করুন
+git clone git@github.com:username/repository.git
+
+# আপনার GitHub SSH সংযোগ যাচাই করুন
+ssh -T git@github.com
+```
+
+### Automated Deployment ও CI/CD
+
+GitHub Actions, GitLab CI, ও Jenkins-এর মতো deployment স্ক্রিপ্ট ও CI/CD সিস্টেম মানুষের হস্তক্ষেপ ছাড়াই production সার্ভারে কোড deploy করতে SSH key ব্যবহার করে। Private key CI সিস্টেমে secret হিসেবে সংরক্ষিত হয়, এবং সংশ্লিষ্ট public key সার্ভারের `authorized_keys` ফাইলে যোগ করা হয়।
+
+### Database ও Application Port Forwarding
+
+SSH tunneling আপনার local মেশিনে remote সার্ভিস নিরাপদে expose করতে পারে। উদাহরণস্বরূপ, ইন্টারনেটে expose না করা একটি remote MySQL database অ্যাক্সেস করতে:
+
+```bash
+ssh -L 3307:localhost:3306 user@dbserver.example.com -N
+```
+
+এটি একটি local tunnel তৈরি করে: আপনার মেশিনে port 3307-এ সংযোগ করলে ট্র্যাফিক SSH tunnel-এ এনক্রিপ্ট হয়ে remote সার্ভারের port 3306-এ transparently forward হয়।
+
+## SSH Port ও Configuration Options
+
+### ডিফল্ট Port 22
+
+SSH ডিফল্টরূপে **TCP port 22**-এ listen করে। এটি একটি IANA-assigned well-known port যা SSH তৈরির পর থেকে এর জন্য সংরক্ষিত। আপনি port নির্দিষ্ট না করে `ssh user@host` চালালে, SSH client port 22-এ সংযোগ করে।
+
+কিছু administrator SSH port পরিবর্তন করেন (যেমন 2222 বা 8022) লগে automated scanning noise কমাতে। এটিকে "security through obscurity" বলা হয় এবং এটি proper key-based authentication-এর বিকল্প নয়, তবে এটি log clutter কমাতে পারে।
+
+```bash
+# Non-standard SSH port-এ সংযোগ করুন
+ssh -p 2222 user@example.com
+```
+
+### SSH Client Configuration ফাইল
+
+প্রতিবার দীর্ঘ command-line option টাইপ করার পরিবর্তে, `~/.ssh/config`-এ SSH সংযোগ configure করতে পারেন। এই ফাইলটি আপনাকে alias সংজ্ঞায়িত করতে, per-host option সেট করতে এবং আপনার workflow উল্লেখযোগ্যভাবে সহজ করতে দেয়।
+
+```
+Host myserver
+    HostName 203.0.113.10
+    User deploy
+    Port 2222
+    IdentityFile ~/.ssh/id_ed25519_prod
+
+Host bastion
+    HostName jump.example.com
+    User ec2-user
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host internal
+    HostName 10.0.1.50
+    User ubuntu
+    ProxyJump bastion
+```
+
+এই configuration দিয়ে, `ssh myserver` নির্দিষ্ট key ব্যবহার করে custom port-এ full hostname-এ সংযোগ করে — কোনো flag প্রয়োজন নেই।
+
+SSH command option ও flag-এর সম্পূর্ণ রেফারেন্সের জন্য, আমাদের <a href="/bn/ssh-command">SSH command গাইড</a> দেখুন।
+
+### Server-Side Configuration (sshd_config)
+
+SSH সার্ভার daemon (sshd) `/etc/ssh/sshd_config`-এর মাধ্যমে configure করা হয়। মূল settings:
+
+```
+# Password authentication বন্ধ করুন — শুধু keys
+ PasswordAuthentication no
+
+# Root login বন্ধ করুন
+ PermitRootLogin no
+
+# Listening port পরিবর্তন করুন
+Port 2222
+
+# নির্দিষ্ট user-এ সীমাবদ্ধ করুন
+AllowUsers deploy admin
+
+# Public key authentication সক্ষম করুন
+PubkeyAuthentication yes
+```
+
+সম্পাদনার পর, daemon reload করুন: `sudo systemctl reload sshd`
+
+## SSH Tunneling
+
+SSH tunneling (SSH port forwarding-ও বলা হয়) আপনাকে এনক্রিপ্টেড SSH সংযোগের মাধ্যমে arbitrary TCP ট্র্যাফিক route করতে দেয়। এটি SSH-এর সবচেয়ে শক্তিশালী ও কম ব্যবহৃত features-এর একটি।
+
+### Local Port Forwarding
+
+Local forwarding একটি remote সার্ভিসকে আপনার local মেশিনে accessible করে। Syntax হলো `-L local_port:remote_host:remote_port`।
+
+```bash
+# Remote PostgreSQL database locally অ্যাক্সেস করুন
+ssh -L 5433:localhost:5432 user@dbserver -N
+
+# একটি jump সার্ভারের মাধ্যমে internal web app অ্যাক্সেস করুন
+ssh -L 8080:internal-app.company.com:80 user@jump.company.com -N
+```
+
+`-N` flag SSH-কে remote command execute না করতে বলে — কেবল tunnel চাইলে কার্যকর।
+
+### Remote Port Forwarding
+
+Remote forwarding remote সার্ভারে একটি local সার্ভিস expose করে। Syntax হলো `-R remote_port:local_host:local_port`।
+
+```bash
+# আপনার local web সার্ভার remote মেশিনে expose করুন
+ssh -R 9090:localhost:3000 user@server -N
+```
+
+এটি কোনো সহকর্মীর সাথে একটি local development সার্ভার সাময়িকভাবে শেয়ার করার জন্য কার্যকর যার remote host-এ অ্যাক্সেস আছে।
+
+### Dynamic Port Forwarding (SOCKS Proxy)
+
+`-D` flag আপনার local মেশিনে একটি SOCKS proxy তৈরি করে, সমস্ত SOCKS-compatible ট্র্যাফিক SSH সংযোগের মাধ্যমে route করে। এটি effectively remote সার্ভারকে VPN exit node হিসেবে ব্যবহার করে।
+
+```bash
+# Local port 1080-এ SOCKS5 proxy তৈরি করুন
+ssh -D 1080 user@remote-server -N -f
+```
+
+আপনার browser বা সিস্টেম `SOCKS5 proxy: 127.0.0.1:1080` ব্যবহার করতে configure করুন এবং সমস্ত web ট্র্যাফিক remote সার্ভারের মাধ্যমে route হবে।
+
+## প্রায়শ জিজ্ঞাসিত প্রশ্ন
+
+### SSH-এর পূর্ণরূপ কী?
+
+SSH-এর পূর্ণরূপ হলো **Secure Shell**। এটি অনিরাপদ নেটওয়ার্কে নিরাপদভাবে নেটওয়ার্ক সার্ভিস পরিচালনার জন্য একটি ক্রিপ্টোগ্রাফিক নেটওয়ার্ক প্রোটোকল। নামটি এর প্রাথমিক ব্যবহারকে নির্দেশ করে: একটি দূরবর্তী কম্পিউটারে একটি নিরাপদ interactive shell সেশন প্রদান করা।
+
+### SSH ও SSL কি একই?
+
+না। SSH এবং SSL/TLS উভয়ই ক্রিপ্টোগ্রাফিক প্রোটোকল, কিন্তু তারা ভিন্ন উদ্দেশ্য পূরণ করে। **SSL/TLS** (Secure Sockets Layer / Transport Layer Security) web ট্র্যাফিক (HTTPS), ইমেইল, এবং অন্যান্য application প্রোটোকল সুরক্ষিত করতে ব্যবহৃত হয়। **SSH** বিশেষভাবে নিরাপদ remote shell অ্যাক্সেস, ফাইল ট্রান্সফার, এবং tunneling-এর জন্য ডিজাইন করা হয়েছে। উভয়ই একই ক্রিপ্টোগ্রাফিক primitive (public-key cryptography, symmetric encryption) ব্যবহার করে কিন্তু ভিন্ন handshake mechanism ও ব্যবহারের ক্ষেত্র রয়েছে। SSH অভ্যন্তরীণভাবে SSL/TLS ব্যবহার করে না।
+
+### SSH কোন port ব্যবহার করে?
+
+SSH ডিফল্টরূপে **TCP port 22** ব্যবহার করে। এটি IANA-assigned well-known port। `/etc/ssh/sshd_config`-এ `Port` directive ব্যবহার করে SSH সার্ভারকে ভিন্ন port-এ listen করতে configure করতে পারেন, এবং `ssh -p PORT user@host` দিয়ে non-standard port-এ সংযোগ করতে পারেন।
+
+### SSH হ্যাক করা যায় কি?
+
+Key-based authentication সহ properly configured SSH সার্ভার compromise করা অত্যন্ত কঠিন। Cryptography — Ed25519 key, AES-256 encryption, SHA-2 MACs — key authentication-এর জন্য quantum-resistant বলে বিবেচিত এবং brute force করা computationally অসম্ভব। বাস্তব জীবনে SSH compromise সাধারণত জড়িত: চুরি হওয়া private key ফাইল, দুর্বল passphrase, দুর্বল পাসওয়ার্ড সহ password authentication অনুমতিদানকারী misconfigured সার্ভার, unpatched CVE সহ vulnerable software, বা ক্রিপ্টোগ্রাফিক আক্রমণের পরিবর্তে social engineering। আপনার সার্ভার আপডেট রাখুন, password authentication বন্ধ করুন, এবং আপনার private key ফাইল সুরক্ষিত রাখুন।
+
+### SSH ও HTTPS-এর মধ্যে পার্থক্য কী?
+
+উভয় SSH ও HTTPS নেটওয়ার্ক ট্র্যাফিক এনক্রিপ্ট করে, কিন্তু তারা ভিন্ন উদ্দেশ্যে ডিজাইন করা হয়েছে। **HTTPS** web browsing সুরক্ষিত করে — এটি browser ও web সার্ভারের মধ্যে HTTP request ও response এনক্রিপ্ট করতে TLS ব্যবহার করে। **SSH** remote administrative অ্যাক্সেস, ফাইল ট্রান্সফার, এবং tunneling সুরক্ষিত করে। আপনি GitHub-এ কোড push করলে, SSH (port 22, key-based auth) বা HTTPS (port 443, token-based auth) উভয়ই ব্যবহার করতে পারেন। SSH সাধারণত developer-দের কাছে পছন্দের কারণ এটিতে credentials পুনরায় দিতে হয় না।
+
+## এখনই আপনার SSH Key তৈরি করুন
+
+SSH key-based authentication পাসওয়ার্ডের চেয়ে আরও নিরাপদ এবং আরও সুবিধাজনক। আপনি যদি এখনও SSH key সেট আপ না করে থাকেন, আমাদের বিনামূল্যের online generator আপনার browser-এ তাৎক্ষণিকভাবে Ed25519 বা RSA key pair তৈরি করে — কোনো ইনস্টলেশন প্রয়োজন নেই, আমাদের সার্ভারে কিছু পাঠানো হয় না।
+
+<a href="/">এখনই আপনার SSH key pair তৈরি করুন →</a>
+
+---
+
+**আরও পড়ুন:**
+- <a href="/bn/what-is-an-ssh-key">SSH Key কী? Public Key, Private Key, ও Key Pair ব্যাখ্যা</a>
+- <a href="/bn/ssh-command">SSH Command: উদাহরণসহ সম্পূর্ণ রেফারেন্স</a>
+- <a href="/bn/how-to-set-up-ssh">SSH কীভাবে সেট আপ করবেন: সম্পূর্ণ ধাপে ধাপে গাইড</a>

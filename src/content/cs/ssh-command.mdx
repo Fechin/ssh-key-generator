@@ -1,0 +1,430 @@
+# Příkaz SSH: Kompletní přehled s příklady pro Linux, Mac a Windows
+
+Příkaz `ssh` je primárním nástrojem pro zahájení SSH připojení z příkazové řádky. Ať už se přihlašujete na vzdálený linuxový server, přesměrováváte port pro přístup k databázi nebo přeskakujete přes bastion host k dosažení interní sítě, příkaz `ssh` je vaším vstupním bodem. Tento průvodce pokrývá vše od základní syntaxe po pokročilé příznaky, tunelování a konfigurace ProxyJump — s reálnými příklady pro Linux, macOS a Windows.
+
+Před spuštěním SSH příkazů budete potřebovat SSH klíče. Viz náš průvodce <a href="/cs/what-is-an-ssh-key">co je SSH klíč</a> nebo použijte <a href="/">bezplatný online generátor</a> k vytvoření páru klíčů.
+
+## Syntaxe příkazu SSH
+
+Základní syntaxe příkazu `ssh` je:
+
+```
+ssh [volby] [user@]hostname [příkaz]
+```
+
+Rozklad:
+
+- **`[volby]`** — Nula nebo více příznaků upravujících chování (popsány v celém průvodci)
+- **`[user@]`** — Volitelné uživatelské jméno. Pokud je vynecháno, SSH použije vaše aktuální lokální uživatelské jméno
+- **`hostname`** — Vzdálený host, ke kterému se připojit. Může být IP adresa, doménové jméno nebo alias definovaný v `~/.ssh/config`
+- **`[příkaz]`** — Volitelný příkaz ke spuštění na vzdáleném hostu. Pokud je vynechán, SSH spustí interaktivní shellovou relaci
+
+**Základní příklady:**
+
+```bash
+# Připojení pomocí aktuálního uživatelského jména
+ssh server.example.com
+
+# Připojení jako konkrétní uživatel
+ssh alice@server.example.com
+
+# Připojení pomocí IP adresy
+ssh ubuntu@192.168.1.100
+
+# Spuštění jednoho příkazu a okamžité odpojení
+ssh user@server.example.com "df -h"
+
+# Spuštění příkazu a zůstat připojen
+ssh user@server.example.com
+```
+
+## SSH na Linuxu a macOS
+
+Linuxové distribuce a macOS jsou dodávány s předinstalovaným **OpenSSH**. Na Linuxu je součástí balíčku `openssh-client` (Debian/Ubuntu) nebo `openssh-clients` (RHEL/CentOS/Fedora). Na macOS je součástí systému a okamžitě dostupné z Terminálu nebo iTerm2.
+
+### Ověření dostupnosti SSH
+
+```bash
+ssh -V
+# Výstup: OpenSSH_9.6p1, LibreSSL 3.3.6
+```
+
+### Základní připojení
+
+```bash
+# Připojení k serveru
+ssh user@myserver.example.com
+
+# SSH zkontroluje ~/.ssh/known_hosts při prvním připojení a zobrazí:
+# The authenticity of host 'myserver.example.com' can't be established.
+# ED25519 key fingerprint is SHA256:abc123...
+# Are you sure you want to continue connecting (yes/no)? yes
+
+# Otisk hostu je uložen do ~/.ssh/known_hosts
+```
+
+### Použití konfiguračního souboru SSH pro pohodlí
+
+Místo opakovaného zadávání úplných detailů připojení vytvořte `~/.ssh/config`:
+
+```
+Host myserver
+    HostName myserver.example.com
+    User alice
+    Port 22
+    IdentityFile ~/.ssh/id_ed25519
+
+Host dev
+    HostName dev.example.com
+    User ubuntu
+    Port 2222
+    IdentityFile ~/.ssh/id_ed25519_work
+```
+
+Nyní se `ssh myserver` rozbalí na úplné připojení — žádné příznaky nejsou potřeba.
+
+## SSH na Windows (PowerShell a OpenSSH)
+
+Windows 10 (verze 1809) a Windows 11 zahrnují **OpenSSH klienta** jako volitelnou funkci, čímž zpřístupňují příkaz `ssh` v PowerShellu, příkazovém řádku a Windows Terminálu.
+
+### Zkontrolujte, zda je OpenSSH nainstalováno
+
+```powershell
+# V PowerShellu
+ssh -V
+```
+
+Pokud příkaz není nalezen, nainstalujte ho:
+
+**Přes Nastavení:**
+1. Otevřete **Nastavení → Aplikace → Volitelné funkce**
+2. Klikněte na **Přidat funkci**
+3. Najděte **OpenSSH Client** a nainstalujte ho
+
+**Přes PowerShell (jako správce):**
+
+```powershell
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+```
+
+### Použití SSH v PowerShellu
+
+Po instalaci je syntaxe totožná s Linuxem a macOS:
+
+```powershell
+# Připojení k serveru
+ssh user@server.example.com
+
+# Připojení na vlastní port
+ssh -p 2222 user@server.example.com
+
+# Použití konkrétního souboru klíče
+ssh -i C:\Users\YourName\.ssh\id_ed25519 user@server.example.com
+```
+
+### Umístění SSH klíčů na Windows
+
+SSH klíče na Windows jsou uloženy v `C:\Users\YourUsername\.ssh\`. PowerShell rozpoznává `~` jako zkratku:
+
+```powershell
+# Toto jsou ekvivalenty
+ssh -i ~/.ssh/id_ed25519 user@server
+ssh -i C:\Users\YourUsername\.ssh\id_ed25519 user@server
+```
+
+### PuTTY vs OpenSSH na Windows
+
+Před tím, než byl OpenSSH dostupný na Windows, byl **PuTTY** standardním SSH klientem. PuTTY používá vlastní formát klíče (soubory `.ppk`) a vlastní generátor klíčů (PuTTYgen). Pokud máte klíč `.ppk` a potřebujete ho převést do standardního formátu OpenSSH:
+
+```bash
+# Pomocí nástrojů PuTTY
+puttygen mykey.ppk -O private-openssh -o id_ed25519
+```
+
+Pro nová nastavení preferujte vestavěného OpenSSH klienta na Windows — je spravován projektem OpenSSH a používá stejný formát klíče a konfigurační soubor jako Linux a macOS.
+
+## SSH s autentizací klíčem: příznak -i
+
+Ve výchozím nastavení SSH hledá soubory klíčů v `~/.ssh/` se standardními názvy (`id_ed25519`, `id_rsa`, `id_ecdsa`, `id_dsa`). **Příznak `-i`** (identity file) umožňuje explicitně zadat jiný soubor klíče.
+
+```bash
+# Použití konkrétního souboru klíče
+ssh -i ~/.ssh/id_ed25519_production user@prod.example.com
+
+# Použití klíče uloženého na nestandardním místě
+ssh -i /path/to/my/custom_key deploy@server.example.com
+
+# Kombinace s dalšími volbami
+ssh -i ~/.ssh/deploy_key -p 2222 -l deploy server.example.com
+```
+
+Příznak `-i` je nezbytný v několika situacích:
+- Máte více párů klíčů pro různé servery nebo účely
+- Váš klíč není ve výchozím adresáři `~/.ssh/`
+- Zadáváte klíč v prostředí CI/CD, kde je cesta explicitní
+- Stáhli jste klíč `.pem` z AWS nebo jiného poskytovatele cloudu
+
+### Příklad AWS EC2
+
+AWS poskytuje soubor klíče `.pem` při spuštění instance EC2:
+
+```bash
+# Připojení k instanci AWS EC2 s klíčem .pem
+ssh -i ~/Downloads/my-aws-key.pem ec2-user@54.123.456.789
+
+# Opravte oprávnění v případě potřeby (povinné — SSH odmítá klíče čitelné všemi)
+chmod 400 ~/Downloads/my-aws-key.pem
+```
+
+## Základní volby a příznaky příkazu SSH
+
+Příkaz `ssh` má desítky voleb. Zde jsou ty, které skutečně budete používat.
+
+| Příznak | Dlouhá forma / Popis | Příklad |
+|---|---|---|
+| `-p PORT` | Připojení na nestandardní port | `ssh -p 2222 user@host` |
+| `-i FILE` | Použití konkrétního souboru identity (klíče) | `ssh -i ~/.ssh/mykey user@host` |
+| `-l USER` | Zadání přihlašovacího uživatelského jména (alternativa k `user@`) | `ssh -l alice host` |
+| `-L local:host:remote` | Přesměrování lokálního portu | `ssh -L 8080:localhost:80 host` |
+| `-R remote:host:local` | Přesměrování vzdáleného portu | `ssh -R 9090:localhost:3000 host` |
+| `-D port` | Dynamický (SOCKS) proxy | `ssh -D 1080 host` |
+| `-N` | Nespouštět vzdálený příkaz (pouze tunelování) | `ssh -N -L 3307:db:3306 host` |
+| `-f` | Jít na pozadí po autentizaci | `ssh -f -N -D 1080 host` |
+| `-v` | Podrobný (ladící) výstup | `ssh -v user@host` |
+| `-vv` nebo `-vvv` | Více podrobný výstup | `ssh -vvv user@host` |
+| `-A` | Povolit přesměrování SSH agenta | `ssh -A user@jump-host` |
+| `-X` | Povolit přesměrování X11 | `ssh -X user@host xclock` |
+| `-C` | Povolit kompresi | `ssh -C user@host` |
+| `-T` | Zakázat alokaci pseudo-terminálu | `ssh -T git@github.com` |
+| `-q` | Tichý režim (potlačit varování) | `ssh -q user@host` |
+| `-o OPTION=VALUE` | Nastavit volbu konfigurace inline | `ssh -o StrictHostKeyChecking=no host` |
+| `-J JUMP` | ProxyJump přes bastion host | `ssh -J jump.host user@internal` |
+| `-W host:port` | Přesměrovat stdio na host:port (pro ProxyJump) | Používáno interně `-J` |
+
+### Podrobný režim pro ladění
+
+Když SSH selže, `-v` (nebo `-vv` nebo `-vvv`) odhalí přesně, co se děje:
+
+```bash
+ssh -v user@server.example.com
+# Zobrazí: které klíče jsou zkoušeny, které metody autentizace server přijímá,
+# zda je agent zapojen a kde připojení selhává
+
+ssh -vvv user@server.example.com
+# Maximální podrobnost — zobrazí detailní kryptografické vyjednávání
+```
+
+### Obejití kontroly klíče hostu (používejte opatrně)
+
+V automatizačních a testovacích prostředích, kde je ověření klíče hostu nepraktické:
+
+```bash
+ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null user@host
+```
+
+**Nepoužívejte toto v produkci.** Deaktivuje ochranu proti útokům man-in-the-middle. Místo toho předvyplňte `known_hosts` pomocí `ssh-keyscan` ve svých provizionačních skriptech.
+
+### Přesměrování agenta
+
+```bash
+# Přesměrujte váš lokální SSH agent na vzdálený server
+ssh -A user@jump-server
+
+# Ze jump-serveru nyní můžete SSH na interní hosty pomocí lokálních klíčů
+# Není třeba kopírovat soukromé klíče na jump-server
+ssh internal-server.private
+```
+
+Přesměrování agenta je užitečné, ale má bezpečnostní důsledky: kdokoli s přístupem root na zprostředkujícím serveru může použít váš přesměrovaný agent. Používejte ho pouze s důvěryhodnými servery a preferujte **ProxyJump**, pokud je to možné (nevystavuje vašeho agenta zprostředkujícím hostům).
+
+## Příkazy SSH tunelování
+
+SSH tunelování směruje TCP připojení přes šifrovaný SSH kanál. Základní informace o tunelování najdete v <a href="/cs/what-is-ssh">sekci tunelování našeho průvodce SSH</a>.
+
+### Přesměrování lokálního portu
+
+Zpřístupní vzdálenou službu na vašem lokálním stroji.
+
+```bash
+# Přístup ke vzdálené MySQL databázi na lokálním portu 3307
+ssh -L 3307:localhost:3306 user@db-server.example.com -N
+
+# Připojení ke vzdálenému webovému serveru dostupnému pouze z SSH hostu
+ssh -L 8080:intranet.company.com:80 user@vpn.company.com -N
+
+# Přístup k instanci Redis na privátní síti
+ssh -L 6380:10.0.1.50:6379 user@bastion.example.com -N
+```
+
+Po spuštění kteréhokoli z výše uvedených příkazů připojte svou lokální aplikaci k `127.0.0.1:LOKÁLNÍ_PORT`.
+
+### Přesměrování vzdáleného portu
+
+Zpřístupní lokální službu na vzdáleném serveru.
+
+```bash
+# Zpřístupnění lokálního vývojového serveru (port 3000) na portu 9090 vzdáleného serveru
+ssh -R 9090:localhost:3000 user@remote.example.com -N
+
+# Povolit jakémukoliv rozhraní na vzdáleném serveru připojení (vyžaduje GatewayPorts yes v sshd_config)
+ssh -R 0.0.0.0:9090:localhost:3000 user@remote.example.com -N
+```
+
+### Dynamické přesměrování portů (SOCKS proxy)
+
+```bash
+# Vytvoření SOCKS5 proxy na lokálním portu 1080, běžící na pozadí
+ssh -D 1080 -N -f user@remote.example.com
+
+# Nyní nakonfigurujte prohlížeč nebo systém na použití SOCKS5 proxy: 127.0.0.1:1080
+# Veškerý provoz směrován přes vzdálený server
+```
+
+Pro použití s curl:
+
+```bash
+curl --socks5 127.0.0.1:1080 https://api.example.com/
+```
+
+### Spuštění tunelu na pozadí
+
+```bash
+# -f odešle SSH na pozadí, -N znamená žádný vzdálený příkaz
+ssh -f -N -L 3307:localhost:3306 user@db-server
+
+# Nalezení SSH procesu na pozadí
+ps aux | grep ssh
+
+# Ukončení procesu
+kill PID
+```
+
+## SSH ProxyJump a bastion hosté
+
+V mnoha organizacích jsou produkční servery v privátních sítích, které nejsou přímo přístupné z internetu. **Bastion host** (nebo jump host) je zabezpečený server na perimetru sítě, na který se nejprve přihlásíte přes SSH, a poté přeskočíte na interní servery. Příznak `ssh -J` (ProxyJump, přidaný v OpenSSH 7.3) to zjednodušuje.
+
+### Základní ProxyJump
+
+```bash
+# Přeskok přes jeden bastion k dosažení interního serveru
+ssh -J ec2-user@bastion.example.com ubuntu@10.0.1.50
+
+# Zkrácená forma
+ssh -J user@jump-host user@internal-server
+```
+
+Tím se vytvoří dvě SSH připojení: nejprve k bastionu, poté od bastionu k internímu serveru — vše v jednom příkazu s end-to-end šifrováním. Váš lokální SSH agent zajišťuje autentizaci k oběma hostům.
+
+### Řetězení více skoků
+
+```bash
+# Přeskok přes dva zprostředkující hosty
+ssh -J user@jump1.example.com,user@jump2.example.com user@final-destination
+```
+
+### ProxyJump v konfiguračním souboru SSH
+
+Pro často navštěvované servery vložte konfiguraci ProxyJump do `~/.ssh/config`:
+
+```
+Host bastion
+    HostName bastion.example.com
+    User ec2-user
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host prod-web
+    HostName 10.0.1.100
+    User ubuntu
+    ProxyJump bastion
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host prod-db
+    HostName 10.0.2.50
+    User postgres
+    ProxyJump bastion
+    IdentityFile ~/.ssh/id_ed25519_aws
+```
+
+Nyní se `ssh prod-web` automaticky připojí přes bastion. Žádné ruční příznaky `-J` nejsou potřeba.
+
+### ProxyJump vs přesměrování agenta
+
+ProxyJump je preferován před přesměrováním agenta (`-A`), protože:
+- Váš soukromý klíč není nikdy přeposílán zprostředkujícímu hostu
+- Bastion host nemůže použít vaše přihlašovací údaje k autentizaci jinde
+- Připojení je end-to-end autentizováno — cílový server vás ověřuje přímo
+
+Podrobnosti o nastavení najdete v našem kompletním průvodci <a href="/cs/how-to-set-up-ssh">jak nastavit SSH</a>.
+
+## Často kladené otázky
+
+### Jak spustím SSH příkaz bez hesla?
+
+Nastavte autentizaci SSH klíčem. Vygenerujte pár klíčů (`ssh-keygen -t ed25519`), zkopírujte veřejný klíč do souboru `~/.ssh/authorized_keys` na serveru pomocí `ssh-copy-id user@host` a následná připojení budou klíč používat bez výzvy k zadání hesla. Pokud má váš klíč passphrase, použijte `ssh-agent` a `ssh-add` k jeho uložení do cache, abyste ho zadávali pouze jednou za relaci.
+
+### Jak ukončím SSH relaci?
+
+Zadejte `exit` nebo stiskněte **Ctrl+D** pro zavření vzdáleného shellu a odpojení. Pokud je relace zmrazená (např. síť vypadla), použijte únikovou sekvenci SSH: stiskněte **Enter**, poté napište `~.` (tilda následovaná tečkou). SSH okamžitě ukončí připojení. Další únikové sekvence: `~^Z` pozastaví SSH na pozadí, `~?` vypíše všechny únikové sekvence.
+
+### Jak spustím příkaz na vzdáleném serveru přes SSH?
+
+Přidejte příkaz za hostname:
+
+```bash
+ssh user@server "příkaz ke spuštění"
+ssh user@server "ls -la /var/log/"
+ssh user@server "sudo systemctl status nginx"
+```
+
+Pro víceřádkové příkazy nebo skripty použijte heredoc:
+
+```bash
+ssh user@server << 'EOF'
+cd /var/www/html
+git pull origin main
+systemctl reload nginx
+EOF
+```
+
+Pro interaktivní příkazy (jako ty vyžadující terminál) přidejte příznak `-t` pro alokaci pseudo-terminálu: `ssh -t user@server sudo apt upgrade`.
+
+### Jaký je rozdíl mezi ssh a scp?
+
+`ssh` otevírá terminálovou relaci (nebo spustí jeden příkaz) na vzdáleném stroji. `scp` (Secure Copy Protocol) kopíruje soubory mezi lokálním strojem a vzdáleným strojem, nebo mezi dvěma vzdálenými stroji, přičemž pro šifrování a autentizaci používá SSH. Oba používají stejný SSH protokol a klíčovou infrastrukturu. Pro přenosy souborů je `scp` určeným nástrojem:
+
+```bash
+# scp lokální na vzdálené
+scp file.txt user@server:/destination/path/
+
+# scp vzdálené na lokální
+scp user@server:/remote/file.txt ./local-copy.txt
+```
+
+Pro pokročilejší přenosy souborů (rekurzivní, obnovitelné, procházení adresářů) použijte `sftp`. Pro přenosy ve velkém měřítku je `rsync -avz -e ssh` ještě efektivnější.
+
+### Jak používám SSH s konfiguračním souborem?
+
+Vytvořte `~/.ssh/config` a přidejte záznamy hostů. Každý blok `Host` definuje alias připojení s úplnými nastaveními:
+
+```
+Host alias-name
+    HostName actual.server.com
+    User username
+    Port 22
+    IdentityFile ~/.ssh/specific_key
+```
+
+Poté `ssh alias-name` automaticky použije všechna definovaná nastavení. Konfigurační soubor podporuje zástupné znaky: `Host *.example.com` platí pro nastavení všech odpovídajících hostů. `Host *` na konci platí pro výchozí nastavení všech připojení. Volby v konkrétním bloku `Host` přepisují globální výchozí nastavení.
+
+## Potřebujete SSH klíče? Vygenerujte je zdarma
+
+Pro použití autentizace SSH klíčem — která eliminuje potřebu hesel — potřebujete pár klíčů. Vygenerujte klíče Ed25519 nebo RSA okamžitě ve vašem prohlížeči, nic se neodesílá na naše servery.
+
+<a href="/">Vygenerujte si SSH klíče zdarma →</a>
+
+---
+
+**Další čtení:**
+- <a href="/cs/what-is-ssh">Co je SSH? Kompletní průvodce protokolem Secure Shell</a>
+- <a href="/cs/what-is-an-ssh-key">Co je SSH klíč? Veřejné klíče, soukromé klíče a páry klíčů vysvětleny</a>
+- <a href="/cs/how-to-set-up-ssh">Jak nastavit SSH: Kompletní průvodce krok za krokem</a>

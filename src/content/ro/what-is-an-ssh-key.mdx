@@ -1,0 +1,337 @@
+# Ce este o cheie SSH? Chei publice, chei private și perechi de chei explicate
+
+O **cheie SSH** este o acreditare criptografică utilizată pentru autentificarea la serverele SSH fără parolă. Cheile SSH vin în perechi — o **cheie publică** și o **cheie privată** — și împreună fac accesul de la distanță mai sigur și mai convenabil decât autentificarea tradițională prin parolă. Acest ghid explică ce este o cheie SSH, cum funcționează sistemul de perechi de chei, ce tipuri de chei să alegi și cum să folosești cheile SSH cu servicii precum GitHub și GitLab.
+
+## Cum funcționează cheile SSH
+
+Cheile SSH sunt bazate pe **criptografia asimetrică**, numită și criptografia cu cheie publică. Spre deosebire de criptografia simetrică (unde o singură cheie secretă atât criptează, cât și decriptează datele), sistemele asimetrice utilizează perechi de chei legate matematic, unde datele criptate cu o cheie pot fi decriptate doar cu cealaltă.
+
+Iată fluxul de autentificare când folosești o cheie SSH pentru a te autentifica pe un server:
+
+1. Rulezi `ssh user@server.example.com`.
+2. Serverul caută cheia ta publică în `~/.ssh/authorized_keys`.
+3. Serverul generează o provocare aleatorie și o criptează cu cheia ta publică.
+4. Clientul tău SSH decriptează provocarea folosind cheia ta privată.
+5. Clientul trimite o dovadă criptografică (derivată din provocarea decriptată și ID-ul sesiunii) înapoi la server.
+6. Serverul verifică dovada. Doar deținătorul cheii private ar fi putut-o produce.
+7. Autentificarea reușește. Nicio parolă nu părăsește niciodată mașina ta.
+
+Aceasta este perspectiva cheie: **cheia ta privată nu circulă niciodată prin rețea**. Serverul vede doar cheia ta publică și dovezile criptografice pe care le produci. Chiar dacă cineva interceptează fiecare pachet din sesiunea ta SSH, nu obține nimic care să îi ajute să te impersoneze.
+
+Pentru context despre protocolul SSH mai larg, consultă ghidul nostru despre <a href="/ro/what-is-ssh">ce este SSH</a>.
+
+## Cheie publică vs. cheie privată: care este diferența?
+
+Înțelegerea distincției dintre cele două chei este esențială pentru utilizarea corectă a SSH.
+
+### Cheia publică — Lacătul tău
+
+**Cheia publică** este concepută pentru a fi partajată liber. Gândește-te la ea ca la un lacăt: distribui copii tuturor ale căror sisteme dorești să le accesezi. Când un server are cheia ta publică în fișierul `authorized_keys`, poate verifica identitatea ta fără să cunoască cheia ta privată.
+
+Cheile publice:
+- Sunt sigure de partajat — nu pot fi folosite pentru a te impersona
+- Sunt plasate pe servere în `~/.ssh/authorized_keys`
+- Sunt încărcate pe GitHub, GitLab și alte servicii
+- Au de obicei extensia `.pub` (de ex., `id_ed25519.pub`)
+- Arată astfel: `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAA... user@hostname`
+
+### Cheia privată — Cheia ta
+
+**Cheia privată** este jumătatea secretă a perechii. Nu trebuie să părăsească niciodată mașina ta și nu ar trebui niciodată partajată cu nimeni — nici cu administratori, nici cu furnizori cloud, nici cu personalul de suport. Dacă cheia ta privată este compromisă, oricine o obține se poate impersona ca tine pe fiecare server unde cheia ta publică este instalată.
+
+Cheile private:
+- Trebuie păstrate secrete și în siguranță
+- Sunt stocate local în `~/.ssh/` cu permisiuni restricționate (600)
+- Sunt opțional criptate cu o frază de acces
+- Nu au extensie sau au o extensie specifică limbajului (de ex., `id_ed25519`)
+
+### Fișierul `authorized_keys`
+
+Pe serverul de la distanță, cheile publice ale fiecărui utilizator sunt stocate în `~/.ssh/authorized_keys`. Acesta este un fișier text simplu unde fiecare linie conține o cheie publică. Când un client SSH încearcă să se autentifice, serverul verifică dacă clientul poate demonstra posesia cheii private corespunzătoare oricărei intrări din acest fișier.
+
+```
+# formatul ~/.ssh/authorized_keys
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGq... alice@laptop
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHr... alice@workstation
+ssh-rsa AAAAB3NzaC1yc2EAAAA... backup-deploy-key
+```
+
+Poți avea câte chei publice ai nevoie în acest fișier, permițând mai multor dispozitive sau sisteme de automatizare să se autentifice pe același server.
+
+## Algoritmii cheilor SSH: Ed25519 vs RSA
+
+Când generezi o pereche de chei SSH, alegi un algoritm. Cele mai comune două opțiuni astăzi sunt **Ed25519** și **RSA**. Mai există ECDSA și DSA, dar DSA este depreciat și ECDSA are capcane de implementare, deci ne vom concentra pe cele două opțiuni recomandate.
+
+### Ed25519 — Alegerea modernă
+
+Ed25519 a fost introdus în OpenSSH în versiunea 6.5 (2014) și este acum implicit-ul recomandat. Utilizează criptografia pe curbe eliptice pe curba Twisted Edwards (Curve25519), proiectată de Daniel J. Bernstein.
+
+**Avantajele Ed25519:**
+- **Compact** — cheile au doar 68 de caractere (cheie publică) și fișierele sunt mici
+- **Rapid** — generarea și verificarea semnăturilor sunt extrem de rapide
+- **Sigur prin design** — nu este vulnerabil la atacurile de tip side-channel care afectează unele implementări RSA
+- **Dimensiune fixă a cheii** — nivel de securitate de 256 de biți, nu este necesară alegerea unei dimensiuni de cheie
+- **Determinist** — semnăturile sunt deterministe, eliminând o clasă de eșecuri ale generatorului de numere aleatoare
+
+```bash
+# Generarea unei perechi de chei Ed25519
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+### RSA — Opțiunea universală
+
+RSA este algoritmul mai vechi (inventat în 1977) și, deși este în continuare sigur la 4096 de biți, este mai lent și produce chei mai mari decât Ed25519. Cu toate acestea, RSA are o compatibilitate mult mai largă — funcționează cu servere SSH foarte vechi, sisteme legacy și unele chei de securitate hardware.
+
+**Când să folosești RSA:**
+- Trebuie să te conectezi la sisteme legacy care rulează versiuni vechi de OpenSSH (înainte de 6.5)
+- Folosești un smartcard sau HSM care nu suportă Ed25519
+- Este necesară compatibilitatea cu instrumente mai vechi
+
+```bash
+# Generarea unei perechi de chei RSA de 4096 de biți
+ssh-keygen -t rsa -b 4096 -C "your@email.com"
+```
+
+**Nu folosi niciodată RSA cu mai puțin de 4096 de biți.** RSA-1024 și RSA-2048 sunt considerate din ce în ce mai insuficiente pe măsură ce puterea de calcul crește. Ed25519 la 256 de biți oferă securitate echivalentă sau mai bună cu o fracțiune din dimensiunea cheii.
+
+### Comparație rezumativă
+
+| Caracteristică | Ed25519 | RSA 4096 |
+|---|---|---|
+| Dimensiunea cheii (publică) | ~68 caractere | ~725 caractere |
+| Nivel de securitate | 128-bit (structură rezistentă post-cuantic) | ~140-bit clasic |
+| Viteză | Foarte rapid | Mai lent |
+| Compatibilitate | SSH modern (OpenSSH 6.5+) | Universal |
+| Recomandat pentru | Toate cheile noi | Numai sisteme legacy |
+
+**Concluzia: generează chei Ed25519 pentru orice caz de utilizare modern.** Folosește RSA doar când ești forțat de cerințele de compatibilitate.
+
+## Cum să adaugi o cheie SSH pe GitHub
+
+Adăugarea cheii tale publice SSH pe GitHub îți permite să faci push și pull prin SSH fără a introduce numele de utilizator și parola la fiecare operațiune. Iată procesul pas cu pas.
+
+### Pasul 1: Generează-ți perechea de chei
+
+Dacă nu ai deja o pereche de chei SSH, generează una. Poți folosi <a href="/">generatorul nostru gratuit de chei SSH online</a> sau rula:
+
+```bash
+ssh-keygen -t ed25519 -C "your-github-email@example.com"
+```
+
+Acceptă locația implicită a fișierului (`~/.ssh/id_ed25519`) și setează opțional o frază de acces.
+
+### Pasul 2: Copiază-ți cheia publică
+
+Afișează cheia ta publică și copiaz-o în clipboard:
+
+```bash
+# Linux
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+
+# macOS
+cat ~/.ssh/id_ed25519.pub | pbcopy
+
+# Windows (PowerShell)
+Get-Content ~/.ssh/id_ed25519.pub | Set-Clipboard
+```
+
+Sau pur și simplu afișeaz-o și copiaz-o manual:
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+### Pasul 3: Adaugă cheia pe GitHub
+
+1. Autentifică-te pe **GitHub.com**
+2. Apasă pe fotografia de profil → **Settings**
+3. În bara laterală stângă, apasă **SSH and GPG keys**
+4. Apasă **New SSH key**
+5. Dă-i un titlu descriptiv (de ex., „MacBook Pro 2024" sau „Laptop de serviciu")
+6. Lipește cheia ta publică în câmpul **Key**
+7. Apasă **Add SSH key**
+
+### Pasul 4: Testează conexiunea
+
+```bash
+ssh -T git@github.com
+```
+
+Ar trebui să vezi: `Hi username! You've successfully authenticated, but GitHub does not provide shell access.`
+
+### Trecerea unui repository existent la SSH
+
+Dacă ai clonat un repository folosind HTTPS și dorești să treci la SSH:
+
+```bash
+# Verifică URL-ul curent al remote-ului
+git remote -v
+
+# Actualizează la SSH
+git remote set-url origin git@github.com:username/repository.git
+```
+
+Pentru GitLab, procesul este identic — navighează la **Preferences → SSH Keys** și urmează aceiași pași.
+
+## Unde sunt stocate cheile SSH?
+
+Cheile SSH sunt stocate într-un director numit `.ssh` în folderul home al utilizatorului. Locația variază în funcție de sistemul de operare.
+
+### Linux și macOS
+
+```
+~/.ssh/
+├── id_ed25519          # Cheia ta privată (permisiuni: 600)
+├── id_ed25519.pub      # Cheia ta publică (permisiuni: 644)
+├── id_rsa              # O cheie privată RSA (dacă ai una)
+├── id_rsa.pub          # Cheia publică RSA
+├── authorized_keys     # Chei publice autorizate să se autentifice pe această mașină
+├── known_hosts         # Amprentele serverelor la care te-ai conectat
+└── config              # Fișierul de configurare a clientului
+```
+
+Directorul `~/.ssh/` în sine trebuie să aibă permisiunile **700** (doar citire/scriere/execuție pentru proprietar). Fișierele de chei private trebuie să aibă permisiunile **600** (doar citire/scriere pentru proprietar). SSH va refuza să folosească chei cu permisiuni prea permisive.
+
+```bash
+# Corectează permisiunile dacă este necesar
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/id_ed25519
+chmod 644 ~/.ssh/id_ed25519.pub
+```
+
+### Windows
+
+Pe Windows 10 și 11 cu OpenSSH instalat, cheile SSH sunt stocate în:
+
+```
+C:\Users\YourUsername\.ssh\
+├── id_ed25519
+├── id_ed25519.pub
+├── authorized_keys
+├── known_hosts
+└── config
+```
+
+Pe Windows, poți accesa directorul `.ssh` din File Explorer (poate fi necesar să activezi „Afișare fișiere ascunse") sau din PowerShell folosind `~\.ssh\`.
+
+### Fișiere multiple de chei
+
+Dacă ai chei pentru scopuri diferite (GitHub personal, GitLab de serviciu, servere de producție), folosește fișierul `~/.ssh/config` pentru a mapa fiecare gazdă la cheia sa:
+
+```
+Host github.com
+    IdentityFile ~/.ssh/id_ed25519_github
+
+Host gitlab.work.com
+    IdentityFile ~/.ssh/id_ed25519_work
+
+Host prod-server
+    HostName 203.0.113.10
+    User deploy
+    IdentityFile ~/.ssh/id_ed25519_production
+```
+
+## Frazele de acces pentru cheile SSH
+
+Când generezi o pereche de chei SSH, `ssh-keygen` întreabă dacă dorești să setezi o **frază de acces**. Aceasta este o parolă opțională care criptează fișierul cheii private pe disc.
+
+### De ce să folosești o frază de acces?
+
+Dacă fișierul tău de cheie privată este protejat de o frază de acces puternică, furtul fișierului nu este suficient pentru a te impersona — atacatorul ar trebui să și spargă fraza de acces. Aceasta oferă un al doilea strat critic de securitate, mai ales pe laptopuri care ar putea fi furate fizic.
+
+Fără o frază de acces, cheia ta privată este stocată în text simplu pe disc. Oricine poate citi fișierul (prin malware, acces fizic sau un backup care nu este securizat corespunzător) o poate folosi imediat.
+
+### Cum interacționează frazele de acces cu ssh-agent
+
+Dezavantajul unei fraze de acces este că trebuie să o tastezi de fiecare dată când folosești cheia. **ssh-agent** rezolvă aceasta prin reținerea cheilor decriptate în memorie pe durata sesiunii tale.
+
+```bash
+# Pornește ssh-agent și adaugă cheia ta
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+# Introdu fraza de acces o dată — aceasta este acum în cache pentru sesiune
+```
+
+Pe macOS, Keychain-ul sistemului se integrează cu ssh-agent. Adaugă `-K` pentru a persista după repornire:
+
+```bash
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+```
+
+### Schimbarea unei fraze de acces
+
+Poți schimba fraza de acces pe o cheie existentă fără a regenera perechea de chei:
+
+```bash
+ssh-keygen -p -f ~/.ssh/id_ed25519
+```
+
+Aceasta solicită vechea frază de acces, apoi îți permite să setezi una nouă. Cheia publică nu se schimbă, deci nu trebuie să o actualizezi pe niciun server.
+
+## Amprentele cheilor SSH
+
+Fiecare pereche de chei SSH are o **amprentă** — un hash scurt al cheii publice care o identifică unic. Amprentele servesc mai multor scopuri:
+
+- **Verifică identitatea gazdei** — Când te conectezi pentru prima dată la un server, SSH îți arată amprenta cheii sale de gazdă. Dacă confirmi că se potrivește cu ce te aștepți (de ex., furnizată de furnizorul tău de hosting), știi că te conectezi la serverul corect.
+- **Identifică cheile** — Când gestionezi multe chei, amprentele te ajută să identifici care cheie fizică corespunde cărei intrări în `authorized_keys` sau pe un serviciu precum GitHub.
+- **Audit și revocare** — Jurnalele de audit înregistrează adesea amprentele în loc de cheile complete. Cunoașterea amprentei unei chei te ajută să o găsești și să o elimini dacă este necesar.
+
+### Vizualizarea amprentei unei chei
+
+```bash
+# Vizualizarea amprentei cheii tale publice
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+# Output: 256 SHA256:abcdef1234567890... your@email.com (ED25519)
+
+# Vizualizarea amprentei cheii de gazdă a unui server
+ssh-keyscan server.example.com | ssh-keygen -lf -
+```
+
+GitHub afișează amprentele tuturor cheilor SSH adăugate în **Settings → SSH and GPG keys**, permițându-ți să verifici că cheia pe care o vezi acolo se potrivește cu cea de pe mașina ta.
+
+### Fișierul `known_hosts`
+
+Prima dată când te conectezi la un nou server SSH, vezi un mesaj de genul:
+
+```
+The authenticity of host 'example.com (203.0.113.10)' can't be established.
+ED25519 key fingerprint is SHA256:abcdef1234567890...
+Are you sure you want to continue connecting (yes/no/[fingerprint])?
+```
+
+Tastează `yes` și amprenta serverului este adăugată în `~/.ssh/known_hosts`. La conexiunile ulterioare, SSH verifică silențios că cheia serverului se potrivește cu amprenta stocată. Dacă nu se potrivește — ceea ce ar putea indica o configurare greșită sau un atac man-in-the-middle — SSH te avertizează puternic și refuză să se conecteze.
+
+## Întrebări frecvente
+
+### La ce este folosită o cheie SSH?
+
+Cheile SSH te autentifică pe serverele la distanță fără o parolă. Cele mai comune utilizări sunt: autentificarea pe serverele Linux/Unix pentru administrare, autentificarea cu servicii de hosting Git (GitHub, GitLab, Bitbucket) pentru acces la push/pull, scripturile de deployment automatizat care au nevoie de acces la server fără parolă și pipeline-urile CI/CD care deployează cod în producție. Cheile SSH sunt preferate față de parole deoarece sunt imune la brute force, nu pot fi refolosite după breșe și pot fi folosite fără interacțiune umană.
+
+### Câte chei SSH ar trebui să am?
+
+Nu există un singur răspuns corect, dar o bună practică comună este **o cheie per dispozitiv** (nu per serviciu). Laptopul tău are o pereche de chei; desktop-ul tău are alta; serverul tău CI are alta. Astfel, dacă un dispozitiv este furat sau compromis, revoci doar cheia acelui dispozitiv. Unele persoane împart și mai mult în funcție de context (personal vs. serviciu), rezultând în două chei per dispozitiv. Evită partajarea unei singure chei pe mai multe mașini — dacă acea cheie este compromisă, tot accesul tău este în pericol simultan.
+
+### Pot partaja cheia mea publică SSH?
+
+Da. Cheia publică este concepută pentru a fi partajată. Este sigur să o trimiți prin e-mail, să o postezi în documentația GitHub sau să o incluzi într-un tichet care solicită acces la server. Cheia publică singură nu poate fi folosită pentru a te autentifica ca tine — aceasta necesită cheia privată corespunzătoare, pe care doar tu o ai. Aceasta este proprietatea fundamentală a criptografiei asimetrice. Nu partaja niciodată cheia ta **privată** cu nimeni.
+
+### Ce se întâmplă dacă pierd cheia mea privată SSH?
+
+Dacă îți pierzi cheia privată și nu ai un backup, pierzi capacitatea de a te autentifica cu ea. Cheia ta publică, încă instalată pe servere și servicii, devine orfană. Vei avea nevoie de o modalitate alternativă de a accesa serverul (autentificare prin parolă dacă este activată, acces prin consolă, mecanismul de acces de urgență al furnizorului tău de hosting) pentru a elimina vechea cheie publică din `authorized_keys` și a adăuga una nouă. De aceea este importantă efectuarea de backup-uri pentru cheia ta privată (într-un manager de parole sau backup criptat). Cheia privată nu poate fi reconstruită din cheia publică.
+
+### Este Ed25519 sau RSA mai bun?
+
+**Ed25519 este mai bun pentru toată generarea de chei noi.** Este mai rapid, produce chei mai mici, nu este vulnerabil la anumite slăbiciuni de implementare care afectează RSA și oferă securitate echivalentă sau superioară cu o cheie de 256 de biți comparativ cu RSA-4096. Singurul motiv pentru a folosi RSA astăzi este compatibilitatea cu software-ul de server SSH foarte vechi (OpenSSH înainte de versiunea 6.5, lansată în 2014) sau module de securitate hardware legacy. Dacă accesezi orice server modern sau serviciu precum GitHub, folosește Ed25519.
+
+## Generează-ți perechea de chei SSH
+
+Ești pregătit să creezi cheile SSH? Generatorul nostru gratuit online creează perechi de chei Ed25519 sau RSA direct în browserul tău. Cheia privată este generată local și nu este niciodată trimisă pe serverele noastre.
+
+<a href="/">Generează-ți perechea de chei SSH acum →</a>
+
+---
+
+**Lectură suplimentară:**
+- <a href="/ro/what-is-ssh">Ce este SSH? Ghidul complet pentru Secure Shell</a>
+- <a href="/ro/ssh-command">Comanda SSH: Referință completă cu exemple</a>
+- <a href="/ro/how-to-set-up-ssh">Cum să configurezi SSH: Un ghid complet pas cu pas</a>

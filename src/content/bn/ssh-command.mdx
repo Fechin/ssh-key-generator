@@ -1,0 +1,430 @@
+# SSH Command: Linux, Mac, ও Windows-এর জন্য উদাহরণসহ সম্পূর্ণ রেফারেন্স
+
+`ssh` command হলো command line থেকে SSH সংযোগ শুরু করার প্রাথমিক টুল। আপনি কোনো remote Linux সার্ভারে লগ ইন করছেন, database অ্যাক্সেসের জন্য port forward করছেন, বা internal network-এ পৌঁছাতে bastion host-এ হপ করছেন — `ssh` command আপনার entry point। এই গাইডটি basic syntax থেকে advanced flag, tunneling, এবং ProxyJump configuration পর্যন্ত সবকিছু cover করে — Linux, macOS, ও Windows-এর জন্য বাস্তব উদাহরণসহ।
+
+SSH command চালানোর আগে, আপনার SSH key প্রয়োজন হবে। আমাদের গাইড দেখুন: <a href="/bn/what-is-an-ssh-key">SSH key কী</a> অথবা key pair তৈরি করতে <a href="/">বিনামূল্যের online generator</a> ব্যবহার করুন।
+
+## SSH Command Syntax
+
+`ssh` command-এর মৌলিক syntax হলো:
+
+```
+ssh [options] [user@]hostname [command]
+```
+
+এটি বিভাজন করলে:
+
+- **`[options]`** — শূন্য বা তার বেশি flag যা behavior পরিবর্তন করে (এই গাইডে covered)
+- **`[user@]`** — ঐচ্ছিক username। বাদ দিলে, SSH আপনার current local username ব্যবহার করে
+- **`hostname`** — সংযোগ করার remote host। IP address, domain name, বা `~/.ssh/config`-এ সংজ্ঞায়িত alias হতে পারে
+- **`[command]`** — Remote host-এ চালানোর ঐচ্ছিক command। বাদ দিলে, SSH একটি interactive shell সেশন শুরু করে
+
+**Basic উদাহরণ:**
+
+```bash
+# আপনার current username ব্যবহার করে সংযোগ করুন
+ssh server.example.com
+
+# একটি নির্দিষ্ট user হিসেবে সংযোগ করুন
+ssh alice@server.example.com
+
+# IP address ব্যবহার করে সংযোগ করুন
+ssh ubuntu@192.168.1.100
+
+# একটি single command চালান এবং তাৎক্ষণিকভাবে disconnect করুন
+ssh user@server.example.com "df -h"
+
+# সংযোগ করুন এবং connected থাকুন
+ssh user@server.example.com
+```
+
+## Linux ও macOS-এ SSH
+
+Linux distribution ও macOS **OpenSSH** pre-installed নিয়ে আসে। Linux-এ, এটি `openssh-client` package (Debian/Ubuntu) বা `openssh-clients` (RHEL/CentOS/Fedora)-এর অংশ। macOS-এ, এটি সিস্টেমের সাথে bundled এবং Terminal বা iTerm2 থেকে তাৎক্ষণিকভাবে উপলব্ধ।
+
+### SSH পাওয়া যাচ্ছে কিনা যাচাই করুন
+
+```bash
+ssh -V
+# Output: OpenSSH_9.6p1, LibreSSL 3.3.6
+```
+
+### Basic সংযোগ
+
+```bash
+# একটি সার্ভারে সংযোগ করুন
+ssh user@myserver.example.com
+
+# SSH প্রথম সংযোগে ~/.ssh/known_hosts পরীক্ষা করে এবং prompt করে:
+# The authenticity of host 'myserver.example.com' can't be established.
+# ED25519 key fingerprint is SHA256:abc123...
+# Are you sure you want to continue connecting (yes/no)? yes
+
+# Host fingerprint ~/.ssh/known_hosts-এ সংরক্ষিত হয়
+```
+
+### সুবিধার জন্য SSH Config ফাইল ব্যবহার
+
+প্রতিবার full connection details টাইপ করার পরিবর্তে, `~/.ssh/config` তৈরি করুন:
+
+```
+Host myserver
+    HostName myserver.example.com
+    User alice
+    Port 22
+    IdentityFile ~/.ssh/id_ed25519
+
+Host dev
+    HostName dev.example.com
+    User ubuntu
+    Port 2222
+    IdentityFile ~/.ssh/id_ed25519_work
+```
+
+এখন `ssh myserver` full connection-এ expand হয় — কোনো flag প্রয়োজন নেই।
+
+## Windows-এ SSH (PowerShell ও OpenSSH)
+
+Windows 10 (version 1809) ও Windows 11-এ **OpenSSH client** একটি optional feature হিসেবে অন্তর্ভুক্ত, যা PowerShell, Command Prompt, ও Windows Terminal-এ `ssh` command পাওয়া যায়।
+
+### OpenSSH ইনস্টল আছে কিনা পরীক্ষা করুন
+
+```powershell
+# PowerShell-এ
+ssh -V
+```
+
+Command পাওয়া না গেলে, ইনস্টল করুন:
+
+**Settings-এর মাধ্যমে:**
+১. **Settings → Apps → Optional Features** খুলুন
+২. **Add a feature**-এ ক্লিক করুন
+৩. **OpenSSH Client** খুঁজুন এবং ইনস্টল করুন
+
+**PowerShell (Administrator)-এর মাধ্যমে:**
+
+```powershell
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+```
+
+### PowerShell-এ SSH ব্যবহার
+
+একবার ইনস্টল হলে, syntax Linux ও macOS-এর মতোই:
+
+```powershell
+# একটি সার্ভারে সংযোগ করুন
+ssh user@server.example.com
+
+# Custom port-এ সংযোগ করুন
+ssh -p 2222 user@server.example.com
+
+# একটি নির্দিষ্ট key ফাইল ব্যবহার করুন
+ssh -i C:\Users\YourName\.ssh\id_ed25519 user@server.example.com
+```
+
+### Windows SSH Key-এর অবস্থান
+
+Windows-এ SSH key `C:\Users\YourUsername\.ssh\`-এ সংরক্ষিত। PowerShell `~` shorthand হিসেবে চেনে:
+
+```powershell
+# এগুলি equivalent
+ssh -i ~/.ssh/id_ed25519 user@server
+ssh -i C:\Users\YourUsername\.ssh\id_ed25519 user@server
+```
+
+### Windows-এ PuTTY বনাম OpenSSH
+
+Windows-এ OpenSSH পাওয়ার আগে, **PuTTY** ছিল standard SSH client। PuTTY নিজস্ব key format (`.ppk` ফাইল) ও key generator (PuTTYgen) ব্যবহার করে। আপনার কাছে `.ppk` key থাকলে এবং standard OpenSSH format-এ convert করতে হলে:
+
+```bash
+# PuTTY টুল ব্যবহার করে
+puttygen mykey.ppk -O private-openssh -o id_ed25519
+```
+
+নতুন setup-এর জন্য, Windows-এ built-in OpenSSH client পছন্দ করুন — এটি OpenSSH প্রকল্প দ্বারা রক্ষণাবেক্ষিত এবং Linux ও macOS-এর মতো একই key format ও configuration ফাইল ব্যবহার করে।
+
+## Key Authentication সহ SSH: -i Flag
+
+ডিফল্টরূপে, SSH `~/.ssh/`-এ standard names (`id_ed25519`, `id_rsa`, `id_ecdsa`, `id_dsa`) সহ key ফাইল খোঁজে। **`-i` flag** (identity ফাইল) আপনাকে একটি ভিন্ন key ফাইল explicitly specify করতে দেয়।
+
+```bash
+# একটি নির্দিষ্ট key ফাইল ব্যবহার করুন
+ssh -i ~/.ssh/id_ed25519_production user@prod.example.com
+
+# Non-standard অবস্থানে সংরক্ষিত key ব্যবহার করুন
+ssh -i /path/to/my/custom_key deploy@server.example.com
+
+# অন্যান্য option-এর সাথে combine করুন
+ssh -i ~/.ssh/deploy_key -p 2222 -l deploy server.example.com
+```
+
+`-i` flag বেশ কিছু পরিস্থিতিতে অপরিহার্য:
+- আপনার কাছে ভিন্ন সার্ভার বা উদ্দেশ্যে multiple key pair আছে
+- আপনার key ডিফল্ট `~/.ssh/` directory-তে নেই
+- আপনি CI/CD environment-এ key specify করছেন যেখানে path explicit
+- আপনি AWS বা অন্য cloud provider থেকে `.pem` key download করেছেন
+
+### AWS EC2 উদাহরণ
+
+AWS EC2 instance launch করলে একটি `.pem` key ফাইল প্রদান করে:
+
+```bash
+# .pem key দিয়ে AWS EC2 instance-এ সংযোগ করুন
+ssh -i ~/Downloads/my-aws-key.pem ec2-user@54.123.456.789
+
+# প্রয়োজনে permissions ঠিক করুন (আবশ্যক — SSH world-readable key প্রত্যাখ্যান করে)
+chmod 400 ~/Downloads/my-aws-key.pem
+```
+
+## আবশ্যক SSH Command Option ও Flag
+
+`ssh` command-এ ডজন ডজন option আছে। এখানে আপনি আসলে যেগুলি ব্যবহার করবেন সেগুলি।
+
+| Flag | বিবরণ | উদাহরণ |
+|---|---|---|
+| `-p PORT` | Non-standard port-এ সংযোগ করুন | `ssh -p 2222 user@host` |
+| `-i FILE` | নির্দিষ্ট identity (key) ফাইল ব্যবহার করুন | `ssh -i ~/.ssh/mykey user@host` |
+| `-l USER` | Login username specify করুন (`user@`-এর বিকল্প) | `ssh -l alice host` |
+| `-L local:host:remote` | Local port forwarding | `ssh -L 8080:localhost:80 host` |
+| `-R remote:host:local` | Remote port forwarding | `ssh -R 9090:localhost:3000 host` |
+| `-D port` | Dynamic (SOCKS) proxy | `ssh -D 1080 host` |
+| `-N` | Remote command execute করবেন না (শুধু tunneling) | `ssh -N -L 3307:db:3306 host` |
+| `-f` | Authentication-এর পর background-এ যান | `ssh -f -N -D 1080 host` |
+| `-v` | Verbose (debug) output | `ssh -v user@host` |
+| `-vv` বা `-vvv` | আরও verbose output | `ssh -vvv user@host` |
+| `-A` | SSH agent forwarding সক্ষম করুন | `ssh -A user@jump-host` |
+| `-X` | X11 forwarding সক্ষম করুন | `ssh -X user@host xclock` |
+| `-C` | Compression সক্ষম করুন | `ssh -C user@host` |
+| `-T` | Pseudo-terminal allocation অক্ষম করুন | `ssh -T git@github.com` |
+| `-q` | Quiet mode (সতর্কতা দমন করুন) | `ssh -q user@host` |
+| `-o OPTION=VALUE` | Config option inline সেট করুন | `ssh -o StrictHostKeyChecking=no host` |
+| `-J JUMP` | Bastion host-এর মাধ্যমে ProxyJump | `ssh -J jump.host user@internal` |
+| `-W host:port` | stdio host:port-এ forward করুন (ProxyJump-এর জন্য) | `-J` দ্বারা অভ্যন্তরীণভাবে ব্যবহৃত |
+
+### Debugging-এর জন্য Verbose Mode
+
+SSH fail হচ্ছে, তখন `-v` (বা `-vv` বা `-vvv`) ঠিক কী ঘটছে তা প্রকাশ করে:
+
+```bash
+ssh -v user@server.example.com
+# দেখায়: কোন key চেষ্টা করা হচ্ছে, সার্ভার কোন auth পদ্ধতি গ্রহণ করে,
+# agent জড়িত কিনা, এবং সংযোগ কোথায় fail হয়
+
+ssh -vvv user@server.example.com
+# Maximum verbosity — detailed cryptographic negotiation দেখায়
+```
+
+### Host Key Checking Bypass করা (সতর্কতার সাথে ব্যবহার করুন)
+
+Automation ও testing environment-এ যেখানে host key verification অসুবিধাজনক:
+
+```bash
+ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null user@host
+```
+
+**Production-এ এটি ব্যবহার করবেন না।** এটি man-in-the-middle আক্রমণের বিরুদ্ধে সুরক্ষা অক্ষম করে। পরিবর্তে, আপনার provisioning স্ক্রিপ্টে `ssh-keyscan` ব্যবহার করে `known_hosts` pre-populate করুন।
+
+### Agent Forwarding
+
+```bash
+# আপনার local SSH agent remote সার্ভারে forward করুন
+ssh -A user@jump-server
+
+# jump-server থেকে, আপনি এখন আপনার local key ব্যবহার করে internal host-এ SSH করতে পারেন
+# jump সার্ভারে private key copy করার প্রয়োজন নেই
+ssh internal-server.private
+```
+
+Agent forwarding কার্যকর কিন্তু নিরাপত্তার প্রভাব আছে: intermediate সার্ভারে root অ্যাক্সেস আছে এমন যে কেউ আপনার forwarded agent ব্যবহার করতে পারে। এটি কেবল trusted সার্ভারের সাথে ব্যবহার করুন, এবং সম্ভব হলে **ProxyJump** পছন্দ করুন (এটি আপনার agent intermediate host-এ expose করে না)।
+
+## SSH Tunneling Command
+
+SSH tunneling TCP সংযোগ এনক্রিপ্টেড SSH channel-এর মাধ্যমে route করে। Tunneling কী তার background-এর জন্য, আমাদের <a href="/bn/what-is-ssh">SSH গাইডের tunneling section</a> দেখুন।
+
+### Local Port Forwarding
+
+Remote সার্ভিসকে আপনার local মেশিনে accessible করে।
+
+```bash
+# Remote MySQL database local port 3307-এ অ্যাক্সেস করুন
+ssh -L 3307:localhost:3306 user@db-server.example.com -N
+
+# SSH host থেকে শুধু accessible remote web সার্ভারে সংযোগ করুন
+ssh -L 8080:intranet.company.com:80 user@vpn.company.com -N
+
+# Private network-এ Redis instance অ্যাক্সেস করুন
+ssh -L 6380:10.0.1.50:6379 user@bastion.example.com -N
+```
+
+উপরের যেকোনোটি চালানোর পর, আপনার local application `127.0.0.1:LOCAL_PORT`-এ connect করুন।
+
+### Remote Port Forwarding
+
+Remote সার্ভারে একটি local সার্ভিস expose করে।
+
+```bash
+# আপনার local development সার্ভার (port 3000) remote সার্ভারের port 9090-এ expose করুন
+ssh -R 9090:localhost:3000 user@remote.example.com -N
+
+# Remote সার্ভারে যেকোনো interface-কে সংযোগ করতে দিন (sshd_config-এ GatewayPorts yes প্রয়োজন)
+ssh -R 0.0.0.0:9090:localhost:3000 user@remote.example.com -N
+```
+
+### Dynamic Port Forwarding (SOCKS Proxy)
+
+```bash
+# Local port 1080-এ SOCKS5 proxy তৈরি করুন, background-এ চালান
+ssh -D 1080 -N -f user@remote.example.com
+
+# এখন আপনার browser বা সিস্টেম SOCKS5 proxy: 127.0.0.1:1080 ব্যবহার করতে configure করুন
+# সমস্ত ট্র্যাফিক remote সার্ভারের মাধ্যমে route হবে
+```
+
+curl-এর সাথে ব্যবহার করতে:
+
+```bash
+curl --socks5 127.0.0.1:1080 https://api.example.com/
+```
+
+### Tunnel Background-এ চালানো
+
+```bash
+# -f SSH-কে background-এ পাঠায়, -N মানে কোনো remote command নেই
+ssh -f -N -L 3307:localhost:3306 user@db-server
+
+# Background SSH process খুঁজুন
+ps aux | grep ssh
+
+# এটি kill করুন
+kill PID
+```
+
+## SSH ProxyJump ও Bastion Host
+
+অনেক প্রতিষ্ঠানে, production সার্ভার private network-এ থাকে যা internet থেকে directly accessible নয়। একটি **bastion host** (বা jump host) হলো network perimeter-এ একটি hardened সার্ভার যেখানে আপনি প্রথমে SSH করেন, তারপর internal সার্ভারে হপ করেন। `ssh -J` flag (ProxyJump, OpenSSH 7.3-এ যোগ করা হয়েছে) এটিকে seamless করে।
+
+### Basic ProxyJump
+
+```bash
+# Internal সার্ভারে পৌঁছাতে একটি bastion হপ করুন
+ssh -J ec2-user@bastion.example.com ubuntu@10.0.1.50
+
+# সংক্ষিপ্ত form
+ssh -J user@jump-host user@internal-server
+```
+
+এটি দুটি SSH সংযোগ তৈরি করে: প্রথমে bastion-এ, তারপর bastion থেকে internal সার্ভারে — সবকিছু একটি single command-এ, end-to-end encryption সহ। আপনার local SSH agent উভয় host-এ authentication পরিচালনা করে।
+
+### Multiple Jump Chain করা
+
+```bash
+# দুটি intermediate host-এর মাধ্যমে jump করুন
+ssh -J user@jump1.example.com,user@jump2.example.com user@final-destination
+```
+
+### SSH Config ফাইলে ProxyJump
+
+ঘন ঘন অ্যাক্সেস করা সার্ভারের জন্য, ProxyJump configuration `~/.ssh/config`-এ রাখুন:
+
+```
+Host bastion
+    HostName bastion.example.com
+    User ec2-user
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host prod-web
+    HostName 10.0.1.100
+    User ubuntu
+    ProxyJump bastion
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host prod-db
+    HostName 10.0.2.50
+    User postgres
+    ProxyJump bastion
+    IdentityFile ~/.ssh/id_ed25519_aws
+```
+
+এখন `ssh prod-web` automatically bastion-এর মাধ্যমে সংযোগ করে। Manual `-J` flag প্রয়োজন নেই।
+
+### ProxyJump বনাম Agent Forwarding
+
+ProxyJump, agent forwarding (`-A`)-এর চেয়ে পছন্দের কারণ:
+- আপনার private key কখনো intermediate host-এ forward হয় না
+- Bastion host আপনার credential অন্যত্র authenticate করতে ব্যবহার করতে পারে না
+- সংযোগ end-to-end authenticated — destination সার্ভার আপনাকে directly verify করে
+
+আরও setup বিবরণের জন্য, আমাদের complete গাইড দেখুন: <a href="/bn/how-to-set-up-ssh">SSH কীভাবে set up করবেন</a>।
+
+## প্রায়শ জিজ্ঞাসিত প্রশ্ন
+
+### পাসওয়ার্ড ছাড়া SSH command কীভাবে চালাবো?
+
+SSH key authentication সেট আপ করুন। একটি key pair তৈরি করুন (`ssh-keygen -t ed25519`), `ssh-copy-id user@host` ব্যবহার করে সার্ভারের `~/.ssh/authorized_keys` ফাইলে public key copy করুন, এবং পরবর্তী সংযোগগুলি পাসওয়ার্ড prompt না করে আপনার key ব্যবহার করবে। আপনার key-এ passphrase থাকলে, session-এ একবারই দিতে হবে এর জন্য `ssh-agent` ও `ssh-add` ব্যবহার করুন।
+
+### SSH সেশন থেকে কীভাবে বের হবো?
+
+Remote shell বন্ধ করতে ও disconnect করতে `exit` টাইপ করুন বা **Ctrl+D** চাপুন। সেশন frozen হলে (যেমন network dropped), SSH escape sequence ব্যবহার করুন: **Enter** চাপুন, তারপর `~.` (tilde followed by a period) টাইপ করুন। SSH তাৎক্ষণিকভাবে সংযোগ terminate করে। অন্যান্য escape sequence: `~^Z` SSH-কে background-এ suspend করে, `~?` সমস্ত escape sequence তালিকাভুক্ত করে।
+
+### SSH-এর মাধ্যমে remote সার্ভারে command কীভাবে চালাবো?
+
+Hostname-এর পরে command append করুন:
+
+```bash
+ssh user@server "command to run"
+ssh user@server "ls -la /var/log/"
+ssh user@server "sudo systemctl status nginx"
+```
+
+Multi-line command বা স্ক্রিপ্টের জন্য, heredoc ব্যবহার করুন:
+
+```bash
+ssh user@server << 'EOF'
+cd /var/www/html
+git pull origin main
+systemctl reload nginx
+EOF
+```
+
+Interactive command-এর জন্য (যেমন terminal প্রয়োজন), pseudo-terminal allocate করতে `-t` flag যোগ করুন: `ssh -t user@server sudo apt upgrade`।
+
+### ssh ও scp-এর মধ্যে পার্থক্য কী?
+
+`ssh` একটি remote মেশিনে terminal সেশন খোলে (বা একটি single command চালায়)। `scp` (Secure Copy Protocol) এনক্রিপশন ও authentication-এর জন্য SSH ব্যবহার করে আপনার local মেশিন ও remote মেশিনের মধ্যে, বা দুটি remote মেশিনের মধ্যে ফাইল copy করে। উভয়ই একই SSH প্রোটোকল ও key infrastructure ব্যবহার করে। ফাইল ট্রান্সফারের জন্য, `scp` dedicated টুল:
+
+```bash
+# scp local থেকে remote
+scp file.txt user@server:/destination/path/
+
+# scp remote থেকে local
+scp user@server:/remote/file.txt ./local-copy.txt
+```
+
+আরও উন্নত ফাইল ট্রান্সফারের (recursive, resumable, directory browsing) জন্য, `sftp` ব্যবহার করুন। বড় আকারের ট্রান্সফারের জন্য, `rsync -avz -e ssh` আরও efficient।
+
+### SSH config ফাইলের সাথে কীভাবে SSH ব্যবহার করবো?
+
+`~/.ssh/config` তৈরি করুন এবং host entry যোগ করুন। প্রতিটি `Host` block তার full settings সহ একটি connection alias সংজ্ঞায়িত করে:
+
+```
+Host alias-name
+    HostName actual.server.com
+    User username
+    Port 22
+    IdentityFile ~/.ssh/specific_key
+```
+
+তারপর `ssh alias-name` automatically সমস্ত সংজ্ঞায়িত settings ব্যবহার করে। Config ফাইল wildcard সমর্থন করে: `Host *.example.com` সমস্ত matching host-এ settings apply করে। শেষে `Host *` সমস্ত সংযোগে ডিফল্ট apply করে। একটি নির্দিষ্ট `Host` block-এর option global ডিফল্ট override করে।
+
+## SSH Key দরকার? বিনামূল্যে তৈরি করুন
+
+SSH key authentication ব্যবহার করতে — যা পাসওয়ার্ডের প্রয়োজন দূর করে — আপনার key pair দরকার। আপনার browser-এ তাৎক্ষণিকভাবে Ed25519 বা RSA key তৈরি করুন, আমাদের সার্ভারে কিছু পাঠানো হয় না।
+
+<a href="/">বিনামূল্যে আপনার SSH key তৈরি করুন →</a>
+
+---
+
+**আরও পড়ুন:**
+- <a href="/bn/what-is-ssh">SSH কী? Secure Shell-এর সম্পূর্ণ গাইড</a>
+- <a href="/bn/what-is-an-ssh-key">SSH Key কী? Public Key, Private Key, ও Key Pair ব্যাখ্যা</a>
+- <a href="/bn/how-to-set-up-ssh">SSH কীভাবে সেট আপ করবেন: সম্পূর্ণ ধাপে ধাপে গাইড</a>

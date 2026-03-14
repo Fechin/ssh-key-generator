@@ -1,0 +1,563 @@
+# Kuinka määrittää SSH: Täydellinen vaiheittainen opas Linuxille, Macille ja Windowsille
+
+SSH:n oikea käyttöönotto vie noin kymmenen minuuttia ja maksaa osinkoa vuosia. Kun asetukset on määritetty, voit kirjautua palvelimille kirjoittamatta salasanoja, työntää koodia GitHubiin antamatta tunnistetietoja jokaiseen toimintoon ja automatisoida käyttöönotot luotettavasti. Tässä oppaassa käydään läpi koko prosessi – avainparin luomisesta yleisten virheiden vianetsintään – Linuxille, macOS:lle ja Windowsille.
+
+Jos haluat ensin ymmärtää taustalla olevaa tekniikkaa, lue oppaamme <a href="/fi/what-is-ssh">mitä SSH on</a> ja <a href="/fi/what-is-an-ssh-key">mitä SSH-avaimet ovat</a>.
+
+## Edellytykset
+
+Ennen kuin aloitat, varmista, että sinulla on:
+
+**Palvelimen käyttö:**
+- Päätesovellus (MacOS/Linux-pääte, Windows-pääte tai PowerShell Windowsissa)
+- Linux/Unix-etäpalvelin, johon on asennettu SSH-palvelinohjelmisto (sshd).
+- Käyttäjätili kyseisellä palvelimella (tai pääkäyttäjän oikeudet sellaisen luomiseksi)
+- Palvelimen IP-osoite tai isäntänimi
+
+**GitHub/GitLab-käyttö:**
+- GitHub- tai GitLab-tili
+- Pääte, jossa on `ssh` käytettävissä
+- Valinnaisesti: git asennettuna paikallisesti
+
+**Käyttöjärjestelmävaatimukset:**
+- **Linux**: SSH-asiakasohjelma on esiasennettu käytännössä kaikkiin jakeluihin
+- **macOS**: SSH-asiakas on sisäänrakennettu, ja siihen pääsee päätteestä
+- **Windows 10 -versio 1809+ / Windows 11**: OpenSSH-asiakasohjelma on saatavana valinnaisena ominaisuutena
+
+Sinun ei tarvitse asentaa mitään Linuxiin tai macOS:ään. Varmista Windowsissa, että OpenSSH on asennettu avaamalla PowerShell ja suorittamalla `ssh -V`. Jos saat versiomerkkijonon, olet valmis. Jos ei, katso asennusohjeet vaiheesta 4.
+
+## Vaihe 1: Luo SSH-avainparisi
+
+Tarvitset avainparin ennen kuin voit tehdä mitään muuta. Avainpari koostuu **yksityisestä avaimesta** (pysyy koneellasi) ja **julkisesta avaimesta** (käytetään palvelimissa tai palveluissa, kuten GitHub).
+
+### Vaihtoehto A: Käytä online-generaattoria
+
+Jos haluat käyttää graafista käyttöliittymää, <a href="/">ilmainen online-SSH-avaingeneraattorimme</a> luo Ed25519- tai RSA-avainpareja selaimeesi. Yksityinen avain luodaan paikallisesti Web Crypto API:n avulla – mitään ei lähetetä palvelimillemme. Lataa molemmat tiedostot ja tallenna ne `~/.ssh/` (Linux/macOS) tai `C:\Users\YourName\.ssh\` (Windows).
+
+### Vaihtoehto B: Käytä komentorivillä ssh-keygeniä
+
+`ssh-keygen`-komento on saatavilla Linuxissa, macOS:ssä ja Windowsissa OpenSSH:n kanssa:
+
+```bash
+# Luo Ed25519-avainpari (suositus)
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+**Mitä kukin lippu tarkoittaa:**
+- `-t ed25519` — avaintyyppi (Ed25519 on moderni, nopea ja turvallinen)
+- `-C "comment"` — julkiseen avaimeen upotettu tunniste, yleensä sähköpostiosoitteesi
+
+Sinulta kysytään:
+
+```
+Generating public/private ed25519 key pair.
+Enter file in which to save the key (/home/user/.ssh/id_ed25519):
+```
+
+Hyväksy oletussijainti painamalla **Enter**. Jos sinulla on useita avaimia, voit nimetä ne kuvaavasti (esim. `/home/user/.ssh/id_ed25519_github`).
+
+```
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+```
+
+Anna vahva tunnuslause. Tämä salaa levyllä olevan yksityisen avaimen tiedoston – jos koneesi varastetaan, avainta ei voi käyttää ilman tunnuslausetta. Voit jättää sen tyhjäksi automaatiokäyttötapauksissa, joissa ihmisen vuorovaikutus ei ole mahdollista, mutta henkilökohtaisten avainten kohdalla käytä aina tunnuslausetta.
+
+**Tuloste:**
+
+```
+Your identification has been saved in /home/user/.ssh/id_ed25519
+Your public key has been saved in /home/user/.ssh/id_ed25519.pub
+The key fingerprint is:
+SHA256:abc123defghijk... your@email.com
+The key's randomart image is:
++--[ED25519 256]--+
+...
+```
+
+Kaksi tiedostoa luodaan:
+- `~/.ssh/id_ed25519` — **yksityinen avaimesi** (älä koskaan jaa tätä)
+- `~/.ssh/id_ed25519.pub` — **julkinen avaimesi** (turvallista jakaa)
+
+### RSA:lle (vanha yhteensopivuus)
+
+Jos sinun on muodostettava yhteys hyvin vanhoihin järjestelmiin, jotka eivät tue Ed25519:ää:
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "your@email.com"
+```
+
+Käytä vähintään 4096 bittiä. Alle 4096 bitin RSA-avaimia ei pidetä enää riittävänä suojana.
+
+## Vaihe 2: Ota SSH käyttöön Linuxissa
+
+Tämä osio kattaa julkisen avaimesi kopioimisen Linux-palvelimelle, jotta voit todentaa ilman salasanaa.
+
+### Tapa 1: ssh-copy-id (helppoin)
+
+`ssh-copy-id` on yksinkertaisin tapa asentaa julkinen avaimesi etäpalvelimelle. Se muodostaa yhteyden salasanatodennusta käyttämällä, lisää julkisen avaimesi palvelimen `~/.ssh/authorized_keys` -tunnukseen ja asettaa oikeat käyttöoikeudet.
+
+```bash
+ssh-copy-id user@server.example.com
+
+# Määritä avaintiedosto selvästi
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server.example.com
+
+# Yhdistä epätyypilliseen porttiin
+ssh-copy-id -p 2222 user@server.example.com
+```
+
+Sinulta kysytään palvelimen salasanaa viimeisen kerran. Tämän jälkeen voit muodostaa yhteyden `ssh user@server.example.com` avaimellasi.
+
+### Tapa 2: Manuaalinen kopiointi
+
+Jos `ssh-copy-id` ei ole saatavilla (yleistä joissakin BSD-järjestelmissä tai minimaalisissa Linux-asennuksissa):
+
+```bash
+# Näytä julkinen avaimesi ja kopioi tulos
+cat ~/.ssh/id_ed25519.pub
+
+# Sitten SSH palvelimelle (salasanalla) ja suorita:
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+echo "PASTE_YOUR_PUBLIC_KEY_HERE" >> ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+```
+
+Tai tee kaikki yhdessä putkessa:
+
+```bash
+cat ~/.ssh/id_ed25519.pub | ssh user@server.example.com \
+  "mkdir -p ~/.ssh && chmod 700 ~/.ssh && \
+   cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+```
+
+### Varmistetaan, että avain on asennettu
+
+```bash
+ssh user@server.example.com
+# Pitäisi muodostaa yhteys ilman salasanaa (vain salasana, jos määrität sellaisen)
+```
+
+### SSH-palvelimen määrittäminen (sshd)
+
+Etäpalvelimella SSH-daemonin kokoonpano sijaitsee osoitteessa `/etc/ssh/sshd_config`. Turvallinen asennus:
+
+```bash
+sudo nano /etc/ssh/sshd_config
+```
+
+Suositellut asetukset:
+
+```
+# Ota käyttöön julkisen avaimen todennus
+PubkeyAuthentication yes
+
+# Poista salasanatodennus käytöstä (kun olet varmistanut, että avaimet toimivat!)
+PasswordAuthentication no
+
+# Poista root-kirjautuminen SSH:n kautta käytöstä
+PermitRootLogin no
+
+# Salli vain tietyt käyttäjät
+AllowUsers alice bob deploy
+
+# Pidä istunnot elossa
+ClientAliveInterval 60
+ClientAliveCountMax 3
+```
+
+Muokkauksen jälkeen lataa SSH-daemon uudelleen:
+
+```bash
+sudo systemctl reload sshd
+# Tai vanhemmissa järjestelmissä:
+sudo service ssh reload
+```
+
+**Tärkeää**: Älä poista `PasswordAuthentication` käytöstä ennen kuin olet varmistanut, että avainpohjainen todennus toimii. Jos lukitset itsesi ulos, tarvitset konsolin pääsyn (tai isännöintipalveluntarjoajasi hätäpääsyn) palautuaksesi.
+
+### Ssh-agentin määrittäminen Linuxissa
+
+Jos avaimessasi on tunnuslause, lisää se `ssh-agent` istunnon alussa välttääksesi sen syöttämisen uudelleen:
+
+```bash
+# Käynnistä agentti (käynnistetään usein automaattisesti työpöytäympäristöissä)
+eval "$(ssh-agent -s)"
+
+# Lisää avaimesi (kirjoita salasana kerran)
+ssh-add ~/.ssh/id_ed25519
+
+# Tarkista, että avaimet on ladattu
+ssh-add -l
+```
+
+Käynnistä `ssh-agent` automaattisesti ja lisää avaimesi kirjautumiseen lisäämällä `~/.bashrc` tai `~/.zshrc`:
+
+```bash
+# Käynnistä ssh-agent automaattisesti
+if [ -z "$SSH_AUTH_SOCK" ]; then
+  eval "$(ssh-agent -s)"
+  ssh-add ~/.ssh/id_ed25519
+fi
+```
+
+## Vaihe 3: Ota SSH käyttöön macOS:ssä
+
+macOS sisältää täyden OpenSSH-asiakkaan. Prosessi avainpohjaisen todennuksen määrittämiseksi etäpalvelimelle on identtinen Linuxin kanssa (katso yllä oleva vaihe 2). MacOS-spesifiset lisäykset sisältävät avainnipun integroinnin.
+
+### Avainnipun integrointi
+
+macOS voi tallentaa tunnuslauseesi järjestelmän avainnippuun, joten sinun ei koskaan tarvitse kirjoittaa sitä ensimmäisen kerran:
+
+```bash
+# Lisää avain ssh-agentiin Keychain-integraation avulla
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+
+# Vanhemmille macOS-versioille (ennen Montereyta)
+ssh-add -K ~/.ssh/id_ed25519
+```
+
+Jos haluat, että macOS lataa avaimesi aina Keychainista, lisää tämä `~/.ssh/config`:
+
+```
+Host *
+    AddKeysToAgent yes
+    UseKeychain yes
+    IdentityFile ~/.ssh/id_ed25519
+```
+
+Tämän jälkeen tunnuslause tallennetaan Keychainiin ja ladataan automaattisesti – sinua ei kysytä sitä uudelleen seuraavissa käynnistyksissä.
+
+### Tarkista SSH-asiakasversio
+
+```bash
+ssh -V
+# OpenSSH_9.x, LibreSSL x.x.x
+```
+
+macOS toimittaa suhteellisen tuoreen OpenSSH:n, mutta ei aina ehdottoman uusimman. Jos tarvitset uusia ominaisuuksia, asenna Homebrew'n kautta: `brew install openssh`.
+
+## Vaihe 4: Asenna SSH Windowsissa
+
+Windows 10 (1809+) ja Windows 11 sisältävät OpenSSH:n. Näin saat sen toimimaan.
+
+### Asenna OpenSSH-asiakas
+
+**Tarkista, onko se jo asennettu:**
+
+```powershell
+ssh -V
+```
+
+**Asenna asetusten kautta:**
+1. Avaa **Asetukset → Sovellukset → Valinnaiset ominaisuudet**
+2. Hae **OpenSSH Client**
+3. Napsauta **Asenna**
+
+**Asenna PowerShellin kautta (järjestelmänvalvoja):**
+
+```powershell
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+```
+
+### Luo avaimet Windowsissa
+
+Avaa PowerShell ja suorita:
+
+```powershell
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+Avaimet tallennetaan osoitteeseen `C:\Users\YourUsername\.ssh\`.
+
+### Kopioi julkinen avaimesi Linux-palvelimelle
+
+Windows ei sisällä `ssh-copy-id`, mutta voit tehdä sen manuaalisesti PowerShellistä:
+
+```powershell
+# Näytä julkinen avaimesi
+Get-Content ~/.ssh/id_ed25519.pub
+
+# Kopioi se etäpalvelimelle (sinua pyydetään antamaan palvelimen salasana)
+$pubkey = Get-Content ~/.ssh/id_ed25519.pub -Raw
+ssh user@server.example.com "mkdir -p ~/.ssh && echo '$pubkey' >> ~/.ssh/authorized_keys && chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys"
+```
+
+Tai käytä `Add-Content` ohjaamaan se läpi:
+
+```powershell
+type $env:USERPROFILE\.ssh\id_ed25519.pub | ssh user@server.example.com "cat >> ~/.ssh/authorized_keys"
+```
+
+### Ssh-agentin määrittäminen Windowsissa
+
+Voit välttää salasanan toistuvan kirjoittamisen käynnistämällä OpenSSH Authentication Agent -palvelun:
+
+```powershell
+# Käynnistä palvelu
+Start-Service ssh-agent
+
+# Aseta se käynnistymään automaattisesti
+Set-Service -Name ssh-agent -StartupType Automatic
+
+# Lisää avaimesi
+ssh-add ~/.ssh/id_ed25519
+```
+
+### PuTTY vaihtoehtona
+
+Jos haluat mieluummin graafisen SSH-asiakkaan, PuTTY on ilmainen vaihtoehto Windowsille. Luo avaimet **PuTTYgenillä** (tallenna sekä `.ppk`-muodossa PuTTY:lle että vie OpenSSH-muotoon). Uusissa asetuksissa sisäänrakennettu OpenSSH-asiakas on kuitenkin yksinkertaisempi ja yhteentoimiva muun ekosysteemin kanssa.
+
+## SSH-avainten määrittäminen GitHubille ja GitLabille
+
+SSH-avaintodennus GitHubille ja GitLabille toimii samalla tavalla – lataat julkisen avaimesi palveluun ja käytät vastaavaa yksityistä avainta suorittaessasi Git-toimintoja.
+
+### SSH:n määrittäminen GitHubille
+
+**1. Kopioi julkinen avaimesi:**
+
+```bash
+# Linux
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+
+# macOS
+cat ~/.ssh/id_ed25519.pub | pbcopy
+
+# Windows PowerShell
+Get-Content ~/.ssh/id_ed25519.pub | Set-Clipboard
+```
+
+Tai yksinkertaisesti näytä ja kopioi manuaalisesti:
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+**2. Lisää GitHubiin:**
+
+1. Siirry osoitteeseen **github.com** ja kirjaudu sisään
+2. Napsauta avatariasi → **Asetukset**
+3. Vasemmassa sivupalkissa: **SSH- ja GPG-avaimet**
+4. Napsauta **Uusi SSH-avain**
+5. Anna sille kuvaava **Otsikko** (esim. "MacBook Pro" tai "Work PC")
+6. Aseta **Avaintyyppi** -asetukseksi **Todennusavain**
+7. Liitä julkinen avaimesi
+8. Napsauta **Lisää SSH-avain**
+
+**3. Testaa yhteyttä:**
+
+```bash
+ssh -T git@github.com
+# Hei käyttäjätunnus! Todennus onnistui, mutta GitHub ei tarjoa shell-käyttöä.
+```
+
+**4. Käytä SSH:ta Git-toimintoihin:**
+
+```bash
+# Kloonaa käyttämällä SSH:ta HTTPS:n sijaan
+git clone git@github.com:username/repository.git
+
+# Jos olemassa oleva repo käyttää HTTPS:ää, vaihda se SSH:hon
+git remote set-url origin git@github.com:username/repository.git
+```
+
+### SSH:n määrittäminen GitLabille
+
+Prosessi on identtinen:
+
+1. Siirry osoitteeseen **gitlab.com** → Napsauta avatariasi → **Asetukset**
+2. Vasemmassa sivupalkissa: **SSH-avaimet**
+3. Liitä julkinen avaimesi, anna sille otsikko ja aseta valinnaisesti viimeinen voimassaolopäivä
+4. Napsauta **Lisää avain**
+
+Testaa:
+
+```bash
+ssh -T git@gitlab.com
+# Tervetuloa GitLabiin, @käyttäjänimi!
+```
+
+Jos kyseessä on itseisännöity GitLab-instanssi, korvaa `gitlab.com` ilmentymän isäntänimelläsi.
+
+### Erillisen avaimen käyttö GitHubille ja muille palveluille
+
+Jos haluat GitHubille erillisen avaimen (suositellaan avainhygieniaan), luo nimetty avain:
+
+```bash
+ssh-keygen -t ed25519 -C "github" -f ~/.ssh/id_ed25519_github
+```
+
+Lisää sitten `Host` lohko `~/.ssh/config`:
+
+```
+Host github.com
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519_github
+    AddKeysToAgent yes
+```
+
+Nyt `git clone git@github.com:...` käyttää automaattisesti GitHub-kohtaista avainta.
+
+## SSH:n testaus ja vianmääritys
+
+### Perusyhteystesti
+
+```bash
+ssh -v user@server.example.com
+```
+
+`-v` (sanallinen) lippu näyttää tarkalleen, mitä kussakin vaiheessa tapahtuu. Etsi rivejä, kuten:
+- `Offering public key: ~/.ssh/id_ed25519` — SSH yrittää avaintasi
+- `Server accepts key` — avain on `authorized_keys`
+- `Authenticated to server.example.com` — menestys
+
+### Yleiset virheet ja korjaukset
+
+**"Lupa estetty (julkinen avain)"**
+
+Tämä on yleisin virhe. Syyt ja korjaukset:
+
+```bash
+# Tarkista, että avaimesi on ladattu ssh-agentiin
+ssh-add -l
+
+# Jos avaimia ei ole luettelossa, lisää avain
+ssh-add ~/.ssh/id_ed25519
+
+# Tarkista etäpalvelimella authorised_keys
+cat ~/.ssh/authorized_keys
+# Varmista, että julkinen avaimesi on siellä
+
+# Tarkista etäpalvelimen käyttöoikeudet
+ls -la ~/.ssh/
+# ~/.ssh:n on oltava 700
+# authorised_keys on oltava 600
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/authorized_keys
+
+# Tarkista, että palvelin sallii julkisen avaimen todennuksen
+sudo grep PubkeyAuthentication /etc/ssh/sshd_config
+# Täytyy olla: PubkeyAuthentication kyllä
+```
+
+**"VAROITUS: ETÄISÄNTÄTUNNISTUS ON MUUTTUNUT"**
+
+Palvelimen isäntäavain muuttui, mitä SSH käsittelee mahdollisena tietoturvaongelmana. Jos tiedät tämän olevan laillista (palvelin rakennettiin uudelleen, IP osoitettiin uudelleen), poista vanha merkintä:
+
+```bash
+# Poista tietty isäntämerkintä
+ssh-keygen -R server.example.com
+
+# Tai muokkaa tunnettuja_isäntiä manuaalisesti ja poista kyseinen rivi
+nano ~/.ssh/known_hosts
+```
+
+**"Huonot käyttöoikeudet" tai "Liian avoimet käyttöoikeudet"**
+
+SSH on tiukka avaintiedostojen lupien suhteen:
+
+```bash
+# Korjaa yksityisen avaimen käyttöoikeudet
+chmod 600 ~/.ssh/id_ed25519
+
+# Korjaa julkisen avaimen käyttöoikeudet
+chmod 644 ~/.ssh/id_ed25519.pub
+
+# Korjaa .ssh-hakemiston käyttöoikeudet
+chmod 700 ~/.ssh
+```
+
+Windowsissa yksityisen avaimen käyttöoikeuksia hallitaan eri tavalla. Napsauta hiiren kakkospainikkeella avaintiedostoa → Ominaisuudet → Suojaus → Lisäasetukset → Poista perintö → Poista kaikki paitsi käyttäjätili, jolloin saat täyden hallinnan vain itsellesi.
+
+### Ssh-agentin määrittäminen ja käyttö
+
+Jos sinua pyydetään toistuvasti antamaan tunnuslause, `ssh-agent` ei ole käynnissä tai avainta ei ole lisätty:
+
+```bash
+# Käynnistä agentti
+eval "$(ssh-agent -s)"
+# Agentti pid 12345
+
+# Lisää avaimesi
+ssh-add ~/.ssh/id_ed25519
+# Anna tunnuslause /home/user/.ssh/id_ed25519:
+# Lisätty henkilöllisyys: /home/user/.ssh/id_ed25519
+
+# Vahvista
+ssh-add -l
+# 256 SHA256:abc123... your@email.com (ED25519)
+```
+
+### Tunnettujen_isäntien esitäyttö automaatiossa
+
+CI/CD-putkissa käytä `ssh-keyscan` etäisännän sormenjäljen lisäämiseen ennen yhteyden muodostamista:
+
+```bash
+ssh-keyscan -H server.example.com >> ~/.ssh/known_hosts
+ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+```
+
+Tämä estää interaktiiviset sormenjälkikehotteet automaattisissa skripteissä.
+
+## Usein kysyttyjä kysymyksiä
+
+### Miten korjaan "Permission denied (julkinen avain)"?
+
+Käy läpi tämä tarkistuslista: (1) Varmista, että avaimesi on SSH-agentissa: `ssh-add -l`. Jos ei, suorita `ssh-add ~/.ssh/id_ed25519`. (2) Tarkista, että julkinen avaimesi on palvelimen `~/.ssh/authorized_keys`-tiedostossa. (3) Tarkista käyttöoikeudet: `~/.ssh` on oltava `700`, `authorized_keys` on oltava `600`. (4) Tarkista, että palvelimella on `PubkeyAuthentication yes` kohdassa `/etc/ssh/sshd_config`. (5) Käytä `ssh -vvv user@server` nähdäksesi tarkalleen missä todennus epäonnistuu. Monisanainen tulos kertoo, mitä avaimia kokeillaan ja hyväksyikö palvelin ne.
+
+### Kuinka lisään SSH-avaimeni ssh-agentiin?
+
+Suorita `ssh-add ~/.ssh/id_ed25519` (korvaa avaintiedoston nimellä). Jos agentti ei ole käynnissä, käynnistä se ensin `eval "$(ssh-agent -s)"`. MacOS:ssa käytä `ssh-add --apple-use-keychain ~/.ssh/id_ed25519` salasanan tallentamiseen Keychainiin. Windowsissa ota `ssh-agent`-palvelu käyttöön `Start-Service ssh-agent` ja suorita sitten `ssh-add`. Sinun tarvitsee suorittaa `ssh-add` vain kerran istuntoa kohden (tai kerran, MacOS:n Keychainilla).
+
+### Voiko minulla olla useita SSH-avaimia?
+
+Kyllä, ja se on hyvä käytäntö. Luo erillisiä avaimia eri tarkoituksiin – esimerkiksi yksi henkilökohtaiselle GitHubille, yksi työ GitLabille ja yksi tuotantopalvelimille. Käytä `~/.ssh/config` yhdistämään kukin isäntä tiettyyn avaimeen `IdentityFile`. Erillisten avainten käyttö tarkoittaa, että yhden peruuttaminen (poistamalla se palvelusta tai palvelimesta) ei vaikuta muihin, mikä rajoittaa avaimen kompromissin räjähdyssädettä.
+
+### Miten vaihdan SSH-avaimen tunnuslauseen?
+
+Käytä `ssh-keygen -p`:
+
+```bash
+ssh-keygen -p -f ~/.ssh/id_ed25519
+```
+
+Sinua pyydetään antamaan nykyinen tunnuslause, jonka jälkeen sinua pyydetään syöttämään ja vahvistamaan uusi. Itse avain (ja siten julkinen avain) ei muutu – sinun ei tarvitse päivittää sitä missään. Tästä on hyötyä, jos epäilet, että salasanasi on vaarantunut tai haluat vaihtaa sitä rutiininomaisena tietoturvakäytäntönä.
+
+### Miten poistan vanhan SSH-avaimen palvelimelta?
+
+Avaa `~/.ssh/authorized_keys` palvelimella ja poista vanhan julkisen avaimen sisältävä rivi:
+
+```bash
+# Muokkaa authorised_keys etäpalvelimella
+ssh user@server.example.com
+nano ~/.ssh/authorized_keys
+# Poista poistettavan avaimen rivi
+# Tallenna ja poistu
+```
+
+Jokainen rivi `authorized_keys` on yksi julkinen avain. Avaimen kommentti (viimeinen kenttä, yleensä `user@hostname` tai sähköposti) auttaa tunnistamaan, mikä avain on kumpi. Jos et tiedä, mikä rivi poistetaan, vertaa sormenjälkeä:
+
+```bash
+# Ota sormenjälki paikalliselta koneeltasi
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+
+# Tarkista palvelimella kaikkien valtuutettujen avainten sormenjäljet
+ssh-keygen -lf ~/.ssh/authorized_keys
+```
+
+Yhdistä sormenjäljet oikean avaimen tunnistamiseksi ja poistamiseksi.
+
+## Luo SSH-avaimesi ilmaiseksi
+
+Jos et ole vielä luonut SSH-avainpariasi, ilmainen online-generaattorimme luo Ed25519- tai RSA-avaimet suoraan selaimeesi sekunneissa. Asennusta ei tarvita, mitään ei lähetetä palvelimillemme – luonti tapahtuu kokonaan laitteellasi.
+
+<a href="/">Luo SSH-avaimesi ilmaiseksi →</a>
+
+---
+
+**Lisälukemista:**
+- <a href="/fi/what-is-ssh">Mikä on SSH? Secure Shellin täydellinen opas</a>
+- <a href="/fi/what-is-an-ssh-key">Mikä on SSH-avain? Julkiset avaimet, yksityiset avaimet ja avainparit selitetty</a>
+- <a href="/fi/ssh-command">SSH-komento: täydellinen viite esimerkkeineen</a>

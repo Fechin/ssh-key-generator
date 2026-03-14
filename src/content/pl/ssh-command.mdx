@@ -1,0 +1,430 @@
+# Polecenie SSH: Kompletny Przewodnik z Przykładami dla Linux, Mac i Windows
+
+Polecenie `ssh` jest podstawowym narzędziem do inicjowania połączeń SSH z wiersza poleceń. Niezależnie od tego, czy logujesz się na zdalny serwer Linux, przekierowujesz port dla dostępu do bazy danych, czy przeskakujesz przez serwer bastion, aby dotrzeć do sieci wewnętrznej — polecenie `ssh` jest Twoim punktem wejścia. Niniejszy przewodnik obejmuje wszystko, od podstawowej składni po zaawansowane flagi, tunelowanie i konfiguracje ProxyJump — z prawdziwymi przykładami dla Linux, macOS i Windows.
+
+Zanim uruchomisz polecenia SSH, będziesz potrzebować kluczy SSH. Zapoznaj się z naszym przewodnikiem o <a href="/pl/what-is-an-ssh-key">tym, czym jest klucz SSH</a> lub użyj <a href="/">bezpłatnego generatora online</a>, aby stworzyć parę kluczy.
+
+## Składnia Polecenia SSH
+
+Podstawowa składnia polecenia `ssh` to:
+
+```
+ssh [opcje] [user@]hostname [polecenie]
+```
+
+Objaśnienie poszczególnych elementów:
+
+- **`[opcje]`** — Zero lub więcej flag modyfikujących zachowanie (omówionych w tym przewodniku)
+- **`[user@]`** — Opcjonalna nazwa użytkownika. Jeśli pominięta, SSH używa bieżącej lokalnej nazwy użytkownika
+- **`hostname`** — Zdalny host, z którym ma zostać nawiązane połączenie. Może być adresem IP, nazwą domeny lub aliasem zdefiniowanym w `~/.ssh/config`
+- **`[polecenie]`** — Opcjonalne polecenie do wykonania na zdalnym hoście. Jeśli pominięte, SSH uruchamia interaktywną sesję powłoki
+
+**Podstawowe przykłady:**
+
+```bash
+# Połącz używając bieżącej nazwy użytkownika
+ssh server.example.com
+
+# Połącz jako określony użytkownik
+ssh alice@server.example.com
+
+# Połącz używając adresu IP
+ssh ubuntu@192.168.1.100
+
+# Wykonaj pojedyncze polecenie i natychmiast rozłącz się
+ssh user@server.example.com "df -h"
+
+# Wykonaj polecenie i pozostań połączony
+ssh user@server.example.com
+```
+
+## SSH na Linux i macOS
+
+Dystrybucje Linux i macOS są dostarczane z preinstalowanym **OpenSSH**. Na Linuksie jest częścią pakietu `openssh-client` (Debian/Ubuntu) lub `openssh-clients` (RHEL/CentOS/Fedora). Na macOS jest dołączony do systemu i dostępny natychmiast z Terminala lub iTerm2.
+
+### Sprawdź Dostępność SSH
+
+```bash
+ssh -V
+# Wyjście: OpenSSH_9.6p1, LibreSSL 3.3.6
+```
+
+### Podstawowe Połączenie
+
+```bash
+# Połącz z serwerem
+ssh user@myserver.example.com
+
+# SSH sprawdza ~/.ssh/known_hosts przy pierwszym połączeniu i pyta:
+# The authenticity of host 'myserver.example.com' can't be established.
+# ED25519 key fingerprint is SHA256:abc123...
+# Are you sure you want to continue connecting (yes/no)? yes
+
+# Odcisk palca hosta jest zapisywany w ~/.ssh/known_hosts
+```
+
+### Używanie Pliku Konfiguracyjnego SSH dla Wygody
+
+Zamiast za każdym razem wpisywać pełne dane połączenia, utwórz plik `~/.ssh/config`:
+
+```
+Host myserver
+    HostName myserver.example.com
+    User alice
+    Port 22
+    IdentityFile ~/.ssh/id_ed25519
+
+Host dev
+    HostName dev.example.com
+    User ubuntu
+    Port 2222
+    IdentityFile ~/.ssh/id_ed25519_work
+```
+
+Teraz `ssh myserver` rozszerza się do pełnego połączenia — bez dodatkowych flag.
+
+## SSH na Windows (PowerShell i OpenSSH)
+
+Windows 10 (wersja 1809) i Windows 11 zawierają **klienta OpenSSH** jako opcjonalną funkcję, dzięki czemu polecenie `ssh` jest dostępne w PowerShell, Wierszu poleceń i Windows Terminal.
+
+### Sprawdź, czy OpenSSH Jest Zainstalowany
+
+```powershell
+# W PowerShell
+ssh -V
+```
+
+Jeśli polecenie nie zostanie znalezione, zainstaluj je:
+
+**Przez Ustawienia:**
+1. Otwórz **Ustawienia → Aplikacje → Funkcje opcjonalne**
+2. Kliknij **Dodaj funkcję**
+3. Znajdź **Klient OpenSSH** i zainstaluj go
+
+**Przez PowerShell (jako Administrator):**
+
+```powershell
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+```
+
+### Używanie SSH w PowerShell
+
+Po zainstalowaniu składnia jest identyczna jak na Linux i macOS:
+
+```powershell
+# Połącz z serwerem
+ssh user@server.example.com
+
+# Połącz na niestandardowym porcie
+ssh -p 2222 user@server.example.com
+
+# Użyj konkretnego pliku klucza
+ssh -i C:\Users\TwojeImię\.ssh\id_ed25519 user@server.example.com
+```
+
+### Lokalizacja Kluczy SSH w Systemie Windows
+
+Klucze SSH w systemie Windows są przechowywane w `C:\Users\TwojaNazwaUżytkownika\.ssh\`. PowerShell rozpoznaje `~` jako skrót:
+
+```powershell
+# Te polecenia są równoważne
+ssh -i ~/.ssh/id_ed25519 user@server
+ssh -i C:\Users\TwojaNazwaUżytkownika\.ssh\id_ed25519 user@server
+```
+
+### PuTTY vs OpenSSH w Systemie Windows
+
+Zanim OpenSSH stał się dostępny w systemie Windows, **PuTTY** był standardowym klientem SSH. PuTTY używa własnego formatu kluczy (pliki `.ppk`) i własnego generatora kluczy (PuTTYgen). Jeśli masz klucz `.ppk` i chcesz go przekonwertować do standardowego formatu OpenSSH:
+
+```bash
+# Przy użyciu narzędzi PuTTY
+puttygen mykey.ppk -O private-openssh -o id_ed25519
+```
+
+W przypadku nowych konfiguracji zaleca się użycie wbudowanego klienta OpenSSH w systemie Windows — jest utrzymywany przez projekt OpenSSH i używa tego samego formatu kluczy i pliku konfiguracyjnego co Linux i macOS.
+
+## SSH z Uwierzytelnianiem Kluczem: Flaga -i
+
+Domyślnie SSH szuka plików kluczy w `~/.ssh/` ze standardowymi nazwami (`id_ed25519`, `id_rsa`, `id_ecdsa`, `id_dsa`). **Flaga `-i`** (plik tożsamości) pozwala jawnie określić inny plik klucza.
+
+```bash
+# Użyj określonego pliku klucza
+ssh -i ~/.ssh/id_ed25519_production user@prod.example.com
+
+# Użyj klucza przechowywanego w niestandardowej lokalizacji
+ssh -i /ścieżka/do/mojego/niestandardowego_klucza deploy@server.example.com
+
+# Połącz z innymi opcjami
+ssh -i ~/.ssh/deploy_key -p 2222 -l deploy server.example.com
+```
+
+Flaga `-i` jest niezbędna w kilku sytuacjach:
+- Masz wiele par kluczy dla różnych serwerów lub celów
+- Twój klucz nie znajduje się w domyślnym katalogu `~/.ssh/`
+- Określasz klucz w środowisku CI/CD, gdzie ścieżka jest jawna
+- Pobrałeś klucz `.pem` z AWS lub innego dostawcy chmury
+
+### Przykład AWS EC2
+
+AWS dostarcza plik klucza `.pem` przy uruchamianiu instancji EC2:
+
+```bash
+# Połącz z instancją AWS EC2 za pomocą klucza .pem
+ssh -i ~/Downloads/my-aws-key.pem ec2-user@54.123.456.789
+
+# Napraw uprawnienia w razie potrzeby (wymagane — SSH odrzuca klucze odczytywalne przez innych)
+chmod 400 ~/Downloads/my-aws-key.pem
+```
+
+## Podstawowe Opcje i Flagi Polecenia SSH
+
+Polecenie `ssh` ma dziesiątki opcji. Oto te, z których faktycznie będziesz korzystać.
+
+| Flaga | Długa forma / Opis | Przykład |
+|---|---|---|
+| `-p PORT` | Połącz na niestandardowym porcie | `ssh -p 2222 user@host` |
+| `-i PLIK` | Użyj określonego pliku tożsamości (klucza) | `ssh -i ~/.ssh/mykey user@host` |
+| `-l UŻYTKOWNIK` | Podaj nazwę użytkownika logowania (alternatywa dla `user@`) | `ssh -l alice host` |
+| `-L lokalny:host:zdalny` | Lokalne przekierowywanie portów | `ssh -L 8080:localhost:80 host` |
+| `-R zdalny:host:lokalny` | Zdalne przekierowywanie portów | `ssh -R 9090:localhost:3000 host` |
+| `-D port` | Proxy dynamiczne (SOCKS) | `ssh -D 1080 host` |
+| `-N` | Nie wykonuj zdalnego polecenia (tylko tunelowanie) | `ssh -N -L 3307:db:3306 host` |
+| `-f` | Przejdź w tło po uwierzytelnieniu | `ssh -f -N -D 1080 host` |
+| `-v` | Szczegółowe wyjście (debugowanie) | `ssh -v user@host` |
+| `-vv` lub `-vvv` | Bardziej szczegółowe wyjście | `ssh -vvv user@host` |
+| `-A` | Włącz przekazywanie agenta SSH | `ssh -A user@jump-host` |
+| `-X` | Włącz przekazywanie X11 | `ssh -X user@host xclock` |
+| `-C` | Włącz kompresję | `ssh -C user@host` |
+| `-T` | Wyłącz przydzielanie pseudoterminala | `ssh -T git@github.com` |
+| `-q` | Tryb cichy (pomijaj ostrzeżenia) | `ssh -q user@host` |
+| `-o OPCJA=WARTOŚĆ` | Ustaw opcję konfiguracji inline | `ssh -o StrictHostKeyChecking=no host` |
+| `-J JUMP` | ProxyJump przez serwer bastion | `ssh -J jump.host user@internal` |
+| `-W host:port` | Przekaż stdio do host:port (dla ProxyJump) | Używane wewnętrznie przez `-J` |
+
+### Tryb Szczegółowy do Debugowania
+
+Gdy SSH zawodzi, `-v` (lub `-vv` albo `-vvv`) ujawnia dokładnie, co się dzieje:
+
+```bash
+ssh -v user@server.example.com
+# Pokazuje: które klucze są próbowane, które metody uwierzytelniania serwer akceptuje,
+# czy agent jest zaangażowany i gdzie połączenie się nie powiedzie
+
+ssh -vvv user@server.example.com
+# Maksymalna szczegółowość — pokazuje szczegółowe negocjacje kryptograficzne
+```
+
+### Pomijanie Weryfikacji Klucza Hosta (Używaj z Ostrożnością)
+
+W środowiskach automatyzacji i testowania, gdzie weryfikacja klucza hosta jest niewygodna:
+
+```bash
+ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null user@host
+```
+
+**Nie używaj tego w produkcji.** Wyłącza to ochronę przed atakami man-in-the-middle. Zamiast tego użyj `ssh-keyscan` w skryptach inicjowania, aby wstępnie wypełnić `known_hosts`.
+
+### Przekazywanie Agenta
+
+```bash
+# Przekaż lokalnego agenta SSH na serwer zdalny
+ssh -A user@jump-server
+
+# Z jump-servera możesz teraz SSH do hostów wewnętrznych używając lokalnych kluczy
+# Nie ma potrzeby kopiowania kluczy prywatnych na serwer pośredniczący
+ssh internal-server.private
+```
+
+Przekazywanie agenta jest przydatne, ale ma implikacje dla bezpieczeństwa: każdy z dostępem root na pośrednim serwerze może używać Twojego przekazanego agenta. Używaj go tylko z zaufanymi serwerami i preferuj **ProxyJump**, gdy to możliwe (nie wystawia agenta na pośrednie hosty).
+
+## Polecenia Tunelowania SSH
+
+Tunelowanie SSH kieruje połączenia TCP przez zaszyfrowany kanał SSH. Informacje o tunelowaniu znajdziesz w <a href="/pl/what-is-ssh">sekcji dotyczącej tunelowania w naszym przewodniku SSH</a>.
+
+### Lokalne Przekierowywanie Portów
+
+Udostępnia zdalną usługę na lokalnej maszynie.
+
+```bash
+# Dostęp do zdalnej bazy MySQL na lokalnym porcie 3307
+ssh -L 3307:localhost:3306 user@db-server.example.com -N
+
+# Połącz z zdalnym serwerem webowym dostępnym tylko z hosta SSH
+ssh -L 8080:intranet.company.com:80 user@vpn.company.com -N
+
+# Dostęp do instancji Redis w sieci prywatnej
+ssh -L 6380:10.0.1.50:6379 user@bastion.example.com -N
+```
+
+Po uruchomieniu któregokolwiek z powyższych poleceń połącz lokalną aplikację z `127.0.0.1:PORT_LOKALNY`.
+
+### Zdalne Przekierowywanie Portów
+
+Udostępnia lokalną usługę na serwerze zdalnym.
+
+```bash
+# Udostępnij lokalny serwer deweloperski (port 3000) na porcie 9090 serwera zdalnego
+ssh -R 9090:localhost:3000 user@remote.example.com -N
+
+# Zezwól dowolnemu interfejsowi na serwerze zdalnym na łączenie się (wymaga GatewayPorts yes w sshd_config)
+ssh -R 0.0.0.0:9090:localhost:3000 user@remote.example.com -N
+```
+
+### Dynamiczne Przekierowywanie Portów (Proxy SOCKS)
+
+```bash
+# Utwórz proxy SOCKS5 na lokalnym porcie 1080, działające w tle
+ssh -D 1080 -N -f user@remote.example.com
+
+# Skonfiguruj teraz przeglądarkę lub system, aby używał proxy SOCKS5: 127.0.0.1:1080
+# Cały ruch jest kierowany przez serwer zdalny
+```
+
+Do użycia z curl:
+
+```bash
+curl --socks5 127.0.0.1:1080 https://api.example.com/
+```
+
+### Uruchamianie Tunelu w Tle
+
+```bash
+# -f wysyła SSH w tło, -N oznacza brak zdalnego polecenia
+ssh -f -N -L 3307:localhost:3306 user@db-server
+
+# Znajdź proces SSH w tle
+ps aux | grep ssh
+
+# Zakończ go
+kill PID
+```
+
+## SSH ProxyJump i Serwery Bastion
+
+W wielu organizacjach serwery produkcyjne znajdują się w sieciach prywatnych niedostępnych bezpośrednio z Internetu. **Serwer bastion** (lub serwer przeskoku) to zahartowany serwer na obrzeżach sieci, do którego najpierw łączysz się przez SSH, a następnie skaczysz do wewnętrznych serwerów. Flaga `ssh -J` (ProxyJump, dodana w OpenSSH 7.3) sprawia, że jest to bezproblemowe.
+
+### Podstawowy ProxyJump
+
+```bash
+# Skocz przez jeden bastion, aby dotrzeć do serwera wewnętrznego
+ssh -J ec2-user@bastion.example.com ubuntu@10.0.1.50
+
+# Skrócona forma
+ssh -J user@jump-host user@internal-server
+```
+
+Tworzy to dwa połączenia SSH: najpierw do bastiona, następnie z bastiona do serwera wewnętrznego — wszystko w jednym poleceniu, z szyfrowaniem end-to-end. Lokalny agent SSH obsługuje uwierzytelnianie do obu hostów.
+
+### Łączenie Wielu Skoków
+
+```bash
+# Skocz przez dwa pośrednie hosty
+ssh -J user@jump1.example.com,user@jump2.example.com user@cel-końcowy
+```
+
+### ProxyJump w Pliku Konfiguracyjnym SSH
+
+W przypadku często odwiedzanych serwerów umieść konfigurację ProxyJump w `~/.ssh/config`:
+
+```
+Host bastion
+    HostName bastion.example.com
+    User ec2-user
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host prod-web
+    HostName 10.0.1.100
+    User ubuntu
+    ProxyJump bastion
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host prod-db
+    HostName 10.0.2.50
+    User postgres
+    ProxyJump bastion
+    IdentityFile ~/.ssh/id_ed25519_aws
+```
+
+Teraz `ssh prod-web` automatycznie łączy się przez bastion. Nie są potrzebne ręczne flagi `-J`.
+
+### ProxyJump vs Przekazywanie Agenta
+
+ProxyJump jest preferowany od przekazywania agenta (`-A`) ponieważ:
+- Klucz prywatny nigdy nie jest przekazywany do hosta pośredniego
+- Host bastion nie może używać Twoich poświadczeń do uwierzytelniania w innych miejscach
+- Połączenie jest uwierzytelniane end-to-end — serwer docelowy weryfikuje Cię bezpośrednio
+
+Więcej szczegółów dotyczących konfiguracji znajdziesz w naszym kompletnym przewodniku po <a href="/pl/how-to-set-up-ssh">konfigurowaniu SSH</a>.
+
+## Często Zadawane Pytania
+
+### Jak uruchomić polecenie SSH bez hasła?
+
+Skonfiguruj uwierzytelnianie kluczem SSH. Wygeneruj parę kluczy (`ssh-keygen -t ed25519`), skopiuj klucz publiczny do pliku `~/.ssh/authorized_keys` serwera za pomocą `ssh-copy-id user@host`, a kolejne połączenia będą używać klucza bez pytania o hasło. Jeśli klucz ma hasło, użyj `ssh-agent` i `ssh-add`, aby je zbuforować, dzięki czemu wprowadzasz je tylko raz na sesję.
+
+### Jak zakończyć sesję SSH?
+
+Wpisz `exit` lub naciśnij **Ctrl+D**, aby zamknąć zdalną powłokę i rozłączyć się. Jeśli sesja jest zawieszona (np. sieć zerwała połączenie), użyj sekwencji ucieczki SSH: naciśnij **Enter**, następnie wpisz `~.` (tylda, a potem kropka). SSH natychmiast zakończy połączenie. Inne sekwencje ucieczki: `~^Z` zawiesza SSH w tle, `~?` wyświetla wszystkie sekwencje ucieczki.
+
+### Jak uruchomić polecenie na zdalnym serwerze przez SSH?
+
+Dodaj polecenie po nazwie hosta:
+
+```bash
+ssh user@server "polecenie do wykonania"
+ssh user@server "ls -la /var/log/"
+ssh user@server "sudo systemctl status nginx"
+```
+
+W przypadku wieloliniowych poleceń lub skryptów użyj heredoc:
+
+```bash
+ssh user@server << 'EOF'
+cd /var/www/html
+git pull origin main
+systemctl reload nginx
+EOF
+```
+
+W przypadku interaktywnych poleceń (takich jak wymagające terminala) dodaj flagę `-t`, aby przydzielić pseudoterminal: `ssh -t user@server sudo apt upgrade`.
+
+### Jaka jest różnica między ssh a scp?
+
+`ssh` otwiera sesję terminala (lub uruchamia pojedyncze polecenie) na zdalnej maszynie. `scp` (Secure Copy Protocol) kopiuje pliki między lokalną maszyną a zdalną, lub między dwiema zdalnymi maszynami, używając SSH do szyfrowania i uwierzytelniania. Oba używają tego samego protokołu SSH i tej samej infrastruktury kluczy. Do transferu plików `scp` jest dedykowanym narzędziem:
+
+```bash
+# scp lokalnie do zdalnego
+scp plik.txt user@server:/ścieżka/docelowa/
+
+# scp ze zdalnego do lokalnego
+scp user@server:/zdalny/plik.txt ./lokalna-kopia.txt
+```
+
+W przypadku bardziej zaawansowanych transferów plików (rekurencyjne, z możliwością wznawiania, przeglądanie katalogów) użyj `sftp`. W przypadku transferów na dużą skalę `rsync -avz -e ssh` jest jeszcze bardziej wydajny.
+
+### Jak używać SSH z plikiem konfiguracyjnym?
+
+Utwórz `~/.ssh/config` i dodaj wpisy hostów. Każdy blok `Host` definiuje alias połączenia z pełnymi ustawieniami:
+
+```
+Host nazwa-aliasu
+    HostName rzeczywisty.serwer.com
+    User nazwa_użytkownika
+    Port 22
+    IdentityFile ~/.ssh/konkretny_klucz
+```
+
+Wtedy `ssh nazwa-aliasu` automatycznie używa wszystkich zdefiniowanych ustawień. Plik konfiguracyjny obsługuje symbole wieloznaczne: `Host *.example.com` stosuje ustawienia do wszystkich pasujących hostów. `Host *` na końcu stosuje ustawienia domyślne do wszystkich połączeń. Opcje w konkretnym bloku `Host` nadpisują globalne ustawienia domyślne.
+
+## Potrzebujesz Kluczy SSH? Wygeneruj Je Bezpłatnie
+
+Aby używać uwierzytelniania kluczem SSH — które eliminuje potrzebę haseł — potrzebujesz pary kluczy. Wygeneruj klucze Ed25519 lub RSA natychmiast w przeglądarce, bez przesyłania czegokolwiek na nasze serwery.
+
+<a href="/">Wygeneruj swoje klucze SSH bezpłatnie →</a>
+
+---
+
+**Dalsze lektury:**
+- <a href="/pl/what-is-ssh">Czym Jest SSH? Kompletny Przewodnik po Secure Shell</a>
+- <a href="/pl/what-is-an-ssh-key">Czym Jest Klucz SSH? Klucze Publiczne, Prywatne i Pary Kluczy Wyjaśnione</a>
+- <a href="/pl/how-to-set-up-ssh">Jak Skonfigurować SSH: Kompletny Przewodnik Krok po Kroku</a>

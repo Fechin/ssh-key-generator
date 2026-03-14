@@ -1,0 +1,430 @@
+# Az SSH-parancs: Teljes referencia példákkal Linuxra, Macre és Windowsra
+
+A `ssh` parancs az SSH-kapcsolatok parancssorból történő indításának elsődleges eszköze. Akár egy távoli Linux-kiszolgálóra jelentkezik be, egy portot továbbít az adatbázis-hozzáféréshez, vagy egy bástya gazdagépen ugrik át egy belső hálózat eléréséhez, a `ssh` parancs a belépési pont. Ez az útmutató mindent lefed az alapvető szintaxistól a speciális zászlókig, alagútkezelésig és a ProxyJump konfigurációkig – valós példákkal Linuxra, macOS-re és Windowsra.
+
+Az SSH-parancsok futtatása előtt szüksége lesz SSH-kulcsokra. Tekintse meg útmutatónkat arról, hogy <a href="/hu/what-is-an-ssh-key">mi az SSH-kulcs</a>, vagy használja az <a href="/">ingyenes online generátort</a> kulcspár létrehozásához.
+
+## SSH parancs szintaxis
+
+A `ssh` parancs alapvető szintaxisa a következő:
+
+```
+ssh [options] [user@]hostname [command]
+```
+
+Ezt lebontva:
+
+- **`[options]`** - Nulla vagy több olyan jelző, amely módosítja a viselkedést (ezt az útmutató tartalmazza)
+- **`[user@]`** - Opcionális felhasználónév. Ha kihagyja, az SSH az aktuális helyi felhasználónevét használja
+- **`hostname`** — A távoli gazdagép, amelyhez csatlakozni kell. Lehet egy IP-cím, domain név vagy egy `~/.ssh/config`-ban meghatározott álnév
+- **`[command]`** — Opcionális parancs a távoli gazdagépen futtatáshoz. Ha kihagyja, az SSH interaktív shell-munkamenetet indít
+
+**Alapvető példák:**
+
+```bash
+# Csatlakozzon jelenlegi felhasználónevével
+ssh server.example.com
+
+# Csatlakozzon egy adott felhasználóként
+ssh alice@server.example.com
+
+# Csatlakozás IP-cím használatával
+ssh ubuntu@192.168.1.100
+
+# Futtasson egyetlen parancsot, és azonnal szakítsa meg a kapcsolatot
+ssh user@server.example.com "df -h"
+
+# Futtasson egy parancsot, és maradjon kapcsolatban
+ssh user@server.example.com
+```
+
+## SSH Linuxon és macOS-en
+
+A Linux disztribúciók és a macOS előre telepített **OpenSSH**-val szállítják. Linuxon az `openssh-client` (Debian/Ubuntu) vagy a `openssh-clients` (RHEL/CentOS/Fedora) csomag része. MacOS rendszeren a rendszerhez tartozik, és azonnal elérhető a terminálról vagy az iTerm2-ről.
+
+### Ellenőrizze, hogy az SSH elérhető-e
+
+```bash
+ssh -V
+# Kimenet: OpenSSH_9.6p1, LibreSSL 3.3.6
+```
+
+### Alapvető kapcsolat
+
+```bash
+# Csatlakozás egy szerverhez
+ssh user@myserver.example.com
+
+# Az SSH az első csatlakozáskor ellenőrzi a ~/.ssh/known_hosts fájlt, és rákérdez:
+# A „myserver.example.com” gazdagép hitelessége nem állapítható meg.
+# Az ED25519 kulcs ujjlenyomata SHA256:abc123...
+# Biztos, hogy folytatni szeretné a csatlakozást (igen/nem)? igen
+
+# A gazdagép ujjlenyomata a ~/.ssh/known_hosts mappába kerül mentésre
+```
+
+### SSH konfigurációs fájl használata a kényelem érdekében
+
+Ahelyett, hogy minden alkalommal beírná a teljes kapcsolati adatokat, hozzon létre `~/.ssh/config`:
+
+```
+Host myserver
+    HostName myserver.example.com
+    User alice
+    Port 22
+    IdentityFile ~/.ssh/id_ed25519
+
+Host dev
+    HostName dev.example.com
+    User ubuntu
+    Port 2222
+    IdentityFile ~/.ssh/id_ed25519_work
+```
+
+Mostantól a `ssh myserver` a teljes kapcsolatra bővül – nincs szükség jelzőkre.
+
+## SSH Windows rendszeren (PowerShell és OpenSSH)
+
+A Windows 10 (1809-es verzió) és a Windows 11 opcionális szolgáltatásként tartalmazza az **OpenSSH-ügyfelet**, így a `ssh` parancs elérhető a PowerShellben, a Parancssorban és a Windows Terminálban.
+
+### Ellenőrizze, hogy az OpenSSH telepítve van-e
+
+```powershell
+# A PowerShellben
+ssh -V
+```
+
+Ha a parancs nem található, telepítse:
+
+**A beállításokon keresztül:**
+1. Nyissa meg a **Beállítások → Alkalmazások → Választható funkciók** lehetőséget.
+2. Kattintson a **Termék hozzáadása** lehetőségre.
+3. Keresse meg az **OpenSSH Client** elemet, és telepítse
+
+**PowerShell-en keresztül (rendszergazda):**
+
+```powershell
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+```
+
+### SSH használata a PowerShellben
+
+A telepítés után a szintaxis megegyezik a Linux és a macOS szintaxisával:
+
+```powershell
+# Csatlakozás egy szerverhez
+ssh user@server.example.com
+
+# Csatlakozás egyéni porton
+ssh -p 2222 user@server.example.com
+
+# Használjon egy adott kulcsfájlt
+ssh -i C:\Users\YourName\.ssh\id_ed25519 user@server.example.com
+```
+
+### Windows SSH kulcs helye
+
+A Windows SSH-kulcsai a `C:\Users\YourUsername\.ssh\` helyen vannak tárolva. A PowerShell a `~` rövidítést ismeri fel:
+
+```powershell
+# Ezek egyenértékűek
+ssh -i ~/.ssh/id_ed25519 user@server
+ssh -i C:\Users\YourUsername\.ssh\id_ed25519 user@server
+```
+
+### PuTTY vs OpenSSH Windows rendszeren
+
+Mielőtt az OpenSSH elérhető lett volna a Windows rendszeren, a **PuTTY** volt a szabványos SSH-kliens. A PuTTY saját kulcsformátumát (`.ppk` fájlok) és saját kulcsgenerátorát (PuTTYgen) használja. Ha van `.ppk` kulcsa, és át kell alakítania a szabványos OpenSSH formátumra:
+
+```bash
+# PuTTY eszközök használata
+puttygen mykey.ppk -O private-openssh -o id_ed25519
+```
+
+Az új beállításokhoz előnyben részesítse a beépített OpenSSH-ügyfelet Windows rendszeren – azt az OpenSSH projekt karbantartja, és ugyanazt a kulcsformátumot és konfigurációs fájlt használja, mint a Linux és a macOS.
+
+## SSH kulcshitelesítéssel: Az -i zászló
+
+Alapértelmezés szerint az SSH szabványos névvel (`id_ed25519`, `id_rsa`, `id_ecdsa`, `id_dsa`) keresi a kulcsfájlokat a `~/.ssh/` helyen. A **`-i` jelző** (identitásfájl) lehetővé teszi egy másik kulcsfájl explicit megadását.
+
+```bash
+# Használjon egy adott kulcsfájlt
+ssh -i ~/.ssh/id_ed25519_production user@prod.example.com
+
+# Használjon nem szabványos helyen tárolt kulcsot
+ssh -i /path/to/my/custom_key deploy@server.example.com
+
+# Kombináld más lehetőségekkel
+ssh -i ~/.ssh/deploy_key -p 2222 -l deploy server.example.com
+```
+
+Az `-i` jelző számos helyzetben elengedhetetlen:
+- Több kulcspárja van különböző szerverekhez vagy célokhoz
+- A kulcsa nincs az alapértelmezett `~/.ssh/` könyvtárban
+- Olyan kulcsot ad meg CI/CD környezetben, ahol az elérési út explicit
+- Letöltött egy `.pem` kulcsot az AWS-től vagy egy másik felhőszolgáltatótól
+
+### AWS EC2 példa
+
+Az AWS egy `.pem` kulcsfájlt biztosít, amikor elindít egy EC2-példányt:
+
+```bash
+# Csatlakozzon egy AWS EC2 példányhoz .pem kulccsal
+ssh -i ~/Downloads/my-aws-key.pem ec2-user@54.123.456.789
+
+# Javítsa ki az engedélyeket, ha szükséges (kötelező – az SSH elutasítja a világ által olvasható kulcsokat)
+chmod 400 ~/Downloads/my-aws-key.pem
+```
+
+## Alapvető SSH-parancsbeállítások és -jelzők
+
+A `ssh` parancs tucatnyi lehetőséget tartalmaz. Itt vannak azok, amelyeket valóban használni fog.
+
+| zászló | Hosszú forma / Leírás | Példa |
+|---|---|---|
+| `-p PORT` | Csatlakoztatás nem szabványos porton | `ssh -p 2222 user@host` |
+| `-i FILE` | Egy adott azonosító (kulcs) fájl használata | `ssh -i ~/.ssh/mykey user@host` |
+| `-l USER` | Adja meg a bejelentkezési felhasználónevet (a `user@` alternatívája) | `ssh -l alice host` |
+| `-L local:host:remote` | Helyi port továbbítás | `ssh -L 8080:localhost:80 host` |
+| `-R remote:host:local` | Távoli port továbbítás | `ssh -R 9090:localhost:3000 host` |
+| `-D port` | Dinamikus (SOCKS) proxy | `ssh -D 1080 host` |
+| `-N` | Ne hajtson végre távoli parancsot (csak alagút) | `ssh -N -L 3307:db:3306 host` |
+| `-f` | Ugrás a háttérre hitelesítés után | `ssh -f -N -D 1080 host` |
+| `-v` | Bőbeszédű (debug) kimenet | `ssh -v user@host` |
+| `-vv` vagy `-vvv` | Bőbeszédűbb kimenet | `ssh -vvv user@host` |
+| `-A` | SSH ügynök továbbítás engedélyezése | `ssh -A user@jump-host` |
+| `-X` | X11 továbbítás engedélyezése | `ssh -X user@host xclock` |
+| `-C` | Tömörítés engedélyezése | `ssh -C user@host` |
+| `-T` | Pszeudoterminál-kiosztás letiltása | `ssh -T git@github.com` |
+| `-q` | Csendes üzemmód (figyelmeztetések elnyomása) | `ssh -q user@host` |
+| `-o OPTION=VALUE` | Állítson be egy konfigurációs beállítást | `ssh -o StrictHostKeyChecking=no host` |
+| `-J JUMP` | ProxyUgrás egy bástya gazdagépen keresztül | `ssh -J jump.host user@internal` |
+| `-W host:port` | Stdio továbbítása egy host:portra (ProxyJumphoz) | Belsőleg használja: `-J` |
+
+### Részletes mód a hibakereséshez
+
+Ha az SSH meghibásodik, `-v` (vagy `-vv` vagy `-vvv`) pontosan felfedi, hogy mi történik:
+
+```bash
+ssh -v user@server.example.com
+# Megmutatja: mely kulcsokat próbálják ki, milyen hitelesítési módszereket fogad el a szerver,
+# érintett-e az ügynök, és hol nem sikerül a kapcsolat
+
+ssh -vvv user@server.example.com
+# Maximális bőbeszédűség – részletes kriptográfiai egyeztetést mutat
+```
+
+### A gazdagépkulcs ellenőrzésének megkerülése (használja óvatosan)
+
+Automatizálási és tesztelési környezetekben, ahol a gazdagép kulcs ellenőrzése kényelmetlen:
+
+```bash
+ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null user@host
+```
+
+**Ne használja ezt az éles üzemben.** Letiltja az ember a köztes támadásokkal szembeni védelmet. Ehelyett előre töltse ki a `known_hosts` karakterláncot a `ssh-keyscan` használatával a kiépítési szkriptekben.
+
+### Ügynöktovábbítás
+
+```bash
+# Továbbítsa a helyi SSH-ügynököt a távoli kiszolgálóra
+ssh -A user@jump-server
+
+# A jump-szerverről most már SSH-t is használhat a belső gazdagépekre a helyi kulcsok használatával
+# Nincs szükség a privát kulcsok másolására az ugrásszerverre
+ssh internal-server.private
+```
+
+Az ügynöktovábbítás hasznos, de biztonsági vonatkozásai is vannak: bárki, aki root hozzáféréssel rendelkezik a köztes kiszolgálón, használhatja a továbbított ügynökét. Csak megbízható szerverekkel használja, és lehetőség szerint részesítse előnyben a **ProxyJump**-t (nem teszi ki az ügynököt a közbenső gazdagépeknek).
+
+## SSH Tunneling Commands
+
+Az SSH-alagút egy titkosított SSH-csatornán keresztül irányítja a TCP-kapcsolatokat. Az alagútépítés hátterét az <a href="/hu/what-is-ssh">SSH-útmutató alagútépítési szakaszában</a> találja.
+
+### Helyi porttovábbítás
+
+Távoli szolgáltatást tesz elérhetővé a helyi gépen.
+
+```bash
+# Hozzáférés egy távoli MySQL adatbázishoz a 3307-es helyi porton
+ssh -L 3307:localhost:3306 user@db-server.example.com -N
+
+# Csatlakozzon egy távoli webszerverhez, amely csak az SSH-állomásról érhető el
+ssh -L 8080:intranet.company.com:80 user@vpn.company.com -N
+
+# Hozzáférés egy Redis-példányhoz magánhálózaton
+ssh -L 6380:10.0.1.50:6379 user@bastion.example.com -N
+```
+
+A fentiek bármelyikének futtatása után csatlakoztassa helyi alkalmazását a `127.0.0.1:LOCAL_PORT` címhez.
+
+### Távoli porttovábbítás
+
+Helyi szolgáltatást tesz közzé a távoli kiszolgálón.
+
+```bash
+# Tegye közzé a helyi fejlesztési kiszolgálót (3000-es port) a távoli kiszolgáló 9090-es portján
+ssh -R 9090:localhost:3000 user@remote.example.com -N
+
+# Engedélyezze a távoli kiszolgáló bármely interfészének csatlakozását (a GatewayPorts igen szükséges az sshd_config fájlban)
+ssh -R 0.0.0.0:9090:localhost:3000 user@remote.example.com -N
+```
+
+### Dinamikus porttovábbítás (SOCKS proxy)
+
+```bash
+# Hozzon létre egy SOCKS5 proxyt a 1080-as helyi porton, amely a háttérben fut
+ssh -D 1080 -N -f user@remote.example.com
+
+# Most állítsa be böngészőjét vagy rendszerét a SOCKS5 proxy használatára: 127.0.0.1:1080
+# Minden forgalom a távoli szerveren keresztül van irányítva
+```
+
+Használata göndörítéssel:
+
+```bash
+curl --socks5 127.0.0.1:1080 https://api.example.com/
+```
+
+### Az alagút futtatása a háttérben
+
+```bash
+# -f SSH-t küld a háttérbe, -N azt jelenti, hogy nincs távoli parancs
+ssh -f -N -L 3307:localhost:3306 user@db-server
+
+# Keresse meg a háttérben futó SSH-folyamatot
+ps aux | grep ssh
+
+# Öld meg
+kill PID
+```
+
+## SSH ProxyJump és Bastion Hosts
+
+Sok szervezetben az éles szerverek magánhálózatokon vannak, amelyek nem érhetők el közvetlenül az internetről. A **bastion host** (vagy jump host) egy megerősített kiszolgáló a hálózat peremén, amelybe először SSH-t kell belépni, majd a belső szerverekre ugrani. A `ssh -J` jelző (ProxyJump, az OpenSSH 7.3-ban hozzáadva) zökkenőmentessé teszi ezt.
+
+### Alapszintű proxyJump
+
+```bash
+# Egy belső kiszolgáló eléréséhez ugorjon át egy bástyán
+ssh -J ec2-user@bastion.example.com ubuntu@10.0.1.50
+
+# Rövid forma
+ssh -J user@jump-host user@internal-server
+```
+
+Ez két SSH-kapcsolatot hoz létre: először a bástyához, majd a bástyától a belső szerverhez – mindezt egyetlen paranccsal, végpontok közötti titkosítással. A helyi SSH-ügynök mindkét gazdagép hitelesítését kezeli.
+
+### Több ugrás láncolása
+
+```bash
+# Ugorj át két köztes házigazdán
+ssh -J user@jump1.example.com,user@jump2.example.com user@final-destination
+```
+
+### ProxyJump az SSH konfigurációs fájlban
+
+A gyakran elért kiszolgálók esetén adja meg a ProxyJump konfigurációját a `~/.ssh/config` címen:
+
+```
+Host bastion
+    HostName bastion.example.com
+    User ec2-user
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host prod-web
+    HostName 10.0.1.100
+    User ubuntu
+    ProxyJump bastion
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host prod-db
+    HostName 10.0.2.50
+    User postgres
+    ProxyJump bastion
+    IdentityFile ~/.ssh/id_ed25519_aws
+```
+
+Most `ssh prod-web` automatikusan csatlakozik a bástyán keresztül. Nincs szükség kézi `-J` jelzőkre.
+
+### ProxyJump vs Agent Forwarding
+
+A ProxyJump előnyben részesítendő az ügynöktovábbítással szemben (`-A`), mert:
+- A privát kulcsot soha nem továbbítják a köztes gazdagépnek
+- A bástya gazdagép nem használhatja az Ön hitelesítő adatait máshol történő hitelesítésre
+- A kapcsolat végponttól végpontig hitelesített – a célszerver közvetlenül ellenőrzi Önt
+
+További beállítási részletekért tekintse meg az <a href="/hu/how-to-set-up-ssh">SSH beállításáról</a> szóló teljes útmutatónkat.
+
+## Gyakran Ismételt Kérdések
+
+### Hogyan futhatok le egy SSH-parancsot jelszó nélkül?
+
+SSH-kulcs hitelesítés beállítása. Hozzon létre egy kulcspárt (`ssh-keygen -t ed25519`), másolja a nyilvános kulcsot a kiszolgáló `~/.ssh/authorized_keys` fájljába a `ssh-copy-id user@host` használatával, és a további kapcsolatok jelszókérés nélkül használják a kulcsot. Ha a kulcsának jelmondata van, használja a `ssh-agent` és `ssh-add` gyorsítótárazásához, hogy munkamenetenként csak egyszer adja meg.
+
+### Hogyan léphetek ki az SSH-munkamenetből?
+
+Írja be a `exit` billentyűt, vagy nyomja meg a **Ctrl+D** billentyűkombinációt a távoli héj bezárásához és a kapcsolat bontásához. Ha a munkamenet lefagy (például a hálózat megszakadt), használja az SSH-kilépési szekvenciát: nyomja meg az **Enter** billentyűt, majd írja be a `~.` (tilde, majd egy pont). Az SSH azonnal megszakítja a kapcsolatot. Egyéb kilépési szekvenciák: `~^Z` felfüggeszti az SSH-t a háttérben, `~?` az összes escape szekvenciát listázza.
+
+### Hogyan futtathatok parancsot távoli szerveren SSH-n keresztül?
+
+Adja hozzá a parancsot a gazdagépnév után:
+
+```bash
+ssh user@server "command to run"
+ssh user@server "ls -la /var/log/"
+ssh user@server "sudo systemctl status nginx"
+```
+
+Többsoros parancsokhoz vagy szkriptekhez használja a következő dokumentumot:
+
+```bash
+ssh user@server << 'EOF'
+cd /var/www/html
+git pull origin main
+systemctl reload nginx
+EOF
+```
+
+Az interaktív parancsok (például a terminált igénylő) parancsok esetén adja hozzá a `-t` jelzőt egy pszeudoterminál hozzárendeléséhez: `ssh -t user@server sudo apt upgrade`.
+
+### Mi a különbség az ssh és az scp között?
+
+`ssh` terminálmunkamenetet nyit meg (vagy egyetlen parancsot futtat) egy távoli gépen. A `scp` (Secure Copy Protocol) fájlokat másol a helyi gép és egy távoli gép között, vagy két távoli gép között, SSH használatával titkosításra és hitelesítésre. Mindkettő ugyanazt az SSH protokollt és kulcsinfrastruktúrát használja. A fájlátvitelhez az `scp` a dedikált eszköz:
+
+```bash
+# scp helyiről távolira
+scp file.txt user@server:/destination/path/
+
+# scp remote helyire
+scp user@server:/remote/file.txt ./local-copy.txt
+```
+
+Fejlettebb fájlátvitelhez (rekurzív, folytatható, könyvtárböngészés) használja a `sftp` címet. Nagy méretű átviteleknél az `rsync -avz -e ssh` még hatékonyabb.
+
+### Hogyan használhatom az SSH-t egy konfigurációs fájllal?
+
+Hozzon létre `~/.ssh/config`, és adjon hozzá gazdagép-bejegyzéseket. Minden `Host` blokk meghatároz egy kapcsolati álnevet a teljes beállításokkal:
+
+```
+Host alias-name
+    HostName actual.server.com
+    User username
+    Port 22
+    IdentityFile ~/.ssh/specific_key
+```
+
+Ekkor `ssh alias-name` automatikusan felhasználja az összes megadott beállítást. A konfigurációs fájl támogatja a helyettesítő karaktereket: `Host *.example.com` minden egyező gazdagépre alkalmazza a beállításokat. A `Host *` a végén az alapértelmezett értékeket alkalmazza az összes kapcsolatra. Egy adott `Host` blokk beállításai felülírják a globális alapértelmezéseket.
+
+## SSH-kulcsokra van szüksége? Generálja őket ingyenesen
+
+Az SSH-kulcs-hitelesítés használatához – amely szükségtelenné teszi a jelszavakat – kulcspárra van szükség. Azonnal generáljon Ed25519- vagy RSA-kulcsokat a böngészőjében anélkül, hogy semmit sem küldene el szervereinkre.
+
+<a href="/">SSH-kulcsok létrehozása ingyenes →</a>
+
+---
+
+**További olvasnivalók:**
+- <a href="/hu/what-is-ssh">Mi az SSH? A Secure Shell teljes útmutatója</a>
+- <a href="/hu/what-is-an-ssh-key">Mi az SSH-kulcs? Nyilvános kulcsok, privát kulcsok és kulcspárok magyarázata</a>
+- <a href="/hu/how-to-set-up-ssh">Hogyan állítsuk be az SSH-t: teljes, lépésről lépésre szóló útmutató</a>

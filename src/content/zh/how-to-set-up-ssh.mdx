@@ -1,0 +1,586 @@
+# 如何设置 SSH：Linux、Mac 和 Windows 完整分步指南
+
+设置 SSH 密钥认证是每位开发人员都应该掌握的基础技能。完成配置后，您可以安全、免密码地连接远程服务器，向 GitHub/GitLab 推送代码，并自动化部署流程。
+
+本指南涵盖在 Linux、macOS 和 Windows 上完整的 SSH 配置流程，从密钥生成到测试验证，每个步骤均附有具体命令。
+
+## 前提条件
+
+开始之前，请确认以下几点：
+
+- **有访问终端的权限**：Linux/macOS 使用内置终端；Windows 使用 PowerShell、命令提示符或 Windows Terminal
+- **目标服务器信息**：服务器 IP 地址或域名、用户名、当前可用的登录方式（初始密码或已有密钥）
+- **管理员权限**（仅在配置服务端 sshd 时需要）
+
+**检查 SSH 客户端是否已安装：**
+
+```bash
+# Linux 和 macOS
+ssh -V
+
+# Windows（PowerShell）
+ssh -V
+```
+
+输出类似 `OpenSSH_9.x` 即表示已安装。若未安装，参见下文各系统安装说明。
+
+## 第一步：生成 SSH 密钥对
+
+SSH 密钥对的生成在**本地计算机**上进行，而非服务器上。
+
+### 推荐：生成 Ed25519 密钥
+
+```bash
+ssh-keygen -t ed25519 -C "your_email@example.com"
+```
+
+`-C` 参数是注释，通常填写邮箱，方便在 `authorized_keys` 中识别密钥归属，不影响功能。
+
+### 备选：生成 RSA 密钥（兼容旧系统）
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+```
+
+### 生成过程详解
+
+执行命令后，系统会交互式询问几个问题：
+
+```
+Generating public/private ed25519 key pair.
+Enter file in which to save the key (/home/user/.ssh/id_ed25519):
+```
+
+**建议直接按回车**使用默认路径，除非您需要管理多个密钥对。
+
+```
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+```
+
+**强烈建议设置密码短语**。密码短语对私钥文件加密，即使文件被盗也无法使用。使用 `ssh-agent` 可以缓存密码短语，避免重复输入（见第三步）。
+
+生成成功后，您将看到：
+
+```
+Your identification has been saved in /home/user/.ssh/id_ed25519
+Your public key has been saved in /home/user/.ssh/id_ed25519.pub
+The key fingerprint is:
+SHA256:abc123...XYZ your_email@example.com
+```
+
+### 查看生成的密钥
+
+```bash
+# 查看公钥内容（这是需要复制到服务器的内容）
+cat ~/.ssh/id_ed25519.pub
+
+# 查看 .ssh 目录
+ls -la ~/.ssh/
+```
+
+了解更多关于 SSH 密钥的知识，请参阅<a href="/zh-Hans/what-is-an-ssh-key">SSH 密钥是什么？</a>
+
+## 第二步：在 Linux 上设置 SSH
+
+### 安装 OpenSSH
+
+大多数 Linux 发行版已预装 OpenSSH 客户端。如需安装服务端（允许其他人 SSH 连接到此机器）：
+
+```bash
+# Debian / Ubuntu
+sudo apt update && sudo apt install openssh-server
+
+# RHEL / CentOS / Fedora
+sudo dnf install openssh-server
+
+# Arch Linux
+sudo pacman -S openssh
+```
+
+启动并设置开机自启：
+
+```bash
+sudo systemctl enable --now sshd
+```
+
+### 将公钥部署到远程服务器
+
+**方法一：使用 ssh-copy-id（推荐）**
+
+`ssh-copy-id` 是专门用于部署公钥的工具，自动处理权限设置：
+
+```bash
+# 基本用法
+ssh-copy-id username@server.example.com
+
+# 指定公钥文件
+ssh-copy-id -i ~/.ssh/id_ed25519.pub username@server.example.com
+
+# 指定非标准端口
+ssh-copy-id -i ~/.ssh/id_ed25519.pub -p 2222 username@server.example.com
+```
+
+执行后，系统会提示输入远程服务器的密码（最后一次），然后自动将公钥追加到服务器的 `~/.ssh/authorized_keys`。
+
+**方法二：手动添加公钥**
+
+如果目标服务器没有安装 `ssh-copy-id`（如某些嵌入式系统）：
+
+```bash
+# 将公钥内容通过 SSH 追加到服务器的 authorized_keys
+cat ~/.ssh/id_ed25519.pub | ssh username@server.example.com "mkdir -p ~/.ssh && chmod 700 ~/.ssh && cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+```
+
+**方法三：通过云控制台添加**
+
+对于 AWS EC2、阿里云、腾讯云等云服务器，通常可以在控制台界面直接添加 SSH 公钥，然后通过密钥对创建实例。
+
+### 验证权限设置
+
+SSH 对文件权限非常敏感，错误的权限会导致密钥认证失败：
+
+```bash
+# 在服务器上执行
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/authorized_keys
+ls -la ~/.ssh/
+```
+
+### 测试密钥认证
+
+```bash
+ssh username@server.example.com
+```
+
+如果配置正确，且私钥有密码短语，系统会提示输入密码短语（而非服务器密码）；如果没有密码短语，将直接登录。
+
+### 安全加固：禁用密码认证
+
+密钥认证配置成功后，强烈建议禁用密码认证，防止暴力破解：
+
+```bash
+# 编辑服务端配置
+sudo nano /etc/ssh/sshd_config
+```
+
+找到并修改以下配置项：
+
+```
+# 禁用密码认证
+PasswordAuthentication no
+
+# 禁止 root 直接登录
+PermitRootLogin no
+
+# 禁用空密码
+PermitEmptyPasswords no
+
+# 启用公钥认证
+PubkeyAuthentication yes
+```
+
+保存后重启 SSH 服务：
+
+```bash
+sudo systemctl restart sshd
+```
+
+> **重要**：在关闭当前 SSH 连接之前，请先打开一个新的终端窗口，验证密钥认证可以正常工作！否则可能将自己锁在服务器之外。
+
+## 第三步：在 macOS 上设置 SSH
+
+macOS 内置 OpenSSH，无需额外安装。
+
+### 配置 ssh-agent 和 Keychain
+
+macOS 提供了与系统 Keychain 集成的 ssh-agent，可以永久缓存密码短语：
+
+```bash
+# 启动 ssh-agent（通常 macOS 已自动运行）
+eval "$(ssh-agent -s)"
+
+# 将密钥添加到 agent，并保存密码短语到 Keychain
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+```
+
+### 配置 SSH config 文件（macOS 特定）
+
+在 macOS 上，需要在 `~/.ssh/config` 中添加以下配置，确保重启后 agent 自动加载密钥：
+
+```
+Host *
+    AddKeysToAgent yes
+    UseKeychain yes
+    IdentityFile ~/.ssh/id_ed25519
+```
+
+创建或编辑配置文件：
+
+```bash
+# 创建文件（如不存在）
+touch ~/.ssh/config
+chmod 600 ~/.ssh/config
+
+# 用文本编辑器打开
+nano ~/.ssh/config
+```
+
+### 将公钥复制到远程服务器
+
+macOS 也支持 `ssh-copy-id`（需先通过 Homebrew 安装，或使用手动方法）：
+
+```bash
+# 使用 Homebrew 安装 ssh-copy-id
+brew install ssh-copy-id
+
+# 然后使用
+ssh-copy-id -i ~/.ssh/id_ed25519.pub username@server.example.com
+
+# 或手动方式
+cat ~/.ssh/id_ed25519.pub | ssh username@server "mkdir -p ~/.ssh && cat >> ~/.ssh/authorized_keys"
+```
+
+## 第四步：在 Windows 上设置 SSH
+
+### 安装 OpenSSH（Windows 10/11）
+
+Windows 10（1809 版本之后）和 Windows 11 内置 OpenSSH。
+
+**通过 PowerShell 安装：**
+
+```powershell
+# 以管理员身份运行 PowerShell
+# 检查可用的 OpenSSH 功能
+Get-WindowsCapability -Online | Where-Object Name -like 'OpenSSH*'
+
+# 安装客户端
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+
+# 如需安装服务端（允许他人 SSH 连接到此 Windows 机器）
+Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
+```
+
+**通过图形界面安装：**
+
+1. 打开**设置** → **应用** → **可选功能**
+2. 点击**添加可选功能**
+3. 搜索并安装 **OpenSSH 客户端**
+
+### 在 Windows 上生成 SSH 密钥
+
+在 PowerShell 中：
+
+```powershell
+# 生成 Ed25519 密钥
+ssh-keygen -t ed25519 -C "your_email@example.com"
+
+# 密钥保存在
+# C:\Users\YourUsername\.ssh\id_ed25519
+# C:\Users\YourUsername\.ssh\id_ed25519.pub
+```
+
+### 在 Windows 上配置 ssh-agent
+
+```powershell
+# 以管理员身份运行 PowerShell
+
+# 设置 ssh-agent 服务为自动启动
+Set-Service ssh-agent -StartupType Automatic
+
+# 启动服务
+Start-Service ssh-agent
+
+# 将私钥添加到 agent
+ssh-add ~\.ssh\id_ed25519
+```
+
+### 将公钥部署到 Linux 服务器
+
+Windows 没有 `ssh-copy-id`，但可以用 PowerShell 实现相同效果：
+
+```powershell
+# 方法一：通过 SSH 管道传输公钥
+Get-Content ~/.ssh/id_ed25519.pub | ssh username@server "mkdir -p ~/.ssh && cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys && chmod 700 ~/.ssh"
+
+# 方法二：使用 type 命令
+type $env:USERPROFILE\.ssh\id_ed25519.pub | ssh username@server "cat >> ~/.ssh/authorized_keys"
+```
+
+### 设置 Windows SSH 服务端（可选）
+
+如果您希望其他机器能 SSH 连接到您的 Windows 机器：
+
+```powershell
+# 以管理员身份启动 sshd 服务
+Start-Service sshd
+Set-Service -Name sshd -StartupType Automatic
+
+# 检查防火墙规则（应已自动添加）
+Get-NetFirewallRule -Name *ssh*
+```
+
+## 为 GitHub 和 GitLab 设置 SSH 密钥
+
+### GitHub SSH 设置
+
+**第一步：复制公钥**
+
+```bash
+# macOS
+cat ~/.ssh/id_ed25519.pub | pbcopy
+
+# Linux（需 xclip）
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+
+# Windows PowerShell
+Get-Content ~/.ssh/id_ed25519.pub | Set-Clipboard
+
+# 或直接查看并手动复制
+cat ~/.ssh/id_ed25519.pub
+```
+
+**第二步：添加到 GitHub**
+
+1. 访问 [github.com](https://github.com) 并登录
+2. 点击右上角头像 → **Settings**
+3. 左侧菜单选择 **SSH and GPG keys**
+4. 点击 **New SSH key**
+5. 填写**标题**（如"MacBook Pro 2024"）
+6. 粘贴公钥内容，点击 **Add SSH key**
+
+**第三步：测试连接**
+
+```bash
+ssh -T git@github.com
+```
+
+成功输出：
+
+```
+Hi username! You've successfully authenticated, but GitHub does not provide shell access.
+```
+
+**第四步：使用 SSH URL 克隆仓库**
+
+```bash
+# 使用 SSH URL（而非 HTTPS URL）
+git clone git@github.com:username/repository.git
+```
+
+### GitLab SSH 设置
+
+GitLab 的设置流程与 GitHub 类似：
+
+1. 登录 GitLab → 点击头像 → **Preferences**（偏好设置）
+2. 左侧选择 **SSH Keys**
+3. 粘贴公钥内容，设置有效期（可选），点击 **Add key**
+
+测试连接：
+
+```bash
+ssh -T git@gitlab.com
+# 成功输出：Welcome to GitLab, @username!
+```
+
+### 为不同平台使用不同密钥（可选）
+
+如果您希望为 GitHub 和 GitLab 使用独立的密钥对：
+
+```bash
+# 生成 GitHub 专用密钥
+ssh-keygen -t ed25519 -C "github" -f ~/.ssh/id_ed25519_github
+
+# 生成 GitLab 专用密钥
+ssh-keygen -t ed25519 -C "gitlab" -f ~/.ssh/id_ed25519_gitlab
+```
+
+然后在 `~/.ssh/config` 中配置：
+
+```
+Host github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519_github
+    AddKeysToAgent yes
+
+Host gitlab.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519_gitlab
+    AddKeysToAgent yes
+```
+
+了解更多 SSH 命令用法，请参阅<a href="/zh-Hans/ssh-command">SSH 命令完整参考</a>。
+
+## 测试和故障排查
+
+### 基本连接测试
+
+```bash
+# 使用详细输出模式连接，查看认证过程
+ssh -v username@server.example.com
+
+# 极详细输出（显示更多调试信息）
+ssh -vvv username@server.example.com
+```
+
+详细输出中关键信息：
+- `Offering public key: ~/.ssh/id_ed25519` — 客户端正在提供密钥
+- `Server accepts key` — 服务器接受密钥
+- `Authenticated to server` — 认证成功
+
+### 常见错误与解决方案
+
+**错误：Permission denied (publickey)**
+
+这是最常见的 SSH 错误，可能原因：
+
+```bash
+# 1. 检查服务器上的 authorized_keys
+ssh -v user@server 2>&1 | grep -i "auth"
+
+# 2. 在服务器上检查文件权限
+ls -la ~/.ssh/
+# ~/.ssh 应为 drwx------ (700)
+# authorized_keys 应为 -rw------- (600)
+
+# 3. 修复权限
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/authorized_keys
+
+# 4. 确认公钥已正确添加
+cat ~/.ssh/authorized_keys
+# 应包含您的公钥内容（整行，不换行）
+
+# 5. 检查服务端是否启用了公钥认证
+sudo grep PubkeyAuthentication /etc/ssh/sshd_config
+# 应为 PubkeyAuthentication yes
+
+# 6. 检查服务端日志
+sudo journalctl -u sshd -n 50
+# 或
+sudo tail -f /var/log/auth.log
+```
+
+**错误：Host key verification failed**
+
+当服务器的主机密钥发生变化时（如重装系统），会出现此错误：
+
+```bash
+# 从 known_hosts 删除旧记录
+ssh-keygen -R server.example.com
+
+# 或手动编辑
+nano ~/.ssh/known_hosts
+```
+
+**错误：Connection refused**
+
+SSH 服务未运行或端口不正确：
+
+```bash
+# 检查服务器 SSH 服务状态
+sudo systemctl status sshd
+
+# 检查 SSH 监听的端口
+sudo ss -tlnp | grep sshd
+
+# 检查防火墙规则
+sudo ufw status
+sudo iptables -L -n | grep 22
+```
+
+**错误：WARNING: UNPROTECTED PRIVATE KEY FILE!**
+
+私钥权限过于宽松：
+
+```bash
+chmod 600 ~/.ssh/id_ed25519
+```
+
+## 常见问题解答
+
+### 如何修复"Permission denied (publickey)"错误？
+
+此错误通常由以下原因之一引起：公钥未正确添加到服务器的 `~/.ssh/authorized_keys`；`~/.ssh` 目录或 `authorized_keys` 文件权限设置错误（目录需要 `700`，文件需要 `600`）；本地客户端未找到或无法读取私钥；服务端配置禁用了公钥认证。使用 `ssh -vvv user@server` 查看详细认证日志来定位具体原因。
+
+### 如何将 SSH 密钥添加到 ssh-agent？
+
+```bash
+# 确认 ssh-agent 正在运行
+eval "$(ssh-agent -s)"
+
+# 添加默认密钥
+ssh-add ~/.ssh/id_ed25519
+
+# 添加时指定密钥（如有密码短语，会提示输入一次）
+ssh-add ~/.ssh/custom_key
+
+# 查看已加载的密钥
+ssh-add -l
+
+# macOS：持久化到 Keychain
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+```
+
+### 我可以拥有多个 SSH 密钥吗？
+
+可以，而且这是推荐的做法。您可以为不同用途创建独立的密钥对：
+
+```bash
+# 为 GitHub 生成专用密钥
+ssh-keygen -t ed25519 -f ~/.ssh/id_github -C "github"
+
+# 为公司服务器生成专用密钥
+ssh-keygen -t ed25519 -f ~/.ssh/id_company -C "company-servers"
+```
+
+在 `~/.ssh/config` 中为每个主机指定对应的密钥文件，SSH 会自动使用正确的密钥。
+
+### 如何更改 SSH 密钥的密码短语？
+
+```bash
+# 更改现有密钥的密码短语（不会改变密钥内容）
+ssh-keygen -p -f ~/.ssh/id_ed25519
+
+# 执行后系统会提示：
+# 输入旧密码短语（如有）
+# 输入新密码短语
+# 再次确认新密码短语
+```
+
+这在定期更换密码以符合安全策略时非常有用，且不需要重新部署公钥到服务器。
+
+### 如何从服务器删除旧的 SSH 密钥？
+
+在服务器上编辑 `~/.ssh/authorized_keys` 文件，找到并删除对应的公钥行：
+
+```bash
+# 在服务器上查看所有已授权的公钥
+cat ~/.ssh/authorized_keys
+
+# 手动编辑删除指定密钥
+nano ~/.ssh/authorized_keys
+# 找到对应行（通过注释或密钥指纹识别），删除整行，保存退出
+
+# 或使用 ssh-keygen 工具（本地操作）：
+# 先获取要删除的公钥指纹
+ssh-keygen -lf ~/.ssh/old_key.pub
+```
+
+删除后，持有对应私钥的客户端将无法再认证连接该服务器。
+
+---
+
+## 免费生成您的 SSH 密钥
+
+现在您已掌握完整的 SSH 设置流程。使用我们的在线工具生成安全的 SSH 密钥对——所有操作在您的浏览器中完成，密钥绝不传输到任何服务器。
+
+<a href="/">免费生成 SSH 密钥</a>
+
+---
+
+## 相关文章
+
+- <a href="/zh-Hans/what-is-ssh">SSH 是什么？Secure Shell 安全外壳协议完整指南</a>
+- <a href="/zh-Hans/what-is-an-ssh-key">SSH 密钥是什么？公钥、私钥与密钥对完整说明</a>
+- <a href="/zh-Hans/ssh-command">SSH 命令完整参考：Linux、Mac 和 Windows 示例</a>

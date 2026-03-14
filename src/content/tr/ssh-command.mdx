@@ -1,0 +1,430 @@
+# SSH Komutu: Linux, Mac ve Windows için Örneklerle Tam Başvuru Kılavuzu
+
+`ssh` komutu, komut satırından SSH bağlantıları başlatmak için birincil araçtır. Uzak bir Linux sunucusuna giriş yapıyor, veritabanı erişimi için port yönlendirme yapıyor ya da dahili bir ağa ulaşmak için bir bastion host üzerinden atlıyor olun, `ssh` komutu giriş noktanızdır. Bu kılavuz, temel sözdiziminden gelişmiş bayraklara, tünellemeye ve ProxyJump yapılandırmalarına kadar her şeyi kapsar — Linux, macOS ve Windows için gerçek örneklerle.
+
+SSH komutlarını çalıştırmadan önce SSH anahtarlarına ihtiyacınız olacak. <a href="/tr/what-is-an-ssh-key">SSH anahtarı nedir</a> kılavuzumuza bakın ya da anahtar çifti oluşturmak için <a href="/">ücretsiz çevrimiçi oluşturucuyu</a> kullanın.
+
+## SSH Komut Sözdizimi
+
+`ssh` komutunun temel sözdizimi şudur:
+
+```
+ssh [seçenekler] [user@]hostname [komut]
+```
+
+Bunu parçalara ayıralım:
+
+- **`[seçenekler]`** — Davranışı değiştiren sıfır veya daha fazla bayrak (bu kılavuzda ele alınmaktadır)
+- **`[user@]`** — İsteğe bağlı kullanıcı adı. Belirtilmezse SSH, mevcut yerel kullanıcı adınızı kullanır
+- **`hostname`** — Bağlanılacak uzak host. Bir IP adresi, alan adı veya `~/.ssh/config` dosyasında tanımlanmış bir takma ad olabilir
+- **`[komut]`** — Uzak hostta çalıştırılacak isteğe bağlı komut. Belirtilmezse SSH etkileşimli bir kabuk oturumu başlatır
+
+**Temel örnekler:**
+
+```bash
+# Mevcut kullanıcı adınızla bağlan
+ssh server.example.com
+
+# Belirli bir kullanıcı olarak bağlan
+ssh alice@server.example.com
+
+# IP adresi kullanarak bağlan
+ssh ubuntu@192.168.1.100
+
+# Tek bir komut çalıştır ve hemen bağlantıyı kes
+ssh user@server.example.com "df -h"
+
+# Bağlan ve oturumu açık tut
+ssh user@server.example.com
+```
+
+## Linux ve macOS'ta SSH
+
+Linux dağıtımları ve macOS, **OpenSSH** ile önceden yüklenmiş gelir. Linux'ta `openssh-client` paketinin (Debian/Ubuntu) veya `openssh-clients` paketinin (RHEL/CentOS/Fedora) bir parçasıdır. macOS'ta sistemle birlikte gelir ve Terminal veya iTerm2'den hemen kullanılabilir.
+
+### SSH'nin Mevcut Olduğunu Doğrulama
+
+```bash
+ssh -V
+# Çıktı: OpenSSH_9.6p1, LibreSSL 3.3.6
+```
+
+### Temel Bağlantı
+
+```bash
+# Bir sunucuya bağlan
+ssh user@myserver.example.com
+
+# SSH, ilk bağlantıda ~/.ssh/known_hosts dosyasını kontrol eder ve şunu sorar:
+# The authenticity of host 'myserver.example.com' can't be established.
+# ED25519 key fingerprint is SHA256:abc123...
+# Are you sure you want to continue connecting (yes/no)? yes
+
+# Host parmak izi ~/.ssh/known_hosts dosyasına kaydedilir
+```
+
+### Kolaylık için SSH Config Dosyası Kullanma
+
+Her seferinde tam bağlantı ayrıntılarını yazmak yerine `~/.ssh/config` dosyası oluşturun:
+
+```
+Host myserver
+    HostName myserver.example.com
+    User alice
+    Port 22
+    IdentityFile ~/.ssh/id_ed25519
+
+Host dev
+    HostName dev.example.com
+    User ubuntu
+    Port 2222
+    IdentityFile ~/.ssh/id_ed25519_work
+```
+
+Artık `ssh myserver` tam bağlantıya genişler — hiçbir bayrak gerekmez.
+
+## Windows'ta SSH (PowerShell ve OpenSSH)
+
+Windows 10 (sürüm 1809) ve Windows 11, **OpenSSH istemcisini** isteğe bağlı bir özellik olarak içerir; bu da `ssh` komutunu PowerShell, Komut İstemi ve Windows Terminal'de kullanılabilir kılar.
+
+### OpenSSH'nin Yüklü Olduğunu Kontrol Etme
+
+```powershell
+# PowerShell'de
+ssh -V
+```
+
+Komut bulunamazsa yükleyin:
+
+**Ayarlar aracılığıyla:**
+1. **Settings → Apps → Optional Features** bölümünü açın
+2. **Add a feature**'a tıklayın
+3. **OpenSSH Client**'ı bulun ve yükleyin
+
+**PowerShell aracılığıyla (Yönetici):**
+
+```powershell
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+```
+
+### PowerShell'de SSH Kullanma
+
+Yüklendikten sonra sözdizimi Linux ve macOS ile aynıdır:
+
+```powershell
+# Bir sunucuya bağlan
+ssh user@server.example.com
+
+# Özel bir porta bağlan
+ssh -p 2222 user@server.example.com
+
+# Belirli bir anahtar dosyası kullan
+ssh -i C:\Users\YourName\.ssh\id_ed25519 user@server.example.com
+```
+
+### Windows SSH Anahtar Konumu
+
+Windows'taki SSH anahtarları `C:\Users\YourUsername\.ssh\` dizininde saklanır. PowerShell `~`'yı kısaltma olarak tanır:
+
+```powershell
+# Bunlar eşdeğerdir
+ssh -i ~/.ssh/id_ed25519 user@server
+ssh -i C:\Users\YourUsername\.ssh\id_ed25519 user@server
+```
+
+### Windows'ta PuTTY ve OpenSSH Karşılaştırması
+
+Windows'ta OpenSSH kullanılabilir olmadan önce **PuTTY** standart SSH istemcisiydi. PuTTY kendi anahtar biçimini (`.ppk` dosyaları) ve kendi anahtar oluşturucusunu (PuTTYgen) kullanır. `.ppk` anahtarınız varsa ve bunu standart OpenSSH biçimine dönüştürmeniz gerekiyorsa:
+
+```bash
+# PuTTY araçlarını kullanarak
+puttygen mykey.ppk -O private-openssh -o id_ed25519
+```
+
+Yeni kurulumlar için Windows'ta yerleşik OpenSSH istemcisini tercih edin — OpenSSH projesi tarafından sürdürülür ve Linux ve macOS ile aynı anahtar biçimini ve yapılandırma dosyasını kullanır.
+
+## Anahtar Kimlik Doğrulamasıyla SSH: -i Bayrağı
+
+Varsayılan olarak SSH, `~/.ssh/` dizininde standart adlara sahip anahtar dosyalarını arar (`id_ed25519`, `id_rsa`, `id_ecdsa`, `id_dsa`). **`-i` bayrağı** (kimlik dosyası), farklı bir anahtar dosyasını açıkça belirtmenizi sağlar.
+
+```bash
+# Belirli bir anahtar dosyası kullan
+ssh -i ~/.ssh/id_ed25519_production user@prod.example.com
+
+# Standart olmayan bir konumda saklanan bir anahtar kullan
+ssh -i /path/to/my/custom_key deploy@server.example.com
+
+# Diğer seçeneklerle birleştir
+ssh -i ~/.ssh/deploy_key -p 2222 -l deploy server.example.com
+```
+
+`-i` bayrağı çeşitli durumlarda gereklidir:
+- Farklı sunucular veya amaçlar için birden fazla anahtar çiftiniz var
+- Anahtarınız varsayılan `~/.ssh/` dizininde değil
+- Yolun açık olduğu bir CI/CD ortamında anahtar belirtiyorsunuz
+- AWS veya başka bir bulut sağlayıcısından `.pem` anahtarı indirdiniz
+
+### AWS EC2 Örneği
+
+AWS, bir EC2 örneği başlattığınızda `.pem` anahtar dosyası sağlar:
+
+```bash
+# .pem anahtarıyla bir AWS EC2 örneğine bağlan
+ssh -i ~/Downloads/my-aws-key.pem ec2-user@54.123.456.789
+
+# Gerekirse izinleri düzelt (gerekli — SSH dünya tarafından okunabilir anahtarları reddeder)
+chmod 400 ~/Downloads/my-aws-key.pem
+```
+
+## Temel SSH Komut Seçenekleri ve Bayrakları
+
+`ssh` komutunun düzinelerce seçeneği vardır. İşte gerçekten kullanacaklarınız.
+
+| Bayrak | Uzun Form / Açıklama | Örnek |
+|---|---|---|
+| `-p PORT` | Standart olmayan bir porta bağlan | `ssh -p 2222 user@host` |
+| `-i FILE` | Belirli bir kimlik (anahtar) dosyası kullan | `ssh -i ~/.ssh/mykey user@host` |
+| `-l USER` | Giriş kullanıcı adını belirt (`user@` alternatifi) | `ssh -l alice host` |
+| `-L local:host:remote` | Yerel port yönlendirme | `ssh -L 8080:localhost:80 host` |
+| `-R remote:host:local` | Uzak port yönlendirme | `ssh -R 9090:localhost:3000 host` |
+| `-D port` | Dinamik (SOCKS) proxy | `ssh -D 1080 host` |
+| `-N` | Uzak komut çalıştırma (yalnızca tünelleme) | `ssh -N -L 3307:db:3306 host` |
+| `-f` | Kimlik doğrulamasından sonra arka plana geç | `ssh -f -N -D 1080 host` |
+| `-v` | Ayrıntılı (hata ayıklama) çıktısı | `ssh -v user@host` |
+| `-vv` veya `-vvv` | Daha ayrıntılı çıktı | `ssh -vvv user@host` |
+| `-A` | SSH ajan yönlendirmesini etkinleştir | `ssh -A user@jump-host` |
+| `-X` | X11 yönlendirmesini etkinleştir | `ssh -X user@host xclock` |
+| `-C` | Sıkıştırmayı etkinleştir | `ssh -C user@host` |
+| `-T` | Sahte terminal tahsisini devre dışı bırak | `ssh -T git@github.com` |
+| `-q` | Sessiz mod (uyarıları bastır) | `ssh -q user@host` |
+| `-o OPTION=VALUE` | Yapılandırma seçeneğini satır içi ayarla | `ssh -o StrictHostKeyChecking=no host` |
+| `-J JUMP` | Bastion host üzerinden ProxyJump | `ssh -J jump.host user@internal` |
+| `-W host:port` | Stdio'yu host:port'a yönlendir (ProxyJump için) | `-J` tarafından dahili olarak kullanılır |
+
+### Hata Ayıklama için Ayrıntılı Mod
+
+SSH başarısız olduğunda, `-v` (veya `-vv` ya da `-vvv`) tam olarak ne olduğunu ortaya koyar:
+
+```bash
+ssh -v user@server.example.com
+# Gösterir: hangi anahtarların denendiğini, sunucunun hangi kimlik doğrulama yöntemlerini kabul ettiğini,
+# ajanın dahil olup olmadığını ve bağlantının nerede başarısız olduğunu
+
+ssh -vvv user@server.example.com
+# Maksimum ayrıntı — ayrıntılı kriptografik müzakereyi gösterir
+```
+
+### Host Anahtarı Denetimini Atlama (Dikkatli Kullanın)
+
+Host anahtarı doğrulamasının sakıncalı olduğu otomasyon ve test ortamlarında:
+
+```bash
+ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null user@host
+```
+
+**Bunu üretimde kullanmayın.** Ortadaki adam saldırılarına karşı korumayı devre dışı bırakır. Bunun yerine, sağlama betiklerinizde `ssh-keyscan` kullanarak `known_hosts` dosyasını önceden doldurun.
+
+### Ajan Yönlendirme
+
+```bash
+# Yerel SSH ajanınızı uzak sunucuya yönlendir
+ssh -A user@jump-server
+
+# jump-server'dan, yerel anahtarlarınızı kullanarak dahili hostlara SSH yapabilirsiniz
+# Özel anahtarları jump sunucusuna kopyalamanıza gerek yok
+ssh internal-server.private
+```
+
+Ajan yönlendirme kullanışlıdır, ancak güvenlik açısından önemlidir: ara sunucuda root erişimine sahip olan herkes yönlendirilen ajanınızı kullanabilir. Yalnızca güvenilir sunucularda kullanın ve mümkün olduğunda **ProxyJump**'ı tercih edin (ajanınızı ara hostlara açmaz).
+
+## SSH Tünelleme Komutları
+
+SSH tünelleme, TCP bağlantılarını şifreli bir SSH kanalı üzerinden yönlendirir. Tünellemenin ne olduğuna ilişkin arka plan için <a href="/tr/what-is-ssh">SSH kılavuzumuzun tünelleme bölümüne</a> bakın.
+
+### Yerel Port Yönlendirme
+
+Uzak bir servisi yerel makinenizde erişilebilir kılar.
+
+```bash
+# Uzak MySQL veritabanına yerel 3307 portu üzerinden eriş
+ssh -L 3307:localhost:3306 user@db-server.example.com -N
+
+# Yalnızca SSH hostundan erişilebilen uzak bir web sunucusuna bağlan
+ssh -L 8080:intranet.company.com:80 user@vpn.company.com -N
+
+# Özel bir ağdaki Redis örneğine eriş
+ssh -L 6380:10.0.1.50:6379 user@bastion.example.com -N
+```
+
+Yukarıdakilerden herhangi birini çalıştırdıktan sonra yerel uygulamanızı `127.0.0.1:YEREL_PORT`'a bağlayın.
+
+### Uzak Port Yönlendirme
+
+Yerel bir servisi uzak sunucuda açığa çıkarır.
+
+```bash
+# Yerel geliştirme sunucunuzu (3000 portu) uzak sunucunun 9090 portunda aç
+ssh -R 9090:localhost:3000 user@remote.example.com -N
+
+# Uzak sunucunun herhangi bir arayüzünün bağlanmasına izin ver (sshd_config'de GatewayPorts yes gerektirir)
+ssh -R 0.0.0.0:9090:localhost:3000 user@remote.example.com -N
+```
+
+### Dinamik Port Yönlendirme (SOCKS Proxy)
+
+```bash
+# Yerel 1080 portunda SOCKS5 proxy oluştur, arka planda çalışsın
+ssh -D 1080 -N -f user@remote.example.com
+
+# Şimdi tarayıcınızı veya sisteminizi SOCKS5 proxy kullanacak şekilde yapılandırın: 127.0.0.1:1080
+# Tüm trafik uzak sunucu üzerinden yönlendirilir
+```
+
+curl ile kullanmak için:
+
+```bash
+curl --socks5 127.0.0.1:1080 https://api.example.com/
+```
+
+### Tüneli Arka Planda Çalıştırma
+
+```bash
+# -f SSH'yi arka plana gönderir, -N uzak komut olmadığı anlamına gelir
+ssh -f -N -L 3307:localhost:3306 user@db-server
+
+# Arka plan SSH sürecini bul
+ps aux | grep ssh
+
+# Sonlandır
+kill PID
+```
+
+## SSH ProxyJump ve Bastion Hostları
+
+Birçok kuruluşta üretim sunucuları, internetten doğrudan erişilemeyen özel ağlardadır. **Bastion host** (ya da jump host), önce SSH ile bağlandığınız, ağ çevresindeki güçlendirilmiş bir sunucudur; ardından dahili sunuculara atlarsınız. `ssh -J` bayrağı (ProxyJump, OpenSSH 7.3'te eklendi) bunu sorunsuz hale getirir.
+
+### Temel ProxyJump
+
+```bash
+# Dahili bir sunucuya ulaşmak için bir bastion üzerinden atla
+ssh -J ec2-user@bastion.example.com ubuntu@10.0.1.50
+
+# Kısa form
+ssh -J user@jump-host user@internal-server
+```
+
+Bu, tek bir komutla uçtan uca şifreleme sağlayarak iki SSH bağlantısı oluşturur: önce bastion'a, ardından bastion'dan dahili sunucuya. Yerel SSH ajanınız her iki hosta da kimlik doğrulamasını yönetir.
+
+### Birden Fazla Atlamayı Zincirleye
+
+```bash
+# İki ara host üzerinden atla
+ssh -J user@jump1.example.com,user@jump2.example.com user@final-destination
+```
+
+### SSH Config Dosyasında ProxyJump
+
+Sık erişilen sunucular için ProxyJump yapılandırmasını `~/.ssh/config` dosyasına ekleyin:
+
+```
+Host bastion
+    HostName bastion.example.com
+    User ec2-user
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host prod-web
+    HostName 10.0.1.100
+    User ubuntu
+    ProxyJump bastion
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host prod-db
+    HostName 10.0.2.50
+    User postgres
+    ProxyJump bastion
+    IdentityFile ~/.ssh/id_ed25519_aws
+```
+
+Artık `ssh prod-web` otomatik olarak bastion üzerinden bağlanır. Manuel `-J` bayraklarına gerek yoktur.
+
+### ProxyJump ve Ajan Yönlendirme Karşılaştırması
+
+ProxyJump, ajan yönlendirmeye (`-A`) kıyasla tercih edilir çünkü:
+- Özel anahtarınız hiçbir zaman ara hosta iletilmez
+- Bastion host, kimlik bilgilerinizi başka bir yerde kimlik doğrulaması için kullanamaz
+- Bağlantı uçtan uca doğrulanır — hedef sunucu sizi doğrudan doğrular
+
+Daha fazla kurulum ayrıntısı için <a href="/tr/how-to-set-up-ssh">SSH nasıl kurulur</a> tam kılavuzumuza bakın.
+
+## Sık Sorulan Sorular
+
+### Parola olmadan SSH komutu nasıl çalıştırırım?
+
+SSH anahtar kimlik doğrulamasını kurun. Bir anahtar çifti oluşturun (`ssh-keygen -t ed25519`), `ssh-copy-id user@host` kullanarak açık anahtarı sunucunun `~/.ssh/authorized_keys` dosyasına kopyalayın; ardından bağlantılar parola sormadan anahtarınızı kullanacaktır. Anahtarınızda parola ifadesi varsa, `ssh-agent` ve `ssh-add` kullanarak oturum başına yalnızca bir kez girilecek şekilde önbelleğe alın.
+
+### SSH oturumundan nasıl çıkarım?
+
+Uzak kabuğu kapatmak ve bağlantıyı kesmek için `exit` yazın veya **Ctrl+D** tuşlarına basın. Oturum donmuşsa (ağ düştü), SSH kaçış dizisini kullanın: **Enter** tuşuna basın, ardından `~.` yazın (tilde ardından nokta). SSH bağlantıyı anında sonlandırır. Diğer kaçış dizileri: `~^Z` SSH'yi arka plana askıya alır, `~?` tüm kaçış dizilerini listeler.
+
+### SSH üzerinden uzak sunucuda nasıl komut çalıştırırım?
+
+Hostname'in ardından komutu ekleyin:
+
+```bash
+ssh user@server "çalıştırılacak komut"
+ssh user@server "ls -la /var/log/"
+ssh user@server "sudo systemctl status nginx"
+```
+
+Çok satırlı komutlar veya betikler için heredoc kullanın:
+
+```bash
+ssh user@server << 'EOF'
+cd /var/www/html
+git pull origin main
+systemctl reload nginx
+EOF
+```
+
+Terminal gerektiren etkileşimli komutlar için sahte terminal tahsis etmek üzere `-t` bayrağını ekleyin: `ssh -t user@server sudo apt upgrade`.
+
+### ssh ve scp arasındaki fark nedir?
+
+`ssh` uzak makinede bir terminal oturumu açar (veya tek bir komut çalıştırır). `scp` (Güvenli Kopyalama Protokolü), şifreleme ve kimlik doğrulama için SSH kullanarak yerel makineniz ile uzak makine arasında ya da iki uzak makine arasında dosyaları kopyalar. Her ikisi de aynı SSH protokolünü ve anahtar altyapısını kullanır. Dosya transferleri için `scp` özel araçtır:
+
+```bash
+# scp yerelden uzağa
+scp file.txt user@server:/destination/path/
+
+# scp uzaktan yerele
+scp user@server:/remote/file.txt ./local-copy.txt
+```
+
+Daha gelişmiş dosya transferleri (özyinelemeli, sürdürülebilir, dizin gezintisi) için `sftp` kullanın. Büyük ölçekli transferler için `rsync -avz -e ssh` daha da verimlidir.
+
+### SSH'yi config dosyasıyla nasıl kullanırım?
+
+`~/.ssh/config` dosyası oluşturun ve host girdileri ekleyin. Her `Host` bloğu, tam ayarlarıyla bir bağlantı takma adı tanımlar:
+
+```
+Host takma-ad
+    HostName actual.server.com
+    User kullanici-adi
+    Port 22
+    IdentityFile ~/.ssh/specific_key
+```
+
+Ardından `ssh takma-ad`, tanımlı tüm ayarları otomatik olarak kullanır. Config dosyası joker karakterleri destekler: `Host *.example.com`, tüm eşleşen hostlara ayarları uygular. Sonda yer alan `Host *` tüm bağlantılara varsayılanları uygular. Belirli bir `Host` bloğundaki seçenekler genel varsayılanları geçersiz kılar.
+
+## SSH Anahtarına İhtiyacınız mı? Ücretsiz Oluşturun
+
+Parola gerektirmeyen SSH anahtar kimlik doğrulamasını kullanmak için bir anahtar çiftine ihtiyacınız var. Tarayıcınızda Ed25519 veya RSA anahtarları anında oluşturun; sunucularımıza hiçbir şey gönderilmez.
+
+<a href="/">SSH anahtarlarınızı ücretsiz oluşturun →</a>
+
+---
+
+**Daha fazla okuma:**
+- <a href="/tr/what-is-ssh">SSH Nedir? Güvenli Kabuk'a Tam Kılavuz</a>
+- <a href="/tr/what-is-an-ssh-key">SSH Anahtarı Nedir? Açık Anahtarlar, Özel Anahtarlar ve Anahtar Çiftleri Açıklandı</a>
+- <a href="/tr/how-to-set-up-ssh">SSH Nasıl Kurulur: Eksiksiz Adım Adım Kılavuz</a>

@@ -1,0 +1,283 @@
+# Wat Is SSH? De Volledige Gids voor Secure Shell
+
+SSH, wat staat voor **Secure Shell**, is een cryptografisch netwerkprotocol waarmee je veilig toegang kunt krijgen tot en beheer kunt uitoefenen over computers op afstand via een onbeveiligd netwerk. Of je nu inlogt op een Linux-server, code pusht naar GitHub of bestanden overzet tussen machines — SSH is vrijwel zeker het protocol dat het werk achter de schermen doet. Deze gids legt alles uit wat je moet weten over SSH: wat het is, hoe het werkt en waarom het de universele standaard voor veilige toegang op afstand is geworden.
+
+## Wat Betekent SSH?
+
+**SSH staat voor Secure Shell**. De naam beschrijft precies wat het protocol doet — het biedt een beveiligde, versleutelde shellsessie naar een externe machine. Voor SSH bestond, gebruikten beheerders tools als Telnet en rsh (remote shell) om servers op afstand te beheren. Die protocollen verstuurden alles als platte tekst, inclusief gebruikersnamen en wachtwoorden, waardoor ze moeiteloos te onderscheppen waren op elk gedeeld netwerk.
+
+SSH is gemaakt door de Finse informaticus **Tatu Ylönen** in 1995, direct ingegeven door een aanval waarbij wachtwoorden werden onderschept op zijn universitaire netwerk. Hij bracht SSH-1 uit als vrije software en het werd snel wereldwijd overgenomen. Het protocol werd later door de IETF gestandaardiseerd als SSH-2 (RFC 4251–4254), dat sterkere cryptografie introduceerde en diverse beveiligingsproblemen in het oorspronkelijke ontwerp verhelp.
+
+Tegenwoordig bedoelen mensen met "SSH" bijna altijd SSH-2. De meest gebruikte implementatie is **OpenSSH**, een open-sourceproject dat wordt onderhouden door het OpenBSD-team en meegeleverd is met vrijwel elke Linux-distributie en macOS-installatie.
+
+De **betekenis van SSH** in de praktijk gaat verder dan een eenvoudig aanmeldprogramma. Het is een volledig protocolpakket dat ten grondslag ligt aan:
+- Veilige externe terminaltoegang
+- Versleutelde bestandsoverdracht (SFTP en SCP)
+- Git-authenticatie (GitHub, GitLab, Bitbucket)
+- Veilige port forwarding en tunneling
+- Geautomatiseerde implementatiepijplijnen
+
+## Hoe Werkt SSH
+
+Het **Secure Shell-protocol** werkt op een gelaagde architectuur die versleuteling, authenticatie en kanaalmultiplexing afzonderlijk afhandelt. Inzicht in deze lagen helpt te begrijpen waarom SSH vertrouwd wordt voor gevoelige bewerkingen.
+
+### De Drie Protocollagen
+
+**1. Transportlaag (RFC 4253)**
+
+Wanneer je een SSH-verbinding start, voeren client en server eerst een handshake uit om versleutelingsalgoritmen te onderhandelen en een gedeeld geheim tot stand te brengen. Dit maakt gebruik van een sleuteluitwisselingsalgoritme — moderne SSH gebruikt standaard Curve25519-gebaseerde sleuteluitwisseling. Na de handshake is alle verdere communicatie versleuteld. De transportlaag biedt ook gegevensintegriteit via message authentication codes (MAC's), zodat gegevens niet kunnen worden gemanipuleerd tijdens verzending.
+
+**2. Gebruikersauthenticatielaag (RFC 4252)**
+
+Zodra een versleuteld kanaal is opgezet, vraagt de server de client zich te authenticeren. SSH ondersteunt meerdere authenticatiemethoden:
+
+- **Authenticatie met openbare sleutel** — De client bewijst bezit van een privésleutel zonder deze ooit over het netwerk te verzenden. Dit is de veiligste en meest gebruikte methode.
+- **Wachtwoordauthenticatie** — Het wachtwoord van de gebruiker wordt via het versleutelde kanaal verstuurd. Handiger maar kwetsbaar voor brute-force-aanvallen.
+- **Keyboard-interactive** — Een uitdaging/antwoord-mechanisme, vaak gebruikt voor meervoudige authenticatie.
+- **GSSAPI/Kerberos** — Gebruikt in zakelijke omgevingen met gecentraliseerd identiteitsbeheer.
+
+**3. Verbindingslaag (RFC 4254)**
+
+Na authenticatie multiplext de verbindingslaag de enkele versleutelde verbinding in meerdere logische kanalen. Dit is wat het mogelijk maakt een interactieve shell te hebben, opdrachten op afstand uit te voeren, poorten door te sturen en bestanden over te dragen — alles via één TCP-verbinding.
+
+### De Sleuteluitwisseling in Detail
+
+Wanneer je `ssh user@example.com` typt, gebeurt het volgende in de eerste milliseconden:
+
+1. De client verbindt met TCP-poort 22 op de server.
+2. Beide partijen wisselen protocolversiestrings uit.
+3. Beide partijen sturen lijsten met ondersteunde algoritmen (sleuteluitwisseling, cijfers, MAC's, compressie).
+4. Ze voeren een Diffie-Hellman- of ECDH-sleuteluitwisseling uit om een gedeelde sessiesleutel af te leiden — dit is waarom zelfs als iemand het versleutelde verkeer opneemt, ze het later niet kunnen ontcijferen.
+5. De server stuurt zijn **hostsleutel** (openbare sleutel), die de client verifieert aan de hand van het bestand `~/.ssh/known_hosts`.
+6. Authenticatie verloopt zoals hierboven beschreven.
+7. De sessie begint.
+
+## SSH vs Telnet: Waarom SSH Won
+
+Voor SSH was **Telnet** het standaardprotocol voor externe terminaltoegang. Telnet is eenvoudig en werkt nog steeds, maar heeft één fatale fout: alles wordt als platte tekst verstuurd. Je gebruikersnaam, je wachtwoord, elke opdracht die je typt en elk stukje uitvoer — allemaal zichtbaar voor iedereen die het netwerkverkeer kan onderscheppen.
+
+In de jaren negentig, toen het internetbackbone bestond uit vertrouwde academische en onderzoeksnetwerken, werd dit niet als een ernstig probleem beschouwd. Toen het internet commercieel en vijandelijk werd, maakten tools als Dsniff en Ettercap het triviaal om Telnet-inloggegevens op lokale netwerken te onderscheppen.
+
+SSH loste dit op door alles te versleutelen. Hier is een directe vergelijking:
+
+| Kenmerk | Telnet | SSH |
+|---|---|---|
+| Versleuteling | Geen | Sterk (AES, ChaCha20) |
+| Authenticatie | Wachtwoord als platte tekst | Openbare sleutel + versleuteld wachtwoord |
+| Gegevensintegriteit | Geen | HMAC-verificatie |
+| Poort | 23 | 22 |
+| Nog aanbevolen | Nee | Ja |
+
+rsh (remote shell) en rlogin hadden vergelijkbare problemen. Ze vertrouwden ook op IP-gebaseerde vertrouwen, wat triviaal te vervalsen is. SSH heeft al deze protocollen vervangen en is meer dan 25 jaar de onbetwiste standaard gebleven.
+
+## Wat Is een SSH-sleutel?
+
+SSH ondersteunt twee primaire authenticatiemethoden: wachtwoorden en **SSH-sleutels**. SSH-sleutels zijn cryptografische sleutelparen — een **openbare sleutel** en een **privésleutel** — gebaseerd op asymmetrische cryptografie.
+
+De **privésleutel** blijft op je lokale machine, optioneel beveiligd met een wachtwoordzin. De **openbare sleutel** wordt geplaatst op elke server waartoe je toegang wilt, in een bestand genaamd `~/.ssh/authorized_keys`. Wanneer je verbinding maakt, geeft de server een cryptografische uitdaging die alleen de houder van de corresponderende privésleutel kan beantwoorden. Er wordt geen wachtwoord over het netwerk verstuurd.
+
+Deze aanpak heeft verschillende voordelen:
+- **Immuun voor brute force** — er is niets te raden. Een 256-bits Ed25519-sleutel heeft 2²⁵⁶ mogelijke waarden.
+- **Geen wachtwoord om te stelen** — zelfs als iemand de handshake onderschept, krijgt hij niets bruikbaars.
+- **Automatiseerbaar** — scripts en CI/CD-pijplijnen kunnen authenticeren zonder menselijke tussenkomst.
+- **Intrekbaar** — het verwijderen van een openbare sleutel uit `authorized_keys` trekt onmiddellijk de toegang in.
+
+Het modernste en aanbevolen sleuteltype is **Ed25519**, dat gebruik maakt van elliptische-curvecryptografie op de Edwards-curve. RSA-sleutels worden ook breed ondersteund, al moet je minimaal 4096 bits gebruiken.
+
+Voor een diepgaande bespreking van sleutelparen, zie onze gids over <a href="/nl/what-is-an-ssh-key">wat een SSH-sleutel is</a>.
+
+## Veelvoorkomende SSH-toepassingen
+
+SSH wordt gebruikt in een opmerkelijk breed scala aan scenario's. Hier zijn de belangrijkste.
+
+### Beheer van Servers op Afstand
+
+De meest fundamentele toepassing. Systeembeheerders loggen in op Linux- en Unix-servers om software te installeren, configuratiebestanden te bewerken, diensten te beheren en problemen te diagnosticeren — allemaal via een SSH-terminalsessie.
+
+```bash
+ssh user@192.168.1.100
+ssh admin@myserver.example.com
+ssh -p 2222 deploy@staging.example.com
+```
+
+### Bestandsoverdracht met SFTP en SCP
+
+SSH biedt twee bestandsoverdrachtprotocollen die zijn gebouwd op hetzelfde versleutelde kanaal:
+
+**SCP (Secure Copy Protocol)** is een eenvoudige opdrachtregeltool voor het kopiëren van bestanden:
+
+```bash
+# Kopieer lokaal bestand naar externe server
+scp report.pdf user@server:/home/user/documents/
+
+# Kopieer extern bestand naar lokale machine
+scp user@server:/var/log/app.log ./local-copy.log
+
+# Kopieer volledige map recursief
+scp -r ./project/ user@server:/var/www/
+```
+
+**SFTP (SSH File Transfer Protocol)** biedt een interactieve FTP-achtige interface met een rijker functieset dan SCP, inclusief hervattbare overdrachten en directoryvermeldingen.
+
+### Git-authenticatie
+
+Wanneer je een SSH-sleutel toevoegt aan GitHub, GitLab of Bitbucket, wordt elke `git clone`, `git push` en `git pull` via SSH geverifieerd met je privésleutel. Dit elimineert de noodzaak om bij elke Git-bewerking een gebruikersnaam en wachtwoord in te voeren en is de aanbevolen authenticatiemethode voor ontwikkelaars.
+
+```bash
+# Kloon een repository via SSH
+git clone git@github.com:username/repository.git
+
+# Controleer je GitHub SSH-verbinding
+ssh -T git@github.com
+```
+
+### Geautomatiseerde Implementatie en CI/CD
+
+Implementatiescripts en CI/CD-systemen zoals GitHub Actions, GitLab CI en Jenkins gebruiken SSH-sleutels om code te implementeren op productieservers zonder menselijke tussenkomst. De privésleutel wordt opgeslagen als geheim in het CI-systeem, en de bijbehorende openbare sleutel wordt toegevoegd aan het bestand `authorized_keys` van de server.
+
+### Port Forwarding voor Databases en Applicaties
+
+SSH-tunneling kan externe diensten veilig toegankelijk maken op je lokale machine. Bijvoorbeeld om toegang te krijgen tot een externe MySQL-database die niet is blootgesteld aan het internet:
+
+```bash
+ssh -L 3307:localhost:3306 user@dbserver.example.com -N
+```
+
+Dit maakt een lokale tunnel: verbinding maken met poort 3307 op je machine stuurt verkeer transparant door naar poort 3306 op de externe server, versleuteld in de SSH-tunnel.
+
+## SSH-poort en Configuratieopties
+
+### Standaardpoort 22
+
+SSH luistert standaard op **TCP-poort 22**. Dit is een door IANA toegewezen bekende poort die is gereserveerd voor SSH sinds het protocol werd gemaakt. Wanneer je `ssh user@host` uitvoert zonder een poort op te geven, verbindt de SSH-client met poort 22.
+
+Sommige beheerders wijzigen de SSH-poort (bijv. naar 2222 of 8022) als kleine beveiligingsmaatregel om geautomatiseerde scanruis in logboeken te verminderen. Dit wordt "security through obscurity" genoemd en is geen vervanging voor correcte authenticatie op basis van sleutels, maar kan de logboeken overzichtelijker houden.
+
+```bash
+# Verbind met een niet-standaard SSH-poort
+ssh -p 2222 user@example.com
+```
+
+### Het SSH-clientconfiguratiebestand
+
+In plaats van elke keer lange opdrachtregelopties te typen, kun je SSH-verbindingen configureren in `~/.ssh/config`. Dit bestand laat je aliassen definiëren, opties per host instellen en je workflow aanzienlijk vereenvoudigen.
+
+```
+Host myserver
+    HostName 203.0.113.10
+    User deploy
+    Port 2222
+    IdentityFile ~/.ssh/id_ed25519_prod
+
+Host bastion
+    HostName jump.example.com
+    User ec2-user
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host internal
+    HostName 10.0.1.50
+    User ubuntu
+    ProxyJump bastion
+```
+
+Met deze configuratie verbindt `ssh myserver` met de volledige hostnaam op de aangepaste poort met de opgegeven sleutel — geen extra vlaggen nodig.
+
+Voor een volledige referentie over SSH-opdrachtopties en -vlaggen, zie onze <a href="/nl/ssh-command">SSH-opdrachtenhandleiding</a>.
+
+### Serverconfiguratie (sshd_config)
+
+De SSH-serverdaemon (sshd) wordt geconfigureerd via `/etc/ssh/sshd_config`. Belangrijke instellingen zijn:
+
+```
+# Schakel wachtwoordauthenticatie uit — alleen sleutels
+ PasswordAuthentication no
+
+# Schakel root-aanmelding uit
+ PermitRootLogin no
+
+# Wijzig de luisterpoort
+Port 2222
+
+# Beperk tot specifieke gebruikers
+AllowUsers deploy admin
+
+# Schakel authenticatie met openbare sleutel in
+PubkeyAuthentication yes
+```
+
+Na bewerking, herlaad de daemon: `sudo systemctl reload sshd`
+
+## SSH-tunneling
+
+SSH-tunneling (ook wel SSH-port forwarding genoemd) stelt je in staat willekeurig TCP-verkeer te routeren via een versleutelde SSH-verbinding. Het is een van SSH's krachtigste en minst gebruikte functies.
+
+### Lokale Port Forwarding
+
+Lokale forwarding maakt een externe dienst toegankelijk op je lokale machine. De syntaxis is `-L lokale_poort:externe_host:externe_poort`.
+
+```bash
+# Toegang tot een externe PostgreSQL-database lokaal
+ssh -L 5433:localhost:5432 user@dbserver -N
+
+# Toegang tot een interne webapp via een jumpserver
+ssh -L 8080:internal-app.company.com:80 user@jump.company.com -N
+```
+
+De vlag `-N` geeft SSH de opdracht geen externe opdracht uit te voeren — handig wanneer je alleen de tunnel wilt.
+
+### Externe Port Forwarding
+
+Externe forwarding stelt een lokale dienst beschikbaar op de externe server. De syntaxis is `-R externe_poort:lokale_host:lokale_poort`.
+
+```bash
+# Stel je lokale webserver beschikbaar op de externe machine
+ssh -R 9090:localhost:3000 user@server -N
+```
+
+Dit is handig voor het tijdelijk delen van een lokale ontwikkelserver met een collega die toegang heeft tot de externe host, of voor het tijdelijk toegang geven aan een klant tot je werk in uitvoering.
+
+### Dynamische Port Forwarding (SOCKS-proxy)
+
+De vlag `-D` maakt een SOCKS-proxy op je lokale machine, waarbij al het SOCKS-compatibele verkeer via de SSH-verbinding wordt gerouteerd. Dit gebruikt de externe server effectief als VPN-exitknooppunt.
+
+```bash
+# Maak een SOCKS5-proxy op lokale poort 1080
+ssh -D 1080 user@remote-server -N -f
+```
+
+Configureer je browser of systeem om `SOCKS5-proxy: 127.0.0.1:1080` te gebruiken en al het webverkeer wordt via de externe server gerouteerd. Dit wordt vaak gebruikt om geografisch beperkte inhoud te bereiken of om veilig te browsen vanaf een onbetrouwbaar netwerk.
+
+## Veelgestelde Vragen
+
+### Wat betekent SSH?
+
+SSH staat voor **Secure Shell**. Het is een cryptografisch netwerkprotocol voor het veilig uitvoeren van netwerkdiensten via een onbeveiligd netwerk. De naam verwijst naar het primaire gebruiksscenario: het bieden van een veilige interactieve shellsessie op een externe computer.
+
+### Is SSH hetzelfde als SSL?
+
+Nee. SSH en SSL/TLS zijn beide cryptografische protocollen, maar ze dienen verschillende doelen. **SSL/TLS** (Secure Sockets Layer / Transport Layer Security) wordt gebruikt om webverkeer (HTTPS), e-mail en andere applicatieprotocollen te beveiligen. **SSH** is specifiek ontworpen voor veilige externe shelltoegang, bestandsoverdracht en tunneling. Ze gebruiken vergelijkbare cryptografische primitieven (cryptografie met openbare sleutel, symmetrische versleuteling), maar hebben verschillende handshake-mechanismen en toepassingsscenario's. SSH gebruikt intern geen SSL/TLS.
+
+### Welke poort gebruikt SSH?
+
+SSH gebruikt standaard **TCP-poort 22**. Dit is een bekende poort toegewezen door IANA. Je kunt de SSH-server configureren om op een andere poort te luisteren met de `Port`-instructie in `/etc/ssh/sshd_config`, en verbinding maken met niet-standaard poorten met `ssh -p POORT user@host`.
+
+### Kan SSH worden gehackt?
+
+Een correct geconfigureerde SSH-server met authenticatie op basis van sleutels is extreem moeilijk te compromitteren. De cryptografie — Ed25519-sleutels, AES-256-versleuteling, SHA-2 MAC's — wordt beschouwd als kwantumresistent voor sleutelauthenticatie en computationeel onhaalbaar om brute force aan te vallen. Echte SSH-compromitteringen zijn typisch het gevolg van: gestolen privésleutelbestanden, zwakke wachtwoordzinnen, verkeerd geconfigureerde servers die wachtwoordauthenticatie toestaan met zwakke wachtwoorden, kwetsbare softwareversies met ongepatchte CVE's, of social engineering in plaats van cryptografische aanvallen. Houd je server up-to-date, schakel wachtwoordauthenticatie uit en beveilig je privésleutelbestand.
+
+### Wat is het verschil tussen SSH en HTTPS?
+
+Zowel SSH als HTTPS versleutelen netwerkverkeer, maar ze zijn ontworpen voor verschillende doeleinden. **HTTPS** beveiligt webbrowsing — het gebruikt TLS om HTTP-verzoeken en -antwoorden tussen browsers en webservers te versleutelen. **SSH** beveiligt beheertoegang op afstand, bestandsoverdrachten en tunneling. Wanneer je code pusht naar GitHub, kun je SSH (poort 22, authenticatie op basis van sleutels) of HTTPS (poort 443, authenticatie op basis van tokens) gebruiken. SSH heeft de voorkeur van ontwikkelaars omdat het niet vereist dat inloggegevens opnieuw worden ingevoerd. HTTPS wordt universeel ondersteund door firewalls die poort 22 kunnen blokkeren.
+
+## Genereer Nu Je SSH-sleutels
+
+SSH-authenticatie op basis van sleutels is veiliger en handiger dan wachtwoorden. Als je nog geen SSH-sleutels hebt ingesteld, maakt onze gratis online generator onmiddellijk Ed25519- of RSA-sleutelparen in je browser — geen installatie vereist, niets naar onze servers gestuurd.
+
+<a href="/">Genereer nu je SSH-sleutelpaar →</a>
+
+---
+
+**Verder lezen:**
+- <a href="/nl/what-is-an-ssh-key">Wat Is een SSH-sleutel? Openbare Sleutels, Privésleutels en Sleutelparen Uitgelegd</a>
+- <a href="/nl/ssh-command">Het SSH-commando: Volledige Referentie met Voorbeelden</a>
+- <a href="/nl/how-to-set-up-ssh">SSH Instellen: Een Volledige Stapsgewijze Handleiding</a>

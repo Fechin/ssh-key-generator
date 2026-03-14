@@ -1,0 +1,430 @@
+# SSH-komento: Täydellinen viite esimerkkeineen Linuxille, Macille ja Windowsille
+
+`ssh`-komento on ensisijainen työkalu SSH-yhteyksien käynnistämiseen komentoriviltä. Olitpa kirjautumassa Linux-etäpalvelimeen, välittämässä porttia tietokantaan pääsyä varten tai hyppäämässä linnakeisäntäkoneen läpi päästäksesi sisäiseen verkkoon, `ssh`-komento on aloituskohtasi. Tämä opas kattaa kaiken perussyntaksista edistyneisiin lippuihin, tunnelointiin ja ProxyJump-kokoonpanoihin – oikeilla esimerkeillä Linuxille, macOS:lle ja Windowsille.
+
+Ennen kuin suoritat SSH-komentoja, tarvitset SSH-avaimet. Katso oppaamme <a href="/fi/what-is-an-ssh-key">mikä on SSH-avain</a> tai luo avainpari käyttämällä <a href="/">ilmaista verkkogeneraattoria</a>.
+
+## SSH-komentosyntaksi
+
+`ssh`-komennon perussyntaksi on:
+
+```
+ssh [options] [user@]hostname [command]
+```
+
+Tämän purkaminen:
+
+- **`[options]`** - Ei tai useampia merkintöjä, jotka muuttavat käyttäytymistä (katso tämä opas)
+- **`[user@]`** — Valinnainen käyttäjätunnus. Jos se jätetään pois, SSH käyttää nykyistä paikallista käyttäjätunnustasi
+- **`hostname`** — Etäisäntä, johon yhdistetään. Voi olla IP-osoite, verkkotunnuksen nimi tai alias, joka on määritetty `~/.ssh/config`
+- **`[command]`** — Valinnainen komento, joka suoritetaan etäisännässä. Jos se jätetään pois, SSH aloittaa interaktiivisen shell-istunnon
+
+**Perusesimerkit:**
+
+```bash
+# Yhdistä nykyisellä käyttäjätunnuksellasi
+ssh server.example.com
+
+# Yhdistä tiettynä käyttäjänä
+ssh alice@server.example.com
+
+# Yhdistä IP-osoitteen avulla
+ssh ubuntu@192.168.1.100
+
+# Suorita yksi komento ja katkaise yhteys välittömästi
+ssh user@server.example.com "df -h"
+
+# Suorita komento ja pysy yhteydessä
+ssh user@server.example.com
+```
+
+## SSH Linuxissa ja macOS:ssä
+
+Linux-jakeluissa ja macOS:ssä on esiasennettu **OpenSSH**. Linuxissa se on osa pakettia `openssh-client` (Debian/Ubuntu) tai `openssh-clients` (RHEL/CentOS/Fedora). MacOS-käyttöjärjestelmässä se on mukana järjestelmän mukana ja on saatavilla välittömästi terminaalista tai iTerm2:sta.
+
+### Varmista, että SSH on saatavilla
+
+```bash
+ssh -V
+# Lähtö: OpenSSH_9.6p1, LibreSSL 3.3.6
+```
+
+### Perusyhteys
+
+```bash
+# Yhdistä palvelimeen
+ssh user@myserver.example.com
+
+# SSH tarkistaa ~/.ssh/known_hosts ensimmäisen yhteyden yhteydessä ja pyytää:
+# Isännän "myserver.example.com" aitoutta ei voida vahvistaa.
+# ED25519-avaimen sormenjälki on SHA256:abc123...
+# Oletko varma, että haluat jatkaa yhteyden muodostamista (kyllä/ei)? kyllä
+
+# Isännän sormenjälki tallennetaan kansioon ~/.ssh/known_hosts
+```
+
+### SSH-määritystiedoston käyttö mukavuuden vuoksi
+
+Sen sijaan, että kirjoitat täydet yhteystiedot joka kerta, luo `~/.ssh/config`:
+
+```
+Host myserver
+    HostName myserver.example.com
+    User alice
+    Port 22
+    IdentityFile ~/.ssh/id_ed25519
+
+Host dev
+    HostName dev.example.com
+    User ubuntu
+    Port 2222
+    IdentityFile ~/.ssh/id_ed25519_work
+```
+
+Nyt `ssh myserver` laajenee koko yhteyteen – lippuja ei tarvita.
+
+## SSH Windowsissa (PowerShell ja OpenSSH)
+
+Windows 10 (versio 1809) ja Windows 11 sisältävät **OpenSSH-asiakkaan** valinnaisena ominaisuutena, jolloin `ssh`-komento on käytettävissä PowerShellissä, komentokehotteessa ja Windows Terminalissa.
+
+### Tarkista, onko OpenSSH asennettu
+
+```powershell
+# PowerShellissä
+ssh -V
+```
+
+Jos komentoa ei löydy, asenna se:
+
+**Asetusten kautta:**
+1. Avaa **Asetukset → Sovellukset → Valinnaiset ominaisuudet**
+2. Napsauta **Lisää ominaisuus**
+3. Etsi **OpenSSH Client** ja asenna se
+
+**PowerShellin kautta (järjestelmänvalvoja):**
+
+```powershell
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+```
+
+### SSH:n käyttäminen PowerShellissä
+
+Asennuksen jälkeen syntaksi on identtinen Linuxin ja macOS:n kanssa:
+
+```powershell
+# Yhdistä palvelimeen
+ssh user@server.example.com
+
+# Yhdistä mukautettuun porttiin
+ssh -p 2222 user@server.example.com
+
+# Käytä tiettyä avaintiedostoa
+ssh -i C:\Users\YourName\.ssh\id_ed25519 user@server.example.com
+```
+
+### Windows SSH -avaimen sijainti
+
+SSH-avaimet Windowsissa on tallennettu `C:\Users\YourUsername\.ssh\`. PowerShell tunnistaa `~` lyhenteeksi:
+
+```powershell
+# Nämä ovat vastaavia
+ssh -i ~/.ssh/id_ed25519 user@server
+ssh -i C:\Users\YourUsername\.ssh\id_ed25519 user@server
+```
+
+### PuTTY vs OpenSSH Windowsissa
+
+Ennen kuin OpenSSH oli saatavilla Windowsissa, **PuTTY** oli tavallinen SSH-asiakas. PuTTY käyttää omaa avainmuotoaan (`.ppk`-tiedostot) ja omaa avaingeneraattoriaan (PuTTYgen). Jos sinulla on `.ppk`-avain ja sinun on muutettava se vakiomuotoiseen OpenSSH-muotoon:
+
+```bash
+# PuTTY-työkalujen käyttö
+puttygen mykey.ppk -O private-openssh -o id_ed25519
+```
+
+Uusissa asetuksissa kannattaa valita sisäänrakennettu OpenSSH-asiakas Windowsissa – sitä ylläpitää OpenSSH-projekti ja se käyttää samaa avainmuotoa ja määritystiedostoa kuin Linux ja macOS.
+
+## SSH avaintodennuksella: -i-lippu
+
+Oletuksena SSH etsii avaintiedostoja osoitteesta `~/.ssh/` vakionimillä (`id_ed25519`, `id_rsa`, `id_ecdsa`, `id_dsa`). **`-i`-lipun** (identiteettitiedosto) avulla voit määrittää eri avaintiedoston erikseen.
+
+```bash
+# Käytä tiettyä avaintiedostoa
+ssh -i ~/.ssh/id_ed25519_production user@prod.example.com
+
+# Käytä avainta, joka on tallennettu muuhun paikkaan
+ssh -i /path/to/my/custom_key deploy@server.example.com
+
+# Yhdistä muihin vaihtoehtoihin
+ssh -i ~/.ssh/deploy_key -p 2222 -l deploy server.example.com
+```
+
+`-i`-lippu on välttämätön useissa tilanteissa:
+- Sinulla on useita avainpareja eri palvelimia tai tarkoituksia varten
+- Avaimesi ei ole oletusarvoisessa `~/.ssh/`-hakemistossa
+- Määrität avaimen CI/CD-ympäristössä, jossa polku on selkeä
+- Latasit `.pem`-avaimen AWS:ltä tai toiselta pilvipalveluntarjoajalta
+
+### AWS EC2 Esimerkki
+
+AWS tarjoaa `.pem`-avaintiedoston, kun käynnistät EC2-esiintymän:
+
+```bash
+# Yhdistä AWS EC2 -esiintymään .pem-avaimella
+ssh -i ~/Downloads/my-aws-key.pem ec2-user@54.123.456.789
+
+# Korjaa käyttöoikeudet tarvittaessa (pakollinen - SSH hylkää maailmanlaajuisesti luettavat avaimet)
+chmod 400 ~/Downloads/my-aws-key.pem
+```
+
+## Tärkeimmät SSH-komentoasetukset ja -liput
+
+`ssh`-komennossa on kymmeniä vaihtoehtoja. Tässä ovat ne, joita todella käytät.
+
+| Lippu | Pitkä muoto / Kuvaus | Esimerkki |
+|---|---|---|
+| `-p PORT` | Yhdistä epätyypilliseen porttiin | `ssh -p 2222 user@host` |
+| `-i FILE` | Käytä tiettyä tunnistetiedostoa (avaintiedostoa) | `ssh -i ~/.ssh/mykey user@host` |
+| `-l USER` | Määritä kirjautumisnimi (vaihtoehto `user@`) | `ssh -l alice host` |
+| `-L local:host:remote` | Paikallinen porttivälitys | `ssh -L 8080:localhost:80 host` |
+| `-R remote:host:local` | Portin etäohjaus | `ssh -R 9090:localhost:3000 host` |
+| `-D port` | Dynaaminen (SOCKS) välityspalvelin | `ssh -D 1080 host` |
+| `-N` | Älä suorita etäkomentoa (vain tunnelointi) | `ssh -N -L 3307:db:3306 host` |
+| `-f` | Siirry taustalle todennuksen jälkeen | `ssh -f -N -D 1080 host` |
+| `-v` | Monisanainen (debug) -tulostus | `ssh -v user@host` |
+| `-vv` tai `-vvv` | Monisanaisempi tulos | `ssh -vvv user@host` |
+| `-A` | Ota SSH-agentin edelleenlähetys käyttöön | `ssh -A user@jump-host` |
+| `-X` | Ota X11-edelleenlähetys käyttöön | `ssh -X user@host xclock` |
+| `-C` | Ota pakkaus käyttöön | `ssh -C user@host` |
+| `-T` | Poista pseudopäätteen varaus käytöstä | `ssh -T git@github.com` |
+| `-q` | Hiljainen tila (poista varoitukset) | `ssh -q user@host` |
+| `-o OPTION=VALUE` | Aseta konfigurointivaihtoehto rivin | `ssh -o StrictHostKeyChecking=no host` |
+| `-J JUMP` | VälityspalvelinJump läpi linnakeisäntä | `ssh -J jump.host user@internal` |
+| `-W host:port` | Välitä stdio isäntä:porttiin (ProxyJump) | Sisäisesti käyttänyt `-J` |
+
+### Monisanainen tila virheenkorjaukseen
+
+Kun SSH epäonnistuu, `-v` (tai `-vv` tai `-vvv`) paljastaa tarkalleen, mitä tapahtuu:
+
+```bash
+ssh -v user@server.example.com
+# Näyttää: mitä avaimia kokeillaan, mitkä todennustavat palvelin hyväksyy,
+# onko agentti mukana ja missä yhteys epäonnistuu
+
+ssh -vvv user@server.example.com
+# Suurin monisanaisuus — näyttää yksityiskohtaisen kryptografisen neuvottelun
+```
+
+### Isäntäavaimen tarkistuksen ohittaminen (käytä varoen)
+
+Automaatio- ja testausympäristöissä, joissa isäntäavaimen vahvistaminen on hankalaa:
+
+```bash
+ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null user@host
+```
+
+**Älä käytä tätä tuotannossa.** Se poistaa suojauksen välimieshyökkäyksiä vastaan. Sen sijaan esitäytä `known_hosts` käyttämällä `ssh-keyscan` hallintaohjelmissasi.
+
+### Agentin edelleenlähetys
+
+```bash
+# Välitä paikallinen SSH-agentti etäpalvelimelle
+ssh -A user@jump-server
+
+# Jump-serveristä voit nyt SSH:ta sisäisiin isänteihin käyttämällä paikallisia avaimia
+# Yksityisiä avaimia ei tarvitse kopioida hyppypalvelimelle
+ssh internal-server.private
+```
+
+Agentin edelleenlähetys on hyödyllistä, mutta sillä on turvallisuusvaikutuksia: kuka tahansa, jolla on pääkäyttäjän oikeudet välipalvelimella, voi käyttää edelleenlähetettyä agenttia. Käytä sitä vain luotettujen palvelimien kanssa ja valitse **ProxyJump**, kun mahdollista (se ei altista agenttiasi välipalvelimille).
+
+## SSH-tunnelointikomennot
+
+SSH-tunnelointi reitittää TCP-yhteydet salatun SSH-kanavan kautta. Katso taustatietoa tunnelointiin <a href="/fi/what-is-ssh">SSH-oppaan tunnelointiosiosta</a>.
+
+### Paikallinen portin edelleenlähetys
+
+Tekee etäpalvelun käytettävissä paikallisella koneellasi.
+
+```bash
+# Käytä MySQL-etätietokantaa paikallisessa portissa 3307
+ssh -L 3307:localhost:3306 user@db-server.example.com -N
+
+# Yhdistä etäverkkopalvelimeen, johon pääsee vain SSH-isännästä
+ssh -L 8080:intranet.company.com:80 user@vpn.company.com -N
+
+# Käytä Redis-esiintymää yksityisessä verkossa
+ssh -L 6380:10.0.1.50:6379 user@bastion.example.com -N
+```
+
+Kun olet suorittanut jonkin yllä olevista, yhdistä paikallinen sovelluksesi osoitteeseen `127.0.0.1:LOCAL_PORT`.
+
+### Etäportin edelleenlähetys
+
+Paljastaa paikallisen palvelun etäpalvelimella.
+
+```bash
+# Avaa paikallinen kehityspalvelin (portti 3000) etäpalvelimen portissa 9090
+ssh -R 9090:localhost:3000 user@remote.example.com -N
+
+# Salli minkä tahansa etäpalvelimen liitännän muodostaa yhteys (vaatii GatewayPortsin kyllä ​​sshd_configissa)
+ssh -R 0.0.0.0:9090:localhost:3000 user@remote.example.com -N
+```
+
+### Dynaaminen portin edelleenlähetys (SOCKS-välityspalvelin)
+
+```bash
+# Luo SOCKS5-välityspalvelin paikalliseen porttiin 1080, joka toimii taustalla
+ssh -D 1080 -N -f user@remote.example.com
+
+# Määritä nyt selaimesi tai järjestelmäsi käyttämään SOCKS5-välityspalvelinta: 127.0.0.1:1080
+# Kaikki liikenne reititetään etäpalvelimen kautta
+```
+
+Käytetään kiharan kanssa:
+
+```bash
+curl --socks5 127.0.0.1:1080 https://api.example.com/
+```
+
+### Tunnelin juokseminen taustalla
+
+```bash
+# -f lähettää SSH:n taustalle, -N tarkoittaa, että ei etäkomentoa
+ssh -f -N -L 3307:localhost:3306 user@db-server
+
+# Etsi tausta SSH-prosessi
+ps aux | grep ssh
+
+# Tapa se
+kill PID
+```
+
+## SSH ProxyJump- ja Bastion-palvelimet
+
+Monissa organisaatioissa tuotantopalvelimet ovat yksityisissä verkoissa, joihin ei pääse suoraan Internetistä. **Bastion-isäntä** (tai jump-isäntä) on verkon kehällä oleva kova palvelin, johon ensin SSH ja sitten siirrytään sisäisille palvelimille. `ssh -J`-lippu (ProxyJump, lisätty OpenSSH 7.3:een) tekee tästä saumattoman.
+
+### Basic ProxyJump
+
+```bash
+# Hyppää yhden linnakkeen läpi päästäksesi sisäiselle palvelimelle
+ssh -J ec2-user@bastion.example.com ubuntu@10.0.1.50
+
+# Lyhyt muoto
+ssh -J user@jump-host user@internal-server
+```
+
+Tämä luo kaksi SSH-yhteyttä: ensin linnakkeelle, sitten linnakkeesta sisäiseen palvelimeen – kaikki yhdellä komennolla päästä päähän -salauksella. Paikallinen SSH-agentti käsittelee molempien isäntien todennuksen.
+
+### Useiden hyppyjen ketjuttaminen
+
+```bash
+# Hyppää kahden väliisännän läpi
+ssh -J user@jump1.example.com,user@jump2.example.com user@final-destination
+```
+
+### ProxyJump SSH-määritystiedostossa
+
+Jos käytät usein palvelimia, aseta ProxyJump-määritykset `~/.ssh/config`:
+
+```
+Host bastion
+    HostName bastion.example.com
+    User ec2-user
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host prod-web
+    HostName 10.0.1.100
+    User ubuntu
+    ProxyJump bastion
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host prod-db
+    HostName 10.0.2.50
+    User postgres
+    ProxyJump bastion
+    IdentityFile ~/.ssh/id_ed25519_aws
+```
+
+Nyt `ssh prod-web` muodostaa automaattisesti yhteyden linnakkeen kautta. Manuaalisia `-J`-lippuja ei tarvita.
+
+### ProxyJump vs Agent Forwarding
+
+ProxyJump on parempi kuin agentin edelleenlähetys (`-A`), koska:
+- Yksityistä avaimesi ei koskaan välitetä välipalvelimelle
+- Linnakeisäntä ei voi käyttää tunnistetietojasi todentamiseen muualla
+- Yhteys on päästä päähän -todennettu - kohdepalvelin vahvistaa sinut suoraan
+
+Lisätietoja asennuksesta on täydellisessä oppaassamme <a href="/fi/how-to-set-up-ssh">SSH:n määrittämisestä</a>.
+
+## Usein kysyttyjä kysymyksiä
+
+### Kuinka suoritan SSH-komennon ilman salasanaa?
+
+Määritä SSH-avaimen todennus. Luo avainpari (`ssh-keygen -t ed25519`), kopioi julkinen avain palvelimen `~/.ssh/authorized_keys`-tiedostoon käyttämällä `ssh-copy-id user@host`, ja myöhemmät yhteydet käyttävät avaintasi ilman salasanaa. Jos avaimessasi on tunnuslause, käytä `ssh-agent` ja `ssh-add` tallentaaksesi sen välimuistiin, jotta kirjoitat sen vain kerran istunnon aikana.
+
+### Miten poistun SSH-istunnosta?
+
+Kirjoita `exit` tai paina **Ctrl+D** sulkeaksesi etäkuoren ja katkaistaksesi yhteyden. Jos istunto on jumiutunut (esim. verkko katkaistu), käytä SSH-pakojaksoa: paina **Enter** ja kirjoita `~.` (tilde ja piste). SSH katkaisee yhteyden välittömästi. Muut pakosarjat: `~^Z` keskeyttää SSH:n taustalle, `~?` luettelee kaikki poistosekvenssit.
+
+### Kuinka suoritan komennon etäpalvelimella SSH:n kautta?
+
+Liitä komento isäntänimen jälkeen:
+
+```bash
+ssh user@server "command to run"
+ssh user@server "ls -la /var/log/"
+ssh user@server "sudo systemctl status nginx"
+```
+
+Käytä monirivisille komentoille tai skripteille tässä asiakirjaa:
+
+```bash
+ssh user@server << 'EOF'
+cd /var/www/html
+git pull origin main
+systemctl reload nginx
+EOF
+```
+
+Interaktiivisille komennoille (kuten niille, jotka vaativat päätelaitteen), lisää `-t` -lippu osoittaaksesi pseudopäätelaitteen: `ssh -t user@server sudo apt upgrade`.
+
+### Mitä eroa on ssh:n ja scp:n välillä?
+
+`ssh` avaa pääteistunnon (tai suorittaa yhden komennon) etäkoneella. `scp` (Secure Copy Protocol) kopioi tiedostoja paikallisen koneen ja etäkoneen välillä tai kahden etäkoneen välillä käyttämällä SSH:ta salaukseen ja todentamiseen. Molemmat käyttävät samaa SSH-protokollaa ja avaininfrastruktuuria. Tiedostonsiirtoa varten `scp` on erityinen työkalu:
+
+```bash
+# scp paikallisesta etäkäyttöön
+scp file.txt user@server:/destination/path/
+
+# scp remote paikalliseen
+scp user@server:/remote/file.txt ./local-copy.txt
+```
+
+Käytä `sftp` edistyneempiä tiedostojen siirtoja (rekursiivisia, jatkuvia, hakemistojen selailuja) varten. `rsync -avz -e ssh` on vielä tehokkaampi suurissa siirroissa.
+
+### Kuinka käytän SSH:ta asetustiedoston kanssa?
+
+Luo `~/.ssh/config` ja lisää isäntämerkintöjä. Jokainen `Host`-lohko määrittää yhteysaliaksen täydellisine asetuksineen:
+
+```
+Host alias-name
+    HostName actual.server.com
+    User username
+    Port 22
+    IdentityFile ~/.ssh/specific_key
+```
+
+Sitten `ssh alias-name` käyttää kaikkia määritettyjä asetuksia automaattisesti. Määritystiedosto tukee yleismerkkejä: `Host *.example.com` käyttää asetuksia kaikkiin vastaaviin isäntiin. `Host *` lopussa käyttää oletusasetuksia kaikille yhteyksille. Tietyn `Host`-lohkon asetukset ohittavat yleiset oletusasetukset.
+
+## Tarvitsetko SSH-avaimia? Luo ne ilmaiseksi
+
+Tarvitset avainparin käyttääksesi SSH-avaintodennusta, joka eliminoi salasanojen tarpeen. Luo Ed25519- tai RSA-avaimet välittömästi selaimessasi ilman, että mitään lähetetä palvelimillemme.
+
+<a href="/">Luo ​​SSH-avaimesi ilmaiseksi →</a>
+
+---
+
+**Lisälukemista:**
+- <a href="/fi/what-is-ssh">Mikä on SSH? Secure Shellin täydellinen opas</a>
+- <a href="/fi/what-is-an-ssh-key">Mikä on SSH-avain? Julkiset avaimet, yksityiset avaimet ja avainparit selitetty</a>
+- <a href="/fi/how-to-set-up-ssh">SSH:n käyttöönotto: Täydellinen vaiheittainen opas</a>

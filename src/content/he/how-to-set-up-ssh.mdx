@@ -1,0 +1,563 @@
+# כיצד להגדיר SSH: מדריך שלב-אחר-שלב מלא ל-Linux, Mac ו-Windows
+
+הגדרת SSH נכונה לוקחת כעשר דקות ומשתלמת לשנים. לאחר ההגדרה, ניתן להתחבר לשרתים ללא הקלדת סיסמאות, לדחוף קוד ל-GitHub ללא הזנת פרטי גישה בכל פעולה, ולבצע פריסות אוטומטיות בביטחון. המדריך הזה עובר על התהליך כולו — מיצירת זוג מפתחות ועד פתרון שגיאות נפוצות — עבור Linux, macOS ו-Windows.
+
+אם ברצונך להבין תחילה את הטכנולוגיה הבסיסית, קרא את המדריכים שלנו על <a href="/he/what-is-ssh">מה זה SSH</a> ו<a href="/he/what-is-an-ssh-key">מה הם מפתחות SSH</a>.
+
+## דרישות קדם
+
+לפני שמתחילים, ודא שיש לך:
+
+**לגישה לשרת:**
+- יישום טרמינל (Terminal ב-macOS/Linux, Windows Terminal או PowerShell ב-Windows)
+- שרת מרוחק עם Linux/Unix עם תוכנת שרת SSH (sshd) מותקנת
+- חשבון משתמש בשרת זה (או גישת root ליצירת אחד)
+- כתובת IP של השרת או שם המארח שלו
+
+**לגישה ל-GitHub/GitLab:**
+- חשבון GitHub או GitLab
+- טרמינל עם `ssh` זמין
+- אופציונלי: git מותקן מקומית
+
+**דרישות מערכת הפעלה:**
+- **Linux**: לקוח SSH מותקן מראש בכמעט כל ההפצות
+- **macOS**: לקוח SSH מובנה, נגיש מ-Terminal
+- **Windows 10 גרסה 1809+ / Windows 11**: לקוח OpenSSH זמין כתכונה אופציונלית
+
+אינך צריך להתקין דבר ב-Linux או macOS. ב-Windows, אמת שה-OpenSSH מותקן על ידי פתיחת PowerShell והרצת `ssh -V`. אם קיבלת מחרוזת גרסה, אתה מוכן. אם לא, ראה שלב 4 לפעולות ההתקנה.
+
+## שלב 1: צור את זוג מפתחות ה-SSH שלך
+
+אתה צריך זוג מפתחות לפני שאתה יכול לעשות כל דבר אחר. זוג המפתחות מורכב ממפתח **פרטי** (נשאר במכונה שלך) ומפתח **ציבורי** (הולך לשרתים או שירותים כמו GitHub).
+
+### אפשרות א: שימוש במחולל המקוון
+
+אם אתה מעדיף ממשק גרפי, <a href="/">מחולל מפתחות SSH המקוון החינמי שלנו</a> יוצר זוגות מפתח Ed25519 או RSA בדפדפן שלך. המפתח הפרטי נוצר מקומית באמצעות Web Crypto API — שום דבר לא נשלח לשרתים שלנו. הורד את שני הקבצים ושמור אותם ב-`~/.ssh/` (Linux/macOS) או `C:\Users\YourName\.ssh\` (Windows).
+
+### אפשרות ב: שימוש ב-ssh-keygen בשורת הפקודה
+
+פקודת `ssh-keygen` זמינה ב-Linux, macOS ו-Windows עם OpenSSH:
+
+```bash
+# צור זוג מפתח Ed25519 (מומלץ)
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+**מה כל דגל אומר:**
+- `-t ed25519` — סוג מפתח (Ed25519 הוא מודרני, מהיר ומאובטח)
+- `-C "comment"` — תווית מוטמעת במפתח הציבורי, בדרך כלל כתובת האימייל שלך
+
+תתבקש:
+
+```
+Generating public/private ed25519 key pair.
+Enter file in which to save the key (/home/user/.ssh/id_ed25519):
+```
+
+לחץ **Enter** לקבלת מיקום ברירת המחדל. אם יש לך מפתחות מרובים, תוכל לתת להם שמות תיאוריים (למשל, `/home/user/.ssh/id_ed25519_github`).
+
+```
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+```
+
+הזן סיסמה חזקה. זה מצפין את קובץ המפתח הפרטי בדיסק — אם המכונה שלך נגנבת, לא ניתן להשתמש במפתח ללא הסיסמה. ניתן להשאיר ריק לשימוש אוטומציה שבו אינטראקציה אנושית אינה אפשרית, אך למפתחות אישיים, השתמש תמיד בסיסמה.
+
+**פלט:**
+
+```
+Your identification has been saved in /home/user/.ssh/id_ed25519
+Your public key has been saved in /home/user/.ssh/id_ed25519.pub
+The key fingerprint is:
+SHA256:abc123defghijk... your@email.com
+The key's randomart image is:
++--[ED25519 256]--+
+...
+```
+
+נוצרים שני קבצים:
+- `~/.ssh/id_ed25519` — המפתח **הפרטי** שלך (לעולם אל תשתף זאת)
+- `~/.ssh/id_ed25519.pub` — המפתח **הציבורי** שלך (בטוח לשיתוף)
+
+### ל-RSA (תאימות Legacy)
+
+אם אתה צריך להתחבר למערכות ישנות מאוד שאינן תומכות ב-Ed25519:
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "your@email.com"
+```
+
+השתמש ב-4096 ביט לפחות. מפתחות RSA קטנים מ-4096 ביט אינם נחשבים עוד לאבטחה מספקת.
+
+## שלב 2: הגדר SSH על Linux
+
+קטע זה מכסה העתקת המפתח הציבורי שלך לשרת Linux כך שתוכל לאמת ללא סיסמה.
+
+### שיטה 1: ssh-copy-id (הקלה ביותר)
+
+`ssh-copy-id` היא הדרך הפשוטה ביותר להתקין את המפתח הציבורי שלך בשרת מרוחק. היא מתחברת באמצעות אימות סיסמה, מוסיפה את המפתח הציבורי שלך לקובץ `~/.ssh/authorized_keys` של השרת, ומגדירה את ההרשאות הנכונות.
+
+```bash
+ssh-copy-id user@server.example.com
+
+# ציין קובץ מפתח במפורש
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server.example.com
+
+# התחבר בפורט לא-סטנדרטי
+ssh-copy-id -p 2222 user@server.example.com
+```
+
+תתבקש לסיסמת השרת פעם אחרונה. לאחר מכן, ניתן להתחבר עם `ssh user@server.example.com` באמצעות המפתח שלך.
+
+### שיטה 2: העתקה ידנית
+
+אם `ssh-copy-id` אינה זמינה (נפוץ במערכות BSD מסוימות או התקנות Linux מינימליות):
+
+```bash
+# הצג את המפתח הציבורי שלך והעתק את הפלט
+cat ~/.ssh/id_ed25519.pub
+
+# ואז SSH לשרת (עם סיסמה) והרץ:
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+echo "PASTE_YOUR_PUBLIC_KEY_HERE" >> ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+```
+
+או עשה הכל בצינור אחד:
+
+```bash
+cat ~/.ssh/id_ed25519.pub | ssh user@server.example.com \
+  "mkdir -p ~/.ssh && chmod 700 ~/.ssh && \
+   cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+```
+
+### אימות שהמפתח הותקן
+
+```bash
+ssh user@server.example.com
+# אמור להתחבר ללא בקשת סיסמה (רק סיסמה אם הגדרת אחת)
+```
+
+### הגדרת שרת SSH (sshd)
+
+בשרת המרוחק, תצורת שרת SSH נמצאת ב-`/etc/ssh/sshd_config`. להגדרה מאובטחת:
+
+```bash
+sudo nano /etc/ssh/sshd_config
+```
+
+הגדרות מומלצות:
+
+```
+# הפעל אימות מפתח ציבורי
+PubkeyAuthentication yes
+
+# בטל אימות סיסמה (לאחר אישור שמפתחות עובדים!)
+PasswordAuthentication no
+
+# בטל כניסת root דרך SSH
+PermitRootLogin no
+
+# אפשר רק משתמשים ספציפיים
+AllowUsers alice bob deploy
+
+# שמור סשנים בחיים
+ClientAliveInterval 60
+ClientAliveCountMax 3
+```
+
+לאחר העריכה, טען מחדש את שרת SSH:
+
+```bash
+sudo systemctl reload sshd
+# או במערכות ישנות:
+sudo service ssh reload
+```
+
+**חשוב**: אל תבטל `PasswordAuthentication` עד שאישרת שאימות מבוסס מפתחות עובד. אם תנעל את עצמך בחוץ, תצטרך גישת קונסול (או מנגנון הגישה החירומי של ספק האחסון שלך) כדי להתאושש.
+
+### הגדרת ssh-agent על Linux
+
+אם למפתח שלך יש סיסמה, הוסף אותו ל-`ssh-agent` בתחילת הסשן שלך כדי להימנע מהזנתה מחדש:
+
+```bash
+# הפעל את הסוכן (לעתים קרובות מופעל אוטומטית על ידי סביבות שולחן עבודה)
+eval "$(ssh-agent -s)"
+
+# הוסף את המפתח שלך (הזן סיסמה פעם אחת)
+ssh-add ~/.ssh/id_ed25519
+
+# אמת שמפתחות נטענו
+ssh-add -l
+```
+
+להפעלה אוטומטית של `ssh-agent` והוספת המפתח שלך בכניסה, הוסף ל-`~/.bashrc` או `~/.zshrc`:
+
+```bash
+# הפעל ssh-agent אוטומטית
+if [ -z "$SSH_AUTH_SOCK" ]; then
+  eval "$(ssh-agent -s)"
+  ssh-add ~/.ssh/id_ed25519
+fi
+```
+
+## שלב 3: הגדר SSH על macOS
+
+macOS כולל לקוח OpenSSH מלא. התהליך להגדרת אימות מבוסס מפתחות לשרת מרוחק זהה ל-Linux (ראה שלב 2 לעיל). ההוספות הספציפיות ל-macOS כוללות שילוב Keychain.
+
+### שילוב Keychain
+
+macOS יכול לאחסן את הסיסמה שלך ב-Keychain של המערכת כך שלעולם לא תצטרך להזינה לאחר הפעם הראשונה:
+
+```bash
+# הוסף מפתח ל-ssh-agent עם שילוב Keychain
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+
+# לגרסאות macOS ישנות יותר (לפני Monterey)
+ssh-add -K ~/.ssh/id_ed25519
+```
+
+כדי ש-macOS תמיד יטען את המפתחות שלך מ-Keychain, הוסף זאת ל-`~/.ssh/config`:
+
+```
+Host *
+    AddKeysToAgent yes
+    UseKeychain yes
+    IdentityFile ~/.ssh/id_ed25519
+```
+
+לאחר זה, הסיסמה מאוחסנת ב-Keychain ונטענת אוטומטית — לא תתבקש אליה שוב לאחר אתחולים מחדש.
+
+### אמת את גרסת לקוח SSH
+
+```bash
+ssh -V
+# OpenSSH_9.x, LibreSSL x.x.x
+```
+
+macOS מגיע עם OpenSSH עדכני יחסית אך לא תמיד האחרון ביותר. אם אתה צריך תכונות חדשות יותר, התקן דרך Homebrew: `brew install openssh`.
+
+## שלב 4: הגדר SSH על Windows
+
+Windows 10 (1809+) ו-Windows 11 כוללים OpenSSH. הנה כיצד להפעילו.
+
+### התקן לקוח OpenSSH
+
+**בדוק אם כבר מותקן:**
+
+```powershell
+ssh -V
+```
+
+**התקן דרך הגדרות:**
+1. פתח **Settings → Apps → Optional Features**
+2. חפש **OpenSSH Client**
+3. לחץ **Install**
+
+**התקן דרך PowerShell (מנהל מערכת):**
+
+```powershell
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+```
+
+### צור מפתחות ב-Windows
+
+פתח PowerShell והרץ:
+
+```powershell
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+המפתחות נשמרים ב-`C:\Users\YourUsername\.ssh\`.
+
+### העתק את המפתח הציבורי שלך לשרת Linux
+
+Windows אינו כולל `ssh-copy-id`, אך ניתן לעשות זאת ידנית מ-PowerShell:
+
+```powershell
+# הצג את המפתח הציבורי שלך
+Get-Content ~/.ssh/id_ed25519.pub
+
+# העתק אותו לשרת המרוחק (תתבקש לסיסמת השרת)
+$pubkey = Get-Content ~/.ssh/id_ed25519.pub -Raw
+ssh user@server.example.com "mkdir -p ~/.ssh && echo '$pubkey' >> ~/.ssh/authorized_keys && chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys"
+```
+
+או השתמש ב-`Add-Content` להעברה:
+
+```powershell
+type $env:USERPROFILE\.ssh\id_ed25519.pub | ssh user@server.example.com "cat >> ~/.ssh/authorized_keys"
+```
+
+### הגדרת ssh-agent ב-Windows
+
+כדי להימנע מהזנת הסיסמה שלך שוב ושוב, הפעל את שירות OpenSSH Authentication Agent:
+
+```powershell
+# הפעל את השירות
+Start-Service ssh-agent
+
+# הגדר אותו להפעלה אוטומטית
+Set-Service -Name ssh-agent -StartupType Automatic
+
+# הוסף את המפתח שלך
+ssh-add ~/.ssh/id_ed25519
+```
+
+### PuTTY כחלופה
+
+אם אתה מעדיף לקוח SSH גרפי, PuTTY הוא אפשרות חינמית ל-Windows. השתמש ב-**PuTTYgen** ליצירת מפתחות (שמור הן בפורמט `.ppk` ל-PuTTY והן בייצוא בפורמט OpenSSH). עם זאת, להגדרות חדשות, לקוח OpenSSH המובנה פשוט יותר ומשתלב עם שאר המערכת.
+
+## כיצד להגדיר מפתחות SSH ל-GitHub ו-GitLab
+
+אימות מפתח SSH ל-GitHub ו-GitLab עובד באופן דומה — אתה מעלה את המפתח הציבורי שלך לשירות ומשתמש במפתח הפרטי המתאים בעת ביצוע פעולות Git.
+
+### הגדרת SSH ל-GitHub
+
+**1. העתק את המפתח הציבורי שלך:**
+
+```bash
+# Linux
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+
+# macOS
+cat ~/.ssh/id_ed25519.pub | pbcopy
+
+# Windows PowerShell
+Get-Content ~/.ssh/id_ed25519.pub | Set-Clipboard
+```
+
+או פשוט הצג והעתק ידנית:
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+**2. הוסף ל-GitHub:**
+
+1. עבור ל-**github.com** והתחבר
+2. לחץ על תמונת הגולגולת שלך ← **Settings**
+3. בסרגל הצד השמאלי: **SSH and GPG keys**
+4. לחץ **New SSH key**
+5. תן לו **כותרת** תיאורית (למשל "MacBook Pro" או "Work PC")
+6. הגדר את **סוג המפתח** ל-**Authentication Key**
+7. הדבק את המפתח הציבורי שלך
+8. לחץ **Add SSH key**
+
+**3. בדוק את החיבור:**
+
+```bash
+ssh -T git@github.com
+# Hi username! You've successfully authenticated, but GitHub does not provide shell access.
+```
+
+**4. השתמש ב-SSH לפעולות Git:**
+
+```bash
+# שכפל באמצעות SSH במקום HTTPS
+git clone git@github.com:username/repository.git
+
+# אם מאגר קיים משתמש ב-HTTPS, עבור ל-SSH
+git remote set-url origin git@github.com:username/repository.git
+```
+
+### הגדרת SSH ל-GitLab
+
+התהליך זהה:
+
+1. עבור ל-**gitlab.com** ← לחץ על תמונת הגולגולת שלך ← **Preferences**
+2. בסרגל הצד השמאלי: **SSH Keys**
+3. הדבק את המפתח הציבורי שלך, תן לו כותרת, והגדר תאריך תפוגה אופציונלי
+4. לחץ **Add key**
+
+בדוק עם:
+
+```bash
+ssh -T git@gitlab.com
+# Welcome to GitLab, @username!
+```
+
+למופעי GitLab עצמיים, החלף `gitlab.com` בשם המארח של המופע שלך.
+
+### שימוש במפתח נפרד ל-GitHub ולשירותים אחרים
+
+אם ברצונך מפתח ייעודי ל-GitHub (מומלץ להיגיינת מפתחות), צור מפתח עם שם:
+
+```bash
+ssh-keygen -t ed25519 -C "github" -f ~/.ssh/id_ed25519_github
+```
+
+ואז הוסף בלוק `Host` ל-`~/.ssh/config`:
+
+```
+Host github.com
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519_github
+    AddKeysToAgent yes
+```
+
+עכשיו `git clone git@github.com:...` משתמש אוטומטית במפתח הספציפי ל-GitHub.
+
+## בדיקה ופתרון בעיות SSH
+
+### בדיקת קישוריות בסיסית
+
+```bash
+ssh -v user@server.example.com
+```
+
+הדגל `-v` (מילולי) מציג בדיוק מה קורה בכל שלב. חפש שורות כמו:
+- `Offering public key: ~/.ssh/id_ed25519` — SSH מנסה את המפתח שלך
+- `Server accepts key` — המפתח נמצא ב-`authorized_keys`
+- `Authenticated to server.example.com` — הצלחה
+
+### שגיאות נפוצות ותיקונים
+
+**"Permission denied (publickey)"**
+
+זוהי השגיאה הנפוצה ביותר. סיבות ותיקונים:
+
+```bash
+# בדוק שהמפתח שלך נטען ב-ssh-agent
+ssh-add -l
+
+# אם לא מופיעים מפתחות, הוסף את המפתח שלך
+ssh-add ~/.ssh/id_ed25519
+
+# בשרת המרוחק, בדוק את authorized_keys
+cat ~/.ssh/authorized_keys
+# ודא שהמפתח הציבורי שלך נמצא שם
+
+# בדוק הרשאות בשרת המרוחק
+ls -la ~/.ssh/
+# ~/.ssh חייב להיות 700
+# authorized_keys חייב להיות 600
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/authorized_keys
+
+# בדוק שהשרת מאפשר אימות מפתח ציבורי
+sudo grep PubkeyAuthentication /etc/ssh/sshd_config
+# חייב להיות: PubkeyAuthentication yes
+```
+
+**"WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED"**
+
+מפתח המארח של השרת השתנה, מה ש-SSH מתייחס אליו כבעיית אבטחה פוטנציאלית. אם אתה יודע שזה לגיטימי (השרת נבנה מחדש, ה-IP הוקצה מחדש), הסר את הרשומה הישנה:
+
+```bash
+# הסר את רשומת המארח הספציפית
+ssh-keygen -R server.example.com
+
+# או ערוך ידנית את known_hosts ומחק את השורה המושפעת
+nano ~/.ssh/known_hosts
+```
+
+**"Bad permissions" או "Permissions too open"**
+
+SSH מחמיר בהרשאות קבצי מפתח:
+
+```bash
+# תקן הרשאות מפתח פרטי
+chmod 600 ~/.ssh/id_ed25519
+
+# תקן הרשאות מפתח ציבורי
+chmod 644 ~/.ssh/id_ed25519.pub
+
+# תקן הרשאות תיקיית .ssh
+chmod 700 ~/.ssh
+```
+
+ב-Windows, הרשאות קבצי מפתח פרטיים מנוהלות באופן שונה. לחץ לחיצה ימנית על קובץ המפתח ← Properties ← Security ← Advanced ← Disable inheritance ← Remove all מלבד חשבון המשתמש שלך, תוך מתן Full control לעצמך בלבד.
+
+### הגדרה ושימוש ב-ssh-agent
+
+אם אתה מתבקש שוב ושוב לסיסמה שלך, `ssh-agent` אינו פועל או המפתח שלך לא נוסף:
+
+```bash
+# הפעל את הסוכן
+eval "$(ssh-agent -s)"
+# Agent pid 12345
+
+# הוסף את המפתח שלך
+ssh-add ~/.ssh/id_ed25519
+# Enter passphrase for /home/user/.ssh/id_ed25519:
+# Identity added: /home/user/.ssh/id_ed25519
+
+# אמת
+ssh-add -l
+# 256 SHA256:abc123... your@email.com (ED25519)
+```
+
+### מילוי מוקדם של known_hosts באוטומציה
+
+בצינורות CI/CD, השתמש ב-`ssh-keyscan` כדי להוסיף את טביעת האצבע של המארח המרוחק לפני ההתחברות:
+
+```bash
+ssh-keyscan -H server.example.com >> ~/.ssh/known_hosts
+ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+```
+
+זה מונע בקשות טביעת אצבע אינטראקטיביות בסקריפטים אוטומטיים.
+
+## שאלות נפוצות
+
+### כיצד אתקן "Permission denied (publickey)"?
+
+עבר על רשימת הבדיקה הזו: (1) אמת שהמפתח שלך נמצא בסוכן ה-SSH: `ssh-add -l`. אם לא, הרץ `ssh-add ~/.ssh/id_ed25519`. (2) בדוק שהמפתח הציבורי שלך נמצא בקובץ `~/.ssh/authorized_keys` של השרת. (3) אמת הרשאות: `~/.ssh` חייב להיות `700`, `authorized_keys` חייב להיות `600`. (4) בדוק שלשרת יש `PubkeyAuthentication yes` ב-`/etc/ssh/sshd_config`. (5) השתמש ב-`ssh -vvv user@server` כדי לראות בדיוק היכן האימות נכשל. הפלט המילולי יאמר לך אילו מפתחות נוסו ואם השרת קיבל אותם.
+
+### כיצד אוסיף את מפתח ה-SSH שלי ל-ssh-agent?
+
+הרץ `ssh-add ~/.ssh/id_ed25519` (החלף בשם קובץ המפתח שלך). אם הסוכן אינו פועל, הפעל אותו תחילה עם `eval "$(ssh-agent -s)"`. ב-macOS, השתמש ב-`ssh-add --apple-use-keychain ~/.ssh/id_ed25519` לאחסון הסיסמה ב-Keychain. ב-Windows, הפעל את שירות `ssh-agent` עם `Start-Service ssh-agent` ואז הרץ `ssh-add`. אתה צריך להריץ `ssh-add` רק פעם אחת בסשן (או פעם אחת בכלל, עם Keychain ב-macOS).
+
+### האם ניתן לי להחזיק מפתחות SSH מרובים?
+
+כן, וזוהי שיטת עבודה טובה. צור מפתחות נפרדים למטרות שונות — לדוגמה, אחד ל-GitHub אישי, אחד ל-GitLab לעבודה, אחד לשרתי ייצור. השתמש ב-`~/.ssh/config` למיפוי כל מארח למפתחו הספציפי עם `IdentityFile`. כאשר יש מפתחות נפרדים, ביטול אחד (על ידי הסרתו משירות או שרת) אינו משפיע על האחרים, מה שמגביל את היקף הנזק של פגיעת מפתח.
+
+### כיצד אשנה את הסיסמה על מפתח SSH?
+
+השתמש ב-`ssh-keygen -p`:
+
+```bash
+ssh-keygen -p -f ~/.ssh/id_ed25519
+```
+
+תתבקש לסיסמה הנוכחית, ואז תתבקש להזין ולאשר את החדשה. המפתח עצמו (ולכן המפתח הציבורי) אינו משתנה — אינך צריך לעדכן אותו בשום מקום. זה שימושי אם אתה חושד שהסיסמה שלך נפגעה או רוצה לסובב אותה כשיטת אבטחה שגרתית.
+
+### כיצד אסיר מפתח SSH ישן מהשרת?
+
+פתח `~/.ssh/authorized_keys` בשרת ומחק את השורה המכילה את המפתח הציבורי הישן:
+
+```bash
+# ערוך authorized_keys בשרת המרוחק
+ssh user@server.example.com
+nano ~/.ssh/authorized_keys
+# מחק את השורה עבור המפתח שברצונך להסיר
+# שמור וצא
+```
+
+כל שורה ב-`authorized_keys` היא מפתח ציבורי אחד. ההערה של המפתח (השדה האחרון, בדרך כלל `user@hostname` או אימייל) עוזרת לזהות איזה מפתח הוא איזה. אם אינך יודע איזה שורה למחוק, השווה את טביעת האצבע:
+
+```bash
+# במכונה המקומית שלך, קבל את טביעת האצבע
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+
+# בשרת, בדוק טביעות אצבע של כל המפתחות המורשים
+ssh-keygen -lf ~/.ssh/authorized_keys
+```
+
+התאם את טביעות האצבע כדי לזהות ולמחוק את המפתח הנכון.
+
+## צור את מפתחות ה-SSH שלך בחינם
+
+אם עדיין לא יצרת את זוג מפתח ה-SSH שלך, המחולל המקוון החינמי שלנו יוצר מפתחות Ed25519 או RSA ישירות בדפדפן שלך תוך שניות. ללא צורך בהתקנה, ללא שליחת דבר לשרתים שלנו — היצירה מתרחשת לחלוטין במכשיר שלך.
+
+<a href="/">צור את מפתחות ה-SSH שלך בחינם ←</a>
+
+---
+
+**קריאה נוספת:**
+- <a href="/he/what-is-ssh">מה זה SSH? המדריך המלא ל-Secure Shell</a>
+- <a href="/he/what-is-an-ssh-key">מה זה מפתח SSH? מפתחות ציבוריים, פרטיים וזוגות מפתחות — הסבר</a>
+- <a href="/he/ssh-command">פקודת SSH: עיון מלא עם דוגמאות</a>

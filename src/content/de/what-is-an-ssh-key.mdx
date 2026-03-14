@@ -1,0 +1,337 @@
+# Was ist ein SSH-Schlüssel? Öffentliche Schlüssel, private Schlüssel und Schlüsselpaare erklärt
+
+Ein **SSH-Schlüssel** ist ein kryptografisches Anmeldedatum, mit dem Sie sich ohne Passwort bei SSH-Servern authentifizieren. SSH-Schlüssel treten paarweise auf — ein **öffentlicher Schlüssel** und ein **privater Schlüssel** — und machen zusammen den Fernzugriff sicherer und komfortabler als herkömmliche Passwort-Authentifizierung. Dieser Leitfaden erklärt, was ein SSH-Schlüssel ist, wie das Schlüsselpaar-System funktioniert, welche Schlüsseltypen Sie wählen sollten und wie Sie SSH-Schlüssel mit Diensten wie GitHub und GitLab verwenden.
+
+## Wie SSH-Schlüssel funktionieren
+
+SSH-Schlüssel basieren auf **asymmetrischer Kryptografie**, auch Public-Key-Kryptografie genannt. Anders als bei symmetrischer Kryptografie (bei der ein einziger geheimer Schlüssel sowohl verschlüsselt als auch entschlüsselt) verwenden asymmetrische Systeme mathematisch verknüpfte Schlüsselpaare, bei denen mit einem Schlüssel verschlüsselte Daten nur mit dem anderen entschlüsselt werden können.
+
+So läuft die Authentifizierung ab, wenn Sie sich mit einem SSH-Schlüssel bei einem Server anmelden:
+
+1. Sie führen `ssh benutzer@server.beispiel.com` aus.
+2. Der Server sucht Ihren öffentlichen Schlüssel in `~/.ssh/authorized_keys`.
+3. Der Server generiert eine zufällige Challenge und verschlüsselt sie mit Ihrem öffentlichen Schlüssel.
+4. Ihr SSH-Client entschlüsselt die Challenge mit Ihrem privaten Schlüssel.
+5. Der Client sendet einen kryptografischen Beweis (abgeleitet aus der entschlüsselten Challenge und der Session-ID) zurück an den Server.
+6. Der Server verifiziert den Beweis. Nur der Inhaber des privaten Schlüssels hätte ihn erzeugen können.
+7. Die Authentifizierung ist erfolgreich. Kein Passwort verlässt jemals Ihre Maschine.
+
+Die entscheidende Erkenntnis lautet: **Ihr privater Schlüssel überquert niemals das Netzwerk**. Der Server sieht ausschließlich Ihren öffentlichen Schlüssel und die kryptografischen Beweise, die Sie erzeugen. Selbst wenn jemand jedes Paket Ihrer SSH-Sitzung abfängt, erhält er nichts, das ihm helfen würde, Sie zu imitieren.
+
+Hintergrundinformationen zum SSH-Protokoll im Allgemeinen finden Sie in unserem Leitfaden zu <a href="/de/what-is-ssh">SSH</a>.
+
+## Öffentlicher Schlüssel vs. privater Schlüssel: Was ist der Unterschied?
+
+Das Verständnis des Unterschieds zwischen den beiden Schlüsseln ist für die korrekte Nutzung von SSH unerlässlich.
+
+### Der öffentliche Schlüssel — Ihr Schloss
+
+Der **öffentliche Schlüssel** ist darauf ausgelegt, frei geteilt zu werden. Stellen Sie ihn sich wie ein Vorhängeschloss vor: Sie verteilen Kopien davon an alle Systeme, auf die Sie zugreifen möchten. Wenn ein Server Ihren öffentlichen Schlüssel in seiner `authorized_keys`-Datei hat, kann er Ihre Identität verifizieren, ohne Ihren privaten Schlüssel zu kennen.
+
+Öffentliche Schlüssel:
+- Können sicher geteilt werden — sie können nicht genutzt werden, um Sie zu imitieren
+- Werden auf Servern in `~/.ssh/authorized_keys` hinterlegt
+- Werden zu GitHub, GitLab und anderen Diensten hochgeladen
+- Haben typischerweise die Erweiterung `.pub` (z. B. `id_ed25519.pub`)
+- Sehen so aus: `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAA... benutzer@hostname`
+
+### Der private Schlüssel — Ihr Schlüssel
+
+Der **private Schlüssel** ist die geheime Hälfte des Paares. Er darf Ihre Maschine niemals verlassen und sollte niemals mit jemandem geteilt werden — nicht einmal mit Administratoren, Cloud-Anbietern oder Support-Mitarbeitern. Wenn Ihr privater Schlüssel kompromittiert wird, kann jeder, der ihn erhält, sich auf jedem Server als Sie ausgeben, auf dem Ihr öffentlicher Schlüssel installiert ist.
+
+Private Schlüssel:
+- Müssen geheim und sicher aufbewahrt werden
+- Werden lokal in `~/.ssh/` mit eingeschränkten Berechtigungen (600) gespeichert
+- Sind optional mit einer Passphrase verschlüsselt
+- Haben keine Erweiterung oder eine typspezifische Erweiterung (z. B. `id_ed25519`)
+
+### Die `authorized_keys`-Datei
+
+Serverseitig werden die öffentlichen Schlüssel jedes Benutzers in `~/.ssh/authorized_keys` gespeichert. Dies ist eine Klartextdatei, bei der jede Zeile einen öffentlichen Schlüssel enthält. Wenn ein SSH-Client versucht, sich zu authentifizieren, prüft der Server, ob der Client den Besitz des privaten Schlüssels nachweisen kann, der einem Eintrag in dieser Datei entspricht.
+
+```
+# Format von ~/.ssh/authorized_keys
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGq... alice@laptop
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHr... alice@arbeitsstation
+ssh-rsa AAAAB3NzaC1yc2EAAAA... backup-deploy-schluessel
+```
+
+Sie können so viele öffentliche Schlüssel wie nötig in dieser Datei haben, sodass mehrere Geräte oder Automatisierungssysteme sich beim selben Server authentifizieren können.
+
+## SSH-Schlüssel-Algorithmen: Ed25519 vs. RSA
+
+Wenn Sie ein SSH-Schlüsselpaar generieren, wählen Sie einen Algorithmus. Die beiden heute gängigsten Optionen sind **Ed25519** und **RSA**. Es gibt auch ECDSA und DSA, aber DSA ist veraltet und ECDSA hat Implementierungstücken, daher konzentrieren wir uns auf die beiden empfohlenen Optionen.
+
+### Ed25519 — Die moderne Wahl
+
+Ed25519 wurde in OpenSSH Version 6.5 (2014) eingeführt und ist heute die empfohlene Standardwahl. Es verwendet elliptische Kurven-Kryptografie auf der Twisted-Edwards-Kurve (Curve25519), die von Daniel J. Bernstein entworfen wurde.
+
+**Vorteile von Ed25519:**
+- **Kompakt** — Schlüssel sind nur 68 Zeichen lang (öffentlicher Schlüssel) und Dateien sind winzig
+- **Schnell** — Signaturerstellung und -verifizierung sind extrem schnell
+- **Sicher by design** — nicht anfällig für Seitenkanalangriffe, die einige RSA-Implementierungen betreffen
+- **Feste Schlüsselgröße** — 256-Bit-Sicherheitsniveau, keine Wahl der Schlüsselgröße erforderlich
+- **Deterministisch** — Signaturen sind deterministisch, was eine Klasse von Zufallsgenerator-Fehlern eliminiert
+
+```bash
+# Ed25519-Schlüsselpaar generieren
+ssh-keygen -t ed25519 -C "ihre@email.com"
+```
+
+### RSA — Die universelle Option
+
+RSA ist der ältere Algorithmus (entwickelt 1977) und ist bei 4096 Bit zwar noch sicher, aber langsamer und erzeugt größere Schlüssel als Ed25519. RSA hat jedoch eine viel breitere Kompatibilität — es funktioniert mit sehr alten SSH-Servern, Legacy-Systemen und einigen Hardware-Sicherheitsschlüsseln.
+
+**Wann RSA verwenden:**
+- Sie müssen sich mit Legacy-Systemen verbinden, die alte OpenSSH-Versionen ausführen (vor 6.5)
+- Sie verwenden eine Smartcard oder ein HSM, das Ed25519 nicht unterstützt
+- Kompatibilität mit älteren Werkzeugen ist erforderlich
+
+```bash
+# RSA-4096-Bit-Schlüsselpaar generieren
+ssh-keygen -t rsa -b 4096 -C "ihre@email.com"
+```
+
+**Verwenden Sie RSA nie mit weniger als 4096 Bit.** RSA-1024 und RSA-2048 gelten mit zunehmender Rechenleistung als zunehmend unzureichend. Ed25519 bietet bei 256 Bit gleichwertige oder bessere Sicherheit bei einem Bruchteil der Schlüsselgröße.
+
+### Vergleichsübersicht
+
+| Merkmal | Ed25519 | RSA 4096 |
+|---|---|---|
+| Schlüsselgröße (öffentlich) | ~68 Zeichen | ~725 Zeichen |
+| Sicherheitsniveau | 128-Bit (post-quantum-resistente Struktur) | ~140-Bit klassisch |
+| Geschwindigkeit | Sehr schnell | Langsamer |
+| Kompatibilität | Modernes SSH (OpenSSH 6.5+) | Universal |
+| Empfohlen für | Alle neuen Schlüssel | Nur Legacy-Systeme |
+
+**Fazit: Generieren Sie Ed25519-Schlüssel für jeden modernen Anwendungsfall.** Verwenden Sie RSA nur, wenn Kompatibilitätsanforderungen es erzwingen.
+
+## Einen SSH-Schlüssel zu GitHub hinzufügen
+
+Das Hinzufügen Ihres öffentlichen SSH-Schlüssels zu GitHub ermöglicht Ihnen, über SSH zu pushen und zu pullen, ohne bei jeder Operation Ihren Benutzernamen und Ihr Passwort einzugeben. Hier ist die schrittweise Vorgehensweise.
+
+### Schritt 1: Ihr Schlüsselpaar generieren
+
+Wenn Sie noch kein SSH-Schlüsselpaar haben, generieren Sie eines. Sie können unseren <a href="/">kostenlosen Online-SSH-Schlüsselgenerator</a> verwenden oder ausführen:
+
+```bash
+ssh-keygen -t ed25519 -C "ihre-github-email@beispiel.com"
+```
+
+Akzeptieren Sie den Standard-Dateispeicherort (`~/.ssh/id_ed25519`) und legen Sie optional eine Passphrase fest.
+
+### Schritt 2: Ihren öffentlichen Schlüssel kopieren
+
+Zeigen Sie Ihren öffentlichen Schlüssel an und kopieren Sie ihn in die Zwischenablage:
+
+```bash
+# Linux
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+
+# macOS
+cat ~/.ssh/id_ed25519.pub | pbcopy
+
+# Windows (PowerShell)
+Get-Content ~/.ssh/id_ed25519.pub | Set-Clipboard
+```
+
+Oder zeigen Sie ihn einfach an und kopieren Sie manuell:
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+### Schritt 3: Den Schlüssel zu GitHub hinzufügen
+
+1. Bei **GitHub.com** anmelden
+2. Auf Ihr Profilbild klicken → **Settings**
+3. In der linken Seitenleiste auf **SSH and GPG keys** klicken
+4. Auf **New SSH key** klicken
+5. Einen beschreibenden Titel vergeben (z. B. „MacBook Pro 2024" oder „Arbeits-Laptop")
+6. Ihren öffentlichen Schlüssel in das Feld **Key** einfügen
+7. Auf **Add SSH key** klicken
+
+### Schritt 4: Die Verbindung testen
+
+```bash
+ssh -T git@github.com
+```
+
+Sie sollten sehen: `Hi username! You've successfully authenticated, but GitHub does not provide shell access.`
+
+### Ein bestehendes Repository zu SSH wechseln
+
+Wenn Sie ein Repository per HTTPS geklont haben und zu SSH wechseln möchten:
+
+```bash
+# Aktuelle Remote-URL prüfen
+git remote -v
+
+# Zu SSH wechseln
+git remote set-url origin git@github.com:benutzername/repository.git
+```
+
+Für GitLab ist der Vorgang identisch — navigieren Sie zu **Preferences → SSH Keys** und folgen Sie denselben Schritten.
+
+## Wo werden SSH-Schlüssel gespeichert?
+
+SSH-Schlüssel werden in einem Verzeichnis namens `.ssh` im Home-Verzeichnis Ihres Benutzers gespeichert. Der Speicherort variiert je nach Betriebssystem.
+
+### Linux und macOS
+
+```
+~/.ssh/
+├── id_ed25519          # Ihr privater Schlüssel (Berechtigungen: 600)
+├── id_ed25519.pub      # Ihr öffentlicher Schlüssel (Berechtigungen: 644)
+├── id_rsa              # Ein RSA-Privatschlüssel (falls vorhanden)
+├── id_rsa.pub          # Der RSA-öffentliche Schlüssel
+├── authorized_keys     # Öffentliche Schlüssel, die sich bei dieser Maschine anmelden dürfen
+├── known_hosts         # Fingerabdrücke von Servern, mit denen Sie sich verbunden haben
+└── config              # Client-Konfigurationsdatei
+```
+
+Das `~/.ssh/`-Verzeichnis selbst muss **700**-Berechtigungen haben (Lesen/Schreiben/Ausführen nur für den Eigentümer). Private Schlüsseldateien müssen **600**-Berechtigungen haben (Lesen/Schreiben nur für den Eigentümer). SSH verweigert die Verwendung von Schlüsseln mit zu großzügigen Berechtigungen.
+
+```bash
+# Berechtigungen bei Bedarf korrigieren
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/id_ed25519
+chmod 644 ~/.ssh/id_ed25519.pub
+```
+
+### Windows
+
+Unter Windows 10 und 11 mit installiertem OpenSSH werden SSH-Schlüssel gespeichert in:
+
+```
+C:\Users\IhrBenutzername\.ssh\
+├── id_ed25519
+├── id_ed25519.pub
+├── authorized_keys
+├── known_hosts
+└── config
+```
+
+Unter Windows können Sie auf das `.ssh`-Verzeichnis über den Datei-Explorer zugreifen (möglicherweise müssen Sie „Versteckte Dateien anzeigen" aktivieren) oder über PowerShell mit `~\.ssh\`.
+
+### Mehrere Schlüsseldateien
+
+Wenn Sie Schlüssel für verschiedene Zwecke haben (persönliches GitHub, berufliches GitLab, Produktionsserver), verwenden Sie die Datei `~/.ssh/config`, um jedem Host seinen Schlüssel zuzuordnen:
+
+```
+Host github.com
+    IdentityFile ~/.ssh/id_ed25519_github
+
+Host gitlab.arbeit.com
+    IdentityFile ~/.ssh/id_ed25519_arbeit
+
+Host prod-server
+    HostName 203.0.113.10
+    User deploy
+    IdentityFile ~/.ssh/id_ed25519_produktion
+```
+
+## SSH-Schlüssel-Passphrasen
+
+Wenn Sie ein SSH-Schlüsselpaar generieren, fragt `ssh-keygen`, ob Sie eine **Passphrase** festlegen möchten. Dies ist ein optionales Passwort, das die private Schlüsseldatei auf der Festplatte verschlüsselt.
+
+### Warum eine Passphrase verwenden?
+
+Wenn Ihre private Schlüsseldatei durch eine starke Passphrase geschützt ist, reicht es nicht aus, die Datei zu stehlen, um sich als Sie auszugeben — der Angreifer müsste auch die Passphrase knacken. Dies bietet eine kritische zweite Sicherheitsebene, besonders bei Laptops, die physisch gestohlen werden könnten.
+
+Ohne Passphrase wird Ihr privater Schlüssel im Klartext auf der Festplatte gespeichert. Jeder, der die Datei lesen kann (über Malware, physischen Zugriff oder eine nicht ordnungsgemäß gesicherte Sicherung), kann sie sofort verwenden.
+
+### Wie Passphrasen mit ssh-agent interagieren
+
+Der Nachteil einer Passphrase ist, dass Sie sie jedes Mal eingeben müssen, wenn Sie den Schlüssel verwenden. **ssh-agent** löst dieses Problem, indem er entschlüsselte Schlüssel für die Dauer Ihrer Sitzung im Speicher hält.
+
+```bash
+# ssh-agent starten und Ihren Schlüssel hinzufügen
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+# Passphrase einmal eingeben — sie ist jetzt für die Sitzung gecacht
+```
+
+Unter macOS integriert sich der System-Schlüsselbund mit ssh-agent. Fügen Sie `--apple-use-keychain` hinzu, um über Neustarts hinaus zu persistieren:
+
+```bash
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+```
+
+### Eine Passphrase ändern
+
+Sie können die Passphrase eines bestehenden Schlüssels ändern, ohne das Schlüsselpaar neu zu generieren:
+
+```bash
+ssh-keygen -p -f ~/.ssh/id_ed25519
+```
+
+Dies fragt nach der alten Passphrase und ermöglicht Ihnen dann, eine neue festzulegen. Der öffentliche Schlüssel ändert sich nicht, Sie müssen ihn also auf keinem Server aktualisieren.
+
+## SSH-Schlüssel-Fingerabdrücke
+
+Jedes SSH-Schlüsselpaar hat einen **Fingerabdruck** — einen kurzen Hash des öffentlichen Schlüssels, der ihn eindeutig identifiziert. Fingerabdrücke dienen mehreren Zwecken:
+
+- **Host-Identität verifizieren** — Wenn Sie sich zum ersten Mal mit einem Server verbinden, zeigt SSH Ihnen den Host-Key-Fingerabdruck. Wenn Sie bestätigen, dass er Ihren Erwartungen entspricht (z. B. von Ihrem Hosting-Anbieter bereitgestellt), wissen Sie, dass Sie sich mit dem richtigen Server verbinden.
+- **Schlüssel identifizieren** — Bei der Verwaltung vieler Schlüssel helfen Fingerabdrücke dabei, welcher physische Schlüssel welchem Eintrag in `authorized_keys` oder auf einem Dienst wie GitHub entspricht.
+- **Audit und Widerruf** — Audit-Logs zeichnen oft Fingerabdrücke statt vollständiger Schlüssel auf. Das Kennen des Fingerabdrucks eines Schlüssels hilft Ihnen, ihn zu finden und zu entfernen, wenn nötig.
+
+### Den Fingerabdruck eines Schlüssels anzeigen
+
+```bash
+# Fingerabdruck Ihres öffentlichen Schlüssels anzeigen
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+# Ausgabe: 256 SHA256:abcdef1234567890... ihre@email.com (ED25519)
+
+# Fingerabdruck des Host-Keys eines Servers anzeigen
+ssh-keyscan server.beispiel.com | ssh-keygen -lf -
+```
+
+GitHub zeigt die Fingerabdrücke aller hinzugefügten SSH-Schlüssel unter **Settings → SSH and GPG keys** an, sodass Sie verifizieren können, dass der dort angezeigte Schlüssel mit dem auf Ihrer Maschine übereinstimmt.
+
+### Die `known_hosts`-Datei
+
+Wenn Sie sich zum ersten Mal mit einem neuen SSH-Server verbinden, sehen Sie eine Meldung wie:
+
+```
+The authenticity of host 'beispiel.com (203.0.113.10)' can't be established.
+ED25519 key fingerprint is SHA256:abcdef1234567890...
+Are you sure you want to continue connecting (yes/no/[fingerprint])?
+```
+
+Geben Sie `yes` ein, und der Fingerabdruck des Servers wird zu `~/.ssh/known_hosts` hinzugefügt. Bei nachfolgenden Verbindungen prüft SSH stillschweigend, ob der Schlüssel des Servers dem gespeicherten Fingerabdruck entspricht. Wenn nicht — was auf eine Fehlkonfiguration oder einen Man-in-the-Middle-Angriff hindeuten könnte — warnt SSH lautstark und verweigert die Verbindung.
+
+## Häufig gestellte Fragen
+
+### Wofür wird ein SSH-Schlüssel verwendet?
+
+SSH-Schlüssel authentifizieren Sie bei Remote-Servern ohne Passwort. Die häufigsten Verwendungszwecke sind: Anmelden bei Linux/Unix-Servern zur Administration, Authentifizierung bei Git-Hosting-Diensten (GitHub, GitLab, Bitbucket) für Push/Pull-Zugriff, automatisierte Deployment-Skripte, die passwortlosen Server-Zugriff benötigen, sowie CI/CD-Pipelines, die Code in die Produktion deployen. SSH-Schlüssel werden Passwörtern vorgezogen, weil sie immun gegen Brute-Force sind, nicht über verschiedene Datenschutzverletzungen hinweg wiederverwendbar sind und ohne menschliche Interaktion genutzt werden können.
+
+### Wie viele SSH-Schlüssel sollte ich haben?
+
+Es gibt keine einzige richtige Antwort, aber eine verbreitete Best Practice ist **ein Schlüssel pro Gerät** (nicht pro Dienst). Ihr Laptop hat ein Schlüsselpaar; Ihr Desktop-PC hat ein anderes; Ihr CI-Server hat ein weiteres. Wenn ein Gerät gestohlen oder kompromittiert wird, widerrufen Sie nur den Schlüssel dieses Geräts. Manche Leute trennen zusätzlich nach Kontext (privat vs. beruflich), was zu zwei Schlüsseln pro Gerät führt. Vermeiden Sie es, einen einzigen Schlüssel auf mehreren Maschinen zu teilen — wenn dieser Schlüssel kompromittiert wird, ist der gesamte Zugriff gleichzeitig gefährdet.
+
+### Kann ich meinen öffentlichen SSH-Schlüssel teilen?
+
+Ja. Der öffentliche Schlüssel ist darauf ausgelegt, geteilt zu werden. Es ist sicher, ihn per E-Mail zu senden, in der GitHub-Dokumentation zu veröffentlichen oder in einem Ticket für Server-Zugriff anzugeben. Der öffentliche Schlüssel allein kann nicht dazu verwendet werden, sich als Sie zu authentifizieren — das erfordert den entsprechenden privaten Schlüssel, den nur Sie besitzen. Dies ist die fundamentale Eigenschaft asymmetrischer Kryptografie. Teilen Sie **niemals** Ihren privaten Schlüssel mit jemandem.
+
+### Was passiert, wenn ich meinen privaten SSH-Schlüssel verliere?
+
+Wenn Sie Ihren privaten Schlüssel verlieren und kein Backup haben, verlieren Sie die Fähigkeit, sich damit zu authentifizieren. Ihr öffentlicher Schlüssel, der noch auf Servern und Diensten installiert ist, wird zum Waisen. Sie benötigen einen alternativen Weg, auf den Server zuzugreifen (Passwort-Authentifizierung, falls aktiviert, Konsolenzugang, der Notfallzugangsmechanismus Ihres Hosting-Anbieters), um den alten öffentlichen Schlüssel aus `authorized_keys` zu entfernen und einen neuen hinzuzufügen. Deshalb ist es wichtig, Ihren privaten Schlüssel zu sichern (in einem Passwort-Manager oder verschlüsselten Backup). Der private Schlüssel kann nicht aus dem öffentlichen Schlüssel rekonstruiert werden.
+
+### Ist Ed25519 oder RSA besser?
+
+**Ed25519 ist für jede neue Schlüsselgenerierung besser.** Er ist schneller, erzeugt kleinere Schlüssel, ist nicht anfällig für bestimmte Implementierungsschwächen, die RSA betreffen, und bietet mit einem 256-Bit-Schlüssel gleichwertige oder überlegene Sicherheit im Vergleich zu RSA-4096. Der einzige Grund, RSA heute zu verwenden, ist die Kompatibilität mit sehr alter SSH-Server-Software (OpenSSH vor Version 6.5, veröffentlicht 2014) oder Legacy-Hardware-Sicherheitsmodulen. Wenn Sie auf einen modernen Server oder Dienst wie GitHub zugreifen, verwenden Sie Ed25519.
+
+## Ihr SSH-Schlüsselpaar generieren
+
+Bereit, Ihre SSH-Schlüssel zu erstellen? Unser kostenloser Online-Generator erstellt Ed25519- oder RSA-Schlüsselpaare direkt in Ihrem Browser. Der private Schlüssel wird lokal generiert und niemals an unsere Server übertragen.
+
+<a href="/">Jetzt Ihr SSH-Schlüsselpaar generieren →</a>
+
+---
+
+**Weiterführende Lektüre:**
+- <a href="/de/what-is-ssh">Was ist SSH? Der vollständige Leitfaden zur Secure Shell</a>
+- <a href="/de/ssh-command">Der SSH-Befehl: Vollständige Referenz mit Beispielen</a>
+- <a href="/de/how-to-set-up-ssh">SSH einrichten: Eine vollständige Schritt-für-Schritt-Anleitung</a>

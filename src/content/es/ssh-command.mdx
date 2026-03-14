@@ -1,0 +1,430 @@
+# El comando SSH: referencia completa con ejemplos para Linux, Mac y Windows
+
+El comando `ssh` es la herramienta principal para iniciar conexiones SSH desde la línea de comandos. Ya sea que estés iniciando sesión en un servidor Linux remoto, reenviando un puerto para acceder a una base de datos o saltando a través de un bastión para llegar a una red interna, el comando `ssh` es tu punto de entrada. Esta guía cubre todo, desde la sintaxis básica hasta indicadores avanzados, tunelado y configuraciones de ProxyJump — con ejemplos reales para Linux, macOS y Windows.
+
+Antes de ejecutar comandos SSH, necesitarás claves SSH. Consulta nuestra guía sobre <a href="/es/what-is-an-ssh-key">qué es una clave SSH</a> o usa el <a href="/">generador en línea gratuito</a> para crear un par de claves.
+
+## Sintaxis del comando SSH
+
+La sintaxis fundamental del comando `ssh` es:
+
+```
+ssh [opciones] [usuario@]hostname [comando]
+```
+
+Desglosando esto:
+
+- **`[opciones]`** — cero o más indicadores que modifican el comportamiento (cubiertos a lo largo de esta guía)
+- **`[usuario@]`** — nombre de usuario opcional. Si se omite, SSH usa tu nombre de usuario local actual
+- **`hostname`** — el host remoto al que conectarse. Puede ser una dirección IP, un nombre de dominio o un alias definido en `~/.ssh/config`
+- **`[comando]`** — comando opcional para ejecutar en el host remoto. Si se omite, SSH inicia una sesión de shell interactiva
+
+**Ejemplos básicos:**
+
+```bash
+# Conectarse usando tu nombre de usuario actual
+ssh server.example.com
+
+# Conectarse como un usuario específico
+ssh alice@server.example.com
+
+# Conectarse usando una dirección IP
+ssh ubuntu@192.168.1.100
+
+# Ejecutar un único comando y desconectarse inmediatamente
+ssh user@server.example.com "df -h"
+
+# Conectarse y permanecer en la sesión
+ssh user@server.example.com
+```
+
+## SSH en Linux y macOS
+
+Las distribuciones Linux y macOS incluyen **OpenSSH** preinstalado. En Linux, forma parte del paquete `openssh-client` (Debian/Ubuntu) o `openssh-clients` (RHEL/CentOS/Fedora). En macOS, viene integrado en el sistema y está disponible de inmediato desde Terminal o iTerm2.
+
+### Verificar que SSH está disponible
+
+```bash
+ssh -V
+# Salida: OpenSSH_9.6p1, LibreSSL 3.3.6
+```
+
+### Conexión básica
+
+```bash
+# Conectarse a un servidor
+ssh user@myserver.example.com
+
+# SSH comprueba ~/.ssh/known_hosts en la primera conexión y pregunta:
+# The authenticity of host 'myserver.example.com' can't be established.
+# ED25519 key fingerprint is SHA256:abc123...
+# Are you sure you want to continue connecting (yes/no)? yes
+
+# La huella dactilar del host se guarda en ~/.ssh/known_hosts
+```
+
+### Usar un fichero de configuración SSH para mayor comodidad
+
+En lugar de escribir los detalles de conexión completos cada vez, crea `~/.ssh/config`:
+
+```
+Host myserver
+    HostName myserver.example.com
+    User alice
+    Port 22
+    IdentityFile ~/.ssh/id_ed25519
+
+Host dev
+    HostName dev.example.com
+    User ubuntu
+    Port 2222
+    IdentityFile ~/.ssh/id_ed25519_work
+```
+
+Ahora `ssh myserver` se expande a la conexión completa — sin indicadores necesarios.
+
+## SSH en Windows (PowerShell y OpenSSH)
+
+Windows 10 (versión 1809) y Windows 11 incluyen el **cliente OpenSSH** como característica opcional, lo que hace que el comando `ssh` esté disponible en PowerShell, el Símbolo del sistema y la Terminal de Windows.
+
+### Comprobar si OpenSSH está instalado
+
+```powershell
+# En PowerShell
+ssh -V
+```
+
+Si no se encuentra el comando, instálalo:
+
+**Mediante Configuración:**
+1. Abre **Configuración → Aplicaciones → Características opcionales**
+2. Haz clic en **Agregar una característica**
+3. Busca **Cliente OpenSSH** e instálalo
+
+**Mediante PowerShell (Administrador):**
+
+```powershell
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+```
+
+### Usar SSH en PowerShell
+
+Una vez instalado, la sintaxis es idéntica a la de Linux y macOS:
+
+```powershell
+# Conectarse a un servidor
+ssh user@server.example.com
+
+# Conectarse en un puerto personalizado
+ssh -p 2222 user@server.example.com
+
+# Usar un fichero de clave específico
+ssh -i C:\Users\TuNombre\.ssh\id_ed25519 user@server.example.com
+```
+
+### Ubicación de las claves SSH en Windows
+
+Las claves SSH en Windows se almacenan en `C:\Users\TuNombreDeUsuario\.ssh\`. PowerShell reconoce `~` como abreviatura:
+
+```powershell
+# Estos son equivalentes
+ssh -i ~/.ssh/id_ed25519 user@server
+ssh -i C:\Users\TuNombreDeUsuario\.ssh\id_ed25519 user@server
+```
+
+### PuTTY vs. OpenSSH en Windows
+
+Antes de que OpenSSH estuviera disponible en Windows, **PuTTY** era el cliente SSH estándar. PuTTY usa su propio formato de clave (ficheros `.ppk`) y su propio generador de claves (PuTTYgen). Si tienes una clave `.ppk` y necesitas convertirla al formato estándar de OpenSSH:
+
+```bash
+# Usando las herramientas de PuTTY
+puttygen mykey.ppk -O private-openssh -o id_ed25519
+```
+
+Para configuraciones nuevas, prefiere el cliente OpenSSH integrado en Windows — es mantenido por el proyecto OpenSSH y usa el mismo formato de clave y fichero de configuración que Linux y macOS.
+
+## SSH con autenticación por clave: el indicador -i
+
+Por defecto, SSH busca ficheros de clave en `~/.ssh/` con nombres estándar (`id_ed25519`, `id_rsa`, `id_ecdsa`, `id_dsa`). El **indicador `-i`** (fichero de identidad) te permite especificar un fichero de clave diferente de forma explícita.
+
+```bash
+# Usar un fichero de clave específico
+ssh -i ~/.ssh/id_ed25519_production user@prod.example.com
+
+# Usar una clave almacenada en una ubicación no estándar
+ssh -i /path/to/my/custom_key deploy@server.example.com
+
+# Combinar con otras opciones
+ssh -i ~/.ssh/deploy_key -p 2222 -l deploy server.example.com
+```
+
+El indicador `-i` es esencial en varias situaciones:
+- Tienes múltiples pares de claves para diferentes servidores o propósitos
+- Tu clave no está en el directorio `~/.ssh/` predeterminado
+- Estás especificando una clave en un entorno CI/CD donde la ruta es explícita
+- Descargaste un fichero `.pem` de AWS u otro proveedor de nube
+
+### Ejemplo con AWS EC2
+
+AWS proporciona un fichero de clave `.pem` cuando lanzas una instancia EC2:
+
+```bash
+# Conectarse a una instancia AWS EC2 con una clave .pem
+ssh -i ~/Downloads/my-aws-key.pem ec2-user@54.123.456.789
+
+# Corregir permisos si es necesario (obligatorio — SSH rechaza las claves con permisos de lectura global)
+chmod 400 ~/Downloads/my-aws-key.pem
+```
+
+## Opciones e indicadores esenciales del comando SSH
+
+El comando `ssh` tiene docenas de opciones. Estas son las que realmente utilizarás.
+
+| Indicador | Descripción | Ejemplo |
+|---|---|---|
+| `-p PUERTO` | Conectarse en un puerto no estándar | `ssh -p 2222 user@host` |
+| `-i FICHERO` | Usar un fichero de identidad (clave) específico | `ssh -i ~/.ssh/mykey user@host` |
+| `-l USUARIO` | Especificar el nombre de usuario de inicio de sesión (alternativa a `user@`) | `ssh -l alice host` |
+| `-L local:host:remoto` | Reenvío de puerto local | `ssh -L 8080:localhost:80 host` |
+| `-R remoto:host:local` | Reenvío de puerto remoto | `ssh -R 9090:localhost:3000 host` |
+| `-D puerto` | Proxy dinámico (SOCKS) | `ssh -D 1080 host` |
+| `-N` | No ejecutar un comando remoto (solo tunelado) | `ssh -N -L 3307:db:3306 host` |
+| `-f` | Pasar al segundo plano tras la autenticación | `ssh -f -N -D 1080 host` |
+| `-v` | Salida detallada (depuración) | `ssh -v user@host` |
+| `-vv` o `-vvv` | Salida más detallada | `ssh -vvv user@host` |
+| `-A` | Habilitar el reenvío del agente SSH | `ssh -A user@jump-host` |
+| `-X` | Habilitar el reenvío de X11 | `ssh -X user@host xclock` |
+| `-C` | Habilitar la compresión | `ssh -C user@host` |
+| `-T` | Deshabilitar la asignación de pseudo-terminal | `ssh -T git@github.com` |
+| `-q` | Modo silencioso (suprimir avisos) | `ssh -q user@host` |
+| `-o OPCION=VALOR` | Establecer una opción de configuración en línea | `ssh -o StrictHostKeyChecking=no host` |
+| `-J SALTO` | ProxyJump a través de un bastión | `ssh -J jump.host user@internal` |
+| `-W host:puerto` | Reenviar stdio a un host:puerto (para ProxyJump) | Usado internamente por `-J` |
+
+### Modo detallado para depuración
+
+Cuando SSH falla, `-v` (o `-vv` o `-vvv`) revela exactamente qué está ocurriendo:
+
+```bash
+ssh -v user@server.example.com
+# Muestra: qué claves se están intentando, qué métodos de autenticación acepta el servidor,
+# si el agente está involucrado y dónde falla la conexión
+
+ssh -vvv user@server.example.com
+# Máxima verbosidad — muestra la negociación criptográfica detallada
+```
+
+### Omitir la verificación de clave de host (usar con precaución)
+
+En entornos de automatización y pruebas donde la verificación de clave de host es inconveniente:
+
+```bash
+ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null user@host
+```
+
+**No uses esto en producción.** Deshabilita la protección contra ataques de intermediario. En su lugar, rellena previamente `known_hosts` usando `ssh-keyscan` en tus scripts de aprovisionamiento.
+
+### Reenvío del agente
+
+```bash
+# Reenviar tu agente SSH local al servidor remoto
+ssh -A user@jump-server
+
+# Desde jump-server, ahora puedes hacer SSH a hosts internos usando tus claves locales
+# No es necesario copiar claves privadas al servidor de salto
+ssh internal-server.private
+```
+
+El reenvío del agente es útil pero tiene implicaciones de seguridad: cualquiera con acceso root en el servidor intermedio puede usar tu agente reenviado. Úsalo solo con servidores de confianza y prefiere **ProxyJump** cuando sea posible (no expone tu agente a hosts intermedios).
+
+## Comandos de tunelado SSH
+
+El tunelado SSH enruta conexiones TCP a través de un canal SSH cifrado. Para conocer el contexto del tunelado, consulta la <a href="/es/what-is-ssh">sección de tunelado de nuestra guía SSH</a>.
+
+### Reenvío de puertos local
+
+Hace que un servicio remoto sea accesible en tu máquina local.
+
+```bash
+# Acceder a una base de datos MySQL remota en el puerto local 3307
+ssh -L 3307:localhost:3306 user@db-server.example.com -N
+
+# Conectarse a un servidor web remoto solo accesible desde el host SSH
+ssh -L 8080:intranet.company.com:80 user@vpn.company.com -N
+
+# Acceder a una instancia de Redis en una red privada
+ssh -L 6380:10.0.1.50:6379 user@bastion.example.com -N
+```
+
+Tras ejecutar cualquiera de los anteriores, conecta tu aplicación local a `127.0.0.1:PUERTO_LOCAL`.
+
+### Reenvío de puertos remoto
+
+Expone un servicio local en el servidor remoto.
+
+```bash
+# Exponer tu servidor de desarrollo local (puerto 3000) en el puerto 9090 del servidor remoto
+ssh -R 9090:localhost:3000 user@remote.example.com -N
+
+# Permitir cualquier interfaz en el servidor remoto para conectarse (requiere GatewayPorts yes en sshd_config)
+ssh -R 0.0.0.0:9090:localhost:3000 user@remote.example.com -N
+```
+
+### Reenvío de puertos dinámico (proxy SOCKS)
+
+```bash
+# Crear un proxy SOCKS5 en el puerto local 1080, ejecutándose en segundo plano
+ssh -D 1080 -N -f user@remote.example.com
+
+# Ahora configura tu navegador o sistema para usar el proxy SOCKS5: 127.0.0.1:1080
+# Todo el tráfico se enruta a través del servidor remoto
+```
+
+Para usar con curl:
+
+```bash
+curl --socks5 127.0.0.1:1080 https://api.example.com/
+```
+
+### Ejecutar el túnel en segundo plano
+
+```bash
+# -f envía SSH al segundo plano, -N significa sin comando remoto
+ssh -f -N -L 3307:localhost:3306 user@db-server
+
+# Encontrar el proceso SSH en segundo plano
+ps aux | grep ssh
+
+# Terminarlo
+kill PID
+```
+
+## ProxyJump SSH y bastiones
+
+En muchas organizaciones, los servidores de producción están en redes privadas no accesibles directamente desde internet. Un **bastión** (o host de salto) es un servidor reforzado en el perímetro de la red al que primero te conectas por SSH y luego saltas a los servidores internos. El indicador `ssh -J` (ProxyJump, añadido en OpenSSH 7.3) hace que esto sea transparente.
+
+### ProxyJump básico
+
+```bash
+# Saltar a través de un bastión para llegar a un servidor interno
+ssh -J ec2-user@bastion.example.com ubuntu@10.0.1.50
+
+# Forma abreviada
+ssh -J user@jump-host user@internal-server
+```
+
+Esto crea dos conexiones SSH: primero al bastión y luego desde el bastión al servidor interno — todo en un único comando, con cifrado de extremo a extremo. Tu agente SSH local gestiona la autenticación en ambos hosts.
+
+### Encadenar múltiples saltos
+
+```bash
+# Saltar a través de dos hosts intermedios
+ssh -J user@jump1.example.com,user@jump2.example.com user@destino-final
+```
+
+### ProxyJump en el fichero de configuración SSH
+
+Para servidores a los que accedes frecuentemente, pon la configuración de ProxyJump en `~/.ssh/config`:
+
+```
+Host bastion
+    HostName bastion.example.com
+    User ec2-user
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host prod-web
+    HostName 10.0.1.100
+    User ubuntu
+    ProxyJump bastion
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host prod-db
+    HostName 10.0.2.50
+    User postgres
+    ProxyJump bastion
+    IdentityFile ~/.ssh/id_ed25519_aws
+```
+
+Ahora `ssh prod-web` se conecta automáticamente a través del bastión. No es necesario usar indicadores `-J` manualmente.
+
+### ProxyJump vs. reenvío del agente
+
+ProxyJump es preferible al reenvío del agente (`-A`) porque:
+- Tu clave privada nunca se reenvía al host intermedio
+- El bastión no puede usar tus credenciales para autenticarse en otros lugares
+- La conexión está autenticada de extremo a extremo — el servidor de destino te verifica directamente
+
+Para más detalles de configuración, consulta nuestra guía completa sobre <a href="/es/how-to-set-up-ssh">cómo configurar SSH</a>.
+
+## Preguntas frecuentes
+
+### ¿Cómo ejecuto un comando SSH sin contraseña?
+
+Configura la autenticación por clave SSH. Genera un par de claves (`ssh-keygen -t ed25519`), copia la clave pública al fichero `~/.ssh/authorized_keys` del servidor usando `ssh-copy-id user@host`, y las conexiones posteriores usarán tu clave sin solicitar contraseña. Si tu clave tiene frase de contraseña, usa `ssh-agent` y `ssh-add` para guardarla en caché y solo tener que introducirla una vez por sesión.
+
+### ¿Cómo salgo de una sesión SSH?
+
+Escribe `exit` o pulsa **Ctrl+D** para cerrar la shell remota y desconectarte. Si la sesión está bloqueada (por ejemplo, se cayó la red), usa la secuencia de escape SSH: pulsa **Enter**, luego escribe `~.` (tilde seguida de un punto). SSH termina la conexión inmediatamente. Otras secuencias de escape: `~^Z` suspende SSH al segundo plano, `~?` lista todas las secuencias de escape.
+
+### ¿Cómo ejecuto un comando en un servidor remoto mediante SSH?
+
+Añade el comando tras el hostname:
+
+```bash
+ssh user@server "comando a ejecutar"
+ssh user@server "ls -la /var/log/"
+ssh user@server "sudo systemctl status nginx"
+```
+
+Para comandos o scripts multilínea, usa un heredoc:
+
+```bash
+ssh user@server << 'EOF'
+cd /var/www/html
+git pull origin main
+systemctl reload nginx
+EOF
+```
+
+Para comandos interactivos (como los que requieren un terminal), añade el indicador `-t` para asignar un pseudo-terminal: `ssh -t user@server sudo apt upgrade`.
+
+### ¿Cuál es la diferencia entre ssh y scp?
+
+`ssh` abre una sesión de terminal (o ejecuta un único comando) en una máquina remota. `scp` (Secure Copy Protocol) copia ficheros entre tu máquina local y una máquina remota, o entre dos máquinas remotas, usando SSH para el cifrado y la autenticación. Ambos usan el mismo protocolo SSH e infraestructura de claves. Para transferencias de ficheros, `scp` es la herramienta dedicada:
+
+```bash
+# scp de local a remoto
+scp file.txt user@server:/destination/path/
+
+# scp de remoto a local
+scp user@server:/remote/file.txt ./local-copy.txt
+```
+
+Para transferencias de ficheros más avanzadas (recursivas, reanudables, exploración de directorios), usa `sftp`. Para transferencias a gran escala, `rsync -avz -e ssh` es aún más eficiente.
+
+### ¿Cómo uso SSH con un fichero de configuración?
+
+Crea `~/.ssh/config` y añade entradas de host. Cada bloque `Host` define un alias de conexión con su configuración completa:
+
+```
+Host alias-name
+    HostName actual.server.com
+    User username
+    Port 22
+    IdentityFile ~/.ssh/specific_key
+```
+
+Luego `ssh alias-name` usa todos los ajustes definidos automáticamente. El fichero de configuración admite comodines: `Host *.example.com` aplica ajustes a todos los hosts coincidentes. `Host *` al final aplica valores predeterminados a todas las conexiones. Las opciones en un bloque `Host` específico anulan los valores predeterminados globales.
+
+## ¿Necesitas claves SSH? Genéralas gratis
+
+Para usar la autenticación por clave SSH — que elimina la necesidad de contraseñas — necesitas un par de claves. Genera claves Ed25519 o RSA al instante en tu navegador, sin enviar nada a nuestros servidores.
+
+<a href="/">Genera tus claves SSH gratis →</a>
+
+---
+
+**Lectura adicional:**
+- <a href="/es/what-is-ssh">¿Qué es SSH? La guía completa sobre Secure Shell</a>
+- <a href="/es/what-is-an-ssh-key">¿Qué es una clave SSH? Claves públicas, privadas y pares de claves explicados</a>
+- <a href="/es/how-to-set-up-ssh">Cómo configurar SSH: guía completa paso a paso</a>

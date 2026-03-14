@@ -1,0 +1,202 @@
+{
+  "tr": {
+    "what-is-ssh": {
+      "title": "SSH Nedir? Shell'i Güvenli Hale Getirmek İçin Tam Kılavuz",
+      "description": "SSH (Güvenli Kabuk), güvenli uzaktan erişim ve dosya aktarımı için bir şifreleme protokolüdür. SSH'nin ne olduğunu, nasıl çalıştığını ve her geliştiricinin buna neden ihtiyaç duyduğunu öğrenin.",
+      "keywords": [
+        "ssh nedir",
+        "ssh anlamı",
+        "ssh'nin anlamı",
+        "güvenli kabuk",
+        "ssh protokolü"
+      ],
+      "publishDate": "2026-03-14"
+    },
+    "what-is-an-ssh-key": {
+      "title": "SSH Anahtarı Nedir? Genel Anahtarlar, Özel Anahtarlar ve Anahtar Çiftlerinin Açıklaması",
+      "description": "SSH anahtarı, güvenli kimlik doğrulama için kullanılan kriptografik bir kimlik bilgisidir. SSH anahtarının ne olduğunu, genel ve özel anahtarların nasıl çalıştığını ve bunların GitHub ile nasıl kullanılacağını öğrenin.",
+      "keywords": [
+        "ssh anahtarı nedir",
+        "ssh anahtarının anlamı",
+        "ssh anahtar çifti",
+        "genel anahtar özel anahtar",
+        "github ssh anahtarı"
+      ],
+      "publishDate": "2026-03-14"
+    },
+    "ssh-command": {
+      "title": "SSH Komutu: Linux, Mac ve Windows Örnekleriyle Tam Referans",
+      "description": "Linux, macOS ve Windows örnekleriyle SSH komutuna ilişkin eksiksiz bir kılavuz. Ssh -i flag'ı, tünel açmayı, ProxyJump'ı, temel seçenekleri ve PowerShell SSH'yi kapsar.",
+      "keywords": [
+        "ssh komutu",
+        "ssh komut örneği",
+        "ssh komutu linux",
+        "ssh komut pencereleri",
+        "powershell ssh komutu"
+      ],
+      "publishDate": "2026-03-14"
+    },
+    "how-to-set-up-ssh": {
+      "title": "SSH Nasıl Kurulur: Linux, Mac ve Windows için Tam Adım Adım Kılavuz",
+      "description": "Linux, macOS ve Windows'ta SSH'yi nasıl kuracağınızı öğrenin. Adım adım kılavuz; anahtar oluşturma, ssh-copy-id, ssh-agent, GitHub SSH kurulumu ve sorun giderme konularını kapsar.",
+      "keywords": [
+        "ssh nasıl kurulur",
+        "ssh anahtarı github nasıl kurulur",
+        "ssh-kopya-kimliği",
+        "ssh aracısı",
+        "izin reddedildi genel anahtar"
+      ],
+      "publishDate": "2026-03-14"
+    }
+  },
+  "id": {
+    "what-is-ssh": {
+      "title": "Apa itu SSH? Panduan Lengkap untuk Mengamankan Shell",
+      "description": "SSH (Secure Shell) adalah protokol kriptografi untuk akses jarak jauh dan transfer file yang aman. Pelajari apa itu SSH, cara kerjanya, dan mengapa setiap pengembang membutuhkannya.",
+      "keywords": [
+        "apa itu ssh",
+        "ssh maksudnya",
+        "arti dari ssh",
+        "cangkang yang aman",
+        "protokol ssh"
+      ],
+      "publishDate": "2026-03-14"
+    },
+    "what-is-an-ssh-key": {
+      "title": "Apa Itu Kunci SSH? Penjelasan Kunci Publik, Kunci Pribadi, dan Pasangan Kunci",
+      "description": "Kunci SSH adalah kredensial kriptografi yang digunakan untuk autentikasi aman. Pelajari apa itu kunci SSH, cara kerja kunci publik dan privat, dan cara menggunakannya dengan GitHub.",
+      "keywords": [
+        "apa itu kunci ssh",
+        "ssh arti kuncinya",
+        "pasangan kunci ssh",
+        "kunci publik kunci pribadi",
+        "kunci ssh github"
+      ],
+      "publishDate": "2026-03-14"
+    },
+    "ssh-command": {
+      "title": "Perintah SSH: Referensi Lengkap dengan Contoh untuk Linux, Mac, dan Windows",
+      "description": "Panduan lengkap tentang perintah SSH dengan contoh untuk Linux, macOS, dan Windows. Meliputi ssh -i flag, tunneling, ProxyJump, opsi penting, dan PowerShell SSH.",
+      "keywords": [
+        "perintah ssh",
+        "contoh perintah ssh",
+        "perintah ssh linux",
+        "ssh jendela perintah",
+        "perintah PowerShell ssh"
+      ],
+      "publishDate": "2026-03-14"
+    },
+    "how-to-set-up-ssh": {
+      "title": "Cara Mengatur SSH: Panduan Langkah-demi-Langkah Lengkap untuk Linux, Mac, dan Windows",
+      "description": "Pelajari cara mengatur SSH di Linux, macOS, dan Windows. Panduan langkah demi langkah mencakup pembuatan kunci, ssh-copy-id, ssh-agent, penyiapan GitHub SSH, dan pemecahan masalah.",
+      "keywords": [
+        "cara mengatur ssh",
+        "cara mengatur kunci ssh github",
+        "ssh-salin-id",
+        "ssh-agent",
+        "izin ditolak kunci publik"
+      ],
+      "publishDate": "2026-03-14"
+    }
+  },
+  "vi": {
+    "what-is-ssh": {
+      "title": "SSH là gì? Hướng dẫn đầy đủ về Secure Shell",
+      "description": "SSH (Secure Shell) là một giao thức mã hóa để truy cập và truyền tệp từ xa một cách an toàn. Tìm hiểu SSH là gì, cách thức hoạt động và lý do mọi nhà phát triển đều cần nó.",
+      "keywords": [
+        "ssh là gì",
+        "ý nghĩa của ssh",
+        "ý nghĩa của ssh",
+        "vỏ an toàn",
+        "giao thức ssh"
+      ],
+      "publishDate": "2026-03-14"
+    },
+    "what-is-an-ssh-key": {
+      "title": "Khóa SSH là gì? Giải thích về khóa công khai, khóa riêng và cặp khóa",
+      "description": "Khóa SSH là thông tin xác thực mật mã được sử dụng để xác thực an toàn. Tìm hiểu khóa SSH là gì, cách khóa chung và khóa riêng tư hoạt động cũng như cách sử dụng chúng với GitHub.",
+      "keywords": [
+        "khóa ssh là gì",
+        "ý nghĩa khóa ssh",
+        "cặp khóa ssh",
+        "khóa công khai khóa riêng",
+        "khóa ssh của github"
+      ],
+      "publishDate": "2026-03-14"
+    },
+    "ssh-command": {
+      "title": "Lệnh SSH: Tham khảo đầy đủ với các ví dụ cho Linux, Mac và Windows",
+      "description": "Hướng dẫn đầy đủ về lệnh SSH với các ví dụ dành cho Linux, macOS và Windows. Bao gồm cờ ssh -i, đường hầm, ProxyJump, các tùy chọn thiết yếu và PowerShell SSH.",
+      "keywords": [
+        "lệnh ssh",
+        "ví dụ lệnh ssh",
+        "lệnh ssh linux",
+        "cửa sổ lệnh ssh",
+        "lệnh ssh powershell"
+      ],
+      "publishDate": "2026-03-14"
+    },
+    "how-to-set-up-ssh": {
+      "title": "Cách thiết lập SSH: Hướng dẫn từng bước đầy đủ cho Linux, Mac và Windows",
+      "description": "Tìm hiểu cách thiết lập SSH trên Linux, macOS và Windows. Hướng dẫn từng bước bao gồm việc tạo khóa, ssh-copy-id, ssh-agent, thiết lập GitHub SSH và khắc phục sự cố.",
+      "keywords": [
+        "cách thiết lập ssh",
+        "cách thiết lập khóa ssh github",
+        "ssh-sao chép-id",
+        "đại lý ssh",
+        "quyền bị từ chối khóa công khai"
+      ],
+      "publishDate": "2026-03-14"
+    }
+  },
+  "th": {
+    "what-is-ssh": {
+      "title": "SSH คืออะไร? คู่มือฉบับสมบูรณ์เกี่ยวกับ Secure Shell",
+      "description": "SSH (Secure Shell) เป็นโปรโตคอลการเข้ารหัสสำหรับการเข้าถึงระยะไกลและการถ่ายโอนไฟล์อย่างปลอดภัย เรียนรู้ว่า SSH คืออะไร ทำงานอย่างไร และเหตุใดนักพัฒนาทุกคนจึงต้องการมัน",
+      "keywords": [
+        "สช.คืออะไร",
+        "ssh ความหมาย",
+        "ความหมายของ ssh",
+        "เปลือกที่ปลอดภัย",
+        "โปรโตคอล ssh"
+      ],
+      "publishDate": "2026-03-14"
+    },
+    "what-is-an-ssh-key": {
+      "title": "คีย์ SSH คืออะไร? อธิบายกุญแจสาธารณะ กุญแจส่วนตัว และคู่กุญแจ",
+      "description": "คีย์ SSH คือข้อมูลรับรองการเข้ารหัสที่ใช้สำหรับการตรวจสอบสิทธิ์ที่ปลอดภัย เรียนรู้ว่าคีย์ SSH คืออะไร คีย์สาธารณะและคีย์ส่วนตัวทำงานอย่างไร และวิธีใช้กับ GitHub",
+      "keywords": [
+        "คีย์ ssh คืออะไร",
+        "ความหมายของคีย์ ssh",
+        "คู่คีย์ ssh",
+        "กุญแจสาธารณะ กุญแจส่วนตัว",
+        "คีย์ GitHub SSH"
+      ],
+      "publishDate": "2026-03-14"
+    },
+    "ssh-command": {
+      "title": "คำสั่ง SSH: การอ้างอิงที่สมบูรณ์พร้อมตัวอย่างสำหรับ Linux, Mac และ Windows",
+      "description": "คำแนะนำฉบับสมบูรณ์เกี่ยวกับคำสั่ง SSH พร้อมตัวอย่างสำหรับ Linux, macOS และ Windows ครอบคลุมแฟล็ก ssh -i, การทำอุโมงค์, ProxyJump, ตัวเลือกที่จำเป็น และ PowerShell SSH",
+      "keywords": [
+        "คำสั่ง ssh",
+        "ตัวอย่างคำสั่ง ssh",
+        "ลินุกซ์คำสั่ง ssh",
+        "หน้าต่างคำสั่ง ssh",
+        "คำสั่ง PowerShell SSH"
+      ],
+      "publishDate": "2026-03-14"
+    },
+    "how-to-set-up-ssh": {
+      "title": "วิธีการตั้งค่า SSH: คำแนะนำทีละขั้นตอนฉบับสมบูรณ์สำหรับ Linux, Mac และ Windows",
+      "description": "เรียนรู้วิธีตั้งค่า SSH บน Linux, macOS และ Windows คำแนะนำทีละขั้นตอนครอบคลุมถึงการสร้างคีย์, ssh-copy-id, ssh-agent, การตั้งค่า GitHub SSH และการแก้ปัญหา",
+      "keywords": [
+        "วิธีการตั้งค่า ssh",
+        "วิธีการตั้งค่า GitHub คีย์ ssh",
+        "ssh-copy-id",
+        "ssh-ตัวแทน",
+        "การอนุญาตถูกปฏิเสธกุญแจสาธารณะ"
+      ],
+      "publishDate": "2026-03-14"
+    }
+  }
+}

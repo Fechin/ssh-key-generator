@@ -1,0 +1,563 @@
+# How to Set Up SSH: A Complete Step-by-Step Guide for Linux, Mac, and Windows
+
+Setting up SSH correctly takes about ten minutes and pays dividends for years. Once configured, you can log into servers without typing passwords, push code to GitHub without entering credentials on every operation, and automate deployments with confidence. This guide walks through the entire process — from generating a key pair to troubleshooting common errors — for Linux, macOS, and Windows.
+
+If you want to understand the underlying technology first, read our guides on <a href="/what-is-ssh">what SSH is</a> and <a href="/what-is-an-ssh-key">what SSH keys are</a>.
+
+## Prerequisites
+
+Before getting started, make sure you have:
+
+**For server access:**
+- A terminal application (Terminal on macOS/Linux, Windows Terminal or PowerShell on Windows)
+- A remote server running Linux/Unix with SSH server software (sshd) installed
+- A user account on that server (or root access to create one)
+- The server's IP address or hostname
+
+**For GitHub/GitLab access:**
+- A GitHub or GitLab account
+- A terminal with `ssh` available
+- Optionally: git installed locally
+
+**Operating system requirements:**
+- **Linux**: SSH client is pre-installed on virtually all distributions
+- **macOS**: SSH client is built in, accessible from Terminal
+- **Windows 10 version 1809+ / Windows 11**: OpenSSH client is available as an optional feature
+
+You do not need to install anything on Linux or macOS. On Windows, verify OpenSSH is installed by opening PowerShell and running `ssh -V`. If you get a version string, you are ready. If not, see Step 4 for installation instructions.
+
+## Step 1: Generate Your SSH Key Pair
+
+You need a key pair before you can do anything else. The key pair consists of a **private key** (stays on your machine) and a **public key** (goes on servers or services like GitHub).
+
+### Option A: Use the Online Generator
+
+If you prefer a graphical interface, our <a href="/">free online SSH key generator</a> creates Ed25519 or RSA key pairs in your browser. The private key is generated locally using the Web Crypto API — nothing is sent to our servers. Download both files and save them to `~/.ssh/` (Linux/macOS) or `C:\Users\YourName\.ssh\` (Windows).
+
+### Option B: Use ssh-keygen on the Command Line
+
+The `ssh-keygen` command is available on Linux, macOS, and Windows with OpenSSH:
+
+```bash
+# Generate an Ed25519 key pair (recommended)
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+**What each flag means:**
+- `-t ed25519` — key type (Ed25519 is modern, fast, and secure)
+- `-C "comment"` — a label embedded in the public key, usually your email address
+
+You will be prompted for:
+
+```
+Generating public/private ed25519 key pair.
+Enter file in which to save the key (/home/user/.ssh/id_ed25519):
+```
+
+Press **Enter** to accept the default location. If you have multiple keys, you can name them descriptively (e.g., `/home/user/.ssh/id_ed25519_github`).
+
+```
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+```
+
+Enter a strong passphrase. This encrypts the private key file on disk — if your machine is stolen, the key cannot be used without the passphrase. You can leave it empty for automation use cases where human interaction is not possible, but for personal keys, always use a passphrase.
+
+**Output:**
+
+```
+Your identification has been saved in /home/user/.ssh/id_ed25519
+Your public key has been saved in /home/user/.ssh/id_ed25519.pub
+The key fingerprint is:
+SHA256:abc123defghijk... your@email.com
+The key's randomart image is:
++--[ED25519 256]--+
+...
+```
+
+Two files are created:
+- `~/.ssh/id_ed25519` — your **private key** (never share this)
+- `~/.ssh/id_ed25519.pub` — your **public key** (safe to share)
+
+### For RSA (Legacy Compatibility)
+
+If you need to connect to very old systems that do not support Ed25519:
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "your@email.com"
+```
+
+Use 4096 bits minimum. RSA keys smaller than 4096 bits are no longer considered adequate security.
+
+## Step 2: Set Up SSH on Linux
+
+This section covers copying your public key to a Linux server so you can authenticate without a password.
+
+### Method 1: ssh-copy-id (Easiest)
+
+`ssh-copy-id` is the simplest way to install your public key on a remote server. It connects using password authentication, adds your public key to the server's `~/.ssh/authorized_keys`, and sets the correct permissions.
+
+```bash
+ssh-copy-id user@server.example.com
+
+# Specify a key file explicitly
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server.example.com
+
+# Connect on a non-standard port
+ssh-copy-id -p 2222 user@server.example.com
+```
+
+You will be prompted for the server password one last time. After this, you can connect with `ssh user@server.example.com` using your key.
+
+### Method 2: Manual Copy
+
+If `ssh-copy-id` is not available (common on some BSD systems or minimal Linux installations):
+
+```bash
+# Display your public key and copy the output
+cat ~/.ssh/id_ed25519.pub
+
+# Then SSH to the server (with password) and run:
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+echo "PASTE_YOUR_PUBLIC_KEY_HERE" >> ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+```
+
+Or do it all in one pipeline:
+
+```bash
+cat ~/.ssh/id_ed25519.pub | ssh user@server.example.com \
+  "mkdir -p ~/.ssh && chmod 700 ~/.ssh && \
+   cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+```
+
+### Verifying the Key Was Installed
+
+```bash
+ssh user@server.example.com
+# Should connect without prompting for a password (only passphrase if you set one)
+```
+
+### Configuring the SSH Server (sshd)
+
+On the remote server, the SSH daemon configuration lives in `/etc/ssh/sshd_config`. For a secure setup:
+
+```bash
+sudo nano /etc/ssh/sshd_config
+```
+
+Recommended settings:
+
+```
+# Enable public key authentication
+PubkeyAuthentication yes
+
+# Disable password authentication (after confirming keys work!)
+PasswordAuthentication no
+
+# Disable root login via SSH
+PermitRootLogin no
+
+# Only allow specific users
+AllowUsers alice bob deploy
+
+# Keep sessions alive
+ClientAliveInterval 60
+ClientAliveCountMax 3
+```
+
+After editing, reload the SSH daemon:
+
+```bash
+sudo systemctl reload sshd
+# Or on older systems:
+sudo service ssh reload
+```
+
+**Important**: Do not disable `PasswordAuthentication` until you have confirmed that key-based authentication works. If you lock yourself out, you will need console access (or your hosting provider's emergency access) to recover.
+
+### Setting Up ssh-agent on Linux
+
+If your key has a passphrase, add it to `ssh-agent` at the start of your session to avoid re-entering it:
+
+```bash
+# Start the agent (often auto-started by desktop environments)
+eval "$(ssh-agent -s)"
+
+# Add your key (enter passphrase once)
+ssh-add ~/.ssh/id_ed25519
+
+# Verify keys loaded
+ssh-add -l
+```
+
+To automatically start `ssh-agent` and add your key on login, add to `~/.bashrc` or `~/.zshrc`:
+
+```bash
+# Auto-start ssh-agent
+if [ -z "$SSH_AUTH_SOCK" ]; then
+  eval "$(ssh-agent -s)"
+  ssh-add ~/.ssh/id_ed25519
+fi
+```
+
+## Step 3: Set Up SSH on macOS
+
+macOS includes a full OpenSSH client. The process for setting up key-based authentication to a remote server is identical to Linux (see Step 2 above). The macOS-specific additions involve Keychain integration.
+
+### Keychain Integration
+
+macOS can store your passphrase in the system Keychain so you never need to enter it after the first time:
+
+```bash
+# Add key to ssh-agent with Keychain integration
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+
+# For older macOS versions (before Monterey)
+ssh-add -K ~/.ssh/id_ed25519
+```
+
+To have macOS always load your keys from Keychain, add this to `~/.ssh/config`:
+
+```
+Host *
+    AddKeysToAgent yes
+    UseKeychain yes
+    IdentityFile ~/.ssh/id_ed25519
+```
+
+After this, the passphrase is stored in Keychain and loaded automatically — you will not be prompted for it again on subsequent boots.
+
+### Verify the SSH Client Version
+
+```bash
+ssh -V
+# OpenSSH_9.x, LibreSSL x.x.x
+```
+
+macOS ships with a relatively recent OpenSSH but not always the absolute latest. If you need newer features, install via Homebrew: `brew install openssh`.
+
+## Step 4: Set Up SSH on Windows
+
+Windows 10 (1809+) and Windows 11 include OpenSSH. Here is how to get it working.
+
+### Install OpenSSH Client
+
+**Check if already installed:**
+
+```powershell
+ssh -V
+```
+
+**Install via Settings:**
+1. Open **Settings → Apps → Optional Features**
+2. Search for **OpenSSH Client**
+3. Click **Install**
+
+**Install via PowerShell (Administrator):**
+
+```powershell
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+```
+
+### Generate Keys on Windows
+
+Open PowerShell and run:
+
+```powershell
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+Keys are saved to `C:\Users\YourUsername\.ssh\`.
+
+### Copy Your Public Key to a Linux Server
+
+Windows does not include `ssh-copy-id`, but you can do it manually from PowerShell:
+
+```powershell
+# Display your public key
+Get-Content ~/.ssh/id_ed25519.pub
+
+# Copy it to the remote server (you'll be prompted for the server password)
+$pubkey = Get-Content ~/.ssh/id_ed25519.pub -Raw
+ssh user@server.example.com "mkdir -p ~/.ssh && echo '$pubkey' >> ~/.ssh/authorized_keys && chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys"
+```
+
+Or use `Add-Content` to pipe it through:
+
+```powershell
+type $env:USERPROFILE\.ssh\id_ed25519.pub | ssh user@server.example.com "cat >> ~/.ssh/authorized_keys"
+```
+
+### Setting Up ssh-agent on Windows
+
+To avoid entering your passphrase repeatedly, start the OpenSSH Authentication Agent service:
+
+```powershell
+# Start the service
+Start-Service ssh-agent
+
+# Set it to start automatically
+Set-Service -Name ssh-agent -StartupType Automatic
+
+# Add your key
+ssh-add ~/.ssh/id_ed25519
+```
+
+### PuTTY as an Alternative
+
+If you prefer a graphical SSH client, PuTTY is a free option for Windows. Use **PuTTYgen** to generate keys (save in both `.ppk` format for PuTTY and export in OpenSSH format). However, for new setups, the built-in OpenSSH client is simpler and interoperable with the rest of the ecosystem.
+
+## How to Set Up SSH Keys for GitHub and GitLab
+
+SSH key authentication to GitHub and GitLab works similarly — you upload your public key to the service and use the corresponding private key when performing Git operations.
+
+### Setting Up SSH for GitHub
+
+**1. Copy your public key:**
+
+```bash
+# Linux
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+
+# macOS
+cat ~/.ssh/id_ed25519.pub | pbcopy
+
+# Windows PowerShell
+Get-Content ~/.ssh/id_ed25519.pub | Set-Clipboard
+```
+
+Or simply display and copy manually:
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+**2. Add to GitHub:**
+
+1. Go to **github.com** and log in
+2. Click your avatar → **Settings**
+3. In the left sidebar: **SSH and GPG keys**
+4. Click **New SSH key**
+5. Give it a descriptive **Title** (e.g., "MacBook Pro" or "Work PC")
+6. Set **Key type** to **Authentication Key**
+7. Paste your public key
+8. Click **Add SSH key**
+
+**3. Test the connection:**
+
+```bash
+ssh -T git@github.com
+# Hi username! You've successfully authenticated, but GitHub does not provide shell access.
+```
+
+**4. Use SSH for Git operations:**
+
+```bash
+# Clone using SSH instead of HTTPS
+git clone git@github.com:username/repository.git
+
+# If an existing repo uses HTTPS, switch it to SSH
+git remote set-url origin git@github.com:username/repository.git
+```
+
+### Setting Up SSH for GitLab
+
+The process is identical:
+
+1. Go to **gitlab.com** → Click your avatar → **Preferences**
+2. In the left sidebar: **SSH Keys**
+3. Paste your public key, give it a title, and optionally set an expiration date
+4. Click **Add key**
+
+Test with:
+
+```bash
+ssh -T git@gitlab.com
+# Welcome to GitLab, @username!
+```
+
+For self-hosted GitLab instances, replace `gitlab.com` with your instance hostname.
+
+### Using a Separate Key for GitHub and Other Services
+
+If you want a dedicated key for GitHub (recommended for key hygiene), generate a named key:
+
+```bash
+ssh-keygen -t ed25519 -C "github" -f ~/.ssh/id_ed25519_github
+```
+
+Then add a `Host` block to `~/.ssh/config`:
+
+```
+Host github.com
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519_github
+    AddKeysToAgent yes
+```
+
+Now `git clone git@github.com:...` automatically uses the GitHub-specific key.
+
+## Testing and Troubleshooting SSH
+
+### Basic Connectivity Test
+
+```bash
+ssh -v user@server.example.com
+```
+
+The `-v` (verbose) flag shows exactly what is happening at each step. Look for lines like:
+- `Offering public key: ~/.ssh/id_ed25519` — SSH is trying your key
+- `Server accepts key` — the key is in `authorized_keys`
+- `Authenticated to server.example.com` — success
+
+### Common Errors and Fixes
+
+**"Permission denied (publickey)"**
+
+This is the most common error. Causes and fixes:
+
+```bash
+# Check that your key is loaded in ssh-agent
+ssh-add -l
+
+# If no keys listed, add your key
+ssh-add ~/.ssh/id_ed25519
+
+# On the remote server, check authorized_keys
+cat ~/.ssh/authorized_keys
+# Make sure your public key is there
+
+# Check permissions on the remote server
+ls -la ~/.ssh/
+# ~/.ssh must be 700
+# authorized_keys must be 600
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/authorized_keys
+
+# Check that the server allows public key auth
+sudo grep PubkeyAuthentication /etc/ssh/sshd_config
+# Must be: PubkeyAuthentication yes
+```
+
+**"WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED"**
+
+The server's host key changed, which SSH treats as a potential security issue. If you know this is legitimate (server was rebuilt, IP was reassigned), remove the old entry:
+
+```bash
+# Remove the specific host entry
+ssh-keygen -R server.example.com
+
+# Or edit known_hosts manually and delete the affected line
+nano ~/.ssh/known_hosts
+```
+
+**"Bad permissions" or "Permissions too open"**
+
+SSH is strict about key file permissions:
+
+```bash
+# Fix private key permissions
+chmod 600 ~/.ssh/id_ed25519
+
+# Fix public key permissions
+chmod 644 ~/.ssh/id_ed25519.pub
+
+# Fix .ssh directory permissions
+chmod 700 ~/.ssh
+```
+
+On Windows, private key permissions are managed differently. Right-click the key file → Properties → Security → Advanced → Disable inheritance → Remove all except your user account, granting Full control only to yourself.
+
+### Setting Up and Using ssh-agent
+
+If you are repeatedly prompted for your passphrase, `ssh-agent` is not running or your key is not added:
+
+```bash
+# Start the agent
+eval "$(ssh-agent -s)"
+# Agent pid 12345
+
+# Add your key
+ssh-add ~/.ssh/id_ed25519
+# Enter passphrase for /home/user/.ssh/id_ed25519:
+# Identity added: /home/user/.ssh/id_ed25519
+
+# Verify
+ssh-add -l
+# 256 SHA256:abc123... your@email.com (ED25519)
+```
+
+### Pre-populating known_hosts in Automation
+
+In CI/CD pipelines, use `ssh-keyscan` to add the remote host fingerprint before connecting:
+
+```bash
+ssh-keyscan -H server.example.com >> ~/.ssh/known_hosts
+ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+```
+
+This prevents interactive fingerprint prompts in automated scripts.
+
+## Frequently Asked Questions
+
+### How do I fix "Permission denied (publickey)"?
+
+Work through this checklist: (1) Verify your key is in the SSH agent: `ssh-add -l`. If not, run `ssh-add ~/.ssh/id_ed25519`. (2) Check that your public key is in the server's `~/.ssh/authorized_keys` file. (3) Verify permissions: `~/.ssh` must be `700`, `authorized_keys` must be `600`. (4) Check that the server has `PubkeyAuthentication yes` in `/etc/ssh/sshd_config`. (5) Use `ssh -vvv user@server` to see exactly where authentication fails. The verbose output will tell you which keys are being tried and whether the server accepted them.
+
+### How do I add my SSH key to ssh-agent?
+
+Run `ssh-add ~/.ssh/id_ed25519` (replace with your key file name). If the agent is not running, start it first with `eval "$(ssh-agent -s)"`. On macOS, use `ssh-add --apple-use-keychain ~/.ssh/id_ed25519` to store the passphrase in Keychain. On Windows, enable the `ssh-agent` service with `Start-Service ssh-agent` and then run `ssh-add`. You only need to run `ssh-add` once per session (or once ever, with Keychain on macOS).
+
+### Can I have multiple SSH keys?
+
+Yes, and it is good practice. Generate separate keys for different purposes — for example, one for personal GitHub, one for work GitLab, one for production servers. Use `~/.ssh/config` to map each host to its specific key with `IdentityFile`. Having separate keys means revoking one (by removing it from a service or server) does not affect others, limiting the blast radius of a key compromise.
+
+### How do I change the passphrase on an SSH key?
+
+Use `ssh-keygen -p`:
+
+```bash
+ssh-keygen -p -f ~/.ssh/id_ed25519
+```
+
+You will be prompted for the current passphrase, then asked to enter and confirm the new one. The key itself (and therefore the public key) does not change — you do not need to update it anywhere. This is useful if you suspect your passphrase has been compromised or want to rotate it as a routine security practice.
+
+### How do I remove an old SSH key from a server?
+
+Open `~/.ssh/authorized_keys` on the server and delete the line containing the old public key:
+
+```bash
+# Edit authorized_keys on the remote server
+ssh user@server.example.com
+nano ~/.ssh/authorized_keys
+# Delete the line for the key you want to remove
+# Save and exit
+```
+
+Each line in `authorized_keys` is one public key. The key's comment (the last field, usually `user@hostname` or an email) helps identify which key is which. If you do not know which line to delete, compare the fingerprint:
+
+```bash
+# On your local machine, get the fingerprint
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+
+# On the server, check fingerprints of all authorized keys
+ssh-keygen -lf ~/.ssh/authorized_keys
+```
+
+Match the fingerprints to identify and delete the right key.
+
+## Generate Your SSH Keys for Free
+
+If you have not yet generated your SSH key pair, our free online generator creates Ed25519 or RSA keys directly in your browser in seconds. No installation required, nothing sent to our servers — generation happens entirely on your device.
+
+<a href="/">Generate your SSH keys for free →</a>
+
+---
+
+**Further reading:**
+- <a href="/what-is-ssh">What Is SSH? The Complete Guide to Secure Shell</a>
+- <a href="/what-is-an-ssh-key">What Is an SSH Key? Public Keys, Private Keys, and Key Pairs Explained</a>
+- <a href="/ssh-command">The SSH Command: Complete Reference with Examples</a>

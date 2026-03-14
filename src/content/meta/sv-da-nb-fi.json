@@ -1,0 +1,202 @@
+{
+  "sv": {
+    "what-is-ssh": {
+      "title": "Vad är SSH? Den kompletta guiden till Secure Shell",
+      "description": "SSH (Secure Shell) är ett kryptografiskt protokoll för säker fjärråtkomst och filöverföring. Lär dig vad SSH är, hur det fungerar och varför varje utvecklare behöver det.",
+      "keywords": [
+        "vad är ssh",
+        "ssh betydelse",
+        "betydelsen av ssh",
+        "säkert skal",
+        "ssh-protokoll"
+      ],
+      "publishDate": "2026-03-14"
+    },
+    "what-is-an-ssh-key": {
+      "title": "Vad är en SSH-nyckel? Offentliga nycklar, privata nycklar och nyckelpar förklaras",
+      "description": "En SSH-nyckel är en kryptografisk referens som används för säker autentisering. Lär dig vad en SSH-nyckel är, hur offentliga och privata nycklar fungerar och hur du använder dem med GitHub.",
+      "keywords": [
+        "vad är en ssh-nyckel",
+        "ssh nyckel betydelse",
+        "ssh nyckelpar",
+        "offentlig nyckel privat nyckel",
+        "github ssh-nyckel"
+      ],
+      "publishDate": "2026-03-14"
+    },
+    "ssh-command": {
+      "title": "SSH-kommandot: Komplett referens med exempel för Linux, Mac och Windows",
+      "description": "En komplett guide till SSH-kommandot med exempel för Linux, macOS och Windows. Täcker ssh -i-flagga, tunnling, ProxyJump, viktiga alternativ och PowerShell SSH.",
+      "keywords": [
+        "ssh kommando",
+        "Exempel på ssh-kommando",
+        "ssh kommando linux",
+        "ssh kommandofönster",
+        "powershell ssh kommando"
+      ],
+      "publishDate": "2026-03-14"
+    },
+    "how-to-set-up-ssh": {
+      "title": "Hur man ställer in SSH: En komplett steg-för-steg-guide för Linux, Mac och Windows",
+      "description": "Lär dig hur du ställer in SSH på Linux, macOS och Windows. Steg-för-steg-guide täcker nyckelgenerering, ssh-copy-id, ssh-agent, GitHub SSH-installation och felsökning.",
+      "keywords": [
+        "hur man ställer in ssh",
+        "hur man ställer in ssh key github",
+        "ssh-copy-id",
+        "ssh-agent",
+        "tillstånd nekad publickey"
+      ],
+      "publishDate": "2026-03-14"
+    }
+  },
+  "da": {
+    "what-is-ssh": {
+      "title": "Hvad er SSH? Den komplette guide til sikker skal",
+      "description": "SSH (Secure Shell) er en kryptografisk protokol til sikker fjernadgang og filoverførsel. Lær, hvad SSH er, hvordan det fungerer, og hvorfor enhver udvikler har brug for det.",
+      "keywords": [
+        "hvad er ssh",
+        "ssh betydning",
+        "betydningen af ​​ssh",
+        "sikker skal",
+        "ssh protokol"
+      ],
+      "publishDate": "2026-03-14"
+    },
+    "what-is-an-ssh-key": {
+      "title": "Hvad er en SSH-nøgle? Offentlige nøgler, private nøgler og nøglepar forklaret",
+      "description": "En SSH-nøgle er en kryptografisk legitimation, der bruges til sikker godkendelse. Lær, hvad en SSH-nøgle er, hvordan offentlige og private nøgler fungerer, og hvordan du bruger dem med GitHub.",
+      "keywords": [
+        "hvad er en ssh-nøgle",
+        "ssh nøgle betydning",
+        "ssh nøglepar",
+        "offentlig nøgle privat nøgle",
+        "github ssh nøgle"
+      ],
+      "publishDate": "2026-03-14"
+    },
+    "ssh-command": {
+      "title": "SSH-kommandoen: Fuldfør reference med eksempler til Linux, Mac og Windows",
+      "description": "En komplet guide til SSH-kommandoen med eksempler til Linux, macOS og Windows. Dækker ssh -i flag, tunneling, ProxyJump, væsentlige muligheder og PowerShell SSH.",
+      "keywords": [
+        "ssh kommando",
+        "ssh kommando eksempel",
+        "ssh kommando linux",
+        "ssh kommando vinduer",
+        "powershell ssh kommando"
+      ],
+      "publishDate": "2026-03-14"
+    },
+    "how-to-set-up-ssh": {
+      "title": "Sådan opsætter du SSH: En komplet trin-for-trin guide til Linux, Mac og Windows",
+      "description": "Lær, hvordan du opsætter SSH på Linux, macOS og Windows. Trin-for-trin guide dækker nøglegenerering, ssh-copy-id, ssh-agent, GitHub SSH-opsætning og fejlfinding.",
+      "keywords": [
+        "hvordan man opsætter ssh",
+        "hvordan man opsætter ssh key github",
+        "ssh-copy-id",
+        "ssh-agent",
+        "tilladelse nægtet offentlig nøgle"
+      ],
+      "publishDate": "2026-03-14"
+    }
+  },
+  "nb": {
+    "what-is-ssh": {
+      "title": "Hva er SSH? Den komplette guiden til Secure Shell",
+      "description": "SSH (Secure Shell) er en kryptografisk protokoll for sikker fjerntilgang og filoverføring. Lær hva SSH er, hvordan det fungerer, og hvorfor alle utviklere trenger det.",
+      "keywords": [
+        "hva er ssh",
+        "ssh betydning",
+        "betydningen av ssh",
+        "sikkert skall",
+        "ssh-protokoll"
+      ],
+      "publishDate": "2026-03-14"
+    },
+    "what-is-an-ssh-key": {
+      "title": "Hva er en SSH-nøkkel? Offentlige nøkler, private nøkler og nøkkelpar forklart",
+      "description": "En SSH-nøkkel er en kryptografisk legitimasjon som brukes for sikker autentisering. Lær hva en SSH-nøkkel er, hvordan offentlige og private nøkler fungerer, og hvordan du bruker dem med GitHub.",
+      "keywords": [
+        "hva er en ssh-nøkkel",
+        "ssh nøkkel betydning",
+        "ssh nøkkelpar",
+        "offentlig nøkkel privat nøkkel",
+        "github ssh-nøkkel"
+      ],
+      "publishDate": "2026-03-14"
+    },
+    "ssh-command": {
+      "title": "SSH-kommandoen: Komplett referanse med eksempler for Linux, Mac og Windows",
+      "description": "En komplett guide til SSH-kommandoen med eksempler for Linux, macOS og Windows. Dekker ssh -i-flagg, tunneling, ProxyJump, viktige alternativer og PowerShell SSH.",
+      "keywords": [
+        "ssh kommando",
+        "ssh kommando eksempel",
+        "ssh kommando linux",
+        "ssh kommandovinduer",
+        "powershell ssh kommando"
+      ],
+      "publishDate": "2026-03-14"
+    },
+    "how-to-set-up-ssh": {
+      "title": "Hvordan sette opp SSH: En komplett trinn-for-trinn-veiledning for Linux, Mac og Windows",
+      "description": "Lær hvordan du setter opp SSH på Linux, macOS og Windows. Trinn-for-trinn guide dekker nøkkelgenerering, ssh-copy-id, ssh-agent, GitHub SSH-oppsett og feilsøking.",
+      "keywords": [
+        "hvordan sette opp ssh",
+        "hvordan sette opp ssh key github",
+        "ssh-copy-id",
+        "ssh-agent",
+        "tillatelse nektet offentlig nøkkel"
+      ],
+      "publishDate": "2026-03-14"
+    }
+  },
+  "fi": {
+    "what-is-ssh": {
+      "title": "Mikä on SSH? Secure Shellin täydellinen opas",
+      "description": "SSH (Secure Shell) on salausprotokolla suojattua etäkäyttöä ja tiedostojen siirtoa varten. Opi mitä SSH on, miten se toimii ja miksi jokainen kehittäjä tarvitsee sitä.",
+      "keywords": [
+        "mikä on ssh",
+        "ssh merkitys",
+        "ssh:n merkitys",
+        "turvallinen kuori",
+        "ssh-protokolla"
+      ],
+      "publishDate": "2026-03-14"
+    },
+    "what-is-an-ssh-key": {
+      "title": "Mikä on SSH-avain? Julkiset avaimet, yksityiset avaimet ja avainparit selitetty",
+      "description": "SSH-avain on salaustieto, jota käytetään suojattuun todentamiseen. Opi mitä SSH-avain on, miten julkiset ja yksityiset avaimet toimivat ja miten niitä käytetään GitHubin kanssa.",
+      "keywords": [
+        "mikä on ssh-avain",
+        "ssh-avaimen merkitys",
+        "ssh-avainpari",
+        "julkisen avaimen yksityinen avain",
+        "github ssh -avain"
+      ],
+      "publishDate": "2026-03-14"
+    },
+    "ssh-command": {
+      "title": "SSH-komento: Täydellinen viite ja esimerkkejä Linuxille, Macille ja Windowsille",
+      "description": "Täydellinen SSH-komennon opas esimerkkeineen Linuxille, macOS:lle ja Windowsille. Kattaa ssh -i -lipun, tunneloinnin, ProxyJumpin, olennaiset asetukset ja PowerShell SSH:n.",
+      "keywords": [
+        "ssh-komento",
+        "ssh-komennon esimerkki",
+        "ssh komento linux",
+        "ssh-komentoikkunat",
+        "powershell ssh -komento"
+      ],
+      "publishDate": "2026-03-14"
+    },
+    "how-to-set-up-ssh": {
+      "title": "SSH:n määrittäminen: Täydellinen vaiheittainen opas Linuxille, Macille ja Windowsille",
+      "description": "Opi ottamaan SSH käyttöön Linuxissa, macOS:ssä ja Windowsissa. Vaiheittainen opas kattaa avainten luomisen, ssh-copy-id:n, ssh-agentin, GitHub SSH:n asennuksen ja vianmäärityksen.",
+      "keywords": [
+        "miten ssh määritetään",
+        "kuinka määrittää ssh-avain github",
+        "ssh-copy-id",
+        "ssh-agentti",
+        "lupa estetty julkinen avain"
+      ],
+      "publishDate": "2026-03-14"
+    }
+  }
+}

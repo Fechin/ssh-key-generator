@@ -1,0 +1,337 @@
+# Wat Is een SSH-sleutel? Openbare Sleutels, Privésleutels en Sleutelparen Uitgelegd
+
+Een **SSH-sleutel** is een cryptografische referentie die wordt gebruikt om te authenticeren bij SSH-servers zonder wachtwoord. SSH-sleutels komen in paren — een **openbare sleutel** en een **privésleutel** — en samen maken ze externe toegang veiliger en handiger dan traditionele wachtwoordauthenticatie. Deze gids legt uit wat een SSH-sleutel is, hoe het sleutelpaar-systeem werkt, welk sleuteltype je moet kiezen en hoe je SSH-sleutels gebruikt met diensten als GitHub en GitLab.
+
+## Hoe Werken SSH-sleutels
+
+SSH-sleutels zijn gebaseerd op **asymmetrische cryptografie**, ook wel cryptografie met openbare sleutels genoemd. In tegenstelling tot symmetrische cryptografie (waarbij één geheime sleutel zowel versleutelt als ontsleutelt), gebruiken asymmetrische systemen wiskundig gekoppelde sleutelparen waarbij gegevens die met de ene sleutel zijn versleuteld, alleen met de andere kunnen worden ontsleuteld.
+
+Dit is de authenticatiestroom wanneer je een SSH-sleutel gebruikt om in te loggen op een server:
+
+1. Je voert `ssh user@server.example.com` uit.
+2. De server zoekt je openbare sleutel op in `~/.ssh/authorized_keys`.
+3. De server genereert een willekeurige uitdaging en versleutelt deze met je openbare sleutel.
+4. Je SSH-client ontsleutelt de uitdaging met je privésleutel.
+5. De client stuurt een cryptografisch bewijs (afgeleid van de ontsleutelde uitdaging en de sessie-ID) terug naar de server.
+6. De server verifieert het bewijs. Alleen de houder van de privésleutel kon dit hebben geproduceerd.
+7. Authenticatie slaagt. Er verlaat nooit een wachtwoord je machine.
+
+Dit is het kernpunt: **je privésleutel reist nooit over het netwerk**. De server ziet alleen je openbare sleutel en de cryptografische bewijzen die je produceert. Zelfs als iemand elk pakket in je SSH-sessie onderschept, krijgt hij niets dat hem helpt jou na te bootsen.
+
+Voor achtergrondinformatie over het bredere SSH-protocol, zie onze gids over <a href="/nl/what-is-ssh">wat SSH is</a>.
+
+## Openbare Sleutel vs. Privésleutel: Wat Is het Verschil?
+
+Inzicht in het onderscheid tussen de twee sleutels is essentieel voor correct gebruik van SSH.
+
+### De Openbare Sleutel — Je Slot
+
+De **openbare sleutel** is ontworpen om vrij te delen. Zie het als een hangslot: je deelt kopieën met iedereen wiens systemen je wilt benaderen. Wanneer een server je openbare sleutel heeft in zijn bestand `authorized_keys`, kan het je identiteit verifiëren zonder je privésleutel te kennen.
+
+Openbare sleutels:
+- Zijn veilig te delen — ze kunnen niet worden gebruikt om jou na te bootsen
+- Worden geplaatst op servers in `~/.ssh/authorized_keys`
+- Worden geüpload naar GitHub, GitLab en andere diensten
+- Hebben doorgaans een `.pub`-extensie (bijv. `id_ed25519.pub`)
+- Zien er zo uit: `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAA... user@hostname`
+
+### De Privésleutel — Je Sleutel
+
+De **privésleutel** is de geheime helft van het paar. Het mag nooit je machine verlaten en mag nooit met iemand worden gedeeld — niet met beheerders, niet met cloudproviders, niet met ondersteuningsmedewerkers. Als je privésleutel wordt gecompromitteerd, kan iedereen die deze verkrijgt, jou nabootsen op elke server waar je openbare sleutel is geïnstalleerd.
+
+Privésleutels:
+- Moeten geheim en veilig worden bewaard
+- Worden lokaal opgeslagen in `~/.ssh/` met beperkte rechten (600)
+- Kunnen optioneel worden versleuteld met een wachtwoordzin
+- Hebben geen extensie of een taalspecifieke extensie (bijv. `id_ed25519`)
+
+### Het Bestand `authorized_keys`
+
+Aan de serverkant worden de openbare sleutels van elke gebruiker opgeslagen in `~/.ssh/authorized_keys`. Dit is een gewoon tekstbestand waarbij elke regel één openbare sleutel bevat. Wanneer een SSH-client probeert te authenticeren, controleert de server of de client bezit van de privésleutel kan bewijzen die overeenkomt met een vermelding in dit bestand.
+
+```
+# Formaat ~/.ssh/authorized_keys
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGq... alice@laptop
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHr... alice@workstation
+ssh-rsa AAAAB3NzaC1yc2EAAAA... backup-deploy-key
+```
+
+Je kunt zoveel openbare sleutels als nodig in dit bestand hebben, zodat meerdere apparaten of automatiseringssystemen op dezelfde server kunnen authenticeren.
+
+## SSH-sleutelalgoritmen: Ed25519 vs RSA
+
+Wanneer je een SSH-sleutelpaar genereert, kies je een algoritme. De twee meest voorkomende opties tegenwoordig zijn **Ed25519** en **RSA**. Er zijn ook ECDSA en DSA, maar DSA is verouderd en ECDSA heeft implementatieproblemen, dus we richten ons op de twee aanbevolen opties.
+
+### Ed25519 — De Moderne Keuze
+
+Ed25519 werd geïntroduceerd in OpenSSH versie 6.5 (2014) en is nu de aanbevolen standaard. Het maakt gebruik van elliptische-curvecryptografie op de Twisted Edwards-curve (Curve25519), ontworpen door Daniel J. Bernstein.
+
+**Voordelen van Ed25519:**
+- **Compact** — sleutels zijn slechts 68 tekens (openbare sleutel) en bestanden zijn klein
+- **Snel** — het genereren en verifiëren van handtekeningen is extreem snel
+- **Veilig by design** — niet kwetsbaar voor side-channel-aanvallen die sommige RSA-implementaties treffen
+- **Vaste sleutelgrootte** — 256-bits beveiligingsniveau, geen keuze van sleutelgrootte nodig
+- **Deterministisch** — handtekeningen zijn deterministisch, waardoor een klasse van willekeurig-getallengenerator-fouten wordt geëlimineerd
+
+```bash
+# Genereer een Ed25519-sleutelpaar
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+### RSA — De Universele Optie
+
+RSA is het oudere algoritme (uitgevonden in 1977) en hoewel het nog steeds veilig is bij 4096 bits, is het langzamer en produceert het grotere sleutels dan Ed25519. RSA heeft echter veel bredere compatibiliteit — het werkt met zeer oude SSH-servers, legacy-systemen en sommige hardware-beveiligingssleutels.
+
+**Wanneer RSA te gebruiken:**
+- Je moet verbinding maken met legacy-systemen met oude versies van OpenSSH (voor 6.5)
+- Je gebruikt een smartcard of HSM die Ed25519 niet ondersteunt
+- Compatibiliteit met oudere tools is vereist
+
+```bash
+# Genereer een RSA 4096-bits sleutelpaar
+ssh-keygen -t rsa -b 4096 -C "your@email.com"
+```
+
+**Gebruik nooit RSA met minder dan 4096 bits.** RSA-1024 en RSA-2048 worden steeds meer als onvoldoende beschouwd naarmate de rekenkracht groeit. Ed25519 met 256 bits biedt equivalente of betere beveiliging met een fractie van de sleutelgrootte.
+
+### Vergelijkingsoverzicht
+
+| Kenmerk | Ed25519 | RSA 4096 |
+|---|---|---|
+| Sleutelgrootte (openbaar) | ~68 tekens | ~725 tekens |
+| Beveiligingsniveau | 128-bits (post-kwantum-resistente structuur) | ~140-bits klassiek |
+| Snelheid | Zeer snel | Langzamer |
+| Compatibiliteit | Moderne SSH (OpenSSH 6.5+) | Universeel |
+| Aanbevolen voor | Alle nieuwe sleutels | Alleen legacy-systemen |
+
+**Conclusie: genereer Ed25519-sleutels voor elk modern gebruik.** Gebruik RSA alleen wanneer compatibiliteitsvereisten dit afdwingen.
+
+## Een SSH-sleutel Toevoegen aan GitHub
+
+Het toevoegen van je openbare SSH-sleutel aan GitHub stelt je in staat te pushen en pullen via SSH zonder bij elke bewerking je gebruikersnaam en wachtwoord in te voeren. Dit is het stapsgewijze proces.
+
+### Stap 1: Genereer Je Sleutelpaar
+
+Als je nog geen SSH-sleutelpaar hebt, genereer er dan een. Je kunt onze <a href="/">gratis online SSH-sleutelgenerator</a> gebruiken of uitvoeren:
+
+```bash
+ssh-keygen -t ed25519 -C "your-github-email@example.com"
+```
+
+Accepteer de standaard bestandslocatie (`~/.ssh/id_ed25519`) en stel optioneel een wachtwoordzin in.
+
+### Stap 2: Kopieer Je Openbare Sleutel
+
+Toon je openbare sleutel en kopieer deze naar je klembord:
+
+```bash
+# Linux
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+
+# macOS
+cat ~/.ssh/id_ed25519.pub | pbcopy
+
+# Windows (PowerShell)
+Get-Content ~/.ssh/id_ed25519.pub | Set-Clipboard
+```
+
+Of toon hem en kopieer handmatig:
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+### Stap 3: Voeg de Sleutel Toe aan GitHub
+
+1. Log in op **GitHub.com**
+2. Klik op je profielfoto → **Instellingen**
+3. Klik in de linker zijbalk op **SSH en GPG-sleutels**
+4. Klik op **Nieuwe SSH-sleutel**
+5. Geef het een beschrijvende titel (bijv. "MacBook Pro 2024" of "Werklaptop")
+6. Plak je openbare sleutel in het veld **Sleutel**
+7. Klik op **SSH-sleutel toevoegen**
+
+### Stap 4: Test de Verbinding
+
+```bash
+ssh -T git@github.com
+```
+
+Je zou moeten zien: `Hi username! You've successfully authenticated, but GitHub does not provide shell access.`
+
+### Een Bestaande Repository Overschakelen naar SSH
+
+Als je een repository hebt geklond via HTTPS en wilt overschakelen naar SSH:
+
+```bash
+# Controleer de huidige externe URL
+git remote -v
+
+# Bijwerken naar SSH
+git remote set-url origin git@github.com:username/repository.git
+```
+
+Voor GitLab is het proces identiek — ga naar **Voorkeuren → SSH-sleutels** en volg dezelfde stappen.
+
+## Waar Worden SSH-sleutels Opgeslagen?
+
+SSH-sleutels worden opgeslagen in een map genaamd `.ssh` in de thuismap van je gebruiker. De locatie verschilt per besturingssysteem.
+
+### Linux en macOS
+
+```
+~/.ssh/
+├── id_ed25519          # Je privésleutel (rechten: 600)
+├── id_ed25519.pub      # Je openbare sleutel (rechten: 644)
+├── id_rsa              # Een RSA-privésleutel (als je die hebt)
+├── id_rsa.pub          # De RSA-openbare sleutel
+├── authorized_keys     # Openbare sleutels die mogen inloggen op deze machine
+├── known_hosts         # Vingerafdrukken van servers waarmee je verbinding hebt gemaakt
+└── config              # Clientconfiguratiebestand
+```
+
+De map `~/.ssh/` zelf moet **700**-rechten hebben (alleen lezen/schrijven/uitvoeren voor eigenaar). Privésleutelbestanden moeten **600**-rechten hebben (alleen lezen/schrijven voor eigenaar). SSH weigert sleutels te gebruiken met te ruime rechten.
+
+```bash
+# Herstel rechten indien nodig
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/id_ed25519
+chmod 644 ~/.ssh/id_ed25519.pub
+```
+
+### Windows
+
+Op Windows 10 en 11 met OpenSSH geïnstalleerd, worden SSH-sleutels opgeslagen in:
+
+```
+C:\Users\JouwGebruikersnaam\.ssh\
+├── id_ed25519
+├── id_ed25519.pub
+├── authorized_keys
+├── known_hosts
+└── config
+```
+
+Op Windows kun je de map `.ssh` openen vanuit Verkenner (mogelijk moet je "Verborgen bestanden weergeven" inschakelen) of vanuit PowerShell met `~\.ssh\`.
+
+### Meerdere Sleutelbestanden
+
+Als je sleutels hebt voor verschillende doeleinden (persoonlijk GitHub, werk GitLab, productieservers), gebruik dan het bestand `~/.ssh/config` om elke host aan zijn sleutel te koppelen:
+
+```
+Host github.com
+    IdentityFile ~/.ssh/id_ed25519_github
+
+Host gitlab.work.com
+    IdentityFile ~/.ssh/id_ed25519_work
+
+Host prod-server
+    HostName 203.0.113.10
+    User deploy
+    IdentityFile ~/.ssh/id_ed25519_production
+```
+
+## SSH-sleutelwachtwoordzinnen
+
+Wanneer je een SSH-sleutelpaar genereert, vraagt `ssh-keygen` of je een **wachtwoordzin** wilt instellen. Dit is een optioneel wachtwoord dat het privésleutelbestand op schijf versleutelt.
+
+### Waarom een Wachtwoordzin Gebruiken?
+
+Als je privésleutelbestand is beveiligd met een sterke wachtwoordzin, is het stelen van het bestand niet voldoende om jou na te bootsen — de aanvaller moet ook de wachtwoordzin kraken. Dit biedt een kritieke tweede beveiligingslaag, met name op laptops die fysiek gestolen kunnen worden.
+
+Zonder wachtwoordzin wordt je privésleutel als platte tekst op schijf opgeslagen. Iedereen die het bestand kan lezen (via malware, fysieke toegang of een back-up die niet goed is beveiligd) kan het onmiddellijk gebruiken.
+
+### Hoe Wachtwoordzinnen Interageren met ssh-agent
+
+Het nadeel van een wachtwoordzin is dat je deze elke keer moet intypen wanneer je de sleutel gebruikt. **ssh-agent** lost dit op door ontsleutelde sleutels in het geheugen te bewaren voor de duur van je sessie.
+
+```bash
+# Start ssh-agent en voeg je sleutel toe
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+# Voer de wachtwoordzin eenmaal in — deze wordt nu gecached voor de sessie
+```
+
+Op macOS integreert de systeemsleutelhanger met ssh-agent. Voeg `-K` toe om te bewaren na opnieuw opstarten:
+
+```bash
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+```
+
+### Een Wachtwoordzin Wijzigen
+
+Je kunt de wachtwoordzin op een bestaande sleutel wijzigen zonder het sleutelpaar opnieuw te genereren:
+
+```bash
+ssh-keygen -p -f ~/.ssh/id_ed25519
+```
+
+Dit vraagt om de oude wachtwoordzin en laat je vervolgens een nieuwe instellen. De openbare sleutel verandert niet, dus je hoeft deze op geen enkele server bij te werken.
+
+## SSH-sleutelvingerafdrukken
+
+Elk SSH-sleutelpaar heeft een **vingerafdruk** — een korte hash van de openbare sleutel die het uniek identificeert. Vingerafdrukken dienen meerdere doelen:
+
+- **Hostidentiteit verifiëren** — Wanneer je voor het eerst verbinding maakt met een server, toont SSH je de vingerafdruk van de hostsleutel. Als je bevestigt dat deze overeenkomt met wat je verwacht (bijv. opgegeven door je hostingprovider), weet je dat je verbinding maakt met de juiste server.
+- **Sleutels identificeren** — Bij het beheren van veel sleutels helpen vingerafdrukken te identificeren welke fysieke sleutel overeenkomt met welke vermelding in `authorized_keys` of op een dienst als GitHub.
+- **Audit en intrekking** — Auditlogboeken registreren vaak vingerafdrukken in plaats van volledige sleutels. De vingerafdruk van een sleutel kennen helpt je deze te vinden en te verwijderen indien nodig.
+
+### De Vingerafdruk van een Sleutel Bekijken
+
+```bash
+# Bekijk de vingerafdruk van je openbare sleutel
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+# Uitvoer: 256 SHA256:abcdef1234567890... your@email.com (ED25519)
+
+# Bekijk de vingerafdruk van de hostsleutel van een server
+ssh-keyscan server.example.com | ssh-keygen -lf -
+```
+
+GitHub toont de vingerafdrukken van alle toegevoegde SSH-sleutels in **Instellingen → SSH en GPG-sleutels**, zodat je kunt verifiëren dat de sleutel die je daar ziet overeenkomt met die op je machine.
+
+### Het Bestand `known_hosts`
+
+De eerste keer dat je verbinding maakt met een nieuwe SSH-server, zie je een bericht als:
+
+```
+The authenticity of host 'example.com (203.0.113.10)' can't be established.
+ED25519 key fingerprint is SHA256:abcdef1234567890...
+Are you sure you want to continue connecting (yes/no/[fingerprint])?
+```
+
+Typ `yes` en de vingerafdruk van de server wordt toegevoegd aan `~/.ssh/known_hosts`. Bij volgende verbindingen verifieert SSH stilzwijgend dat de sleutel van de server overeenkomt met de opgeslagen vingerafdruk. Als het niet overeenkomt — wat kan wijzen op een verkeerde configuratie of een man-in-the-middle-aanval — waarschuwt SSH je luidruchtig en weigert het verbinding te maken.
+
+## Veelgestelde Vragen
+
+### Waarvoor wordt een SSH-sleutel gebruikt?
+
+SSH-sleutels authenticeren je bij externe servers zonder wachtwoord. De meest voorkomende toepassingen zijn: inloggen op Linux/Unix-servers voor beheer, authenticeren bij Git-hostingdiensten (GitHub, GitLab, Bitbucket) voor push/pull-toegang, geautomatiseerde implementatiescripts die wachtwoordloze servertoegang nodig hebben, en CI/CD-pijplijnen die code implementeren in productie. SSH-sleutels hebben de voorkeur boven wachtwoorden omdat ze immuun zijn voor brute force, niet herbruikbaar zijn bij inbreuken en zonder menselijke tussenkomst kunnen worden gebruikt.
+
+### Hoeveel SSH-sleutels moet ik hebben?
+
+Er is geen eenduidig antwoord, maar een veelvoorkomende beste praktijk is **één sleutel per apparaat** (niet per dienst). Je laptop heeft één sleutelpaar; je desktop heeft een andere; je CI-server heeft een andere. Op deze manier trek je bij diefstal of compromittering van een apparaat alleen de sleutel van dat apparaat in. Sommige mensen splitsen verder op naar context (persoonlijk vs. werk), wat resulteert in twee sleutels per apparaat. Vermijd het delen van één sleutel op meerdere machines — als die sleutel wordt gecompromitteerd, is al je toegang tegelijk in gevaar.
+
+### Kan ik mijn openbare SSH-sleutel delen?
+
+Ja. De openbare sleutel is ontworpen om te delen. Het is veilig om hem te e-mailen, in GitHub-documentatie te plaatsen of op te nemen in een ticket om servertoegang te vragen. De openbare sleutel alleen kan niet worden gebruikt om jou te authenticeren — dat vereist de bijbehorende privésleutel, die alleen jij hebt. Dit is de fundamentele eigenschap van asymmetrische cryptografie. Deel nooit je **privé**sleutel met iemand.
+
+### Wat gebeurt er als ik mijn SSH-privésleutel verlies?
+
+Als je je privésleutel verliest en geen back-up hebt, verlies je de mogelijkheid om ermee te authenticeren. Je openbare sleutel, nog steeds geïnstalleerd op servers en diensten, wordt een wees. Je hebt een alternatieve manier nodig om toegang te krijgen tot de server (wachtwoordauthenticatie indien ingeschakeld, consoletoegang, het noodtoegangsmechanisme van je hostingprovider) om de oude openbare sleutel uit `authorized_keys` te verwijderen en een nieuwe toe te voegen. Daarom is het belangrijk een back-up van je privésleutel te maken (in een wachtwoordbeheerder of versleutelde back-up). De privésleutel kan niet worden gereconstrueerd uit de openbare sleutel.
+
+### Is Ed25519 of RSA beter?
+
+**Ed25519 is beter voor alle nieuwe sleutels.** Het is sneller, produceert kleinere sleutels, is niet kwetsbaar voor bepaalde implementatiezwakheden die RSA treffen, en biedt equivalente of superieure beveiliging met een 256-bits sleutel vergeleken met RSA-4096. De enige reden om tegenwoordig RSA te gebruiken is compatibiliteit met zeer oude SSH-serversoftware (OpenSSH voor versie 6.5, uitgebracht in 2014) of legacy hardware-beveiligingsmodules. Als je toegang hebt tot een moderne server of dienst zoals GitHub, gebruik dan Ed25519.
+
+## Genereer Je SSH-sleutelpaar
+
+Klaar om je SSH-sleutels te maken? Onze gratis online generator maakt Ed25519- of RSA-sleutelparen direct in je browser. De privésleutel wordt lokaal gegenereerd en nooit naar onze servers gestuurd.
+
+<a href="/">Genereer nu je SSH-sleutelpaar →</a>
+
+---
+
+**Verder lezen:**
+- <a href="/nl/what-is-ssh">Wat Is SSH? De Volledige Gids voor Secure Shell</a>
+- <a href="/nl/ssh-command">Het SSH-commando: Volledige Referentie met Voorbeelden</a>
+- <a href="/nl/how-to-set-up-ssh">SSH Instellen: Een Volledige Stapsgewijze Handleiding</a>

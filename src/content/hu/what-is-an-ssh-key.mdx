@@ -1,0 +1,337 @@
+# Mi az SSH-kulcs? Nyilvános kulcsok, privát kulcsok és kulcspárok magyarázata
+
+Az **SSH-kulcs** egy titkosítási hitelesítő adat, amellyel jelszó nélkül hitelesíthetők az SSH-kiszolgálók. Az SSH-kulcsok párban állnak rendelkezésre – egy **nyilvános kulcs** és egy **privát kulcs** –, és együtt biztonságosabbá és kényelmesebbé teszik a távoli hozzáférést, mint a hagyományos jelszavas hitelesítés. Ez az útmutató elmagyarázza, mi az SSH-kulcs, hogyan működik a kulcspár-rendszer, milyen kulcstípusokat válasszunk, és hogyan használhatjuk az SSH-kulcsokat olyan szolgáltatásokkal, mint a GitHub és a GitLab.
+
+## Hogyan működnek az SSH-kulcsok
+
+Az SSH-kulcsok **aszimmetrikus titkosításon** alapulnak, amelyet nyilvános kulcsú titkosításnak is neveznek. A szimmetrikus kriptográfiától eltérően (ahol egyetlen titkos kulcs egyaránt titkosítja és visszafejti az adatokat), az aszimmetrikus rendszerek matematikailag összekapcsolt kulcspárokat használnak, ahol az egyik kulccsal titkosított adatok csak a másik kulccsal dekódolhatók.
+
+Íme a hitelesítési folyamat, amikor SSH-kulcsot használ a szerverre való bejelentkezéshez:
+
+1. A `ssh user@server.example.com`-t futtatod.
+2. A szerver megkeresi az Ön nyilvános kulcsát `~/.ssh/authorized_keys`.
+3. A szerver véletlenszerű kihívást generál, és titkosítja azt a nyilvános kulccsal.
+4. Az SSH-ügyfél visszafejti a kihívást a privát kulcsával.
+5. A kliens kriptográfiai bizonyítékot küld vissza a szervernek (a dekódolt kihívásból és a munkamenet azonosítójából származik).
+6. A szerver ellenőrzi a bizonyítást. Csak a magánkulcs tulajdonosa tudta volna előállítani.
+7. A hitelesítés sikeres. Egyetlen jelszó sem hagyja el a gépet.
+
+Ez a legfontosabb betekintés: **a privát kulcsa soha nem jut el a hálózaton**. A szerver mindig csak a nyilvános kulcsot és az általad készített kriptográfiai bizonyítékokat látja. Még ha valaki elfog is minden csomagot az SSH-munkamenetben, semmit sem nyer, ami segítene abban, hogy megszemélyesítse Önt.
+
+A tágabb értelemben vett SSH-protokoll hátteréért tekintse meg az <a href="/hu/what-is-ssh">mi az SSH</a> című útmutatónkat.
+
+## Nyilvános kulcs vs. privát kulcs: mi a különbség?
+
+A két kulcs közötti különbség megértése elengedhetetlen az SSH helyes használatához.
+
+### A nyilvános kulcs – a zár
+
+A **nyilvános kulcs** szabadon megosztható. Tekintsd úgy, mint egy lakatot: mindenkinek kiosztod a másolatokat, akiknek a rendszeréhez hozzá szeretnél férni. Ha egy szerver `authorized_keys` fájljában szerepel az Ön nyilvános kulcsa, a privát kulcs ismerete nélkül is ellenőrizheti az Ön személyazonosságát.
+
+Nyilvános kulcsok:
+- Megosztásuk biztonságos – nem használhatók arra, hogy kiadják magukat
+- `~/.ssh/authorized_keys` kiszolgálókon vannak elhelyezve
+- Fel vannak töltve a GitHubba, a GitLabba és más szolgáltatásokba
+- Általában `.pub` kiterjesztéssel rendelkezik (pl. `id_ed25519.pub`)
+- Úgy néz ki: `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAA... user@hostname`
+
+### A privát kulcs – az Ön kulcsa
+
+A **privát kulcs** a pár titkos fele. Soha nem hagyhatja el a gépét, és soha nem szabad megosztani senkivel – még a rendszergazdákkal, a felhőszolgáltatókkal és a támogató személyzettel sem. Ha a magánkulcsot feltörték, bárki, aki megszerzi azt, megszemélyesítheti Önt minden olyan szerveren, amelyre a nyilvános kulcsa telepítve van.
+
+Privát kulcsok:
+- Titokban és biztonságban kell tartani
+- Helyileg a `~/.ssh/` helyen tárolva korlátozott engedélyekkel (600)
+- Opcionálisan jelmondattal titkosítva vannak
+- Nincs kiterjesztése vagy nyelvspecifikus kiterjesztése (pl. `id_ed25519`)
+
+### A `authorized_keys` fájl
+
+A szerver oldalon az egyes felhasználók nyilvános kulcsai a `~/.ssh/authorized_keys` helyen vannak tárolva. Ez egy egyszerű szöveges fájl, amelyben minden sor egy nyilvános kulcsot tartalmaz. Amikor egy SSH-kliens megkísérli a hitelesítést, a szerver ellenőrzi, hogy az ügyfél bizonyítani tudja-e a fájl bármely bejegyzésének megfelelő privát kulcs birtoklását.
+
+```
+# ~/.ssh/authorized_keys formátumban
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGq... alice@laptop
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHr... alice@workstation
+ssh-rsa AAAAB3NzaC1yc2EAAAA... backup-deploy-key
+```
+
+Ebben a fájlban annyi nyilvános kulcs lehet, amennyire szüksége van, így több eszköz vagy automatizálási rendszer is hitelesíthet ugyanahhoz a szerverhez.
+
+## SSH kulcsalgoritmusok: Ed25519 vs RSA
+
+Amikor létrehoz egy SSH-kulcspárt, kiválaszt egy algoritmust. Manapság a két leggyakoribb lehetőség az **Ed25519** és **RSA**. Létezik ECDSA és DSA is, de a DSA elavult, és az ECDSA megvalósítási buktatói is vannak, ezért a két javasolt lehetőségre összpontosítunk.
+
+### Ed25519 – A modern választás
+
+Az Ed25519-et az OpenSSH 6.5-ös verziójában (2014) vezették be, és most az ajánlott alapértelmezett. Elliptikus görbe kriptográfiát használ a Twisted Edwards-görbén (Curve25519), amelyet Daniel J. Bernstein tervezett.
+
+**Az Ed25519 előnyei:**
+- **Kompakt** — a kulcsok csak 68 karakterből állnak (nyilvános kulcs), a fájlok pedig aprók
+- **Gyors** – az aláírás generálása és ellenőrzése rendkívül gyors
+- ** Tervezés szerint biztonságos** – nem kiszolgáltatott az oldalcsatornás támadásoknak, amelyek bizonyos RSA-megvalósításokat érintenek
+- **Rögzített kulcsméret** — 256 bites biztonsági szint, nem kell kulcsméretet választani
+- **Determinisztikus** – az aláírások determinisztikusak, kiküszöbölve a véletlenszám-generátor meghibásodásának egy osztályát
+
+```bash
+# Hozzon létre egy Ed25519 kulcspárt
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+### RSA – Az univerzális lehetőség
+
+Az RSA a régebbi (1977-ben feltalált) algoritmus, és bár még mindig biztonságos 4096 biten, lassabb és nagyobb kulcsokat produkál, mint az Ed25519. Az RSA azonban sokkal szélesebb körű kompatibilitással rendelkezik – nagyon régi SSH-kiszolgálókkal, régi rendszerekkel és néhány hardveres biztonsági kulccsal működik.
+
+**Mikor használjuk az RSA-t:**
+- Csatlakoznia kell régi rendszerekhez, amelyek az OpenSSH régi verzióit futtatják (6.5 előtt)
+- Olyan intelligens kártyát vagy HSM-et használ, amely nem támogatja az Ed25519-et
+- A régebbi eszközökkel való kompatibilitás szükséges
+
+```bash
+# Hozzon létre egy RSA 4096 bites kulcspárt
+ssh-keygen -t rsa -b 4096 -C "your@email.com"
+```
+
+**Soha ne használjon 4096 bitnél kevesebb RSA-t.** Az RSA-1024 és az RSA-2048 a számítási teljesítmény növekedésével egyre inkább elégtelennek számít. A 256 bites Ed25519 egyenértékű vagy jobb biztonságot nyújt a kulcsméret töredékével.
+
+### Összefoglaló összehasonlítás
+
+| Funkció | Ed25519 | RSA 4096 |
+|---|---|---|
+| Kulcsméret (nyilvános) | ~68 karakter | ~725 karakter |
+| Biztonsági szint | 128 bites (kvantum-ellenálló szerkezet) | ~140 bites klasszikus |
+| Sebesség | Nagyon gyors | Lassabban |
+| Kompatibilitás | Modern SSH (OpenSSH 6.5+) | Univerzális |
+| Ajánlott | Minden új kulcs | Csak örökölt rendszerek |
+
+**A lényeg: generáljon Ed25519 kulcsokat bármilyen modern felhasználási esethez.** Csak akkor használja az RSA-t, ha a kompatibilitási követelmények megkövetelik.
+
+## SSH-kulcs hozzáadása a GitHubhoz
+
+Ha hozzáadja nyilvános SSH-kulcsát a GitHubhoz, lehetővé teszi az SSH-t anélkül, hogy minden műveletnél megadná felhasználónevét és jelszavát. Íme a lépésenkénti folyamat.
+
+### 1. lépés: A kulcspár létrehozása
+
+Ha még nem rendelkezik SSH-kulcspárral, hozzon létre egyet. Használhatja <a href="/">ingyenes online SSH-kulcsgenerátorunkat</a>, vagy futtassa:
+
+```bash
+ssh-keygen -t ed25519 -C "your-github-email@example.com"
+```
+
+Fogadja el az alapértelmezett fájlhelyet (`~/.ssh/id_ed25519`), és opcionálisan állítson be egy jelszót.
+
+### 2. lépés: Másolja ki nyilvános kulcsát
+
+Jelenítse meg nyilvános kulcsát, és másolja a vágólapra:
+
+```bash
+# Linux
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+
+# macOS
+cat ~/.ssh/id_ed25519.pub | pbcopy
+
+# Windows (PowerShell)
+Get-Content ~/.ssh/id_ed25519.pub | Set-Clipboard
+```
+
+Vagy egyszerűen jelenítse meg és másolja manuálisan:
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+### 3. lépés: Adja hozzá a kulcsot a GitHubhoz
+
+1. Jelentkezzen be a **GitHub.com** webhelyre.
+2. Kattintson a profilképére → **Beállítások**
+3. A bal oldalsávon kattintson az **SSH- és GPG-kulcsok** elemre.
+4. Kattintson az **Új SSH-kulcs** lehetőségre.
+5. Adjon leíró címet (pl. "MacBook Pro 2024" vagy "Munkahelyi laptop")
+6. Illessze be nyilvános kulcsát a **Kulcs** mezőbe
+7. Kattintson az **SSH-kulcs hozzáadása** lehetőségre.
+
+### 4. lépés: Tesztelje a kapcsolatot
+
+```bash
+ssh -T git@github.com
+```
+
+Látnod kell: `Hi username! You've successfully authenticated, but GitHub does not provide shell access.`
+
+### Meglévő adattár váltása SSH-ra
+
+Ha HTTPS használatával klónozott egy adattárat, és SSH-ra szeretne váltani:
+
+```bash
+# Ellenőrizze az aktuális távoli URL-t
+git remote -v
+
+# Frissítés SSH-ra
+git remote set-url origin git@github.com:username/repository.git
+```
+
+A GitLab esetében a folyamat azonos – lépjen a **Preferences → SSH Keys** elemre, és kövesse ugyanazokat a lépéseket.
+
+## Hol tárolják az SSH-kulcsokat?
+
+Az SSH-kulcsok egy `.ssh` nevű könyvtárban vannak tárolva a felhasználó saját mappájában. A hely operációs rendszerenként eltérő.
+
+### Linux és macOS
+
+```
+~/.ssh/
+├── id_ed25519          # Your private key (permissions: 600)
+├── id_ed25519.pub      # Your public key (permissions: 644)
+├── id_rsa              # An RSA private key (if you have one)
+├── id_rsa.pub          # The RSA public key
+├── authorized_keys     # Public keys allowed to log into this machine
+├── known_hosts         # Fingerprints of servers you have connected to
+└── config              # Client configuration file
+```
+
+Magának az `~/.ssh/` könyvtárnak **700** engedélyekkel kell rendelkeznie (csak a tulajdonos olvasási/írási/végrehajtási engedélyével). A privát kulcsfájloknak **600** engedélyekkel kell rendelkezniük (csak a tulajdonos írási/olvasási jogosultsága). Az SSH megtagadja a túlzottan megengedő jogosultságokkal rendelkező kulcsok használatát.
+
+```bash
+# Javítsa ki az engedélyeket, ha szükséges
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/id_ed25519
+chmod 644 ~/.ssh/id_ed25519.pub
+```
+
+### Windows
+
+A telepített OpenSSH-val rendelkező Windows 10 és 11 esetén az SSH-kulcsok a következő helyen tárolódnak:
+
+```
+C:\Users\YourUsername\.ssh\
+├── id_ed25519
+├── id_ed25519.pub
+├── authorized_keys
+├── known_hosts
+└── config
+```
+
+Windows rendszeren elérheti a `.ssh` könyvtárat a Fájlkezelőből (előfordulhat, hogy engedélyeznie kell a "Rejtett fájlok megjelenítése" lehetőséget), vagy a PowerShellből a `~\.ssh\` használatával.
+
+### Több kulcsfájl
+
+Ha különböző célú kulcsai vannak (személyes GitHub, munkahelyi GitLab, éles szerverek), használja a `~/.ssh/config` fájlt az egyes gazdagépek kulcsához való hozzárendeléséhez:
+
+```
+Host github.com
+    IdentityFile ~/.ssh/id_ed25519_github
+
+Host gitlab.work.com
+    IdentityFile ~/.ssh/id_ed25519_work
+
+Host prod-server
+    HostName 203.0.113.10
+    User deploy
+    IdentityFile ~/.ssh/id_ed25519_production
+```
+
+## SSH-kulcs jelszavak
+
+Amikor létrehoz egy SSH-kulcspárt, a `ssh-keygen` megkérdezi, hogy kíván-e beállítani egy **jelszót**. Ez egy opcionális jelszó, amely titkosítja a lemezen lévő privát kulcsfájlt.
+
+### Miért használjunk jelszót?
+
+Ha a privát kulcs fájlját erős jelmondat védi, akkor a fájl ellopása nem elegendő ahhoz, hogy megszemélyesítse Önt – a támadónak is fel kell törnie a jelszót. Ez egy kritikus második biztonsági réteget biztosít, különösen a fizikailag ellopható laptopokon.
+
+Jelszó nélkül a privát kulcs egyszerű szövegként kerül tárolásra a lemezen. Bárki, aki el tudja olvasni a fájlt (rosszindulatú programon, fizikai hozzáférésen vagy nem megfelelően védett biztonsági másolaton keresztül), azonnal használhatja.
+
+### Hogyan lépnek kapcsolatba a jelszavak az ssh-agenttel
+
+A jelmondat hátránya, hogy minden alkalommal begépeli, amikor a kulcsot használja. Az **ssh-agent** ezt úgy oldja meg, hogy a visszafejtett kulcsokat a munkamenet időtartama alatt a memóriában tartja.
+
+```bash
+# Indítsa el az ssh-agent programot, és adja hozzá a kulcsot
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+# Adja meg egyszer a jelszót – most gyorsítótárban van a munkamenethez
+```
+
+A macOS rendszeren a Keychain rendszer integrálódik az ssh-agenttel. Add hozzá a `-K` karakterláncot az újraindításokig:
+
+```bash
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+```
+
+### Jelszó módosítása
+
+Meglévő kulcson módosíthatja a jelszót a kulcspár újragenerálása nélkül:
+
+```bash
+ssh-keygen -p -f ~/.ssh/id_ed25519
+```
+
+Ez kéri a régi összetett jelszót, majd lehetővé teszi egy új jelszó beállítását. A nyilvános kulcs nem változik, így nem kell frissítenie egyetlen szerveren sem.
+
+## SSH-kulcs ujjlenyomatai
+
+Minden SSH-kulcspárnak van egy **ujjlenyomata** – a nyilvános kulcs rövid hash-je, amely egyedileg azonosítja azt. Az ujjlenyomatok több célt szolgálnak:
+
+- **A gazdagép azonosságának ellenőrzése** — Amikor először csatlakozik egy szerverhez, az SSH megmutatja a gazdagép-kulcs ujjlenyomatát. Ha megerősíti, hogy megfelel az elvárásoknak (például a tárhelyszolgáltató által biztosított), akkor tudja, hogy a megfelelő szerverhez csatlakozik.
+- **Azonosítsa a kulcsokat** — Sok kulcs kezelésekor az ujjlenyomatok segítségével azonosíthatja, hogy melyik fizikai kulcs melyik bejegyzésnek felel meg a `authorized_keys` vagy egy olyan szolgáltatásban, mint a GitHub.
+- **Ellenőrzés és visszavonás** – Az auditnaplók gyakran ujjlenyomatokat rögzítenek, nem pedig teljes kulcsokat. A kulcs ujjlenyomatának ismerete segít megtalálni és szükség esetén eltávolítani.
+
+### Kulcs ujjlenyomatának megtekintése
+
+```bash
+# Megtekintheti nyilvános kulcsának ujjlenyomatát
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+# Kimenet: 256 SHA256:abcdef1234567890... your@email.com (ED25519)
+
+# A szerver gazdagép kulcsának ujjlenyomatának megtekintése
+ssh-keyscan server.example.com | ssh-keygen -lf -
+```
+
+A GitHub megjeleníti az összes hozzáadott SSH-kulcs ujjlenyomatát a **Beállítások → SSH- és GPG-kulcsok** részben, lehetővé téve annak ellenőrzését, hogy az ott látható kulcs megegyezik-e a gépén lévővel.
+
+### A `known_hosts` fájl
+
+Amikor először csatlakozik egy új SSH-kiszolgálóhoz, a következő üzenet jelenik meg:
+
+```
+The authenticity of host 'example.com (203.0.113.10)' can't be established.
+ED25519 key fingerprint is SHA256:abcdef1234567890...
+Are you sure you want to continue connecting (yes/no/[fingerprint])?
+```
+
+Írja be a `yes` karakterláncot, és a szerver ujjlenyomata hozzáadódik a `~/.ssh/known_hosts` számhoz. A következő kapcsolatok során az SSH csendben ellenőrzi, hogy a szerver kulcsa megegyezik-e a tárolt ujjlenyomattal. Ha nem egyezik – ami hibás konfigurációt vagy emberközeli támadást jelezhet – az SSH hangosan figyelmeztet, és megtagadja a csatlakozást.
+
+## Gyakran Ismételt Kérdések
+
+### Mire használható az SSH-kulcs?
+
+Az SSH-kulcsok jelszó nélkül hitelesítik Önt a távoli szervereken. A leggyakoribb felhasználási módok a következők: bejelentkezés Linux/Unix szerverekre adminisztrációhoz, hitelesítés Git hosting szolgáltatásokkal (GitHub, GitLab, Bitbucket) push/pull hozzáféréshez, automatizált telepítési szkriptek, amelyekhez jelszó nélküli szerver hozzáférésre van szükség, és CI/CD folyamatok, amelyek kódot telepítenek a termelésbe. Az SSH-kulcsokat előnyben részesítik a jelszavakkal szemben, mivel immunisak a brutális erőszakra, nem használhatók fel újra a jogsértések során, és emberi beavatkozás nélkül is használhatók.
+
+### Hány SSH-kulcsom legyen?
+
+Nincs egyetlen helyes válasz, de a bevált gyakorlat szerint **eszközenként egy kulcs** (szolgáltatásonként nem). A laptop egy kulcspárral rendelkezik; az asztalon van egy másik; a CI-szervernek van másik. Ily módon, ha egy eszközt ellopnak vagy feltörtek, csak az adott eszköz kulcsát vonja vissza. Egyes emberek kontextus szerint tovább oszlanak (személyes vagy munkahelyi), így eszközönként két kulcs keletkezik. Kerülje el, hogy egyetlen kulcsot több gépen megosszon – ha a kulcsot feltörik, az összes hozzáférése egyidejűleg veszélybe kerül.
+
+### Megoszthatom a nyilvános SSH-kulcsomat?
+
+Igen. A nyilvános kulcsot megosztásra tervezték. Biztonságos elküldeni e-mailben, közzétenni a GitHub dokumentációjában, vagy belefoglalni egy kiszolgálóhoz való hozzáférést kérő jegybe. A nyilvános kulcs önmagában nem használható az önként való hitelesítéshez – ehhez a megfelelő privát kulcsra van szükség, amellyel csak Ön rendelkezik. Ez az aszimmetrikus kriptográfia alapvető tulajdonsága. Soha ne ossza meg **privát** kulcsát senkivel.
+
+### Mi történik, ha elveszítem az SSH privát kulcsomat?
+
+Ha elveszíti privát kulcsát, és nincs biztonsági másolata, akkor elveszíti a hitelesítés lehetőségét. Az Ön nyilvános kulcsa, amely továbbra is telepítve van a szervereken és szolgáltatásokon, árva marad. Szüksége lesz egy másik módra a szerver eléréséhez (jelszó hitelesítés, ha engedélyezve van, konzol hozzáférés, a tárhelyszolgáltató vészhelyzeti hozzáférési mechanizmusa), hogy eltávolítsa a régi nyilvános kulcsot a `authorized_keys` címről, és újat adjon hozzá. Ezért fontos a privát kulcs biztonsági mentése (jelszókezelőben vagy titkosított biztonsági másolatban). A magánkulcs nem rekonstruálható a nyilvános kulcsból.
+
+### Az Ed25519 vagy az RSA jobb?
+
+**Az Ed25519 jobb az összes új kulcsgenerációhoz.** Gyorsabb, kisebb kulcsokat állít elő, nincs kitéve bizonyos, az RSA-t érintő megvalósítási hiányosságoknak, és az RSA-4096-hoz képest egyenértékű vagy jobb biztonságot nyújt 256 bites kulccsal. Az egyetlen ok az RSA használatára manapság a nagyon régi SSH-kiszolgálószoftverekkel (az OpenSSH a 6.5-ös verzió előtt, 2014-ben megjelent) vagy a régi hardver biztonsági modulokkal való kompatibilitás. Ha bármilyen modern szerverhez vagy szolgáltatáshoz, például GitHubhoz fér hozzá, használja az Ed25519-et.
+
+## SSH kulcspár létrehozása
+
+Készen áll az SSH-kulcsok létrehozására? Ingyenes online generátorunk Ed25519 vagy RSA kulcspárokat hoz létre közvetlenül a böngészőben. A privát kulcsot helyben állítják elő, és soha nem küldik el szervereinknek.
+
+<a href="/">Hozza létre az SSH-kulcspárt most →</a>
+
+---
+
+**További olvasnivalók:**
+- <a href="/hu/what-is-ssh">Mi az SSH? A Secure Shell teljes útmutatója</a>
+- <a href="/hu/ssh-command">Az SSH-parancs: teljes hivatkozás példákkal</a>
+- <a href="/hu/how-to-set-up-ssh">Hogyan állítsuk be az SSH-t: teljes, lépésről lépésre szóló útmutató</a>

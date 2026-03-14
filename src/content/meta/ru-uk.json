@@ -1,0 +1,54 @@
+{
+  "ru": {
+    "what-is-ssh": {
+      "title": "Что такое SSH? Полное руководство по Secure Shell",
+      "description": "Узнайте, что такое SSH (Secure Shell): как работает протокол, зачем нужны SSH-ключи, чем SSH отличается от Telnet и HTTPS, и как используется туннелирование. Полное руководство для разработчиков и системных администраторов.",
+      "keywords": ["SSH", "Secure Shell", "что такое SSH", "протокол SSH", "SSH туннелирование", "SSH порт", "SSH ключи", "SSH vs Telnet", "OpenSSH", "удалённый доступ"],
+      "publishDate": "2026-03-14"
+    },
+    "what-is-an-ssh-key": {
+      "title": "Что такое SSH-ключ? Открытые ключи, приватные ключи и пары ключей",
+      "description": "Полное объяснение SSH-ключей: как работает асимметричная криптография, в чём разница между открытым и приватным ключом, сравнение Ed25519 и RSA, как добавить ключ в GitHub и где хранятся SSH-ключи.",
+      "keywords": ["SSH ключ", "открытый ключ", "приватный ключ", "пара ключей SSH", "Ed25519", "RSA ключ", "SSH аутентификация", "authorized_keys", "ssh-keygen", "GitHub SSH ключ"],
+      "publishDate": "2026-03-14"
+    },
+    "ssh-command": {
+      "title": "Команда SSH: полный справочник с примерами для Linux, Mac и Windows",
+      "description": "Полный справочник по команде ssh: синтаксис, основные флаги (-i, -p, -L, -R, -D, -J), туннелирование портов, ProxyJump через бастионные хосты, использование в PowerShell и отладка с -v. Примеры для Linux, macOS и Windows.",
+      "keywords": ["команда SSH", "SSH флаги", "SSH туннель", "SSH перенаправление портов", "SSH ProxyJump", "ssh -i", "ssh -L", "ssh -D", "SOCKS прокси SSH", "SSH Windows PowerShell"],
+      "publishDate": "2026-03-14"
+    },
+    "how-to-set-up-ssh": {
+      "title": "Как настроить SSH: полное пошаговое руководство для Linux, Mac и Windows",
+      "description": "Пошаговое руководство по настройке SSH: генерация ключей через ssh-keygen или онлайн-генератор, установка публичного ключа через ssh-copy-id, настройка sshd_config, интеграция с GitHub и GitLab, устранение ошибок Permission denied и настройка ssh-agent.",
+      "keywords": ["настройка SSH", "ssh-keygen", "ssh-copy-id", "SSH ключи GitHub", "SSH ключи GitLab", "sshd_config", "ssh-agent", "Permission denied publickey", "SSH Windows", "SSH macOS"],
+      "publishDate": "2026-03-14"
+    }
+  },
+  "uk": {
+    "what-is-ssh": {
+      "title": "Що таке SSH? Повний посібник із Secure Shell",
+      "description": "Дізнайтеся, що таке SSH (Secure Shell): як працює протокол, навіщо потрібні SSH-ключі, чим SSH відрізняється від Telnet і HTTPS, і як використовується тунелювання. Повний посібник для розробників і системних адміністраторів.",
+      "keywords": ["SSH", "Secure Shell", "що таке SSH", "протокол SSH", "SSH тунелювання", "SSH порт", "SSH ключі", "SSH vs Telnet", "OpenSSH", "віддалений доступ"],
+      "publishDate": "2026-03-14"
+    },
+    "what-is-an-ssh-key": {
+      "title": "Що таке SSH-ключ? Відкриті ключі, приватні ключі та пари ключів",
+      "description": "Повне пояснення SSH-ключів: як працює асиметрична криптографія, у чому різниця між відкритим і приватним ключем, порівняння Ed25519 і RSA, як додати ключ до GitHub і де зберігаються SSH-ключі.",
+      "keywords": ["SSH ключ", "відкритий ключ", "приватний ключ", "пара ключів SSH", "Ed25519", "RSA ключ", "SSH автентифікація", "authorized_keys", "ssh-keygen", "GitHub SSH ключ"],
+      "publishDate": "2026-03-14"
+    },
+    "ssh-command": {
+      "title": "Команда SSH: повний довідник з прикладами для Linux, Mac і Windows",
+      "description": "Повний довідник по команді ssh: синтаксис, основні прапорці (-i, -p, -L, -R, -D, -J), тунелювання портів, ProxyJump через бастіонні хости, використання в PowerShell і налагодження з -v. Приклади для Linux, macOS і Windows.",
+      "keywords": ["команда SSH", "SSH прапорці", "SSH тунель", "SSH перенаправлення портів", "SSH ProxyJump", "ssh -i", "ssh -L", "ssh -D", "SOCKS проксі SSH", "SSH Windows PowerShell"],
+      "publishDate": "2026-03-14"
+    },
+    "how-to-set-up-ssh": {
+      "title": "Як налаштувати SSH: повний покроковий посібник для Linux, Mac і Windows",
+      "description": "Покроковий посібник з налаштування SSH: генерація ключів через ssh-keygen або онлайн-генератор, встановлення публічного ключа через ssh-copy-id, налаштування sshd_config, інтеграція з GitHub і GitLab, усунення помилок Permission denied і налаштування ssh-agent.",
+      "keywords": ["налаштування SSH", "ssh-keygen", "ssh-copy-id", "SSH ключі GitHub", "SSH ключі GitLab", "sshd_config", "ssh-agent", "Permission denied publickey", "SSH Windows", "SSH macOS"],
+      "publishDate": "2026-03-14"
+    }
+  }
+}

@@ -1,0 +1,147 @@
+import type { Language } from '@/i18n/languageConfig'
+
+export type ArticleSlug = 'what-is-ssh' | 'what-is-an-ssh-key' | 'ssh-command' | 'how-to-set-up-ssh'
+
+// Re-export for consumers that imported ArticleLang from here
+export type ArticleLang = Language
+
+export const ARTICLE_SLUGS: ArticleSlug[] = [
+  'what-is-ssh',
+  'what-is-an-ssh-key',
+  'ssh-command',
+  'how-to-set-up-ssh',
+]
+
+export interface ArticleMeta {
+  title: string
+  description: string
+  keywords: string[]
+  publishDate: string
+}
+
+// 'en' is always required as the canonical fallback; all other languages are optional
+export type ArticleMetaRecord = { en: ArticleMeta } & Partial<Record<Language, ArticleMeta>>
+
+type ArticleMetaBatch = Partial<Record<Language, Partial<Record<ArticleSlug, ArticleMeta>>>>
+
+const baseArticleMeta: Record<ArticleSlug, ArticleMetaRecord> = {
+  'what-is-ssh': {
+    en: {
+      title: 'What Is SSH? The Complete Guide to Secure Shell',
+      description:
+        'SSH (Secure Shell) is a cryptographic protocol for secure remote access and file transfer. Learn what SSH is, how it works, and why every developer needs it.',
+      keywords: ['what is ssh', 'ssh meaning', 'meaning of ssh', 'secure shell', 'ssh protocol'],
+      publishDate: '2026-03-14',
+    },
+    zh: {
+      title: 'SSH 是什么？Secure Shell 安全外壳协议完整指南',
+      description:
+        'SSH（安全外壳协议）是用于安全远程访问和文件传输的加密协议。了解 SSH 是什么、它如何工作，以及为什么每位开发者都需要它。',
+      keywords: ['ssh是什么', 'ssh含义', '安全外壳协议', 'ssh协议'],
+      publishDate: '2026-03-14',
+    },
+  },
+  'what-is-an-ssh-key': {
+    en: {
+      title: 'What Is an SSH Key? Public Keys, Private Keys, and Key Pairs Explained',
+      description:
+        'An SSH key is a cryptographic credential used for secure authentication. Learn what an SSH key is, how public and private keys work, and how to use them with GitHub.',
+      keywords: [
+        'what is an ssh key',
+        'ssh key meaning',
+        'ssh key pair',
+        'public key private key',
+        'github ssh key',
+      ],
+      publishDate: '2026-03-14',
+    },
+    zh: {
+      title: 'SSH 密钥是什么？公钥、私钥与密钥对完整说明',
+      description:
+        'SSH 密钥是用于安全身份验证的加密凭证。了解 SSH 密钥是什么、公钥和私钥如何工作，以及如何在 GitHub 中使用它们。',
+      keywords: ['ssh密钥是什么', 'ssh公钥私钥', 'ssh密钥对', 'github ssh密钥'],
+      publishDate: '2026-03-14',
+    },
+  },
+  'ssh-command': {
+    en: {
+      title: 'The SSH Command: Complete Reference with Examples for Linux, Mac, and Windows',
+      description:
+        'A complete guide to the SSH command with examples for Linux, macOS, and Windows. Covers ssh -i flag, tunneling, ProxyJump, essential options, and PowerShell SSH.',
+      keywords: [
+        'ssh command',
+        'ssh command example',
+        'ssh command linux',
+        'ssh command windows',
+        'powershell ssh command',
+      ],
+      publishDate: '2026-03-14',
+    },
+    zh: {
+      title: 'SSH 命令完整参考：Linux、Mac 和 Windows 示例',
+      description:
+        'Linux、macOS 和 Windows 下 SSH 命令的完整指南，包含示例。涵盖 ssh -i 标志、隧道、ProxyJump、关键选项和 PowerShell SSH。',
+      keywords: ['ssh命令', 'ssh命令示例', 'ssh命令linux', 'ssh命令windows', 'powershell ssh'],
+      publishDate: '2026-03-14',
+    },
+  },
+  'how-to-set-up-ssh': {
+    en: {
+      title: 'How to Set Up SSH: A Complete Step-by-Step Guide for Linux, Mac, and Windows',
+      description:
+        'Learn how to set up SSH on Linux, macOS, and Windows. Step-by-step guide covers key generation, ssh-copy-id, ssh-agent, GitHub SSH setup, and troubleshooting.',
+      keywords: [
+        'how to set up ssh',
+        'how to set up ssh key github',
+        'ssh-copy-id',
+        'ssh-agent',
+        'permission denied publickey',
+      ],
+      publishDate: '2026-03-14',
+    },
+    zh: {
+      title: '如何设置 SSH：Linux、Mac 和 Windows 完整分步指南',
+      description:
+        '了解如何在 Linux、macOS 和 Windows 上设置 SSH。分步指南涵盖密钥生成、ssh-copy-id、ssh-agent、GitHub SSH 设置和故障排查。',
+      keywords: ['如何设置ssh', 'ssh密钥github设置', 'ssh-copy-id', 'ssh-agent', 'ssh密钥配置'],
+      publishDate: '2026-03-14',
+    },
+  },
+}
+
+const metaModules = import.meta.glob<ArticleMetaBatch>('./meta/*.json', {
+  eager: true,
+  import: 'default',
+})
+
+function mergeArticleMeta() {
+  const merged = Object.fromEntries(
+    Object.entries(baseArticleMeta).map(([slug, meta]) => [slug, { ...meta }]),
+  ) as Record<ArticleSlug, ArticleMetaRecord>
+
+  for (const batch of Object.values(metaModules)) {
+    for (const [language, localizedArticles] of Object.entries(batch) as [
+      Language,
+      Partial<Record<ArticleSlug, ArticleMeta>>,
+    ][]) {
+      if (!localizedArticles) {
+        continue
+      }
+
+      for (const [slug, meta] of Object.entries(localizedArticles) as [ArticleSlug, ArticleMeta][]) {
+        merged[slug] = {
+          ...merged[slug],
+          [language]: meta,
+        }
+      }
+    }
+  }
+
+  return merged
+}
+
+export const articleMeta = mergeArticleMeta()
+
+export function getArticleMeta(slug: ArticleSlug, language: Language): ArticleMeta {
+  return articleMeta[slug][language] ?? articleMeta[slug].en
+}

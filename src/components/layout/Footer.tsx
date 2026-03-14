@@ -65,6 +65,16 @@ export function Footer() {
                   {t('footer.bestPractices')}
                 </a>
               </li>
+              <li>
+                <a
+                  href="https://cheatsheets.zip/ssh"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-primary transition-colors inline-block py-1.5"
+                >
+                  {t('footer.sshCheatSheet')}
+                </a>
+              </li>
             </ul>
           </div>
         </div>

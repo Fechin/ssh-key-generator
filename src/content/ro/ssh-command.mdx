@@ -1,0 +1,430 @@
+# Comanda SSH: Referință completă cu exemple pentru Linux, Mac și Windows
+
+Comanda `ssh` este instrumentul principal pentru inițierea conexiunilor SSH din linia de comandă. Fie că te autentifici pe un server Linux la distanță, redirecționezi un port pentru accesul la baze de date sau sari printr-un bastion host pentru a ajunge la o rețea internă, comanda `ssh` este punctul tău de intrare. Acest ghid acoperă totul, de la sintaxa de bază la flag-uri avansate, tunelare și configurații ProxyJump — cu exemple reale pentru Linux, macOS și Windows.
+
+Înainte de a rula comenzi SSH, vei avea nevoie de chei SSH. Consultă ghidul nostru despre <a href="/ro/what-is-an-ssh-key">ce este o cheie SSH</a> sau folosește <a href="/">generatorul gratuit online</a> pentru a crea o pereche de chei.
+
+## Sintaxa comenzii SSH
+
+Sintaxa fundamentală a comenzii `ssh` este:
+
+```
+ssh [opțiuni] [user@]hostname [comandă]
+```
+
+Descompunând aceasta:
+
+- **`[opțiuni]`** — Zero sau mai multe flag-uri care modifică comportamentul (acoperite pe tot parcursul acestui ghid)
+- **`[user@]`** — Nume de utilizator opțional. Dacă este omis, SSH folosește numele de utilizator local curent
+- **`hostname`** — Gazda la distanță la care să te conectezi. Poate fi o adresă IP, un nume de domeniu sau un alias definit în `~/.ssh/config`
+- **`[comandă]`** — Comandă opțională de rulat pe gazda la distanță. Dacă este omisă, SSH pornește o sesiune shell interactivă
+
+**Exemple de bază:**
+
+```bash
+# Conectare folosind numele de utilizator curent
+ssh server.example.com
+
+# Conectare ca un utilizator specific
+ssh alice@server.example.com
+
+# Conectare folosind o adresă IP
+ssh ubuntu@192.168.1.100
+
+# Rularea unei singure comenzi și deconectarea imediată
+ssh user@server.example.com "df -h"
+
+# Rularea unei comenzi și menținerea conexiunii
+ssh user@server.example.com
+```
+
+## SSH pe Linux și macOS
+
+Distribuțiile Linux și macOS vin cu **OpenSSH** pre-instalat. Pe Linux, face parte din pachetul `openssh-client` (Debian/Ubuntu) sau `openssh-clients` (RHEL/CentOS/Fedora). Pe macOS, este inclus în sistem și disponibil imediat din Terminal sau iTerm2.
+
+### Verifică disponibilitatea SSH
+
+```bash
+ssh -V
+# Output: OpenSSH_9.6p1, LibreSSL 3.3.6
+```
+
+### Conexiune de bază
+
+```bash
+# Conectare la un server
+ssh user@myserver.example.com
+
+# SSH verifică ~/.ssh/known_hosts la prima conexiune și solicită:
+# The authenticity of host 'myserver.example.com' can't be established.
+# ED25519 key fingerprint is SHA256:abc123...
+# Are you sure you want to continue connecting (yes/no)? yes
+
+# Amprenta gazdei este salvată în ~/.ssh/known_hosts
+```
+
+### Folosirea unui fișier de configurare SSH pentru comoditate
+
+În loc să tastezi detaliile complete de conexiune de fiecare dată, creează `~/.ssh/config`:
+
+```
+Host myserver
+    HostName myserver.example.com
+    User alice
+    Port 22
+    IdentityFile ~/.ssh/id_ed25519
+
+Host dev
+    HostName dev.example.com
+    User ubuntu
+    Port 2222
+    IdentityFile ~/.ssh/id_ed25519_work
+```
+
+Acum `ssh myserver` se extinde la conexiunea completă — nu sunt necesare flag-uri.
+
+## SSH pe Windows (PowerShell și OpenSSH)
+
+Windows 10 (versiunea 1809) și Windows 11 includ **clientul OpenSSH** ca funcție opțională, făcând comanda `ssh` disponibilă în PowerShell, Command Prompt și Windows Terminal.
+
+### Verifică dacă OpenSSH este instalat
+
+```powershell
+# În PowerShell
+ssh -V
+```
+
+Dacă comanda nu este găsită, instalează-o:
+
+**Prin Settings:**
+1. Deschide **Settings → Apps → Optional Features**
+2. Apasă **Add a feature**
+3. Găsește **OpenSSH Client** și instalează-l
+
+**Prin PowerShell (Administrator):**
+
+```powershell
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+```
+
+### Folosirea SSH în PowerShell
+
+Odată instalat, sintaxa este identică cu Linux și macOS:
+
+```powershell
+# Conectare la un server
+ssh user@server.example.com
+
+# Conectare pe un port personalizat
+ssh -p 2222 user@server.example.com
+
+# Folosirea unui fișier de cheie specific
+ssh -i C:\Users\YourName\.ssh\id_ed25519 user@server.example.com
+```
+
+### Locația cheilor SSH pe Windows
+
+Cheile SSH pe Windows sunt stocate în `C:\Users\YourUsername\.ssh\`. PowerShell recunoaște `~` ca prescurtare:
+
+```powershell
+# Acestea sunt echivalente
+ssh -i ~/.ssh/id_ed25519 user@server
+ssh -i C:\Users\YourUsername\.ssh\id_ed25519 user@server
+```
+
+### PuTTY vs OpenSSH pe Windows
+
+Înainte ca OpenSSH să fie disponibil pe Windows, **PuTTY** era clientul SSH standard. PuTTY folosește propriul format de cheie (fișiere `.ppk`) și propriul generator de chei (PuTTYgen). Dacă ai o cheie `.ppk` și trebuie să o convertești la formatul standard OpenSSH:
+
+```bash
+# Folosind instrumentele PuTTY
+puttygen mykey.ppk -O private-openssh -o id_ed25519
+```
+
+Pentru configurări noi, preferă clientul OpenSSH integrat pe Windows — este menținut de proiectul OpenSSH și folosește același format de cheie și fișier de configurare ca Linux și macOS.
+
+## SSH cu autentificare prin cheie: flag-ul -i
+
+În mod implicit, SSH caută fișiere de cheie în `~/.ssh/` cu nume standard (`id_ed25519`, `id_rsa`, `id_ecdsa`, `id_dsa`). **Flag-ul `-i`** (fișier de identitate) îți permite să specifici explicit un fișier de cheie diferit.
+
+```bash
+# Folosirea unui fișier de cheie specific
+ssh -i ~/.ssh/id_ed25519_production user@prod.example.com
+
+# Folosirea unei chei stocate într-o locație non-standard
+ssh -i /path/to/my/custom_key deploy@server.example.com
+
+# Combinarea cu alte opțiuni
+ssh -i ~/.ssh/deploy_key -p 2222 -l deploy server.example.com
+```
+
+Flag-ul `-i` este esențial în mai multe situații:
+- Ai mai multe perechi de chei pentru servere sau scopuri diferite
+- Cheia ta nu se află în directorul implicit `~/.ssh/`
+- Specifici o cheie într-un mediu CI/CD unde calea este explicită
+- Ai descărcat o cheie `.pem` de la AWS sau alt furnizor cloud
+
+### Exemplu AWS EC2
+
+AWS furnizează un fișier de cheie `.pem` când lansezi o instanță EC2:
+
+```bash
+# Conectare la o instanță AWS EC2 cu o cheie .pem
+ssh -i ~/Downloads/my-aws-key.pem ec2-user@54.123.456.789
+
+# Corectarea permisiunilor dacă este necesar (obligatoriu — SSH respinge cheile citibile de toată lumea)
+chmod 400 ~/Downloads/my-aws-key.pem
+```
+
+## Opțiuni și flag-uri esențiale ale comenzii SSH
+
+Comanda `ssh` are zeci de opțiuni. Iată cele pe care le vei folosi efectiv.
+
+| Flag | Formă lungă / Descriere | Exemplu |
+|---|---|---|
+| `-p PORT` | Conectare pe un port non-standard | `ssh -p 2222 user@host` |
+| `-i FILE` | Folosirea unui fișier de identitate (cheie) specific | `ssh -i ~/.ssh/mykey user@host` |
+| `-l USER` | Specificarea numelui de utilizator de autentificare (alternativă la `user@`) | `ssh -l alice host` |
+| `-L local:host:remote` | Redirecționarea portului local | `ssh -L 8080:localhost:80 host` |
+| `-R remote:host:local` | Redirecționarea portului la distanță | `ssh -R 9090:localhost:3000 host` |
+| `-D port` | Proxy dinamic (SOCKS) | `ssh -D 1080 host` |
+| `-N` | Nu executa o comandă la distanță (doar tunelare) | `ssh -N -L 3307:db:3306 host` |
+| `-f` | Mergi în fundal după autentificare | `ssh -f -N -D 1080 host` |
+| `-v` | Output verbos (debug) | `ssh -v user@host` |
+| `-vv` sau `-vvv` | Output mai verbos | `ssh -vvv user@host` |
+| `-A` | Activarea redirecționării agentului SSH | `ssh -A user@jump-host` |
+| `-X` | Activarea redirecționării X11 | `ssh -X user@host xclock` |
+| `-C` | Activarea compresiei | `ssh -C user@host` |
+| `-T` | Dezactivarea alocării pseudo-terminalului | `ssh -T git@github.com` |
+| `-q` | Mod silențios (suprimarea avertismentelor) | `ssh -q user@host` |
+| `-o OPTION=VALUE` | Setarea unei opțiuni de configurare inline | `ssh -o StrictHostKeyChecking=no host` |
+| `-J JUMP` | ProxyJump printr-un bastion host | `ssh -J jump.host user@internal` |
+| `-W host:port` | Redirecționarea stdio la un host:port (pentru ProxyJump) | Folosit intern de `-J` |
+
+### Modul verbos pentru depanare
+
+Când SSH eșuează, `-v` (sau `-vv` sau `-vvv`) dezvăluie exact ce se întâmplă:
+
+```bash
+ssh -v user@server.example.com
+# Afișează: ce chei sunt încercate, ce metode de autentificare acceptă serverul,
+# dacă agentul este implicat și unde eșuează conexiunea
+
+ssh -vvv user@server.example.com
+# Verbozitate maximă — afișează negocierea criptografică detaliată
+```
+
+### Ocolirea verificării cheii de gazdă (Utilizează cu precauție)
+
+În medii de automatizare și testare unde verificarea cheii de gazdă este incomodă:
+
+```bash
+ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null user@host
+```
+
+**Nu folosi aceasta în producție.** Dezactivează protecția împotriva atacurilor man-in-the-middle. În schimb, pre-populează `known_hosts` folosind `ssh-keyscan` în scripturile tale de provizionare.
+
+### Redirecționarea agentului
+
+```bash
+# Redirecționează agentul tău SSH local la serverul la distanță
+ssh -A user@jump-server
+
+# De pe jump-server, poți acum face SSH la gazde interne folosind cheile locale
+# Nu este nevoie să copiezi chei private pe jump-server
+ssh internal-server.private
+```
+
+Redirecționarea agentului este utilă, dar are implicații de securitate: oricine cu acces root pe serverul intermediar poate folosi agentul tău redirecționat. Folosește-o doar cu servere de încredere și preferă **ProxyJump** când este posibil (nu expune agentul tău gazdelor intermediare).
+
+## Comenzi de tunelare SSH
+
+Tunelarea SSH rutează conexiunile TCP printr-un canal SSH criptat. Pentru context despre ce este tunelarea, consultă <a href="/ro/what-is-ssh">secțiunea de tunelare a ghidului nostru SSH</a>.
+
+### Redirecționarea portului local
+
+Face un serviciu la distanță accesibil pe mașina ta locală.
+
+```bash
+# Accesarea unei baze de date MySQL la distanță pe portul local 3307
+ssh -L 3307:localhost:3306 user@db-server.example.com -N
+
+# Conectarea la un server web la distanță accesibil doar de pe gazda SSH
+ssh -L 8080:intranet.company.com:80 user@vpn.company.com -N
+
+# Accesarea unei instanțe Redis pe o rețea privată
+ssh -L 6380:10.0.1.50:6379 user@bastion.example.com -N
+```
+
+După rularea oricăreia din comenzile de mai sus, conectează aplicația ta locală la `127.0.0.1:PORT_LOCAL`.
+
+### Redirecționarea portului la distanță
+
+Expune un serviciu local pe serverul la distanță.
+
+```bash
+# Expunerea serverului tău local de development (portul 3000) pe portul 9090 al serverului la distanță
+ssh -R 9090:localhost:3000 user@remote.example.com -N
+
+# Permite oricărei interfețe de pe serverul la distanță să se conecteze (necesită GatewayPorts yes în sshd_config)
+ssh -R 0.0.0.0:9090:localhost:3000 user@remote.example.com -N
+```
+
+### Redirecționarea dinamică a portului (proxy SOCKS)
+
+```bash
+# Creează un proxy SOCKS5 pe portul local 1080, rulând în fundal
+ssh -D 1080 -N -f user@remote.example.com
+
+# Acum configurează browserul sau sistemul să folosească proxy SOCKS5: 127.0.0.1:1080
+# Tot traficul rutat prin serverul la distanță
+```
+
+Pentru a folosi cu curl:
+
+```bash
+curl --socks5 127.0.0.1:1080 https://api.example.com/
+```
+
+### Rularea tunelului în fundal
+
+```bash
+# -f trimite SSH în fundal, -N înseamnă nicio comandă la distanță
+ssh -f -N -L 3307:localhost:3306 user@db-server
+
+# Găsirea procesului SSH din fundal
+ps aux | grep ssh
+
+# Oprirea lui
+kill PID
+```
+
+## SSH ProxyJump și bastion hosts
+
+În multe organizații, serverele de producție se află pe rețele private, inaccesibile direct de pe internet. Un **bastion host** (sau jump host) este un server întărit pe perimetrul rețelei la care faci SSH mai întâi, apoi sari la serverele interne. Flag-ul `ssh -J` (ProxyJump, adăugat în OpenSSH 7.3) face aceasta fără probleme.
+
+### ProxyJump de bază
+
+```bash
+# Salt printr-un bastion pentru a ajunge la un server intern
+ssh -J ec2-user@bastion.example.com ubuntu@10.0.1.50
+
+# Formă scurtă
+ssh -J user@jump-host user@internal-server
+```
+
+Aceasta creează două conexiuni SSH: mai întâi la bastion, apoi de la bastion la serverul intern — toate într-o singură comandă, cu criptare end-to-end. Agentul tău SSH local gestionează autentificarea la ambele gazde.
+
+### Înlănțuirea mai multor salturi
+
+```bash
+# Salt prin două gazde intermediare
+ssh -J user@jump1.example.com,user@jump2.example.com user@final-destination
+```
+
+### ProxyJump în fișierul de configurare SSH
+
+Pentru serverele accesate frecvent, pune configurația ProxyJump în `~/.ssh/config`:
+
+```
+Host bastion
+    HostName bastion.example.com
+    User ec2-user
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host prod-web
+    HostName 10.0.1.100
+    User ubuntu
+    ProxyJump bastion
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host prod-db
+    HostName 10.0.2.50
+    User postgres
+    ProxyJump bastion
+    IdentityFile ~/.ssh/id_ed25519_aws
+```
+
+Acum `ssh prod-web` se conectează automat prin bastion. Nu sunt necesare flag-uri `-J` manuale.
+
+### ProxyJump vs redirecționarea agentului
+
+ProxyJump este preferat față de redirecționarea agentului (`-A`) deoarece:
+- Cheia ta privată nu este niciodată redirecționată la gazda intermediară
+- Bastion host-ul nu poate folosi acreditările tale pentru a se autentifica în altă parte
+- Conexiunea este autentificată end-to-end — serverul de destinație te verifică direct
+
+Pentru mai multe detalii de configurare, consultă ghidul nostru complet despre <a href="/ro/how-to-set-up-ssh">cum să configurezi SSH</a>.
+
+## Întrebări frecvente
+
+### Cum rulez o comandă SSH fără parolă?
+
+Configurează autentificarea SSH prin cheie. Generează o pereche de chei (`ssh-keygen -t ed25519`), copiază cheia publică în fișierul `~/.ssh/authorized_keys` al serverului folosind `ssh-copy-id user@host` și conexiunile ulterioare vor folosi cheia ta fără a solicita o parolă. Dacă cheia ta are o frază de acces, folosește `ssh-agent` și `ssh-add` pentru a o stoca în cache, astfel încât să o introduci o singură dată pe sesiune.
+
+### Cum ies dintr-o sesiune SSH?
+
+Tastează `exit` sau apasă **Ctrl+D** pentru a închide shell-ul de la distanță și a te deconecta. Dacă sesiunea este blocată (de ex., rețeaua a căzut), folosește secvența de escape SSH: apasă **Enter**, apoi tastează `~.` (tildă urmată de un punct). SSH termină imediat conexiunea. Alte secvențe de escape: `~^Z` suspendă SSH în fundal, `~?` listează toate secvențele de escape.
+
+### Cum rulez o comandă pe un server la distanță prin SSH?
+
+Adaugă comanda după hostname:
+
+```bash
+ssh user@server "comandă de rulat"
+ssh user@server "ls -la /var/log/"
+ssh user@server "sudo systemctl status nginx"
+```
+
+Pentru comenzi sau scripturi pe mai multe linii, folosește un heredoc:
+
+```bash
+ssh user@server << 'EOF'
+cd /var/www/html
+git pull origin main
+systemctl reload nginx
+EOF
+```
+
+Pentru comenzi interactive (cum ar fi cele care necesită un terminal), adaugă flag-ul `-t` pentru a aloca un pseudo-terminal: `ssh -t user@server sudo apt upgrade`.
+
+### Care este diferența dintre ssh și scp?
+
+`ssh` deschide o sesiune de terminal (sau rulează o singură comandă) pe o mașină la distanță. `scp` (Secure Copy Protocol) copiază fișiere între mașina ta locală și o mașină la distanță, sau între două mașini la distanță, folosind SSH pentru criptare și autentificare. Ambele folosesc același protocol SSH și infrastructură de chei. Pentru transferuri de fișiere, `scp` este instrumentul dedicat:
+
+```bash
+# scp local la distanță
+scp file.txt user@server:/destination/path/
+
+# scp distanță la local
+scp user@server:/remote/file.txt ./local-copy.txt
+```
+
+Pentru transferuri de fișiere mai avansate (recursive, rezumabile, navigarea directoarelor), folosește `sftp`. Pentru transferuri la scară largă, `rsync -avz -e ssh` este și mai eficient.
+
+### Cum folosesc SSH cu un fișier de configurare?
+
+Creează `~/.ssh/config` și adaugă intrări de gazdă. Fiecare bloc `Host` definește un alias de conexiune cu setările sale complete:
+
+```
+Host alias-name
+    HostName actual.server.com
+    User username
+    Port 22
+    IdentityFile ~/.ssh/specific_key
+```
+
+Apoi `ssh alias-name` folosește toate setările definite automat. Fișierul de configurare suportă wildcards: `Host *.example.com` aplică setările tuturor gazdelor corespunzătoare. `Host *` la final aplică valorile implicite tuturor conexiunilor. Opțiunile dintr-un bloc `Host` specific suprascriu valorile implicite globale.
+
+## Ai nevoie de chei SSH? Generează-le gratuit
+
+Pentru a folosi autentificarea SSH prin cheie — care elimină necesitatea parolelor — ai nevoie de o pereche de chei. Generează chei Ed25519 sau RSA instantaneu în browserul tău, fără nimic trimis pe serverele noastre.
+
+<a href="/">Generează-ți cheile SSH gratuit →</a>
+
+---
+
+**Lectură suplimentară:**
+- <a href="/ro/what-is-ssh">Ce este SSH? Ghidul complet pentru Secure Shell</a>
+- <a href="/ro/what-is-an-ssh-key">Ce este o cheie SSH? Chei publice, chei private și perechi de chei explicate</a>
+- <a href="/ro/how-to-set-up-ssh">Cum să configurezi SSH: Un ghid complet pas cu pas</a>

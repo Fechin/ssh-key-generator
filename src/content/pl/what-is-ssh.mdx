@@ -1,0 +1,283 @@
+# Czym Jest SSH? Kompletny Przewodnik po Secure Shell
+
+SSH, czyli **Secure Shell**, to kryptograficzny protokół sieciowy umożliwiający bezpieczny dostęp do zdalnych komputerów i zarządzanie nimi przez niezabezpieczone sieci. Niezależnie od tego, czy logujesz się na serwer Linux, wysyłasz kod do GitHub, czy przenosisz pliki między maszynami — SSH jest prawie na pewno protokołem wykonującym tę pracę za kulisami. Niniejszy przewodnik wyjaśnia wszystko, co musisz wiedzieć o SSH: czym jest, jak działa i dlaczego stał się powszechnym standardem bezpiecznego dostępu zdalnego.
+
+## Co Oznacza Skrót SSH?
+
+**SSH to skrót od Secure Shell**. Nazwa dokładnie opisuje działanie protokołu — zapewnia bezpieczną, zaszyfrowaną sesję powłoki (shell) na zdalnej maszynie. Zanim powstał SSH, administratorzy używali narzędzi takich jak Telnet i rsh (remote shell) do zarządzania serwerami zdalnymi. Protokoły te przesyłały wszystko jako zwykły tekst, w tym nazwy użytkowników i hasła, co czyniło je trywialnie łatwymi do przechwycenia w każdej wspólnej sieci.
+
+SSH został stworzony przez fińskiego informatyka **Tatu Ylönena** w 1995 roku, bezpośrednio zainspirowany atakiem polegającym na przechwytywaniu haseł, który zaobserwował w sieci swojej uczelni. Wydał SSH-1 jako wolne oprogramowanie, które szybko zostało przyjęte w całym Internecie. Protokół został następnie zestandaryzowany przez IETF jako SSH-2 (RFC 4251–4254), który wprowadził silniejszą kryptografię i naprawił kilka słabości bezpieczeństwa oryginalnego projektu.
+
+Dziś mówiąc „SSH", niemal zawsze ma się na myśli SSH-2. Najszerzej stosowaną implementacją jest **OpenSSH**, projekt open source utrzymywany przez zespół OpenBSD i dołączany praktycznie do każdej dystrybucji Linuksa oraz instalacji macOS.
+
+**Praktyczne znaczenie SSH** wykracza daleko poza zwykłe narzędzie do logowania. Jest to pełna pakiet protokołów stanowiący podstawę dla:
+- Bezpiecznego zdalnego dostępu do terminala
+- Szyfrowanych transferów plików (SFTP i SCP)
+- Uwierzytelniania Git (GitHub, GitLab, Bitbucket)
+- Bezpiecznego przekierowywania portów i tunelowania
+- Zautomatyzowanych potoków wdrożeniowych
+
+## Jak Działa SSH
+
+**Protokół Secure Shell** działa na warstwowej architekturze, która obsługuje szyfrowanie, uwierzytelnianie i multipleksowanie kanałów osobno. Zrozumienie tych warstw pomaga wyjaśnić, dlaczego SSH jest stosowany w przypadku wrażliwych operacji.
+
+### Trzy Warstwy Protokołu
+
+**1. Warstwa transportowa (RFC 4253)**
+
+Po zainicjowaniu połączenia SSH klient i serwer przeprowadzają najpierw uzgadnianie (handshake), aby wynegocjować algorytmy szyfrowania i ustalić wspólny sekret. Używany jest algorytm wymiany kluczy — nowoczesny SSH domyślnie stosuje wymianę kluczy opartą na Curve25519. Po uzgadnianiu cała dalsza komunikacja jest szyfrowana. Warstwa transportowa zapewnia również integralność danych za pomocą kodów uwierzytelniania wiadomości (MAC), gwarantując, że dane nie mogą być modyfikowane podczas przesyłania.
+
+**2. Warstwa uwierzytelniania użytkownika (RFC 4252)**
+
+Po ustanowieniu zaszyfrowanego kanału serwer prosi klienta o uwierzytelnienie. SSH obsługuje wiele metod uwierzytelniania:
+
+- **Uwierzytelnianie kluczem publicznym** — Klient udowadnia posiadanie klucza prywatnego, nie przesyłając go nigdy przez sieć. Jest to najbezpieczniejsza i najczęściej stosowana metoda.
+- **Uwierzytelnianie hasłem** — Hasło użytkownika jest wysyłane przez zaszyfrowany kanał. Wygodniejsze, ale podatne na ataki brute-force.
+- **Keyboard-interactive** — Mechanizm wyzwanie/odpowiedź, często stosowany do uwierzytelniania wieloskładnikowego.
+- **GSSAPI/Kerberos** — Stosowane w środowiskach korporacyjnych ze scentralizowanym zarządzaniem tożsamościami.
+
+**3. Warstwa połączenia (RFC 4254)**
+
+Po uwierzytelnieniu warstwa połączenia multipleksuje pojedyncze zaszyfrowane połączenie na wiele logicznych kanałów. To właśnie umożliwia posiadanie interaktywnej powłoki, uruchamianie zdalnych poleceń, przekierowywanie portów i przesyłanie plików — wszystko przez jedno połączenie TCP.
+
+### Wymiana Kluczy w Szczegółach
+
+Po wpisaniu `ssh user@example.com` w ciągu pierwszych milisekund dzieje się co następuje:
+
+1. Klient łączy się z portem TCP 22 serwera.
+2. Obie strony wymieniają ciągi wersji protokołu.
+3. Obie strony wysyłają listy obsługiwanych algorytmów (wymiana kluczy, szyfry, MAC-y, kompresja).
+4. Przeprowadzana jest wymiana kluczy Diffie-Hellman lub ECDH w celu wyprowadzenia współdzielonego klucza sesji — dlatego nawet jeśli ktoś nagra zaszyfrowany ruch, nie będzie mógł go później odszyfrować.
+5. Serwer wysyła swój **klucz hosta** (klucz publiczny), który klient weryfikuje w pliku `~/.ssh/known_hosts`.
+6. Uwierzytelnianie przebiega zgodnie z opisem powyżej.
+7. Sesja się rozpoczyna.
+
+## SSH vs Telnet: Dlaczego SSH Wygrał
+
+Przed SSH standardowym protokołem dostępu zdalnego do terminala był **Telnet**. Telnet jest prosty i nadal działa, ale ma jedną śmiertelną wadę: wszystko jest przesyłane jako zwykły tekst. Twoja nazwa użytkownika, hasło, każde wpisywane polecenie i każdy fragment wyjścia — wszystko widoczne dla każdego, kto może przechwycić ruch sieciowy.
+
+W latach 90., gdy szkielet Internetu tworzyły zaufane sieci akademickie i badawcze, nie było to uważane za poważny problem. Gdy Internet stał się komercyjny i wrogi, narzędzia takie jak Dsniff i Ettercap sprawiły, że przechwytywanie poświadczeń Telnetu w sieciach lokalnych stało się trywialne.
+
+SSH rozwiązał ten problem, szyfrując wszystko. Oto bezpośrednie porównanie:
+
+| Funkcja | Telnet | SSH |
+|---|---|---|
+| Szyfrowanie | Brak | Silne (AES, ChaCha20) |
+| Uwierzytelnianie | Hasło w postaci zwykłego tekstu | Klucz publiczny + zaszyfrowane hasło |
+| Integralność danych | Brak | Weryfikacja HMAC |
+| Port | 23 | 22 |
+| Nadal zalecany | Nie | Tak |
+
+rsh (remote shell) i rlogin miały podobne problemy. Opierały się również na zaufaniu opartym na adresie IP, które jest trywialnie do sfałszowania. SSH zastąpił wszystkie te protokoły i pozostaje niekwestionowanym standardem od ponad 25 lat.
+
+## Czym Jest Klucz SSH?
+
+SSH obsługuje dwie podstawowe metody uwierzytelniania: hasła i **klucze SSH**. Klucze SSH to kryptograficzne pary kluczy — **klucz publiczny** i **klucz prywatny** — oparte na kryptografii asymetrycznej.
+
+**Klucz prywatny** pozostaje na lokalnej maszynie, opcjonalnie chroniony hasłem. **Klucz publiczny** jest umieszczany na każdym serwerze, do którego chcesz mieć dostęp, w pliku o nazwie `~/.ssh/authorized_keys`. Podczas łączenia serwer wystawia wyzwanie kryptograficzne, na które może odpowiedzieć tylko posiadacz odpowiadającego klucza prywatnego. Żadne hasło nie jest przesyłane przez sieć.
+
+To podejście ma kilka zalet:
+- **Odporność na ataki brute-force** — nie ma nic do odgadnięcia. Klucz Ed25519 o długości 256 bitów ma 2²⁵⁶ możliwych wartości.
+- **Brak hasła do kradzieży** — nawet jeśli ktoś przechwyci uzgadnianie, nie uzyska niczego użytecznego.
+- **Automatyzowalność** — skrypty i potoki CI/CD mogą uwierzytelniać się bez udziału człowieka.
+- **Możliwość unieważnienia** — usunięcie klucza publicznego z `authorized_keys` natychmiast odbiera dostęp.
+
+Najnowocześniejszym i zalecanym typem klucza jest **Ed25519**, który wykorzystuje kryptografię na krzywych eliptycznych na krzywej Edwardsa. Klucze RSA są również szeroko obsługiwane, choć należy używać co najmniej 4096 bitów.
+
+Szczegółowe omówienie par kluczy znajdziesz w naszym przewodniku po <a href="/pl/what-is-an-ssh-key">kluczach SSH</a>.
+
+## Typowe Zastosowania SSH
+
+SSH jest stosowany w niezwykle szerokim zakresie scenariuszy. Oto najważniejsze z nich.
+
+### Zdalne Administrowanie Serwerem
+
+Najbardziej podstawowe zastosowanie. Administratorzy systemów logują się na serwery Linux i Unix, aby instalować oprogramowanie, edytować pliki konfiguracyjne, zarządzać usługami i diagnozować problemy — wszystko przez sesję terminala SSH.
+
+```bash
+ssh user@192.168.1.100
+ssh admin@myserver.example.com
+ssh -p 2222 deploy@staging.example.com
+```
+
+### Transfer Plików za Pomocą SFTP i SCP
+
+SSH udostępnia dwa protokoły transferu plików zbudowane na tym samym zaszyfrowanym kanale:
+
+**SCP (Secure Copy Protocol)** to proste narzędzie wiersza poleceń do kopiowania plików:
+
+```bash
+# Kopiuj lokalny plik na serwer zdalny
+scp report.pdf user@server:/home/user/documents/
+
+# Kopiuj plik zdalny na lokalną maszynę
+scp user@server:/var/log/app.log ./local-copy.log
+
+# Kopiuj cały katalog rekurencyjnie
+scp -r ./project/ user@server:/var/www/
+```
+
+**SFTP (SSH File Transfer Protocol)** zapewnia interaktywny interfejs podobny do FTP z bogatszym zestawem funkcji niż SCP, w tym możliwością wznawiania transferów i listowania katalogów.
+
+### Uwierzytelnianie Git
+
+Po dodaniu klucza SSH do GitHub, GitLab lub Bitbucket każda operacja `git clone`, `git push` i `git pull` przez SSH jest uwierzytelniana przy użyciu klucza prywatnego. Eliminuje to konieczność wprowadzania nazwy użytkownika i hasła przy każdej operacji Git i jest zalecaną metodą uwierzytelniania dla programistów.
+
+```bash
+# Sklonuj repozytorium używając SSH
+git clone git@github.com:username/repository.git
+
+# Sprawdź połączenie SSH z GitHub
+ssh -T git@github.com
+```
+
+### Zautomatyzowane Wdrożenia i CI/CD
+
+Skrypty wdrożeniowe i systemy CI/CD, takie jak GitHub Actions, GitLab CI i Jenkins, używają kluczy SSH do wdrażania kodu na serwerach produkcyjnych bez ingerencji człowieka. Klucz prywatny jest przechowywany jako sekret w systemie CI, a odpowiadający mu klucz publiczny jest dodawany do pliku `authorized_keys` serwera.
+
+### Przekierowywanie Portów dla Baz Danych i Aplikacji
+
+Tunelowanie SSH może bezpiecznie udostępnić zdalne usługi na lokalnej maszynie. Na przykład, aby uzyskać dostęp do zdalnej bazy danych MySQL niewystawionej na Internet:
+
+```bash
+ssh -L 3307:localhost:3306 user@dbserver.example.com -N
+```
+
+Tworzy to lokalny tunel: połączenie z portem 3307 na Twojej maszynie w sposób przezroczysty przekierowuje ruch na port 3306 serwera zdalnego, zaszyfrowany w tunelu SSH.
+
+## Port SSH i Opcje Konfiguracji
+
+### Domyślny Port 22
+
+SSH nasłuchuje domyślnie na **porcie TCP 22**. Jest to dobrze znany port przydzielony przez IANA, zarezerwowany dla SSH od czasu powstania protokołu. Gdy uruchamiasz `ssh user@host` bez podawania portu, klient SSH łączy się z portem 22.
+
+Niektórzy administratorzy zmieniają port SSH (np. na 2222 lub 8022) jako niewielki środek bezpieczeństwa mający na celu zmniejszenie hałasu automatycznych skanowań w dziennikach. Technika ta nazywa się „bezpieczeństwem przez ukrycie" i nie zastępuje właściwego uwierzytelniania opartego na kluczach, ale może zmniejszyć bałagan w dziennikach.
+
+```bash
+# Połącz się z niestandardowym portem SSH
+ssh -p 2222 user@example.com
+```
+
+### Plik Konfiguracyjny Klienta SSH
+
+Zamiast za każdym razem wpisywać długie opcje wiersza poleceń, możesz skonfigurować połączenia SSH w pliku `~/.ssh/config`. Plik ten pozwala definiować aliasy, ustawiać opcje dla poszczególnych hostów i znacznie upraszczać przepływ pracy.
+
+```
+Host myserver
+    HostName 203.0.113.10
+    User deploy
+    Port 2222
+    IdentityFile ~/.ssh/id_ed25519_prod
+
+Host bastion
+    HostName jump.example.com
+    User ec2-user
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host internal
+    HostName 10.0.1.50
+    User ubuntu
+    ProxyJump bastion
+```
+
+Dzięki tej konfiguracji `ssh myserver` łączy się z pełną nazwą hosta na niestandardowym porcie, używając określonego klucza — bez dodatkowych flag.
+
+Pełne omówienie opcji i flag polecenia SSH znajdziesz w naszym <a href="/pl/ssh-command">przewodniku po poleceniu SSH</a>.
+
+### Konfiguracja po Stronie Serwera (sshd_config)
+
+Demon serwera SSH (sshd) jest konfigurowany przez `/etc/ssh/sshd_config`. Kluczowe ustawienia to:
+
+```
+# Wyłącz uwierzytelnianie hasłem — tylko klucze
+ PasswordAuthentication no
+
+# Wyłącz logowanie jako root
+ PermitRootLogin no
+
+# Zmień port nasłuchiwania
+Port 2222
+
+# Ogranicz do określonych użytkowników
+AllowUsers deploy admin
+
+# Włącz uwierzytelnianie kluczem publicznym
+PubkeyAuthentication yes
+```
+
+Po edycji, przeładuj demona: `sudo systemctl reload sshd`
+
+## Tunelowanie SSH
+
+Tunelowanie SSH (zwane również przekierowywaniem portów SSH) pozwala na routing dowolnego ruchu TCP przez zaszyfrowane połączenie SSH. Jest to jedna z najpotężniejszych i najbardziej niedocenianych funkcji SSH.
+
+### Lokalne Przekierowywanie Portów
+
+Lokalne przekierowanie udostępnia zdalną usługę na lokalnej maszynie. Składnia to `-L port_lokalny:host_zdalny:port_zdalny`.
+
+```bash
+# Lokalne uzyskiwanie dostępu do zdalnej bazy PostgreSQL
+ssh -L 5433:localhost:5432 user@dbserver -N
+
+# Dostęp do wewnętrznej aplikacji webowej przez serwer pośredniczący
+ssh -L 8080:internal-app.company.com:80 user@jump.company.com -N
+```
+
+Flaga `-N` nakazuje SSH, aby nie wykonywał zdalnego polecenia — przydatne, gdy potrzebny jest tylko tunel.
+
+### Zdalne Przekierowywanie Portów
+
+Zdalne przekierowanie udostępnia lokalną usługę na serwerze zdalnym. Składnia to `-R port_zdalny:host_lokalny:port_lokalny`.
+
+```bash
+# Udostępnij lokalny serwer webowy na maszynie zdalnej
+ssh -R 9090:localhost:3000 user@server -N
+```
+
+Jest to przydatne do tymczasowego udostępniania lokalnego serwera deweloperskiego współpracownikowi mającemu dostęp do hosta zdalnego lub do tymczasowego udostępnienia klientowi dostępu do pracy w toku.
+
+### Dynamiczne Przekierowywanie Portów (Proxy SOCKS)
+
+Flaga `-D` tworzy proxy SOCKS na lokalnej maszynie, kierując cały ruch zgodny z SOCKS przez połączenie SSH. Dzięki temu serwer zdalny działa jako węzeł wyjściowy VPN.
+
+```bash
+# Utwórz proxy SOCKS5 na lokalnym porcie 1080
+ssh -D 1080 user@remote-server -N -f
+```
+
+Skonfiguruj przeglądarkę lub system tak, aby używał `proxy SOCKS5: 127.0.0.1:1080`, a cały ruch internetowy będzie przekierowywany przez serwer zdalny. Jest to często używane do dostępu do treści z ograniczeniami geograficznymi lub bezpiecznego przeglądania z niezaufanej sieci.
+
+## Często Zadawane Pytania
+
+### Co oznacza skrót SSH?
+
+SSH to skrót od **Secure Shell**. Jest to kryptograficzny protokół sieciowy do bezpiecznej obsługi usług sieciowych w niezabezpieczonej sieci. Nazwa odnosi się do jego głównego zastosowania: zapewniania bezpiecznej interaktywnej sesji powłoki na zdalnym komputerze.
+
+### Czy SSH to to samo co SSL?
+
+Nie. SSH i SSL/TLS to oba protokoły kryptograficzne, ale służą różnym celom. **SSL/TLS** (Secure Sockets Layer / Transport Layer Security) służy do zabezpieczania ruchu internetowego (HTTPS), poczty elektronicznej i innych protokołów aplikacyjnych. **SSH** jest specjalnie zaprojektowany do bezpiecznego zdalnego dostępu do powłoki, transferu plików i tunelowania. Używają podobnych prymitywów kryptograficznych (kryptografia klucza publicznego, szyfrowanie symetryczne), ale mają różne mechanizmy uzgadniania i zastosowania. SSH nie używa wewnętrznie SSL/TLS.
+
+### Jakiego portu używa SSH?
+
+SSH domyślnie używa **portu TCP 22**. Jest to dobrze znany port przydzielony przez IANA. Możesz skonfigurować serwer SSH, aby nasłuchiwał na innym porcie za pomocą dyrektywy `Port` w `/etc/ssh/sshd_config`, i łączyć się z niestandardowymi portami za pomocą `ssh -p PORT user@host`.
+
+### Czy SSH można zhakować?
+
+Prawidłowo skonfigurowany serwer SSH z uwierzytelnianiem opartym na kluczach jest niezwykle trudny do złamania. Kryptografia — klucze Ed25519, szyfrowanie AES-256, MAC SHA-2 — jest uważana za odporną na komputery kwantowe w zakresie uwierzytelniania kluczem i obliczeniowo niewykonalną do złamania metodą brute-force. Rzeczywiste włamania do SSH zazwyczaj wiążą się z: kradzieżą plików klucza prywatnego, słabymi hasłami, błędnie skonfigurowanymi serwerami umożliwiającymi uwierzytelnianie hasłem ze słabymi hasłami, podatnymi wersjami oprogramowania z niełatanymi CVE lub inżynierią społeczną, a nie atakami kryptograficznymi. Dbaj o aktualizacje serwera, wyłącz uwierzytelnianie hasłem i chroń plik klucza prywatnego.
+
+### Jaka jest różnica między SSH a HTTPS?
+
+Zarówno SSH, jak i HTTPS szyfrują ruch sieciowy, ale są przeznaczone do różnych celów. **HTTPS** zabezpiecza przeglądanie Internetu — używa TLS do szyfrowania żądań i odpowiedzi HTTP między przeglądarkami a serwerami internetowymi. **SSH** zabezpiecza zdalny dostęp administracyjny, transfery plików i tunelowanie. Podczas wysyłania kodu do GitHub możesz użyć SSH (port 22, uwierzytelnianie oparte na kluczach) lub HTTPS (port 443, uwierzytelnianie oparte na tokenach). SSH jest na ogół preferowany przez programistów, ponieważ nie wymaga ponownego wprowadzania poświadczeń. HTTPS jest powszechnie obsługiwany przez zapory ogniowe, które mogą blokować port 22.
+
+## Wygeneruj Swoje Klucze SSH Teraz
+
+Uwierzytelnianie SSH oparte na kluczach jest bezpieczniejsze i wygodniejsze niż hasła. Jeśli nie skonfigurowałeś jeszcze kluczy SSH, nasz bezpłatny generator online tworzy pary kluczy Ed25519 lub RSA natychmiast w przeglądarce — bez wymagania instalacji, nic nie jest wysyłane na nasze serwery.
+
+<a href="/">Wygeneruj swoją parę kluczy SSH teraz →</a>
+
+---
+
+**Dalsze lektury:**
+- <a href="/pl/what-is-an-ssh-key">Czym Jest Klucz SSH? Klucze Publiczne, Prywatne i Pary Kluczy Wyjaśnione</a>
+- <a href="/pl/ssh-command">Polecenie SSH: Kompletny Przewodnik z Przykładami</a>
+- <a href="/pl/how-to-set-up-ssh">Jak Skonfigurować SSH: Kompletny Przewodnik Krok po Kroku</a>

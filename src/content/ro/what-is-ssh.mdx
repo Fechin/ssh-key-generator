@@ -1,0 +1,283 @@
+# Ce este SSH? Ghidul complet pentru Secure Shell
+
+SSH, acronim pentru **Secure Shell**, este un protocol de rețea criptografic care îți permite să accesezi și să administrezi în siguranță calculatoare la distanță printr-o rețea nesecurizată. Fie că te autentifici pe un server Linux, trimiți cod pe GitHub sau transferi fișiere între mașini, SSH este aproape sigur protocolul care lucrează în culise. Acest ghid explică tot ce trebuie să știi despre SSH: ce este, cum funcționează și de ce a devenit standardul universal pentru accesul securizat la distanță.
+
+## Ce înseamnă SSH?
+
+**SSH înseamnă Secure Shell**. Numele descrie exact ce face protocolul — oferă o sesiune shell securizată și criptată către o mașină la distanță. Înainte de existența SSH, administratorii foloseau instrumente precum Telnet și rsh (remote shell) pentru a gestiona serverele la distanță. Acele protocoale transmiteau totul în text simplu, inclusiv numele de utilizator și parolele, făcând interceptarea lor banală pe orice rețea partajată.
+
+SSH a fost creat de informaticianul finlandez **Tatu Ylönen** în 1995, motivat direct de un atac de tip password-sniffing pe care l-a observat în rețeaua universității sale. El a lansat SSH-1 ca software liber, iar acesta a fost rapid adoptat pe tot internetul. Protocolul a fost ulterior standardizat de IETF ca SSH-2 (RFC 4251–4254), care a introdus criptografie mai puternică și a corectat mai multe vulnerabilități de securitate din designul original.
+
+Astăzi, când oamenii spun „SSH", se referă aproape întotdeauna la SSH-2. Implementarea cea mai utilizată este **OpenSSH**, un proiect open-source menținut de echipa OpenBSD și inclus în practic orice distribuție Linux și instalare macOS.
+
+**Semnificația SSH** în practică depășește simpla funcție de instrument de autentificare. Este o suită de protocoale completă care stă la baza:
+- Accesului securizat la terminal de la distanță
+- Transferurilor de fișiere criptate (SFTP și SCP)
+- Autentificării Git (GitHub, GitLab, Bitbucket)
+- Redirecționării securizate de porturi și tunelării
+- Pipeline-urilor de deployment automatizat
+
+## Cum funcționează SSH
+
+**Protocolul Secure Shell** operează pe o arhitectură stratificată care gestionează separat criptarea, autentificarea și multiplexarea canalelor. Înțelegerea acestor straturi ajută la demistificarea motivului pentru care SSH este de încredere pentru operațiuni sensibile.
+
+### Cele trei straturi de protocol
+
+**1. Stratul de transport (RFC 4253)**
+
+Când inițiezi o conexiune SSH, clientul și serverul efectuează mai întâi un handshake pentru a negocia algoritmii de criptare și a stabili o cheie de sesiune partajată. Aceasta folosește un algoritm de schimb de chei — SSH-ul modern utilizează implicit schimbul de chei bazat pe Curve25519. După handshake, toată comunicarea ulterioară este criptată. Stratul de transport oferă, de asemenea, integritatea datelor prin coduri de autentificare a mesajelor (MAC-uri), asigurând că datele nu pot fi alterate în tranzit.
+
+**2. Stratul de autentificare a utilizatorului (RFC 4252)**
+
+Odată ce un canal criptat este stabilit, serverul solicită clientului să se autentifice. SSH suportă mai multe metode de autentificare:
+
+- **Autentificarea cu cheie publică** — Clientul demonstrează posesia unei chei private fără a o trimite niciodată prin rețea. Aceasta este metoda cea mai sigură și mai comună.
+- **Autentificarea prin parolă** — Parola utilizatorului este trimisă prin canalul criptat. Mai convenabilă, dar vulnerabilă la atacuri de tip brute force.
+- **Keyboard-interactive** — Un mecanism de tip challenge/response, adesea folosit pentru autentificarea multifactorială.
+- **GSSAPI/Kerberos** — Utilizat în medii enterprise cu managementul centralizat al identității.
+
+**3. Stratul de conexiune (RFC 4254)**
+
+După autentificare, stratul de conexiune multiplexează conexiunea criptată unică în mai multe canale logice. Aceasta permite să ai un shell interactiv, să rulezi comenzi la distanță, să redirecționezi porturi și să transferi fișiere printr-o singură conexiune TCP.
+
+### Schimbul de chei în detaliu
+
+Când tastezi `ssh user@example.com`, iată ce se întâmplă în primele câteva milisecunde:
+
+1. Clientul se conectează la portul TCP 22 al serverului.
+2. Ambele părți schimbă șiruri de versiune a protocolului.
+3. Ambele părți trimit liste de algoritmi suportați (schimb de chei, cifruri, MAC-uri, compresie).
+4. Efectuează un schimb de chei Diffie-Hellman sau ECDH pentru a deriva o cheie de sesiune partajată — de aceea, chiar dacă cineva înregistrează traficul criptat, nu îl poate decripta ulterior.
+5. Serverul trimite **cheia sa de gazdă** (cheie publică), pe care clientul o verifică în fișierul `~/.ssh/known_hosts`.
+6. Autentificarea procedează conform descrierii de mai sus.
+7. Sesiunea începe.
+
+## SSH vs Telnet: De ce a câștigat SSH
+
+Înainte de SSH, **Telnet** era protocolul standard pentru accesul la terminal de la distanță. Telnet este simplu și funcționează în continuare, dar are un defect fatal: totul se transmite în text simplu. Numele de utilizator, parola, fiecare comandă tastată și fiecare răspuns — toate vizibile pentru oricine poate intercepta traficul de rețea.
+
+În anii 1990, când backbone-ul internetului era format din rețele academice și de cercetare de încredere, aceasta nu era considerată o problemă serioasă. Pe măsură ce internetul a devenit comercial și adversarial, instrumente precum Dsniff și Ettercap au făcut banală capturarea credențialelor Telnet în rețelele locale.
+
+SSH a rezolvat aceasta prin criptarea totului. Iată o comparație directă:
+
+| Caracteristică | Telnet | SSH |
+|---|---|---|
+| Criptare | Niciuna | Puternică (AES, ChaCha20) |
+| Autentificare | Parolă în text simplu | Cheie publică + parolă criptată |
+| Integritatea datelor | Niciuna | Verificare HMAC |
+| Port | 23 | 22 |
+| Recomandat în continuare | Nu | Da |
+
+rsh (remote shell) și rlogin aveau probleme similare. Se bazau, de asemenea, pe încrederea bazată pe IP, care poate fi falsificată cu ușurință. SSH a înlocuit toate aceste protocoale și a rămas standardul necontestat timp de peste 25 de ani.
+
+## Ce este o cheie SSH?
+
+SSH suportă două metode principale de autentificare: parole și **chei SSH**. Cheile SSH sunt perechi de chei criptografice — o **cheie publică** și o **cheie privată** — bazate pe criptografia asimetrică.
+
+**Cheia privată** rămâne pe mașina ta locală, protejată cu o parolă opțională. **Cheia publică** este plasată pe orice server pe care dorești să îl accesezi, într-un fișier numit `~/.ssh/authorized_keys`. Când te conectezi, serverul emite o provocare criptografică la care doar deținătorul cheii private corespunzătoare poate răspunde. Nicio parolă nu este trimisă prin rețea.
+
+Această abordare are mai multe avantaje:
+- **Imună la brute force** — nu există nimic de ghicit. O cheie Ed25519 de 256 de biți are 2²⁵⁶ valori posibile.
+- **Nicio parolă de furat** — chiar dacă cineva interceptează handshake-ul, nu obține nimic util.
+- **Automatizabilă** — scripturile și pipeline-urile CI/CD se pot autentifica fără interacțiune umană.
+- **Revocabilă** — eliminarea unei chei publice din `authorized_keys` revocă imediat accesul.
+
+Cel mai modern și recomandat tip de cheie este **Ed25519**, care utilizează criptografia pe curbe eliptice pe curba Edwards. Cheile RSA sunt, de asemenea, larg suportate, deși ar trebui să folosești cel puțin 4096 de biți.
+
+Pentru o aprofundare a perechilor de chei, consultă ghidul nostru despre <a href="/ro/what-is-an-ssh-key">ce este o cheie SSH</a>.
+
+## Cazuri de utilizare comune SSH
+
+SSH este folosit într-o gamă remarcabil de largă de scenarii. Iată cele mai importante.
+
+### Administrarea serverelor la distanță
+
+Cazul de utilizare fundamental. Administratorii de sistem se autentifică pe servere Linux și Unix pentru a instala software, edita fișiere de configurare, gestiona servicii și diagnostica probleme — toate printr-o sesiune SSH de terminal.
+
+```bash
+ssh user@192.168.1.100
+ssh admin@myserver.example.com
+ssh -p 2222 deploy@staging.example.com
+```
+
+### Transferul de fișiere cu SFTP și SCP
+
+SSH oferă două protocoale de transfer de fișiere construite pe același canal criptat:
+
+**SCP (Secure Copy Protocol)** este un instrument simplu de linie de comandă pentru copierea fișierelor:
+
+```bash
+# Copierea unui fișier local pe serverul la distanță
+scp report.pdf user@server:/home/user/documents/
+
+# Copierea unui fișier de la distanță pe mașina locală
+scp user@server:/var/log/app.log ./local-copy.log
+
+# Copierea unui întreg director recursiv
+scp -r ./project/ user@server:/var/www/
+```
+
+**SFTP (SSH File Transfer Protocol)** oferă o interfață interactivă asemănătoare FTP cu un set de funcții mai bogat decât SCP, inclusiv transferuri rezumabile și listări de directoare.
+
+### Autentificarea Git
+
+Când adaugi o cheie SSH la GitHub, GitLab sau Bitbucket, fiecare `git clone`, `git push` și `git pull` prin SSH este autentificat folosind cheia ta privată. Aceasta elimină necesitatea de a introduce un nume de utilizator și o parolă la fiecare operațiune Git și este metoda de autentificare recomandată pentru dezvoltatori.
+
+```bash
+# Clonarea unui repository folosind SSH
+git clone git@github.com:username/repository.git
+
+# Verificarea conexiunii SSH la GitHub
+ssh -T git@github.com
+```
+
+### Deployment automatizat și CI/CD
+
+Scripturile de deployment și sistemele CI/CD precum GitHub Actions, GitLab CI și Jenkins folosesc chei SSH pentru a deploya cod pe serverele de producție fără intervenție umană. Cheia privată este stocată ca secret în sistemul CI, iar cheia publică corespunzătoare este adăugată în fișierul `authorized_keys` al serverului.
+
+### Redirecționarea porturilor pentru baze de date și aplicații
+
+Tunelarea SSH poate expune securizat servicii la distanță mașinii tale locale. De exemplu, pentru a accesa o bază de date MySQL la distanță care nu este expusă pe internet:
+
+```bash
+ssh -L 3307:localhost:3306 user@dbserver.example.com -N
+```
+
+Aceasta creează un tunel local: conectarea la portul 3307 al mașinii tale redirecționează transparent traficul la portul 3306 al serverului la distanță, criptat în tunelul SSH.
+
+## Portul SSH și opțiunile de configurare
+
+### Portul implicit 22
+
+SSH ascultă pe **portul TCP 22** în mod implicit. Acesta este un port bine-cunoscut atribuit de IANA care a fost rezervat pentru SSH de când a fost creat protocolul. Când rulezi `ssh user@host` fără a specifica un port, clientul SSH se conectează la portul 22.
+
+Unii administratori schimbă portul SSH (de ex., la 2222 sau 8022) ca măsură minoră de securitate pentru a reduce zgomotul de scanare automată în jurnale. Aceasta se numește „securitate prin obscuritate" și nu este un substitut pentru autentificarea adecvată bazată pe chei, dar poate reduce aglomerarea jurnalelor.
+
+```bash
+# Conectarea la un port SSH non-standard
+ssh -p 2222 user@example.com
+```
+
+### Fișierul de configurare a clientului SSH
+
+În loc să tastezi opțiuni lungi de linie de comandă de fiecare dată, poți configura conexiunile SSH în `~/.ssh/config`. Acest fișier îți permite să definești aliasuri, să setezi opțiuni per-gazdă și să simplifici dramatic fluxul de lucru.
+
+```
+Host myserver
+    HostName 203.0.113.10
+    User deploy
+    Port 2222
+    IdentityFile ~/.ssh/id_ed25519_prod
+
+Host bastion
+    HostName jump.example.com
+    User ec2-user
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host internal
+    HostName 10.0.1.50
+    User ubuntu
+    ProxyJump bastion
+```
+
+Cu această configurare, `ssh myserver` se conectează la numele complet al gazdei pe portul personalizat folosind cheia specificată — nu sunt necesare flag-uri.
+
+Pentru o referință completă privind opțiunile și flag-urile comenzii SSH, consultă <a href="/ro/ssh-command">ghidul nostru pentru comanda SSH</a>.
+
+### Configurarea pe server (sshd_config)
+
+Daemonul serverului SSH (sshd) este configurat prin `/etc/ssh/sshd_config`. Setările cheie includ:
+
+```
+# Dezactivarea autentificării prin parolă — doar chei
+ PasswordAuthentication no
+
+# Dezactivarea autentificării ca root
+ PermitRootLogin no
+
+# Schimbarea portului de ascultare
+Port 2222
+
+# Restricționarea la utilizatori specifici
+AllowUsers deploy admin
+
+# Activarea autentificării cu cheie publică
+PubkeyAuthentication yes
+```
+
+După editare, reîncarcă daemonul: `sudo systemctl reload sshd`
+
+## Tunelarea SSH
+
+Tunelarea SSH (numită și redirecționarea porturilor SSH) îți permite să rutezi traficul TCP arbitrar printr-o conexiune SSH criptată. Este una dintre cele mai puternice și subutilizate funcții ale SSH.
+
+### Redirecționarea porturilor locale
+
+Redirecționarea locală face un serviciu la distanță accesibil pe mașina ta locală. Sintaxa este `-L port_local:gazdă_la_distanță:port_la_distanță`.
+
+```bash
+# Accesarea unei baze de date PostgreSQL la distanță local
+ssh -L 5433:localhost:5432 user@dbserver -N
+
+# Accesarea unei aplicații web interne printr-un server de salt
+ssh -L 8080:internal-app.company.com:80 user@jump.company.com -N
+```
+
+Flag-ul `-N` spune SSH să nu execute o comandă la distanță — util când vrei doar tunelul.
+
+### Redirecționarea porturilor la distanță
+
+Redirecționarea la distanță expune un serviciu local pe serverul la distanță. Sintaxa este `-R port_la_distanță:gazdă_locală:port_local`.
+
+```bash
+# Expunerea serverului web local mașinii la distanță
+ssh -R 9090:localhost:3000 user@server -N
+```
+
+Aceasta este utilă pentru partajarea temporară a unui server de development local cu un coleg care are acces la gazda la distanță, sau pentru a oferi unui client acces temporar la lucrarea în desfășurare.
+
+### Redirecționarea dinamică a porturilor (proxy SOCKS)
+
+Flag-ul `-D` creează un proxy SOCKS pe mașina ta locală, rutând tot traficul compatibil SOCKS prin conexiunea SSH. Aceasta utilizează efectiv serverul la distanță ca nod de ieșire VPN.
+
+```bash
+# Crearea unui proxy SOCKS5 pe portul local 1080
+ssh -D 1080 user@remote-server -N -f
+```
+
+Configurează browserul sau sistemul să folosească `proxy SOCKS5: 127.0.0.1:1080` și tot traficul web va fi rutat prin serverul la distanță. Aceasta este adesea utilizată pentru a accesa conținut restricționat geografic sau pentru a naviga în siguranță dintr-o rețea nesigură.
+
+## Întrebări frecvente
+
+### Ce înseamnă SSH?
+
+SSH înseamnă **Secure Shell**. Este un protocol de rețea criptografic pentru operarea securizată a serviciilor de rețea peste o rețea nesecurizată. Numele se referă la cazul său principal de utilizare: furnizarea unei sesiuni shell interactive securizate pe un calculator la distanță.
+
+### SSH este același lucru cu SSL?
+
+Nu. SSH și SSL/TLS sunt ambele protocoale criptografice, dar servesc scopuri diferite. **SSL/TLS** (Secure Sockets Layer / Transport Layer Security) este utilizat pentru securizarea traficului web (HTTPS), e-mailului și altor protocoale de aplicație. **SSH** este proiectat special pentru accesul securizat la shell la distanță, transferul de fișiere și tunelarea. Folosesc primitive criptografice similare (criptografie cu cheie publică, criptare simetrică) dar au mecanisme de handshake și cazuri de utilizare diferite. SSH nu utilizează SSL/TLS intern.
+
+### Ce port utilizează SSH?
+
+SSH utilizează **portul TCP 22** în mod implicit. Acesta este un port bine-cunoscut atribuit de IANA. Poți configura serverul SSH să asculte pe un port diferit folosind directiva `Port` în `/etc/ssh/sshd_config` și să te conectezi la porturi non-standard cu `ssh -p PORT user@host`.
+
+### SSH poate fi spart?
+
+Un server SSH configurat corespunzător cu autentificare bazată pe chei este extrem de dificil de compromis. Criptografia — chei Ed25519, criptare AES-256, MAC-uri SHA-2 — este considerată rezistentă cuantic pentru autentificarea prin chei și imposibil de spart prin brute force din punct de vedere computațional. Compromiterea SSH în lumea reală implică de obicei: fișiere de chei private furate, fraze de acces slabe, servere configurate greșit care permit autentificarea prin parolă cu parole slabe, versiuni de software vulnerabile cu CVE-uri neactualizate sau inginerie socială, mai degrabă decât atacuri criptografice. Ține-ți serverul actualizat, dezactivează autentificarea prin parolă și protejează-ți fișierul de cheie privată.
+
+### Care este diferența dintre SSH și HTTPS?
+
+Atât SSH, cât și HTTPS criptează traficul de rețea, dar sunt proiectate pentru scopuri diferite. **HTTPS** securizează navigarea web — utilizează TLS pentru a cripta cererile și răspunsurile HTTP dintre browsere și serverele web. **SSH** securizează accesul administrativ de la distanță, transferurile de fișiere și tunelarea. Când trimiți cod pe GitHub, poți folosi fie SSH (portul 22, autentificare bazată pe chei), fie HTTPS (portul 443, autentificare bazată pe token). SSH este în general preferat de dezvoltatori deoarece nu necesită reintroducerea credențialelor. HTTPS este suportat universal prin firewall-uri care ar putea bloca portul 22.
+
+## Generează-ți cheile SSH acum
+
+Autentificarea SSH bazată pe chei este mai sigură și mai convenabilă decât parolele. Dacă nu ai configurat încă cheile SSH, generatorul nostru online gratuit creează perechi de chei Ed25519 sau RSA instantaneu în browserul tău — fără instalare necesară, nimic trimis pe serverele noastre.
+
+<a href="/">Generează-ți perechea de chei SSH acum →</a>
+
+---
+
+**Lectură suplimentară:**
+- <a href="/ro/what-is-an-ssh-key">Ce este o cheie SSH? Chei publice, chei private și perechi de chei explicate</a>
+- <a href="/ro/ssh-command">Comanda SSH: Referință completă cu exemple</a>
+- <a href="/ro/how-to-set-up-ssh">Cum să configurezi SSH: Un ghid complet pas cu pas</a>

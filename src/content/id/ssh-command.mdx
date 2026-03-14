@@ -1,0 +1,430 @@
+# Perintah SSH: Referensi Lengkap dengan Contoh untuk Linux, Mac, dan Windows
+
+Perintah `ssh` adalah alat utama untuk memulai koneksi SSH dari baris perintah. Baik saat login ke server Linux jarak jauh, meneruskan port untuk akses database, atau melompat melalui bastion host untuk mencapai jaringan internal, perintah `ssh` adalah titik masuk Anda. Panduan ini mencakup segalanya mulai dari sintaks dasar hingga flag lanjutan, tunneling, dan konfigurasi ProxyJump — dengan contoh nyata untuk Linux, macOS, dan Windows.
+
+Sebelum menjalankan perintah SSH, Anda memerlukan kunci SSH. Lihat panduan kami tentang <a href="/id/what-is-an-ssh-key">apa itu kunci SSH</a> atau gunakan <a href="/">generator online gratis</a> untuk membuat pasangan kunci.
+
+## Sintaks Perintah SSH
+
+Sintaks dasar perintah `ssh` adalah:
+
+```
+ssh [opsi] [user@]hostname [perintah]
+```
+
+Mari kita uraikan:
+
+- **`[opsi]`** — Nol atau lebih flag yang mengubah perilaku (dibahas sepanjang panduan ini)
+- **`[user@]`** — Nama pengguna opsional. Jika dihilangkan, SSH menggunakan nama pengguna lokal Anda saat ini
+- **`hostname`** — Host jarak jauh yang akan dihubungi. Bisa berupa alamat IP, nama domain, atau alias yang didefinisikan di `~/.ssh/config`
+- **`[perintah]`** — Perintah opsional untuk dijalankan di host jarak jauh. Jika dihilangkan, SSH memulai sesi shell interaktif
+
+**Contoh dasar:**
+
+```bash
+# Hubungkan menggunakan nama pengguna Anda saat ini
+ssh server.example.com
+
+# Hubungkan sebagai pengguna tertentu
+ssh alice@server.example.com
+
+# Hubungkan menggunakan alamat IP
+ssh ubuntu@192.168.1.100
+
+# Jalankan satu perintah dan segera putus sambungan
+ssh user@server.example.com "df -h"
+
+# Jalankan perintah dan tetap terhubung
+ssh user@server.example.com
+```
+
+## SSH di Linux dan macOS
+
+Distribusi Linux dan macOS sudah menyertakan **OpenSSH** yang terinstal sebelumnya. Di Linux, ini adalah bagian dari paket `openssh-client` (Debian/Ubuntu) atau `openssh-clients` (RHEL/CentOS/Fedora). Di macOS, sudah terbundel dengan sistem dan langsung tersedia dari Terminal atau iTerm2.
+
+### Verifikasi SSH Tersedia
+
+```bash
+ssh -V
+# Output: OpenSSH_9.6p1, LibreSSL 3.3.6
+```
+
+### Koneksi Dasar
+
+```bash
+# Hubungkan ke server
+ssh user@myserver.example.com
+
+# SSH memeriksa ~/.ssh/known_hosts pada koneksi pertama dan meminta:
+# The authenticity of host 'myserver.example.com' can't be established.
+# ED25519 key fingerprint is SHA256:abc123...
+# Are you sure you want to continue connecting (yes/no)? yes
+
+# Sidik jari host disimpan ke ~/.ssh/known_hosts
+```
+
+### Menggunakan File Konfigurasi SSH untuk Kemudahan
+
+Alih-alih mengetik detail koneksi lengkap setiap kali, buat `~/.ssh/config`:
+
+```
+Host myserver
+    HostName myserver.example.com
+    User alice
+    Port 22
+    IdentityFile ~/.ssh/id_ed25519
+
+Host dev
+    HostName dev.example.com
+    User ubuntu
+    Port 2222
+    IdentityFile ~/.ssh/id_ed25519_work
+```
+
+Sekarang `ssh myserver` diperluas ke koneksi lengkap — tidak perlu flag.
+
+## SSH di Windows (PowerShell dan OpenSSH)
+
+Windows 10 (versi 1809) dan Windows 11 menyertakan **klien OpenSSH** sebagai fitur opsional, membuat perintah `ssh` tersedia di PowerShell, Command Prompt, dan Windows Terminal.
+
+### Periksa apakah OpenSSH Terpasang
+
+```powershell
+# Di PowerShell
+ssh -V
+```
+
+Jika perintah tidak ditemukan, instal:
+
+**Melalui Pengaturan:**
+1. Buka **Settings → Apps → Optional Features**
+2. Klik **Add a feature**
+3. Temukan **OpenSSH Client** dan instal
+
+**Melalui PowerShell (Administrator):**
+
+```powershell
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+```
+
+### Menggunakan SSH di PowerShell
+
+Setelah terpasang, sintaksnya identik dengan Linux dan macOS:
+
+```powershell
+# Hubungkan ke server
+ssh user@server.example.com
+
+# Hubungkan di port kustom
+ssh -p 2222 user@server.example.com
+
+# Gunakan file kunci tertentu
+ssh -i C:\Users\YourName\.ssh\id_ed25519 user@server.example.com
+```
+
+### Lokasi Kunci SSH Windows
+
+Kunci SSH di Windows disimpan di `C:\Users\YourUsername\.ssh\`. PowerShell mengenali `~` sebagai singkatan:
+
+```powershell
+# Ini setara
+ssh -i ~/.ssh/id_ed25519 user@server
+ssh -i C:\Users\YourUsername\.ssh\id_ed25519 user@server
+```
+
+### PuTTY vs OpenSSH di Windows
+
+Sebelum OpenSSH tersedia di Windows, **PuTTY** adalah klien SSH standar. PuTTY menggunakan format kunci sendiri (file `.ppk`) dan generator kunci sendiri (PuTTYgen). Jika Anda memiliki kunci `.ppk` dan perlu mengonversinya ke format OpenSSH standar:
+
+```bash
+# Menggunakan alat PuTTY
+puttygen mykey.ppk -O private-openssh -o id_ed25519
+```
+
+Untuk pengaturan baru, lebih baik gunakan klien OpenSSH bawaan di Windows — dikelola oleh proyek OpenSSH dan menggunakan format kunci serta file konfigurasi yang sama dengan Linux dan macOS.
+
+## SSH dengan Autentikasi Kunci: Flag -i
+
+Secara default, SSH mencari file kunci di `~/.ssh/` dengan nama standar (`id_ed25519`, `id_rsa`, `id_ecdsa`, `id_dsa`). **Flag `-i`** (identity file) memungkinkan Anda menentukan file kunci yang berbeda secara eksplisit.
+
+```bash
+# Gunakan file kunci tertentu
+ssh -i ~/.ssh/id_ed25519_production user@prod.example.com
+
+# Gunakan kunci yang disimpan di lokasi non-standar
+ssh -i /path/to/my/custom_key deploy@server.example.com
+
+# Gabungkan dengan opsi lain
+ssh -i ~/.ssh/deploy_key -p 2222 -l deploy server.example.com
+```
+
+Flag `-i` sangat penting dalam beberapa situasi:
+- Anda memiliki beberapa pasangan kunci untuk server atau tujuan yang berbeda
+- Kunci Anda tidak ada di direktori `~/.ssh/` default
+- Anda menentukan kunci di lingkungan CI/CD di mana path-nya eksplisit
+- Anda mengunduh kunci `.pem` dari AWS atau penyedia cloud lainnya
+
+### Contoh AWS EC2
+
+AWS menyediakan file kunci `.pem` saat Anda meluncurkan instansi EC2:
+
+```bash
+# Hubungkan ke instansi AWS EC2 dengan kunci .pem
+ssh -i ~/Downloads/my-aws-key.pem ec2-user@54.123.456.789
+
+# Perbaiki izin jika diperlukan (wajib — SSH menolak kunci yang dapat dibaca oleh semua)
+chmod 400 ~/Downloads/my-aws-key.pem
+```
+
+## Opsi dan Flag Perintah SSH yang Penting
+
+Perintah `ssh` memiliki lusinan opsi. Berikut yang akan benar-benar Anda gunakan.
+
+| Flag | Bentuk Panjang / Deskripsi | Contoh |
+|---|---|---|
+| `-p PORT` | Hubungkan di port non-standar | `ssh -p 2222 user@host` |
+| `-i FILE` | Gunakan file identitas (kunci) tertentu | `ssh -i ~/.ssh/mykey user@host` |
+| `-l USER` | Tentukan nama pengguna login (alternatif untuk `user@`) | `ssh -l alice host` |
+| `-L local:host:remote` | Local port forwarding | `ssh -L 8080:localhost:80 host` |
+| `-R remote:host:local` | Remote port forwarding | `ssh -R 9090:localhost:3000 host` |
+| `-D port` | Dynamic (SOCKS) proxy | `ssh -D 1080 host` |
+| `-N` | Jangan eksekusi perintah jarak jauh (hanya tunneling) | `ssh -N -L 3307:db:3306 host` |
+| `-f` | Masuk ke background setelah autentikasi | `ssh -f -N -D 1080 host` |
+| `-v` | Output verbose (debug) | `ssh -v user@host` |
+| `-vv` atau `-vvv` | Output lebih verbose | `ssh -vvv user@host` |
+| `-A` | Aktifkan SSH agent forwarding | `ssh -A user@jump-host` |
+| `-X` | Aktifkan X11 forwarding | `ssh -X user@host xclock` |
+| `-C` | Aktifkan kompresi | `ssh -C user@host` |
+| `-T` | Nonaktifkan alokasi pseudo-terminal | `ssh -T git@github.com` |
+| `-q` | Mode diam (sembunyikan peringatan) | `ssh -q user@host` |
+| `-o OPTION=VALUE` | Atur opsi konfigurasi secara inline | `ssh -o StrictHostKeyChecking=no host` |
+| `-J JUMP` | ProxyJump melalui bastion host | `ssh -J jump.host user@internal` |
+| `-W host:port` | Teruskan stdio ke host:port (untuk ProxyJump) | Digunakan secara internal oleh `-J` |
+
+### Mode Verbose untuk Debugging
+
+Saat SSH gagal, `-v` (atau `-vv` atau `-vvv`) mengungkapkan persis apa yang terjadi:
+
+```bash
+ssh -v user@server.example.com
+# Menampilkan: kunci mana yang dicoba, metode autentikasi yang diterima server,
+# apakah agent terlibat, dan di mana koneksi gagal
+
+ssh -vvv user@server.example.com
+# Verbositas maksimum — menampilkan negosiasi kriptografi yang mendetail
+```
+
+### Melewati Pemeriksaan Host Key (Gunakan dengan Hati-hati)
+
+Di lingkungan otomasi dan pengujian di mana verifikasi host key merepotkan:
+
+```bash
+ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null user@host
+```
+
+**Jangan gunakan ini di produksi.** Ini menonaktifkan perlindungan terhadap serangan man-in-the-middle. Sebagai gantinya, isi terlebih dahulu `known_hosts` menggunakan `ssh-keyscan` dalam skrip provisioning Anda.
+
+### Agent Forwarding
+
+```bash
+# Teruskan agen SSH lokal Anda ke server jarak jauh
+ssh -A user@jump-server
+
+# Dari jump-server, Anda sekarang dapat SSH ke host internal menggunakan kunci lokal Anda
+# Tidak perlu menyalin kunci privat ke jump server
+ssh internal-server.private
+```
+
+Agent forwarding berguna tetapi memiliki implikasi keamanan: siapa pun dengan akses root di server perantara dapat menggunakan agen yang diteruskan. Gunakan hanya dengan server yang tepercaya, dan lebih baik pilih **ProxyJump** jika memungkinkan (tidak mengekspos agen Anda ke host perantara).
+
+## Perintah SSH Tunneling
+
+SSH tunneling merutekan koneksi TCP melalui saluran SSH terenkripsi. Untuk latar belakang tentang apa itu tunneling, lihat <a href="/id/what-is-ssh">bagian tunneling panduan SSH</a> kami.
+
+### Local Port Forwarding
+
+Membuat layanan jarak jauh dapat diakses di mesin lokal Anda.
+
+```bash
+# Akses database MySQL jarak jauh di port lokal 3307
+ssh -L 3307:localhost:3306 user@db-server.example.com -N
+
+# Hubungkan ke web server jarak jauh yang hanya dapat diakses dari host SSH
+ssh -L 8080:intranet.company.com:80 user@vpn.company.com -N
+
+# Akses instansi Redis di jaringan privat
+ssh -L 6380:10.0.1.50:6379 user@bastion.example.com -N
+```
+
+Setelah menjalankan salah satu di atas, hubungkan aplikasi lokal Anda ke `127.0.0.1:PORT_LOKAL`.
+
+### Remote Port Forwarding
+
+Mengekspos layanan lokal di server jarak jauh.
+
+```bash
+# Ekspos server pengembangan lokal Anda (port 3000) di port 9090 server jarak jauh
+ssh -R 9090:localhost:3000 user@remote.example.com -N
+
+# Izinkan antarmuka mana pun di server jarak jauh untuk terhubung (memerlukan GatewayPorts yes di sshd_config)
+ssh -R 0.0.0.0:9090:localhost:3000 user@remote.example.com -N
+```
+
+### Dynamic Port Forwarding (SOCKS Proxy)
+
+```bash
+# Buat SOCKS5 proxy di port lokal 1080, berjalan di background
+ssh -D 1080 -N -f user@remote.example.com
+
+# Sekarang konfigurasi browser atau sistem Anda untuk menggunakan SOCKS5 proxy: 127.0.0.1:1080
+# Semua lalu lintas dirutekan melalui server jarak jauh
+```
+
+Untuk digunakan dengan curl:
+
+```bash
+curl --socks5 127.0.0.1:1080 https://api.example.com/
+```
+
+### Menjalankan Tunnel di Background
+
+```bash
+# -f mengirim SSH ke background, -N berarti tidak ada perintah jarak jauh
+ssh -f -N -L 3307:localhost:3306 user@db-server
+
+# Temukan proses SSH di background
+ps aux | grep ssh
+
+# Hentikan
+kill PID
+```
+
+## SSH ProxyJump dan Bastion Host
+
+Di banyak organisasi, server produksi berada di jaringan privat yang tidak dapat diakses langsung dari internet. **Bastion host** (atau jump host) adalah server yang diperkuat di perimeter jaringan yang pertama kali Anda SSH, kemudian lompat ke server internal. Flag `ssh -J` (ProxyJump, ditambahkan di OpenSSH 7.3) membuat ini mulus.
+
+### ProxyJump Dasar
+
+```bash
+# Lompat melalui satu bastion untuk mencapai server internal
+ssh -J ec2-user@bastion.example.com ubuntu@10.0.1.50
+
+# Bentuk singkat
+ssh -J user@jump-host user@internal-server
+```
+
+Ini membuat dua koneksi SSH: pertama ke bastion, kemudian dari bastion ke server internal — semuanya dalam satu perintah, dengan enkripsi end-to-end. Agen SSH lokal Anda menangani autentikasi ke kedua host.
+
+### Merangkai Beberapa Lompatan
+
+```bash
+# Lompat melalui dua host perantara
+ssh -J user@jump1.example.com,user@jump2.example.com user@final-destination
+```
+
+### ProxyJump di File Konfigurasi SSH
+
+Untuk server yang sering diakses, masukkan konfigurasi ProxyJump di `~/.ssh/config`:
+
+```
+Host bastion
+    HostName bastion.example.com
+    User ec2-user
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host prod-web
+    HostName 10.0.1.100
+    User ubuntu
+    ProxyJump bastion
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host prod-db
+    HostName 10.0.2.50
+    User postgres
+    ProxyJump bastion
+    IdentityFile ~/.ssh/id_ed25519_aws
+```
+
+Sekarang `ssh prod-web` secara otomatis terhubung melalui bastion. Tidak perlu flag `-J` manual.
+
+### ProxyJump vs Agent Forwarding
+
+ProxyJump lebih disukai daripada agent forwarding (`-A`) karena:
+- Kunci privat Anda tidak pernah diteruskan ke host perantara
+- Bastion host tidak dapat menggunakan kredensial Anda untuk mengautentikasi di tempat lain
+- Koneksi diautentikasi secara end-to-end — server tujuan memverifikasi Anda secara langsung
+
+Untuk detail pengaturan lebih lanjut, lihat panduan lengkap kami tentang <a href="/id/how-to-set-up-ssh">cara mengatur SSH</a>.
+
+## Pertanyaan yang Sering Diajukan
+
+### Bagaimana cara menjalankan perintah SSH tanpa kata sandi?
+
+Siapkan autentikasi kunci SSH. Buat pasangan kunci (`ssh-keygen -t ed25519`), salin kunci publik ke file `~/.ssh/authorized_keys` server menggunakan `ssh-copy-id user@host`, dan koneksi selanjutnya akan menggunakan kunci Anda tanpa meminta kata sandi. Jika kunci Anda memiliki passphrase, gunakan `ssh-agent` dan `ssh-add` untuk meng-cache-nya sehingga Anda hanya perlu memasukkannya sekali per sesi.
+
+### Bagaimana cara keluar dari sesi SSH?
+
+Ketik `exit` atau tekan **Ctrl+D** untuk menutup shell jarak jauh dan memutus sambungan. Jika sesi membeku (misalnya, jaringan putus), gunakan urutan escape SSH: tekan **Enter**, lalu ketik `~.` (tilde diikuti titik). SSH segera mengakhiri koneksi. Urutan escape lainnya: `~^Z` menangguhkan SSH ke background, `~?` mencantumkan semua urutan escape.
+
+### Bagaimana cara menjalankan perintah di server jarak jauh melalui SSH?
+
+Tambahkan perintah setelah hostname:
+
+```bash
+ssh user@server "perintah yang akan dijalankan"
+ssh user@server "ls -la /var/log/"
+ssh user@server "sudo systemctl status nginx"
+```
+
+Untuk perintah multi-baris atau skrip, gunakan heredoc:
+
+```bash
+ssh user@server << 'EOF'
+cd /var/www/html
+git pull origin main
+systemctl reload nginx
+EOF
+```
+
+Untuk perintah interaktif (seperti yang memerlukan terminal), tambahkan flag `-t` untuk mengalokasikan pseudo-terminal: `ssh -t user@server sudo apt upgrade`.
+
+### Apa perbedaan antara ssh dan scp?
+
+`ssh` membuka sesi terminal (atau menjalankan satu perintah) di mesin jarak jauh. `scp` (Secure Copy Protocol) menyalin file antara mesin lokal dan mesin jarak jauh Anda, atau antara dua mesin jarak jauh, menggunakan SSH untuk enkripsi dan autentikasi. Keduanya menggunakan protokol SSH dan infrastruktur kunci yang sama. Untuk transfer file, `scp` adalah alat yang tepat:
+
+```bash
+# scp lokal ke jarak jauh
+scp file.txt user@server:/destination/path/
+
+# scp jarak jauh ke lokal
+scp user@server:/remote/file.txt ./local-copy.txt
+```
+
+Untuk transfer file yang lebih canggih (rekursif, dapat dilanjutkan, penjelajahan direktori), gunakan `sftp`. Untuk transfer skala besar, `rsync -avz -e ssh` bahkan lebih efisien.
+
+### Bagaimana cara menggunakan SSH dengan file konfigurasi?
+
+Buat `~/.ssh/config` dan tambahkan entri host. Setiap blok `Host` mendefinisikan alias koneksi dengan pengaturan lengkapnya:
+
+```
+Host nama-alias
+    HostName actual.server.com
+    User nama-pengguna
+    Port 22
+    IdentityFile ~/.ssh/specific_key
+```
+
+Kemudian `ssh nama-alias` menggunakan semua pengaturan yang ditentukan secara otomatis. File konfigurasi mendukung wildcard: `Host *.example.com` menerapkan pengaturan ke semua host yang cocok. `Host *` di bagian akhir menerapkan default ke semua koneksi. Opsi dalam blok `Host` tertentu menggantikan default global.
+
+## Butuh Kunci SSH? Buat Gratis
+
+Untuk menggunakan autentikasi kunci SSH — yang menghilangkan kebutuhan kata sandi — Anda memerlukan pasangan kunci. Buat kunci Ed25519 atau RSA secara instan di browser Anda, tanpa apa pun yang dikirim ke server kami.
+
+<a href="/">Buat kunci SSH Anda secara gratis →</a>
+
+---
+
+**Bacaan lebih lanjut:**
+- <a href="/id/what-is-ssh">Apa Itu SSH? Panduan Lengkap Secure Shell</a>
+- <a href="/id/what-is-an-ssh-key">Apa Itu Kunci SSH? Kunci Publik, Kunci Privat, dan Pasangan Kunci Dijelaskan</a>
+- <a href="/id/how-to-set-up-ssh">Cara Mengatur SSH: Panduan Langkah demi Langkah yang Lengkap</a>

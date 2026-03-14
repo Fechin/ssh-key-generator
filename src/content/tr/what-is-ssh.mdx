@@ -1,0 +1,283 @@
+# SSH Nedir? Güvenli Kabuk'a Tam Kılavuz
+
+SSH, **Secure Shell** (Güvenli Kabuk) anlamına gelen bir kriptografik ağ protokolüdür ve güvenli olmayan bir ağ üzerinden uzaktaki bilgisayarlara güvenli biçimde erişmenizi ve bunları yönetmenizi sağlar. Bir Linux sunucusuna giriş yapıyor, GitHub'a kod gönderiyor ya da makineler arasında dosya aktarıyor olun, SSH büyük olasılıkla arka planda işi yapan protokoldür. Bu kılavuz, SSH hakkında bilmeniz gereken her şeyi açıklar: ne olduğunu, nasıl çalıştığını ve neden güvenli uzak erişimin evrensel standardı haline geldiğini.
+
+## SSH Ne Anlama Gelir?
+
+**SSH, Secure Shell anlamına gelir**. Ad, protokolün tam olarak ne yaptığını açıklar — uzaktaki bir makineye güvenli, şifrelenmiş bir kabuk oturumu sağlar. SSH var olmadan önce yöneticiler, uzak sunucuları yönetmek için Telnet ve rsh (remote shell) gibi araçlar kullanırdı. Bu protokoller, kullanıcı adları ve parolalar dahil her şeyi düz metin olarak ileterek paylaşılan herhangi bir ağda kolayca ele geçirilmelerine yol açıyordu.
+
+SSH, 1995 yılında Finlandiyalı bilgisayar bilimci **Tatu Ylönen** tarafından, üniversite ağında tanık olduğu bir parola koklama saldırısından doğrudan ilham alınarak oluşturuldu. Ylönen SSH-1'i özgür yazılım olarak yayımladı ve internet genelinde hızla benimsendi. Protokol daha sonra IETF tarafından SSH-2 (RFC 4251–4254) olarak standartlaştırıldı; bu sürüm daha güçlü kriptografi sunarak orijinal tasarımdaki çeşitli güvenlik açıklarını kapattı.
+
+Bugün insanlar "SSH" derken neredeyse her zaman SSH-2'yi kasteder. En yaygın kullanılan uygulama, OpenBSD ekibi tarafından sürdürülen ve neredeyse her Linux dağıtımı ile macOS kurulumunda birlikte gelen açık kaynaklı proje olan **OpenSSH**'dir.
+
+**SSH'nin** pratikte anlamı, yalnızca bir oturum açma aracının ötesine geçer. SSH, şunların temelini oluşturan tam bir protokol paketidir:
+- Güvenli uzak terminal erişimi
+- Şifrelenmiş dosya transferleri (SFTP ve SCP)
+- Git kimlik doğrulaması (GitHub, GitLab, Bitbucket)
+- Güvenli port yönlendirme ve tünelleme
+- Otomatik dağıtım hatları
+
+## SSH Nasıl Çalışır?
+
+**Güvenli kabuk protokolü**, şifreleme, kimlik doğrulama ve kanal çoğullamasını ayrı ayrı ele alan katmanlı bir mimari üzerinde çalışır. Bu katmanları anlamak, SSH'nin neden hassas işlemler için güvenilir olduğunu açıklığa kavuşturur.
+
+### Üç Protokol Katmanı
+
+**1. Taşıma Katmanı (RFC 4253)**
+
+Bir SSH bağlantısı başlattığınızda, istemci ve sunucu önce şifreleme algoritmalarını müzakere etmek ve paylaşılan bir gizli anahtar oluşturmak için el sıkışma gerçekleştirir. Bu işlem bir anahtar değişim algoritması kullanır — modern SSH varsayılan olarak Curve25519 tabanlı anahtar değişimini kullanır. El sıkışmadan sonra tüm iletişim şifrelenir. Taşıma katmanı ayrıca ileti doğrulama kodları (MAC) aracılığıyla veri bütünlüğü sağlayarak verilerin aktarım sırasında değiştirilemeyeceğini garanti eder.
+
+**2. Kullanıcı Kimlik Doğrulama Katmanı (RFC 4252)**
+
+Şifrelenmiş bir kanal kurulduktan sonra sunucu, istemciden kimliğini doğrulamasını ister. SSH birden fazla kimlik doğrulama yöntemini destekler:
+
+- **Açık anahtar kimlik doğrulaması** — İstemci, özel anahtarı hiçbir zaman ağ üzerinden göndermeden sahip olduğunu kanıtlar. Bu, en güvenli ve en yaygın yöntemdir.
+- **Parola kimlik doğrulaması** — Kullanıcının parolası şifrelenmiş kanal üzerinden gönderilir. Daha kullanışlıdır ancak kaba kuvvet saldırılarına karşı savunmasızdır.
+- **Klavye-etkileşimli** — Genellikle çok faktörlü kimlik doğrulama için kullanılan bir soru-yanıt mekanizması.
+- **GSSAPI/Kerberos** — Merkezi kimlik yönetimine sahip kurumsal ortamlarda kullanılır.
+
+**3. Bağlantı Katmanı (RFC 4254)**
+
+Kimlik doğrulamasının ardından bağlantı katmanı, tek şifreli bağlantıyı birden fazla mantıksal kanala çoğullar. Bu sayede tek bir TCP bağlantısı üzerinden etkileşimli kabuk, uzak komut çalıştırma, port yönlendirme ve dosya transferi gibi işlemlerin tamamını gerçekleştirebilirsiniz.
+
+### Anahtar Değişiminin Ayrıntıları
+
+`ssh user@example.com` yazdığınızda ilk birkaç milisaniyede şunlar gerçekleşir:
+
+1. İstemci, sunucunun TCP port 22'sine bağlanır.
+2. Her iki taraf protokol sürüm dizelerini değiştirir.
+3. Her iki taraf desteklenen algoritma listelerini gönderir (anahtar değişimi, şifreler, MAC'ler, sıkıştırma).
+4. Paylaşılan bir oturum anahtarı türetmek için Diffie-Hellman veya ECDH anahtar değişimi gerçekleştirirler — bu nedenle biri şifreli trafiği kaydetse bile sonradan çözemez.
+5. Sunucu **host anahtarını** (açık anahtar) gönderir; istemci bunu `~/.ssh/known_hosts` dosyasıyla doğrular.
+6. Kimlik doğrulama yukarıda açıklandığı gibi devam eder.
+7. Oturum başlar.
+
+## SSH ve Telnet: SSH Neden Kazandı?
+
+SSH'den önce **Telnet**, uzak terminal erişimi için standart protokoldü. Telnet basit ve hâlâ çalışır, ancak ölümcül bir kusuru var: her şey düz metin olarak iletilir. Kullanıcı adınız, parolanız, yazdığınız her komut ve her çıktı — ağ trafiğini dinleyebilen herkes tarafından görülebilir.
+
+1990'larda internet omurgası güvenilir akademik ve araştırma ağlarından oluşuyordu ve bu durum ciddi bir sorun olarak görülmüyordu. İnternet ticari ve rekabetçi bir hal aldıkça Dsniff ve Ettercap gibi araçlar, yerel alan ağlarında Telnet kimlik bilgilerini ele geçirmeyi son derece kolaylaştırdı.
+
+SSH, her şeyi şifreleyerek bu sorunu çözdü. İşte doğrudan bir karşılaştırma:
+
+| Özellik | Telnet | SSH |
+|---|---|---|
+| Şifreleme | Yok | Güçlü (AES, ChaCha20) |
+| Kimlik doğrulama | Düz metin parola | Açık anahtar + şifreli parola |
+| Veri bütünlüğü | Yok | HMAC doğrulaması |
+| Port | 23 | 22 |
+| Hâlâ önerilen | Hayır | Evet |
+
+rsh (remote shell) ve rlogin de benzer sorunlara sahipti. Bunlar ayrıca kolayca taklit edilebilen IP tabanlı güvene dayanıyordu. SSH tüm bu protokollerin yerini aldı ve 25 yılı aşkın süredir rakipsiz standart olarak kalmaya devam etmektedir.
+
+## SSH Anahtarı Nedir?
+
+SSH iki temel kimlik doğrulama yöntemini destekler: parolalar ve **SSH anahtarları**. SSH anahtarları, asimetrik kriptografiye dayalı kriptografik anahtar çiftleridir — **açık anahtar** ve **özel anahtar**.
+
+**Özel anahtar**, isteğe bağlı bir parola ifadesiyle korunan yerel makinenizde kalır. **Açık anahtar**, erişmek istediğiniz her sunucuya `~/.ssh/authorized_keys` adlı bir dosyaya yerleştirilir. Bağlandığınızda sunucu, yalnızca karşılık gelen özel anahtarın sahibinin yanıtlayabileceği kriptografik bir meydan okuma gönderir. Ağ üzerinden hiçbir parola iletilmez.
+
+Bu yaklaşımın çeşitli avantajları vardır:
+- **Kaba kuvvete karşı bağışık** — tahmin edilecek bir şey yoktur. 256-bit Ed25519 anahtarının 2²⁵⁶ olası değeri vardır.
+- **Çalınacak parola yok** — biri el sıkışmayı ele geçirse bile işe yarar bir şey elde edemez.
+- **Otomatize edilebilir** — betikler ve CI/CD hatları insan müdahalesi olmadan kimlik doğrulaması yapabilir.
+- **İptal edilebilir** — `authorized_keys` dosyasından açık anahtarın kaldırılması erişimi anında iptal eder.
+
+En modern ve önerilen anahtar türü, Edwards eğrisi üzerinde eliptik eğri kriptografisi kullanan **Ed25519**'dur. RSA anahtarları da yaygın olarak desteklenir; ancak en az 4096 bit kullanmanız gerekir.
+
+Anahtar çiftleri hakkında daha fazla bilgi için <a href="/tr/what-is-an-ssh-key">SSH anahtarı nedir</a> kılavuzumuza bakın.
+
+## Yaygın SSH Kullanım Senaryoları
+
+SSH, çarpıcı derecede geniş bir senaryo yelpazesinde kullanılır. İşte en önemlileri.
+
+### Uzak Sunucu Yönetimi
+
+En temel kullanım senaryosu. Sistem yöneticileri, yazılım yüklemek, yapılandırma dosyalarını düzenlemek, servisleri yönetmek ve sorunları teşhis etmek için bir SSH terminal oturumu aracılığıyla Linux ve Unix sunucularına giriş yapar.
+
+```bash
+ssh user@192.168.1.100
+ssh admin@myserver.example.com
+ssh -p 2222 deploy@staging.example.com
+```
+
+### SFTP ve SCP ile Dosya Transferi
+
+SSH, aynı şifreli kanal üzerine kurulu iki dosya transfer protokolü sunar:
+
+**SCP (Güvenli Kopyalama Protokolü)**, dosyaları kopyalamak için basit bir komut satırı aracıdır:
+
+```bash
+# Yerel dosyayı uzak sunucuya kopyala
+scp report.pdf user@server:/home/user/documents/
+
+# Uzak dosyayı yerel makineye kopyala
+scp user@server:/var/log/app.log ./local-copy.log
+
+# Tüm dizini özyinelemeli olarak kopyala
+scp -r ./project/ user@server:/var/www/
+```
+
+**SFTP (SSH Dosya Transfer Protokolü)**, SCP'ye kıyasla sürdürülebilir transferler ve dizin listeleme gibi daha zengin özelliklerle etkileşimli bir FTP benzeri arayüz sağlar.
+
+### Git Kimlik Doğrulaması
+
+GitHub, GitLab veya Bitbucket'a SSH anahtarı eklediğinizde, SSH üzerinden gerçekleştirilen her `git clone`, `git push` ve `git pull` işlemi özel anahtarınız kullanılarak doğrulanır. Bu, her Git işleminde kullanıcı adı ve parola girme zorunluluğunu ortadan kaldırır ve geliştiriciler için önerilen kimlik doğrulama yöntemidir.
+
+```bash
+# SSH üzerinden bir depoyu klonla
+git clone git@github.com:username/repository.git
+
+# GitHub SSH bağlantısını doğrula
+ssh -T git@github.com
+```
+
+### Otomatik Dağıtım ve CI/CD
+
+GitHub Actions, GitLab CI ve Jenkins gibi dağıtım betikleri ve CI/CD sistemleri, insan müdahalesi olmadan üretim sunucularına kod dağıtmak için SSH anahtarlarını kullanır. Özel anahtar CI sisteminde gizli olarak saklanır; karşılık gelen açık anahtar ise sunucunun `authorized_keys` dosyasına eklenir.
+
+### Veritabanı ve Uygulama Port Yönlendirme
+
+SSH tünelleme, uzak servisleri yerel makinenize güvenli biçimde açabilir. Örneğin, internete açık olmayan uzak bir MySQL veritabanına erişmek için:
+
+```bash
+ssh -L 3307:localhost:3306 user@dbserver.example.com -N
+```
+
+Bu, yerel bir tünel oluşturur: makinenizdeki 3307 portuna bağlantı, SSH tünelinde şifrelenmiş biçimde uzak sunucudaki 3306 portuna saydam olarak yönlendirilir.
+
+## SSH Portu ve Yapılandırma Seçenekleri
+
+### Varsayılan Port 22
+
+SSH varsayılan olarak **TCP port 22**'de dinler. Bu, protokol oluşturulduğundan beri SSH için ayrılmış olan, IANA tarafından atanmış iyi bilinen bir porttur. `ssh user@host` komutunu port belirtmeden çalıştırdığınızda, SSH istemcisi port 22'ye bağlanır.
+
+Bazı yöneticiler, günlüklerdeki otomatik tarama gürültüsünü azaltmak için küçük bir güvenlik önlemi olarak SSH portunu (örneğin 2222 veya 8022'ye) değiştirir. Buna "gizlilik yoluyla güvenlik" denir ve uygun anahtar tabanlı kimlik doğrulamanın yerini tutmaz; ancak günlük kirliliğini azaltabilir.
+
+```bash
+# Standart olmayan bir SSH portuna bağlan
+ssh -p 2222 user@example.com
+```
+
+### SSH İstemci Yapılandırma Dosyası
+
+Her seferinde uzun komut satırı seçenekleri yazmak yerine, SSH bağlantılarını `~/.ssh/config` dosyasında yapılandırabilirsiniz. Bu dosya, takma adlar tanımlamanıza, host başına seçenekler ayarlamanıza ve iş akışınızı önemli ölçüde basitleştirmenize olanak tanır.
+
+```
+Host myserver
+    HostName 203.0.113.10
+    User deploy
+    Port 2222
+    IdentityFile ~/.ssh/id_ed25519_prod
+
+Host bastion
+    HostName jump.example.com
+    User ec2-user
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host internal
+    HostName 10.0.1.50
+    User ubuntu
+    ProxyJump bastion
+```
+
+Bu yapılandırmayla `ssh myserver`, belirtilen anahtarı kullanarak özel portta tam ana makine adına bağlanır — hiçbir bayrak gerekmez.
+
+SSH komut seçenekleri ve bayrakları için eksiksiz bir referans için <a href="/tr/ssh-command">SSH komut kılavuzumuza</a> bakın.
+
+### Sunucu Tarafı Yapılandırması (sshd_config)
+
+SSH sunucu arka plan programı (sshd), `/etc/ssh/sshd_config` aracılığıyla yapılandırılır. Önemli ayarlar:
+
+```
+# Parola kimlik doğrulamasını devre dışı bırak — yalnızca anahtarlar
+PasswordAuthentication no
+
+# Root girişini devre dışı bırak
+PermitRootLogin no
+
+# Dinleme portunu değiştir
+Port 2222
+
+# Belirli kullanıcılarla kısıtla
+AllowUsers deploy admin
+
+# Açık anahtar kimlik doğrulamasını etkinleştir
+PubkeyAuthentication yes
+```
+
+Düzenledikten sonra arka plan programını yeniden yükleyin: `sudo systemctl reload sshd`
+
+## SSH Tünelleme
+
+SSH tünelleme (SSH port yönlendirme olarak da bilinir), keyfi TCP trafiğini şifreli bir SSH bağlantısı üzerinden yönlendirmenize olanak tanır. Bu, SSH'nin en güçlü ve az kullanılan özelliklerinden biridir.
+
+### Yerel Port Yönlendirme
+
+Yerel yönlendirme, uzak bir servisi yerel makinenizde erişilebilir kılar. Sözdizimi: `-L yerel_port:uzak_host:uzak_port`.
+
+```bash
+# Uzak PostgreSQL veritabanına yerel olarak eriş
+ssh -L 5433:localhost:5432 user@dbserver -N
+
+# Bir jump sunucusu üzerinden dahili web uygulamasına eriş
+ssh -L 8080:internal-app.company.com:80 user@jump.company.com -N
+```
+
+`-N` bayrağı SSH'ye uzak komut çalıştırmamasını söyler — yalnızca tünel istediğinizde kullanışlıdır.
+
+### Uzak Port Yönlendirme
+
+Uzak yönlendirme, yerel bir servisi uzak sunucuda açığa çıkarır. Sözdizimi: `-R uzak_port:yerel_host:yerel_port`.
+
+```bash
+# Yerel web sunucunuzu uzak makineye aç
+ssh -R 9090:localhost:3000 user@server -N
+```
+
+Bu, yerel geliştirme sunucusunu uzak hosta erişimi olan bir meslektaşınızla geçici olarak paylaşmak veya bir müşteriye sürmekte olan çalışmanıza geçici erişim vermek için kullanışlıdır.
+
+### Dinamik Port Yönlendirme (SOCKS Proxy)
+
+`-D` bayrağı, yerel makinenizde bir SOCKS proxy oluşturarak SOCKS uyumlu tüm trafiği SSH bağlantısı üzerinden yönlendirir. Bu, uzak sunucuyu etkin biçimde bir VPN çıkış noktası olarak kullanır.
+
+```bash
+# Yerel 1080 portunda SOCKS5 proxy oluştur
+ssh -D 1080 user@remote-server -N -f
+```
+
+Tarayıcınızı veya sisteminizi `SOCKS5 proxy: 127.0.0.1:1080` kullanacak şekilde yapılandırın; tüm web trafiği uzak sunucu üzerinden yönlendirilecektir. Bu, coğrafi olarak kısıtlanmış içeriklere erişmek veya güvenilmeyen bir ağdan güvenli biçimde gezinmek için sıklıkla kullanılır.
+
+## Sık Sorulan Sorular
+
+### SSH ne anlama gelir?
+
+SSH, **Secure Shell** anlamına gelir. Güvenli olmayan bir ağ üzerinden ağ hizmetlerini güvenli biçimde işletmek için kullanılan kriptografik bir ağ protokolüdür. Ad, birincil kullanım senaryosuna atıfta bulunur: uzaktaki bir bilgisayarda güvenli bir etkileşimli kabuk oturumu sağlamak.
+
+### SSH ile SSL aynı şey midir?
+
+Hayır. SSH ve SSL/TLS her ikisi de kriptografik protokollerdir, ancak farklı amaçlara hizmet eder. **SSL/TLS** (Güvenli Soketler Katmanı / Taşıma Katmanı Güvenliği), web trafiğini (HTTPS), e-postayı ve diğer uygulama protokollerini güvence altına almak için kullanılır. **SSH** özellikle güvenli uzak kabuk erişimi, dosya transferi ve tünelleme için tasarlanmıştır. Benzer kriptografik temeller kullanırlar (açık anahtar kriptografisi, simetrik şifreleme) ancak farklı el sıkışma mekanizmalarına ve kullanım senaryolarına sahiptirler. SSH dahili olarak SSL/TLS kullanmaz.
+
+### SSH hangi portu kullanır?
+
+SSH varsayılan olarak **TCP port 22**'yi kullanır. Bu, IANA tarafından atanmış iyi bilinen bir porttur. SSH sunucusunu `/etc/ssh/sshd_config` dosyasındaki `Port` yönergesini kullanarak farklı bir portu dinleyecek şekilde yapılandırabilir ve `ssh -p PORT user@host` komutuyla standart olmayan portlara bağlanabilirsiniz.
+
+### SSH ele geçirilebilir mi?
+
+Anahtar tabanlı kimlik doğrulama ile düzgün yapılandırılmış bir SSH sunucusunun güvenliğini aşmak son derece güçtür. Kriptografi — Ed25519 anahtarları, AES-256 şifreleme, SHA-2 MAC'ler — anahtar kimlik doğrulaması için kuantuma dayanıklı kabul edilir ve kaba kuvvetle aşılması hesaplama açısından imkânsızdır. Gerçek dünya SSH ihlalleri genellikle şunları içerir: çalınan özel anahtar dosyaları, zayıf parola ifadeleri, zayıf parolalarla parola kimlik doğrulamasına izin veren yanlış yapılandırılmış sunucular, yamanmamış CVE'lere sahip savunmasız yazılım sürümleri veya kriptografik saldırılar yerine sosyal mühendislik. Sunucunuzu güncel tutun, parola kimlik doğrulamasını devre dışı bırakın ve özel anahtar dosyanızı koruyun.
+
+### SSH ile HTTPS arasındaki fark nedir?
+
+Hem SSH hem de HTTPS ağ trafiğini şifreler, ancak farklı amaçlar için tasarlanmışlardır. **HTTPS** web gezintisini güvence altına alır — tarayıcılar ile web sunucuları arasındaki HTTP isteklerini ve yanıtlarını şifrelemek için TLS kullanır. **SSH** uzak yönetimsel erişimi, dosya transferlerini ve tünellemeyi güvence altına alır. GitHub'a kod gönderirken SSH (port 22, anahtar tabanlı kimlik doğrulama) veya HTTPS (port 443, token tabanlı kimlik doğrulama) kullanabilirsiniz. SSH, kimlik bilgilerini yeniden girmek gerekmediği için genellikle geliştiriciler tarafından tercih edilir. HTTPS, port 22'yi engelleyen güvenlik duvarları üzerinden evrensel olarak desteklenir.
+
+## SSH Anahtarlarınızı Hemen Oluşturun
+
+SSH anahtar tabanlı kimlik doğrulama, parolalara kıyasla daha güvenli ve daha kullanışlıdır. Henüz SSH anahtarı kurmadıysanız, ücretsiz çevrimiçi oluşturucumuz tarayıcınızda anında Ed25519 veya RSA anahtar çiftleri oluşturur — kurulum gerekmez, sunucularımıza hiçbir şey gönderilmez.
+
+<a href="/">SSH anahtar çiftinizi şimdi oluşturun →</a>
+
+---
+
+**Daha fazla okuma:**
+- <a href="/tr/what-is-an-ssh-key">SSH Anahtarı Nedir? Açık Anahtarlar, Özel Anahtarlar ve Anahtar Çiftleri Açıklandı</a>
+- <a href="/tr/ssh-command">SSH Komutu: Örneklerle Tam Başvuru Kılavuzu</a>
+- <a href="/tr/how-to-set-up-ssh">SSH Nasıl Kurulur: Eksiksiz Adım Adım Kılavuz</a>

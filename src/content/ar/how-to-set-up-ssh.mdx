@@ -1,0 +1,563 @@
+# كيفية إعداد SSH: دليل خطوة بخطوة شامل لـ Linux وMac وWindows
+
+يستغرق إعداد SSH بشكل صحيح حوالي عشر دقائق ويعود بفوائد جمّة لسنوات. بمجرد الإعداد، يمكنك تسجيل الدخول إلى الخوادم دون كتابة كلمات مرور، ورفع الكود إلى GitHub دون إدخال بيانات اعتماد في كل عملية، وأتمتة عمليات النشر بثقة. يرشدك هذا الدليل خلال العملية بأكملها — من توليد زوج مفاتيح إلى استكشاف الأخطاء وإصلاحها — لـ Linux وmacOS وWindows.
+
+إذا أردت فهم التقنية الأساسية أولًا، اقرأ دليلَينا حول <a href="/ar/what-is-ssh">ما هو SSH</a> و<a href="/ar/what-is-an-ssh-key">ما هي مفاتيح SSH</a>.
+
+## المتطلبات الأساسية
+
+قبل البدء، تأكد من توافر ما يلي:
+
+**للوصول إلى الخوادم:**
+- تطبيق طرفية (Terminal على macOS/Linux، وWindows Terminal أو PowerShell على Windows)
+- خادم بعيد يشغّل Linux/Unix مع برنامج خادم SSH (sshd) مثبتًا
+- حساب مستخدم على ذلك الخادم (أو وصول root لإنشاء حساب)
+- عنوان IP للخادم أو اسم مضيفه
+
+**للوصول إلى GitHub/GitLab:**
+- حساب GitHub أو GitLab
+- طرفية مع توافر `ssh`
+- اختياريًا: git مثبت محليًا
+
+**متطلبات نظام التشغيل:**
+- **Linux**: عميل SSH مثبت مسبقًا على كل التوزيعات تقريبًا
+- **macOS**: عميل SSH مدمج، متاح من Terminal
+- **Windows 10 الإصدار 1809+ / Windows 11**: عميل OpenSSH متاح كميزة اختيارية
+
+لا تحتاج تثبيت أي شيء على Linux أو macOS. على Windows، تحقق من تثبيت OpenSSH بفتح PowerShell وتشغيل `ssh -V`. إذا حصلت على سلسلة إصدار، أنت جاهز. إذا لم تحصل، انظر الخطوة 4 لتعليمات التثبيت.
+
+## الخطوة 1: توليد زوج مفاتيح SSH
+
+تحتاج زوج مفاتيح قبل أي شيء آخر. يتكون زوج المفاتيح من **مفتاح خاص** (يبقى على جهازك) و**مفتاح عام** (يُوضع على الخوادم أو خدمات مثل GitHub).
+
+### الخيار أ: استخدام المولّد عبر الإنترنت
+
+إذا فضّلت واجهة رسومية، فإن <a href="/">مولّد مفاتيح SSH المجاني عبر الإنترنت</a> ينشئ أزواج مفاتيح Ed25519 أو RSA في متصفحك. يُولَّد المفتاح الخاص محليًا باستخدام Web Crypto API — لا يُرسَل شيء إلى خوادمنا. نزّل كلا الملفين واحفظهما في `~/.ssh/` (Linux/macOS) أو `C:\Users\YourName\.ssh\` (Windows).
+
+### الخيار ب: استخدام ssh-keygen في سطر الأوامر
+
+أمر `ssh-keygen` متاح على Linux وmacOS وWindows مع OpenSSH:
+
+```bash
+# توليد زوج مفاتيح Ed25519 (موصى به)
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+**معنى كل علم:**
+- `-t ed25519` — نوع المفتاح (Ed25519 حديث وسريع وآمن)
+- `-C "comment"` — تسمية مضمّنة في المفتاح العام، عادةً عنوان بريدك الإلكتروني
+
+ستُطلب منك:
+
+```
+Generating public/private ed25519 key pair.
+Enter file in which to save the key (/home/user/.ssh/id_ed25519):
+```
+
+اضغط **Enter** لقبول الموقع الافتراضي. إذا كان لديك مفاتيح متعددة، يمكنك تسميتها بشكل وصفي (مثل `/home/user/.ssh/id_ed25519_github`).
+
+```
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+```
+
+أدخل عبارة مرور قوية. هذا يشفّر ملف المفتاح الخاص على القرص — إذا سُرق جهازك، لا يمكن استخدام المفتاح بدون عبارة المرور. يمكنك تركها فارغة لحالات الأتمتة حيث التفاعل البشري غير ممكن، لكن للمفاتيح الشخصية، استخدم دائمًا عبارة مرور.
+
+**المخرجات:**
+
+```
+Your identification has been saved in /home/user/.ssh/id_ed25519
+Your public key has been saved in /home/user/.ssh/id_ed25519.pub
+The key fingerprint is:
+SHA256:abc123defghijk... your@email.com
+The key's randomart image is:
++--[ED25519 256]--+
+...
+```
+
+يُنشأ ملفان:
+- `~/.ssh/id_ed25519` — **مفتاحك الخاص** (لا تشاركه أبدًا)
+- `~/.ssh/id_ed25519.pub` — **مفتاحك العام** (آمن للمشاركة)
+
+### لـ RSA (التوافقية القديمة)
+
+إذا احتجت الاتصال بأنظمة قديمة جدًا لا تدعم Ed25519:
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "your@email.com"
+```
+
+استخدم 4096 بت كحد أدنى. مفاتيح RSA الأصغر من 4096 بت لم تعد تُعدّ كافية أمنيًا.
+
+## الخطوة 2: إعداد SSH على Linux
+
+يغطي هذا القسم نسخ مفتاحك العام إلى خادم Linux حتى تستطيع المصادقة بدون كلمة مرور.
+
+### الطريقة 1: ssh-copy-id (الأسهل)
+
+`ssh-copy-id` هي أبسط طريقة لتثبيت مفتاحك العام على خادم بعيد. تتصل باستخدام مصادقة كلمة المرور، تضيف مفتاحك العام إلى `~/.ssh/authorized_keys` في الخادم، وتضبط الصلاحيات الصحيحة.
+
+```bash
+ssh-copy-id user@server.example.com
+
+# تحديد ملف مفتاح صراحةً
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server.example.com
+
+# الاتصال على منفذ غير قياسي
+ssh-copy-id -p 2222 user@server.example.com
+```
+
+ستُطلب منك كلمة مرور الخادم مرة أخيرة. بعد هذا، يمكنك الاتصال بـ `ssh user@server.example.com` باستخدام مفتاحك.
+
+### الطريقة 2: النسخ اليدوي
+
+إذا لم يتوافر `ssh-copy-id` (شائع على بعض أنظمة BSD أو تثبيتات Linux المبسّطة):
+
+```bash
+# عرض مفتاحك العام ونسخ المخرجات
+cat ~/.ssh/id_ed25519.pub
+
+# ثم SSH إلى الخادم (بكلمة المرور) وشغّل:
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+echo "PASTE_YOUR_PUBLIC_KEY_HERE" >> ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+```
+
+أو افعل كل شيء في خط أنابيب واحد:
+
+```bash
+cat ~/.ssh/id_ed25519.pub | ssh user@server.example.com \
+  "mkdir -p ~/.ssh && chmod 700 ~/.ssh && \
+   cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+```
+
+### التحقق من تثبيت المفتاح
+
+```bash
+ssh user@server.example.com
+# يجب أن يتصل بدون طلب كلمة مرور (فقط عبارة المرور إذا حددت واحدة)
+```
+
+### إعداد خادم SSH (sshd)
+
+على الخادم البعيد، يوجد إعداد خادم SSH في `/etc/ssh/sshd_config`. للإعداد الآمن:
+
+```bash
+sudo nano /etc/ssh/sshd_config
+```
+
+الإعدادات الموصى بها:
+
+```
+# تمكين مصادقة المفتاح العام
+PubkeyAuthentication yes
+
+# تعطيل مصادقة كلمة المرور (بعد التأكد من عمل المفاتيح!)
+PasswordAuthentication no
+
+# تعطيل تسجيل دخول root عبر SSH
+PermitRootLogin no
+
+# السماح لمستخدمين محددين فقط
+AllowUsers alice bob deploy
+
+# الإبقاء على الجلسات حية
+ClientAliveInterval 60
+ClientAliveCountMax 3
+```
+
+بعد التحرير، أعد تحميل خادم SSH:
+
+```bash
+sudo systemctl reload sshd
+# أو على الأنظمة القديمة:
+sudo service ssh reload
+```
+
+**مهم**: لا تعطّل `PasswordAuthentication` حتى تتأكد من عمل المصادقة القائمة على المفاتيح. إذا حجبت نفسك عن الخادم، ستحتاج وصول وحدة التحكم (أو آلية الوصول الطارئ لمزوّد الاستضافة) للاسترداد.
+
+### إعداد ssh-agent على Linux
+
+إذا كان مفتاحك يمتلك عبارة مرور، أضفه إلى `ssh-agent` عند بدء جلستك لتجنب إعادة إدخالها:
+
+```bash
+# بدء الوكيل (غالبًا ما تبدأه بيئات سطح المكتب تلقائيًا)
+eval "$(ssh-agent -s)"
+
+# إضافة مفتاحك (أدخل عبارة المرور مرة واحدة)
+ssh-add ~/.ssh/id_ed25519
+
+# التحقق من تحميل المفاتيح
+ssh-add -l
+```
+
+لبدء `ssh-agent` تلقائيًا وإضافة مفتاحك عند تسجيل الدخول، أضف إلى `~/.bashrc` أو `~/.zshrc`:
+
+```bash
+# بدء ssh-agent تلقائيًا
+if [ -z "$SSH_AUTH_SOCK" ]; then
+  eval "$(ssh-agent -s)"
+  ssh-add ~/.ssh/id_ed25519
+fi
+```
+
+## الخطوة 3: إعداد SSH على macOS
+
+يتضمن macOS عميل OpenSSH كاملًا. عملية إعداد المصادقة القائمة على المفاتيح لخادم بعيد مطابقة لـ Linux (انظر الخطوة 2 أعلاه). الإضافات الخاصة بـ macOS تتعلق بتكامل Keychain.
+
+### تكامل Keychain
+
+يستطيع macOS تخزين عبارة مرورك في Keychain النظامي حتى لا تضطر لإدخالها بعد المرة الأولى:
+
+```bash
+# إضافة المفتاح إلى ssh-agent مع تكامل Keychain
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+
+# لإصدارات macOS الأقدم (قبل Monterey)
+ssh-add -K ~/.ssh/id_ed25519
+```
+
+لجعل macOS يحمّل مفاتيحك دائمًا من Keychain، أضف هذا إلى `~/.ssh/config`:
+
+```
+Host *
+    AddKeysToAgent yes
+    UseKeychain yes
+    IdentityFile ~/.ssh/id_ed25519
+```
+
+بعد هذا، تُخزَّن عبارة المرور في Keychain وتُحمَّل تلقائيًا — لن تُطلب منك مرة أخرى عند إعادة التشغيل.
+
+### التحقق من إصدار عميل SSH
+
+```bash
+ssh -V
+# OpenSSH_9.x, LibreSSL x.x.x
+```
+
+يشحن macOS مع OpenSSH حديث نسبيًا لكن ليس دائمًا الأحدث تمامًا. إذا احتجت ميزات أحدث، ثبّته عبر Homebrew: `brew install openssh`.
+
+## الخطوة 4: إعداد SSH على Windows
+
+يتضمن Windows 10 (1809+) وWindows 11 OpenSSH. إليك كيفية تشغيله.
+
+### تثبيت عميل OpenSSH
+
+**التحقق من التثبيت المسبق:**
+
+```powershell
+ssh -V
+```
+
+**التثبيت عبر الإعدادات:**
+1. افتح **Settings → Apps → Optional Features**
+2. ابحث عن **OpenSSH Client**
+3. انقر **Install**
+
+**التثبيت عبر PowerShell (مسؤول):**
+
+```powershell
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+```
+
+### توليد المفاتيح على Windows
+
+افتح PowerShell وشغّل:
+
+```powershell
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+تُحفظ المفاتيح في `C:\Users\YourUsername\.ssh\`.
+
+### نسخ مفتاحك العام إلى خادم Linux
+
+لا يتضمن Windows `ssh-copy-id`، لكن يمكنك فعل ذلك يدويًا من PowerShell:
+
+```powershell
+# عرض مفتاحك العام
+Get-Content ~/.ssh/id_ed25519.pub
+
+# نسخه إلى الخادم البعيد (ستُطلب منك كلمة مرور الخادم)
+$pubkey = Get-Content ~/.ssh/id_ed25519.pub -Raw
+ssh user@server.example.com "mkdir -p ~/.ssh && echo '$pubkey' >> ~/.ssh/authorized_keys && chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys"
+```
+
+أو استخدم `Add-Content` لتوصيله:
+
+```powershell
+type $env:USERPROFILE\.ssh\id_ed25519.pub | ssh user@server.example.com "cat >> ~/.ssh/authorized_keys"
+```
+
+### إعداد ssh-agent على Windows
+
+لتجنب إدخال عبارة مرورك بشكل متكرر، ابدأ خدمة وكيل مصادقة OpenSSH:
+
+```powershell
+# بدء الخدمة
+Start-Service ssh-agent
+
+# ضبطها لتبدأ تلقائيًا
+Set-Service -Name ssh-agent -StartupType Automatic
+
+# إضافة مفتاحك
+ssh-add ~/.ssh/id_ed25519
+```
+
+### PuTTY كبديل
+
+إذا فضّلت عميل SSH رسوميًا، PuTTY خيار مجاني لـ Windows. استخدم **PuTTYgen** لتوليد المفاتيح (احفظ بصيغة `.ppk` لـ PuTTY وصدّر بصيغة OpenSSH). لكن للإعدادات الجديدة، عميل OpenSSH المدمج أبسط وأكثر توافقًا مع باقي النظام.
+
+## كيفية إعداد مفاتيح SSH لـ GitHub وGitLab
+
+تعمل مصادقة مفتاح SSH لـ GitHub وGitLab بالمثل — ترفع مفتاحك العام إلى الخدمة وتستخدم المفتاح الخاص المقابل عند تنفيذ عمليات Git.
+
+### إعداد SSH لـ GitHub
+
+**1. نسخ مفتاحك العام:**
+
+```bash
+# Linux
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+
+# macOS
+cat ~/.ssh/id_ed25519.pub | pbcopy
+
+# Windows PowerShell
+Get-Content ~/.ssh/id_ed25519.pub | Set-Clipboard
+```
+
+أو اعرضه ببساطة وانسخ يدويًا:
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+**2. الإضافة إلى GitHub:**
+
+1. اذهب إلى **github.com** وسجّل الدخول
+2. انقر على صورتك الرمزية ← **Settings**
+3. في الشريط الجانبي الأيسر: **SSH and GPG keys**
+4. انقر **New SSH key**
+5. أعطه **عنوانًا** وصفيًا (مثل "MacBook Pro" أو "Work PC")
+6. اضبط **نوع المفتاح** على **Authentication Key**
+7. الصق مفتاحك العام
+8. انقر **Add SSH key**
+
+**3. اختبار الاتصال:**
+
+```bash
+ssh -T git@github.com
+# Hi username! You've successfully authenticated, but GitHub does not provide shell access.
+```
+
+**4. استخدام SSH لعمليات Git:**
+
+```bash
+# الاستنساخ باستخدام SSH بدلًا من HTTPS
+git clone git@github.com:username/repository.git
+
+# إذا كان مستودع موجود يستخدم HTTPS، بدّله إلى SSH
+git remote set-url origin git@github.com:username/repository.git
+```
+
+### إعداد SSH لـ GitLab
+
+العملية مطابقة:
+
+1. اذهب إلى **gitlab.com** ← انقر على صورتك الرمزية ← **Preferences**
+2. في الشريط الجانبي الأيسر: **SSH Keys**
+3. الصق مفتاحك العام، أعطه عنوانًا، واضبط تاريخ انتهاء اختياريًا
+4. انقر **Add key**
+
+اختبر بـ:
+
+```bash
+ssh -T git@gitlab.com
+# Welcome to GitLab, @username!
+```
+
+لنسخ GitLab المستضافة ذاتيًا، استبدل `gitlab.com` باسم مضيف نسختك.
+
+### استخدام مفتاح منفصل لـ GitHub والخدمات الأخرى
+
+إذا أردت مفتاحًا مخصصًا لـ GitHub (موصى به لنظافة المفاتيح)، أنشئ مفتاحًا مسمى:
+
+```bash
+ssh-keygen -t ed25519 -C "github" -f ~/.ssh/id_ed25519_github
+```
+
+ثم أضف كتلة `Host` إلى `~/.ssh/config`:
+
+```
+Host github.com
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519_github
+    AddKeysToAgent yes
+```
+
+الآن `git clone git@github.com:...` يستخدم تلقائيًا المفتاح الخاص بـ GitHub.
+
+## اختبار SSH واستكشاف الأخطاء وإصلاحها
+
+### اختبار الاتصال الأساسي
+
+```bash
+ssh -v user@server.example.com
+```
+
+علم `-v` (تفصيلي) يُظهر بالضبط ما يحدث في كل خطوة. ابحث عن أسطر مثل:
+- `Offering public key: ~/.ssh/id_ed25519` — SSH يجرّب مفتاحك
+- `Server accepts key` — المفتاح في `authorized_keys`
+- `Authenticated to server.example.com` — نجاح
+
+### الأخطاء الشائعة وإصلاحاتها
+
+**"Permission denied (publickey)"**
+
+هذا الخطأ الأكثر شيوعًا. الأسباب والإصلاحات:
+
+```bash
+# التحقق من تحميل مفتاحك في ssh-agent
+ssh-add -l
+
+# إذا لم تكن مفاتيح مدرجة، أضف مفتاحك
+ssh-add ~/.ssh/id_ed25519
+
+# على الخادم البعيد، تحقق من authorized_keys
+cat ~/.ssh/authorized_keys
+# تأكد من وجود مفتاحك العام هناك
+
+# تحقق من الصلاحيات على الخادم البعيد
+ls -la ~/.ssh/
+# ~/.ssh يجب أن يكون 700
+# authorized_keys يجب أن يكون 600
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/authorized_keys
+
+# تحقق من أن الخادم يسمح بمصادقة المفتاح العام
+sudo grep PubkeyAuthentication /etc/ssh/sshd_config
+# يجب أن يكون: PubkeyAuthentication yes
+```
+
+**"WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED"**
+
+تغيّر مفتاح مضيف الخادم، يعامله SSH كمشكلة أمنية محتملة. إذا علمت أن هذا شرعي (أُعيد بناء الخادم، أو أُعيد تعيين IP)، احذف الإدخال القديم:
+
+```bash
+# حذف إدخال المضيف المحدد
+ssh-keygen -R server.example.com
+
+# أو تحرير known_hosts يدويًا وحذف السطر المتأثر
+nano ~/.ssh/known_hosts
+```
+
+**"Bad permissions" أو "Permissions too open"**
+
+SSH صارم بشأن صلاحيات ملفات المفاتيح:
+
+```bash
+# إصلاح صلاحيات المفتاح الخاص
+chmod 600 ~/.ssh/id_ed25519
+
+# إصلاح صلاحيات المفتاح العام
+chmod 644 ~/.ssh/id_ed25519.pub
+
+# إصلاح صلاحيات مجلد .ssh
+chmod 700 ~/.ssh
+```
+
+على Windows، تُدار صلاحيات ملف المفتاح الخاص بشكل مختلف. انقر بالزر الأيمن على ملف المفتاح ← Properties ← Security ← Advanced ← Disable inheritance ← Remove all ثم أبقِ حسابك فقط بمنحه Full control.
+
+### إعداد واستخدام ssh-agent
+
+إذا طُلبت منك عبارة مرورك بشكل متكرر، فإن `ssh-agent` لا يعمل أو مفتاحك غير مضاف:
+
+```bash
+# بدء الوكيل
+eval "$(ssh-agent -s)"
+# Agent pid 12345
+
+# إضافة مفتاحك
+ssh-add ~/.ssh/id_ed25519
+# Enter passphrase for /home/user/.ssh/id_ed25519:
+# Identity added: /home/user/.ssh/id_ed25519
+
+# التحقق
+ssh-add -l
+# 256 SHA256:abc123... your@email.com (ED25519)
+```
+
+### تعبئة known_hosts مسبقًا في الأتمتة
+
+في خطوط CI/CD، استخدم `ssh-keyscan` لإضافة بصمة المضيف البعيد قبل الاتصال:
+
+```bash
+ssh-keyscan -H server.example.com >> ~/.ssh/known_hosts
+ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+```
+
+هذا يمنع مطالبات البصمة التفاعلية في النصوص البرمجية الآلية.
+
+## الأسئلة الشائعة
+
+### كيف أصلح "Permission denied (publickey)"؟
+
+اتبع هذه القائمة: (1) تحقق من أن مفتاحك في وكيل SSH: `ssh-add -l`. إذا لم يكن، شغّل `ssh-add ~/.ssh/id_ed25519`. (2) تحقق من وجود مفتاحك العام في ملف `~/.ssh/authorized_keys` للخادم. (3) تحقق من الصلاحيات: `~/.ssh` يجب أن يكون `700`، و`authorized_keys` يجب أن يكون `600`. (4) تحقق من أن الخادم يمتلك `PubkeyAuthentication yes` في `/etc/ssh/sshd_config`. (5) استخدم `ssh -vvv user@server` لترى بالضبط أين تفشل المصادقة. المخرجات التفصيلية ستُخبرك أي المفاتيح جُرّبت وما إذا قبلها الخادم.
+
+### كيف أضيف مفتاح SSH إلى ssh-agent؟
+
+شغّل `ssh-add ~/.ssh/id_ed25519` (استبدل باسم ملف مفتاحك). إذا لم يكن الوكيل يعمل، ابدأه أولًا بـ `eval "$(ssh-agent -s)"`. على macOS، استخدم `ssh-add --apple-use-keychain ~/.ssh/id_ed25519` لتخزين عبارة المرور في Keychain. على Windows، فعّل خدمة `ssh-agent` بـ `Start-Service ssh-agent` ثم شغّل `ssh-add`. تحتاج تشغيل `ssh-add` مرة واحدة فقط في الجلسة (أو مرة واحدة فقط على الإطلاق، مع Keychain على macOS).
+
+### هل يمكنني امتلاك مفاتيح SSH متعددة؟
+
+نعم، وهي ممارسة جيدة. أنشئ مفاتيح منفصلة لأغراض مختلفة — مثلًا، واحد لـ GitHub الشخصي، وآخر لـ GitLab للعمل، وآخر لخوادم الإنتاج. استخدم `~/.ssh/config` لربط كل مضيف بمفتاحه المحدد بـ `IdentityFile`. وجود مفاتيح منفصلة يعني أن إلغاء أحدها (بإزالته من خدمة أو خادم) لا يؤثر على الآخرين، مما يحدّ من نطاق اختراق المفتاح.
+
+### كيف أغيّر عبارة المرور على مفتاح SSH؟
+
+استخدم `ssh-keygen -p`:
+
+```bash
+ssh-keygen -p -f ~/.ssh/id_ed25519
+```
+
+ستُطلب منك عبارة المرور الحالية، ثم تُطلب منك إدخال الجديدة والتأكيد عليها. المفتاح نفسه (وبالتالي المفتاح العام) لا يتغير — لا تحتاج تحديثه في أي مكان. هذا مفيد إذا شككت في اختراق عبارة مرورك أو تريد تدويرها كممارسة أمنية روتينية.
+
+### كيف أحذف مفتاح SSH قديم من خادم؟
+
+افتح `~/.ssh/authorized_keys` على الخادم واحذف السطر المحتوي على المفتاح العام القديم:
+
+```bash
+# تحرير authorized_keys على الخادم البعيد
+ssh user@server.example.com
+nano ~/.ssh/authorized_keys
+# احذف السطر للمفتاح الذي تريد إزالته
+# احفظ وأغلق
+```
+
+كل سطر في `authorized_keys` هو مفتاح عام واحد. تعليق المفتاح (الحقل الأخير، عادةً `user@hostname` أو بريد إلكتروني) يساعد في التعريف. إذا لم تعرف أي سطر تحذف، قارن البصمة:
+
+```bash
+# على جهازك المحلي، احصل على البصمة
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+
+# على الخادم، تحقق من بصمات جميع المفاتيح المصرّح بها
+ssh-keygen -lf ~/.ssh/authorized_keys
+```
+
+طابق البصمات لتحديد المفتاح الصحيح وحذفه.
+
+## أنشئ مفاتيح SSH مجانًا
+
+إذا لم تولّد بعد زوج مفاتيح SSH، فإن مولّدنا المجاني عبر الإنترنت ينشئ مفاتيح Ed25519 أو RSA مباشرةً في متصفحك في ثوانٍ. لا يلزم أي تثبيت، ولا يُرسَل شيء إلى خوادمنا — يحدث التوليد بالكامل على جهازك.
+
+<a href="/">أنشئ مفاتيح SSH مجانًا ←</a>
+
+---
+
+**لمزيد من القراءة:**
+- <a href="/ar/what-is-ssh">ما هو SSH؟ الدليل الشامل للـ Secure Shell</a>
+- <a href="/ar/what-is-an-ssh-key">ما هو مفتاح SSH؟ المفاتيح العامة والخاصة وأزواج المفاتيح شرح</a>
+- <a href="/ar/ssh-command">أمر SSH: المرجع الكامل مع أمثلة</a>

@@ -1,0 +1,563 @@
+# SSH কীভাবে সেট আপ করবেন: Linux, Mac, ও Windows-এর জন্য সম্পূর্ণ ধাপে ধাপে গাইড
+
+SSH সঠিকভাবে সেট আপ করতে প্রায় দশ মিনিট লাগে এবং বছরের পর বছর সুফল দেয়। একবার configure হলে, পাসওয়ার্ড না টাইপ করেই সার্ভারে লগ ইন করতে পারবেন, প্রতিটি অপারেশনে credential না দিয়ে GitHub-এ কোড push করতে পারবেন, এবং আত্মবিশ্বাসের সাথে deployment automate করতে পারবেন। এই গাইডটি সম্পূর্ণ প্রক্রিয়ার মধ্য দিয়ে নিয়ে যায় — key pair তৈরি থেকে সাধারণ ত্রুটি troubleshoot করা পর্যন্ত — Linux, macOS, ও Windows-এর জন্য।
+
+অন্তর্নিহিত প্রযুক্তি প্রথমে বুঝতে চাইলে, আমাদের গাইড পড়ুন: <a href="/bn/what-is-ssh">SSH কী</a> এবং <a href="/bn/what-is-an-ssh-key">SSH key কী</a>।
+
+## পূর্বশর্ত
+
+শুরু করার আগে, নিশ্চিত করুন আপনার কাছে আছে:
+
+**সার্ভার অ্যাক্সেসের জন্য:**
+- একটি terminal application (macOS/Linux-এ Terminal, Windows-এ Windows Terminal বা PowerShell)
+- SSH সার্ভার সফটওয়্যার (sshd) ইনস্টল সহ Linux/Unix চালানো remote সার্ভার
+- সেই সার্ভারে একটি user account (বা একটি তৈরি করতে root অ্যাক্সেস)
+- সার্ভারের IP address বা hostname
+
+**GitHub/GitLab অ্যাক্সেসের জন্য:**
+- GitHub বা GitLab account
+- `ssh` পাওয়া যায় এমন terminal
+- ঐচ্ছিকভাবে: locally ইনস্টল করা git
+
+**Operating system requirement:**
+- **Linux**: SSH client প্রায় সমস্ত distribution-এ pre-installed
+- **macOS**: SSH client built-in, Terminal থেকে accessible
+- **Windows 10 version 1809+ / Windows 11**: OpenSSH client optional feature হিসেবে পাওয়া যায়
+
+Linux বা macOS-এ কিছু ইনস্টল করার প্রয়োজন নেই। Windows-এ, PowerShell খুলে `ssh -V` চালিয়ে OpenSSH ইনস্টল আছে কিনা যাচাই করুন। Version string পেলে, আপনি প্রস্তুত। না পেলে, ইনস্টলেশন নির্দেশের জন্য Step 4 দেখুন।
+
+## ধাপ ১: আপনার SSH Key Pair তৈরি করুন
+
+অন্য কিছু করার আগে আপনার key pair দরকার। Key pair-এ একটি **private key** (আপনার মেশিনে থাকে) এবং একটি **public key** (সার্ভার বা GitHub-এর মতো সার্ভিসে যায়) থাকে।
+
+### Option A: Online Generator ব্যবহার করুন
+
+Graphical interface পছন্দ করলে, আমাদের <a href="/">বিনামূল্যের online SSH key generator</a> আপনার browser-এ Ed25519 বা RSA key pair তৈরি করে। Private key Web Crypto API ব্যবহার করে locally তৈরি হয় — আমাদের সার্ভারে কিছু পাঠানো হয় না। উভয় ফাইল download করুন এবং `~/.ssh/` (Linux/macOS) বা `C:\Users\YourName\.ssh\` (Windows)-এ সংরক্ষণ করুন।
+
+### Option B: Command Line-এ ssh-keygen ব্যবহার করুন
+
+`ssh-keygen` command Linux, macOS, ও OpenSSH সহ Windows-এ পাওয়া যায়:
+
+```bash
+# Ed25519 key pair তৈরি করুন (প্রস্তাবিত)
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+**প্রতিটি flag-এর অর্থ:**
+- `-t ed25519` — key type (Ed25519 আধুনিক, দ্রুত ও নিরাপদ)
+- `-C "comment"` — public key-এ embedded একটি label, সাধারণত আপনার ইমেইল ঠিকানা
+
+আপনাকে prompt করা হবে:
+
+```
+Generating public/private ed25519 key pair.
+Enter file in which to save the key (/home/user/.ssh/id_ed25519):
+```
+
+ডিফল্ট অবস্থান গ্রহণ করতে **Enter** চাপুন। Multiple key থাকলে, descriptively নাম দিতে পারেন (যেমন `/home/user/.ssh/id_ed25519_github`)।
+
+```
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+```
+
+একটি শক্তিশালী passphrase দিন। এটি disk-এ private key ফাইল এনক্রিপ্ট করে — আপনার মেশিন চুরি হলে, passphrase ছাড়া key ব্যবহার করা যাবে না। Automation use case-এ যেখানে human interaction সম্ভব নয় সেখানে খালি রাখতে পারেন, কিন্তু personal key-এর জন্য সবসময় passphrase ব্যবহার করুন।
+
+**Output:**
+
+```
+Your identification has been saved in /home/user/.ssh/id_ed25519
+Your public key has been saved in /home/user/.ssh/id_ed25519.pub
+The key fingerprint is:
+SHA256:abc123defghijk... your@email.com
+The key's randomart image is:
++--[ED25519 256]--+
+...
+```
+
+দুটি ফাইল তৈরি হয়:
+- `~/.ssh/id_ed25519` — আপনার **private key** (কখনো এটি শেয়ার করবেন না)
+- `~/.ssh/id_ed25519.pub` — আপনার **public key** (শেয়ার করা নিরাপদ)
+
+### RSA-এর জন্য (Legacy Compatibility)
+
+আপনাকে খুব পুরোনো সিস্টেমে সংযোগ করতে হলে যা Ed25519 সমর্থন করে না:
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "your@email.com"
+```
+
+কমপক্ষে 4096 bits ব্যবহার করুন। 4096 bits-এর ছোট RSA key আর পর্যাপ্ত নিরাপত্তা বলে বিবেচিত হয় না।
+
+## ধাপ ২: Linux-এ SSH সেট আপ করুন
+
+এই section-এ পাসওয়ার্ড ছাড়া authenticate করতে Linux সার্ভারে আপনার public key copy করা covered।
+
+### পদ্ধতি ১: ssh-copy-id (সহজতম)
+
+`ssh-copy-id` remote সার্ভারে আপনার public key ইনস্টল করার সহজতম উপায়। এটি password authentication ব্যবহার করে সংযোগ করে, সার্ভারের `~/.ssh/authorized_keys`-এ আপনার public key যোগ করে, এবং সঠিক permissions সেট করে।
+
+```bash
+ssh-copy-id user@server.example.com
+
+# Explicitly key ফাইল specify করুন
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server.example.com
+
+# Non-standard port-এ সংযোগ করুন
+ssh-copy-id -p 2222 user@server.example.com
+```
+
+সর্বশেষবারের মতো সার্ভার পাসওয়ার্ড দিতে prompt হবেন। এরপর, আপনার key ব্যবহার করে `ssh user@server.example.com` দিয়ে সংযোগ করতে পারবেন।
+
+### পদ্ধতি ২: Manual Copy
+
+`ssh-copy-id` পাওয়া না গেলে (কিছু BSD সিস্টেম বা minimal Linux installation-এ সাধারণ):
+
+```bash
+# আপনার public key প্রদর্শন করুন এবং output copy করুন
+cat ~/.ssh/id_ed25519.pub
+
+# তারপর সার্ভারে (পাসওয়ার্ড দিয়ে) SSH করুন এবং চালান:
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+echo "PASTE_YOUR_PUBLIC_KEY_HERE" >> ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+```
+
+বা একটি pipeline-এ সবকিছু করুন:
+
+```bash
+cat ~/.ssh/id_ed25519.pub | ssh user@server.example.com \
+  "mkdir -p ~/.ssh && chmod 700 ~/.ssh && \
+   cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+```
+
+### Key ইনস্টল হয়েছে কিনা যাচাই করুন
+
+```bash
+ssh user@server.example.com
+# পাসওয়ার্ড না চেয়ে সংযোগ হওয়া উচিত (শুধু passphrase যদি সেট করা থাকে)
+```
+
+### SSH সার্ভার (sshd) Configure করুন
+
+Remote সার্ভারে, SSH daemon configuration `/etc/ssh/sshd_config`-এ। নিরাপদ setup-এর জন্য:
+
+```bash
+sudo nano /etc/ssh/sshd_config
+```
+
+প্রস্তাবিত settings:
+
+```
+# Public key authentication সক্ষম করুন
+PubkeyAuthentication yes
+
+# Password authentication অক্ষম করুন (key কাজ করছে confirm করার পর!)
+PasswordAuthentication no
+
+# SSH-এর মাধ্যমে root login অক্ষম করুন
+PermitRootLogin no
+
+# শুধু নির্দিষ্ট user-কে অনুমতি দিন
+AllowUsers alice bob deploy
+
+# Session alive রাখুন
+ClientAliveInterval 60
+ClientAliveCountMax 3
+```
+
+সম্পাদনার পর, SSH daemon reload করুন:
+
+```bash
+sudo systemctl reload sshd
+# বা পুরোনো সিস্টেমে:
+sudo service ssh reload
+```
+
+**গুরুত্বপূর্ণ**: key-based authentication কাজ করছে confirm না করা পর্যন্ত `PasswordAuthentication` অক্ষম করবেন না। নিজেকে lock out করলে, recover করতে console অ্যাক্সেস (বা আপনার hosting provider-এর emergency অ্যাক্সেস) প্রয়োজন হবে।
+
+### Linux-এ ssh-agent সেট আপ করা
+
+আপনার key-এ passphrase থাকলে, বারবার না দিতে session শুরুতে `ssh-agent`-এ যোগ করুন:
+
+```bash
+# Agent start করুন (প্রায়ই desktop environment দ্বারা auto-started)
+eval "$(ssh-agent -s)"
+
+# আপনার key যোগ করুন (একবার passphrase দিন)
+ssh-add ~/.ssh/id_ed25519
+
+# Loaded key যাচাই করুন
+ssh-add -l
+```
+
+লগইনে automatically `ssh-agent` start করতে ও key যোগ করতে, `~/.bashrc` বা `~/.zshrc`-এ যোগ করুন:
+
+```bash
+# ssh-agent auto-start করুন
+if [ -z "$SSH_AUTH_SOCK" ]; then
+  eval "$(ssh-agent -s)"
+  ssh-add ~/.ssh/id_ed25519
+fi
+```
+
+## ধাপ ৩: macOS-এ SSH সেট আপ করুন
+
+macOS-এ একটি full OpenSSH client অন্তর্ভুক্ত। Remote সার্ভারে key-based authentication সেট আপ করার প্রক্রিয়া Linux-এর মতোই (উপরে ধাপ ২ দেখুন)। macOS-specific addition-এ Keychain integration আছে।
+
+### Keychain Integration
+
+macOS আপনার passphrase সিস্টেম Keychain-এ সংরক্ষণ করতে পারে যাতে প্রথমবারের পর আর দিতে না হয়:
+
+```bash
+# Keychain integration সহ ssh-agent-এ key যোগ করুন
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+
+# পুরোনো macOS version-এর জন্য (Monterey-এর আগে)
+ssh-add -K ~/.ssh/id_ed25519
+```
+
+macOS সবসময় Keychain থেকে আপনার key load করতে, `~/.ssh/config`-এ যোগ করুন:
+
+```
+Host *
+    AddKeysToAgent yes
+    UseKeychain yes
+    IdentityFile ~/.ssh/id_ed25519
+```
+
+এরপর, passphrase Keychain-এ সংরক্ষিত হয় এবং automatically load হয় — পরবর্তী boot-এ আর prompt হবেন না।
+
+### SSH Client Version যাচাই করুন
+
+```bash
+ssh -V
+# OpenSSH_9.x, LibreSSL x.x.x
+```
+
+macOS relatively recent OpenSSH নিয়ে আসে কিন্তু সবসময় একেবারে latest নয়। নতুন feature প্রয়োজন হলে, Homebrew-এর মাধ্যমে ইনস্টল করুন: `brew install openssh`।
+
+## ধাপ ৪: Windows-এ SSH সেট আপ করুন
+
+Windows 10 (1809+) ও Windows 11-এ OpenSSH আছে। এটি কাজে লাগানোর উপায় এখানে।
+
+### OpenSSH Client ইনস্টল করুন
+
+**Already ইনস্টল আছে কিনা পরীক্ষা করুন:**
+
+```powershell
+ssh -V
+```
+
+**Settings-এর মাধ্যমে ইনস্টল করুন:**
+১. **Settings → Apps → Optional Features** খুলুন
+২. **OpenSSH Client** খুঁজুন
+৩. **Install**-এ ক্লিক করুন
+
+**PowerShell (Administrator)-এর মাধ্যমে ইনস্টল করুন:**
+
+```powershell
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+```
+
+### Windows-এ Key তৈরি করুন
+
+PowerShell খুলুন এবং চালান:
+
+```powershell
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+Key `C:\Users\YourUsername\.ssh\`-এ সংরক্ষিত হয়।
+
+### Linux সার্ভারে আপনার Public Key Copy করুন
+
+Windows-এ `ssh-copy-id` নেই, কিন্তু PowerShell থেকে manually করতে পারেন:
+
+```powershell
+# আপনার public key প্রদর্শন করুন
+Get-Content ~/.ssh/id_ed25519.pub
+
+# Remote সার্ভারে copy করুন (সার্ভার পাসওয়ার্ড দিতে prompt হবেন)
+$pubkey = Get-Content ~/.ssh/id_ed25519.pub -Raw
+ssh user@server.example.com "mkdir -p ~/.ssh && echo '$pubkey' >> ~/.ssh/authorized_keys && chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys"
+```
+
+বা `Add-Content` দিয়ে pipe করুন:
+
+```powershell
+type $env:USERPROFILE\.ssh\id_ed25519.pub | ssh user@server.example.com "cat >> ~/.ssh/authorized_keys"
+```
+
+### Windows-এ ssh-agent সেট আপ করা
+
+বারবার passphrase দেওয়া এড়াতে, OpenSSH Authentication Agent service start করুন:
+
+```powershell
+# Service start করুন
+Start-Service ssh-agent
+
+# Automatically start হতে সেট করুন
+Set-Service -Name ssh-agent -StartupType Automatic
+
+# আপনার key যোগ করুন
+ssh-add ~/.ssh/id_ed25519
+```
+
+### PuTTY Alternative হিসেবে
+
+Graphical SSH client পছন্দ করলে, PuTTY Windows-এর জন্য একটি বিনামূল্যের option। Key তৈরি করতে **PuTTYgen** ব্যবহার করুন (PuTTY-এর জন্য `.ppk` format-এ সংরক্ষণ করুন এবং OpenSSH format-এ export করুন)। তবে নতুন setup-এর জন্য, built-in OpenSSH client সহজ এবং ecosystem-এর বাকি অংশের সাথে interoperable।
+
+## GitHub ও GitLab-এর জন্য SSH Key কীভাবে সেট আপ করবেন
+
+GitHub ও GitLab-এ SSH key authentication একইভাবে কাজ করে — আপনি আপনার public key সার্ভিসে upload করেন এবং Git অপারেশন করার সময় সংশ্লিষ্ট private key ব্যবহৃত হয়।
+
+### GitHub-এর জন্য SSH সেট আপ করা
+
+**১. আপনার public key copy করুন:**
+
+```bash
+# Linux
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+
+# macOS
+cat ~/.ssh/id_ed25519.pub | pbcopy
+
+# Windows PowerShell
+Get-Content ~/.ssh/id_ed25519.pub | Set-Clipboard
+```
+
+বা প্রদর্শন করুন এবং manually copy করুন:
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+**২. GitHub-এ যোগ করুন:**
+
+১. **github.com**-এ যান এবং লগ ইন করুন
+২. আপনার avatar ক্লিক করুন → **Settings**
+৩. বাম sidebar-এ: **SSH and GPG keys**
+৪. **New SSH key**-এ ক্লিক করুন
+৫. একটি descriptive **Title** দিন (যেমন "MacBook Pro" বা "Work PC")
+৬. **Key type** কে **Authentication Key**-তে সেট করুন
+৭. আপনার public key paste করুন
+৮. **Add SSH key**-এ ক্লিক করুন
+
+**৩. সংযোগ পরীক্ষা করুন:**
+
+```bash
+ssh -T git@github.com
+# Hi username! You've successfully authenticated, but GitHub does not provide shell access.
+```
+
+**৪. Git অপারেশনের জন্য SSH ব্যবহার করুন:**
+
+```bash
+# HTTPS-এর পরিবর্তে SSH ব্যবহার করে clone করুন
+git clone git@github.com:username/repository.git
+
+# বিদ্যমান repo HTTPS ব্যবহার করলে, SSH-এ switch করুন
+git remote set-url origin git@github.com:username/repository.git
+```
+
+### GitLab-এর জন্য SSH সেট আপ করা
+
+প্রক্রিয়া identical:
+
+১. **gitlab.com**-এ যান → আপনার avatar ক্লিক করুন → **Preferences**
+২. বাম sidebar-এ: **SSH Keys**
+৩. আপনার public key paste করুন, title দিন, এবং ঐচ্ছিকভাবে expiration date সেট করুন
+৪. **Add key**-এ ক্লিক করুন
+
+পরীক্ষা করুন:
+
+```bash
+ssh -T git@gitlab.com
+# Welcome to GitLab, @username!
+```
+
+Self-hosted GitLab instance-এর জন্য, `gitlab.com` আপনার instance hostname দিয়ে replace করুন।
+
+### GitHub ও অন্যান্য Service-এর জন্য Separate Key ব্যবহার করা
+
+GitHub-এর জন্য dedicated key চাইলে (key hygiene-এর জন্য প্রস্তাবিত), একটি named key তৈরি করুন:
+
+```bash
+ssh-keygen -t ed25519 -C "github" -f ~/.ssh/id_ed25519_github
+```
+
+তারপর `~/.ssh/config`-এ একটি `Host` block যোগ করুন:
+
+```
+Host github.com
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519_github
+    AddKeysToAgent yes
+```
+
+এখন `git clone git@github.com:...` automatically GitHub-specific key ব্যবহার করে।
+
+## SSH Testing ও Troubleshooting
+
+### Basic Connectivity পরীক্ষা
+
+```bash
+ssh -v user@server.example.com
+```
+
+`-v` (verbose) flag প্রতিটি ধাপে ঠিক কী ঘটছে তা দেখায়। এই লাইনগুলি খুঁজুন:
+- `Offering public key: ~/.ssh/id_ed25519` — SSH আপনার key চেষ্টা করছে
+- `Server accepts key` — key `authorized_keys`-এ আছে
+- `Authenticated to server.example.com` — সফল
+
+### সাধারণ ত্রুটি ও সমাধান
+
+**"Permission denied (publickey)"**
+
+এটি সবচেয়ে সাধারণ ত্রুটি। কারণ ও সমাধান:
+
+```bash
+# Check করুন আপনার key ssh-agent-এ loaded আছে কিনা
+ssh-add -l
+
+# কোনো key listed না থাকলে, আপনার key যোগ করুন
+ssh-add ~/.ssh/id_ed25519
+
+# Remote সার্ভারে, authorized_keys পরীক্ষা করুন
+cat ~/.ssh/authorized_keys
+# নিশ্চিত করুন আপনার public key সেখানে আছে
+
+# Remote সার্ভারে permissions পরীক্ষা করুন
+ls -la ~/.ssh/
+# ~/.ssh অবশ্যই 700 হতে হবে
+# authorized_keys অবশ্যই 600 হতে হবে
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/authorized_keys
+
+# সার্ভার public key auth অনুমতি দেয় কিনা পরীক্ষা করুন
+sudo grep PubkeyAuthentication /etc/ssh/sshd_config
+# হওয়া উচিত: PubkeyAuthentication yes
+```
+
+**"WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED"**
+
+সার্ভারের host key পরিবর্তন হয়েছে, যা SSH একটি সম্ভাব্য নিরাপত্তা সমস্যা হিসেবে বিবেচনা করে। এটি legitimate জানলে (সার্ভার rebuild হয়েছে, IP reassign হয়েছে), পুরোনো entry সরান:
+
+```bash
+# Specific host entry সরান
+ssh-keygen -R server.example.com
+
+# বা known_hosts manually edit করুন এবং affected লাইন মুছুন
+nano ~/.ssh/known_hosts
+```
+
+**"Bad permissions" বা "Permissions too open"**
+
+SSH key ফাইল permissions সম্পর্কে strict:
+
+```bash
+# Private key permissions ঠিক করুন
+chmod 600 ~/.ssh/id_ed25519
+
+# Public key permissions ঠিক করুন
+chmod 644 ~/.ssh/id_ed25519.pub
+
+# .ssh directory permissions ঠিক করুন
+chmod 700 ~/.ssh
+```
+
+Windows-এ, private key permissions আলাদাভাবে manage হয়। Key ফাইলে right-click করুন → Properties → Security → Advanced → Inheritance disable করুন → আপনার user account ছাড়া সব remove করুন, শুধু নিজেকে Full control দিন।
+
+### ssh-agent সেট আপ ও ব্যবহার
+
+বারবার passphrase দিতে হচ্ছে, তাহলে `ssh-agent` চলছে না বা আপনার key added নেই:
+
+```bash
+# Agent start করুন
+eval "$(ssh-agent -s)"
+# Agent pid 12345
+
+# আপনার key যোগ করুন
+ssh-add ~/.ssh/id_ed25519
+# Enter passphrase for /home/user/.ssh/id_ed25519:
+# Identity added: /home/user/.ssh/id_ed25519
+
+# যাচাই করুন
+ssh-add -l
+# 256 SHA256:abc123... your@email.com (ED25519)
+```
+
+### Automation-এ known_hosts Pre-populate করা
+
+CI/CD pipeline-এ, সংযোগের আগে remote host fingerprint যোগ করতে `ssh-keyscan` ব্যবহার করুন:
+
+```bash
+ssh-keyscan -H server.example.com >> ~/.ssh/known_hosts
+ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+```
+
+এটি automated স্ক্রিপ্টে interactive fingerprint prompt প্রতিরোধ করে।
+
+## প্রায়শ জিজ্ঞাসিত প্রশ্ন
+
+### "Permission denied (publickey)" কীভাবে ঠিক করবো?
+
+এই checklist দিয়ে কাজ করুন: (১) আপনার key SSH agent-এ আছে কিনা যাচাই করুন: `ssh-add -l`। না থাকলে, `ssh-add ~/.ssh/id_ed25519` চালান। (২) আপনার public key সার্ভারের `~/.ssh/authorized_keys` ফাইলে আছে কিনা পরীক্ষা করুন। (৩) Permissions যাচাই করুন: `~/.ssh` অবশ্যই `700`, `authorized_keys` অবশ্যই `600`। (৪) সার্ভারে `/etc/ssh/sshd_config`-এ `PubkeyAuthentication yes` আছে কিনা পরীক্ষা করুন। (৫) Authentication ঠিক কোথায় fail হচ্ছে দেখতে `ssh -vvv user@server` ব্যবহার করুন। Verbose output বলবে কোন key চেষ্টা করা হচ্ছে এবং সার্ভার সেগুলি accept করেছে কিনা।
+
+### আমার SSH key ssh-agent-এ কীভাবে যোগ করবো?
+
+`ssh-add ~/.ssh/id_ed25519` চালান (আপনার key ফাইল নাম দিয়ে replace করুন)। Agent না চললে, প্রথমে `eval "$(ssh-agent -s)"` দিয়ে start করুন। macOS-এ, passphrase Keychain-এ সংরক্ষণ করতে `ssh-add --apple-use-keychain ~/.ssh/id_ed25519` ব্যবহার করুন। Windows-এ, `Start-Service ssh-agent` দিয়ে `ssh-agent` service সক্ষম করুন এবং তারপর `ssh-add` চালান। Session-এ একবারই (বা macOS-এ Keychain সহ একবারের জন্য চিরতরে) `ssh-add` চালাতে হবে।
+
+### আমার কি multiple SSH key থাকতে পারে?
+
+হ্যাঁ, এবং এটি ভালো অভ্যাস। ভিন্ন উদ্দেশ্যে separate key তৈরি করুন — উদাহরণস্বরূপ, personal GitHub-এর জন্য একটি, work GitLab-এর জন্য একটি, production সার্ভারের জন্য একটি। প্রতিটি host-কে তার specific key map করতে `IdentityFile` সহ `~/.ssh/config` ব্যবহার করুন। Separate key রাখার মানে একটি revoke করলে (কোনো সার্ভিস বা সার্ভার থেকে সরিয়ে) অন্যগুলি প্রভাবিত হয় না, key compromise-এর blast radius সীমিত রাখে।
+
+### SSH key-এর passphrase কীভাবে পরিবর্তন করবো?
+
+`ssh-keygen -p` ব্যবহার করুন:
+
+```bash
+ssh-keygen -p -f ~/.ssh/id_ed25519
+```
+
+Current passphrase দিতে prompt হবেন, তারপর নতুনটি দিতে ও confirm করতে বলা হবে। Key নিজে (এবং তাই public key) পরিবর্তন হয় না — কোথাও আপডেট করার প্রয়োজন নেই। এটি কার্যকর যদি সন্দেহ হয় আপনার passphrase compromise হয়েছে বা নিয়মিত নিরাপত্তা অভ্যাস হিসেবে rotate করতে চান।
+
+### সার্ভার থেকে পুরোনো SSH key কীভাবে সরাবো?
+
+সার্ভারে `~/.ssh/authorized_keys` খুলুন এবং পুরোনো public key-এর লাইন মুছুন:
+
+```bash
+# Remote সার্ভারে authorized_keys edit করুন
+ssh user@server.example.com
+nano ~/.ssh/authorized_keys
+# আপনি যে key সরাতে চান তার লাইন মুছুন
+# Save করুন এবং exit করুন
+```
+
+`authorized_keys`-এর প্রতিটি লাইন একটি public key। Key-এর comment (শেষ field, সাধারণত `user@hostname` বা ইমেইল) কোন key কোনটি চিহ্নিত করতে সাহায্য করে। কোন লাইন মুছবেন জানেন না, fingerprint compare করুন:
+
+```bash
+# আপনার local মেশিনে fingerprint নিন
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+
+# সার্ভারে, সমস্ত authorized key-এর fingerprint পরীক্ষা করুন
+ssh-keygen -lf ~/.ssh/authorized_keys
+```
+
+সঠিক key সনাক্ত ও মুছতে fingerprint মেলান।
+
+## বিনামূল্যে আপনার SSH Key তৈরি করুন
+
+আপনি যদি এখনও SSH key pair তৈরি না করে থাকেন, আমাদের বিনামূল্যের online generator সেকেন্ডে সরাসরি আপনার browser-এ Ed25519 বা RSA key তৈরি করে। কোনো ইনস্টলেশন প্রয়োজন নেই, আমাদের সার্ভারে কিছু পাঠানো হয় না — তৈরি সম্পূর্ণভাবে আপনার ডিভাইসে হয়।
+
+<a href="/">বিনামূল্যে আপনার SSH key তৈরি করুন →</a>
+
+---
+
+**আরও পড়ুন:**
+- <a href="/bn/what-is-ssh">SSH কী? Secure Shell-এর সম্পূর্ণ গাইড</a>
+- <a href="/bn/what-is-an-ssh-key">SSH Key কী? Public Key, Private Key, ও Key Pair ব্যাখ্যা</a>
+- <a href="/bn/ssh-command">SSH Command: উদাহরণসহ সম্পূর্ণ রেফারেন্স</a>

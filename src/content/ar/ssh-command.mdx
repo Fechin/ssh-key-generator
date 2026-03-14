@@ -1,0 +1,430 @@
+# أمر SSH: المرجع الكامل مع أمثلة لـ Linux وMac وWindows
+
+أمر `ssh` هو الأداة الرئيسية لبدء اتصالات SSH من سطر الأوامر. سواء كنت تسجّل الدخول إلى خادم Linux بعيد، أو تعيد توجيه منفذ للوصول إلى قاعدة بيانات، أو تقفز عبر خادم bastion للوصول إلى شبكة داخلية، فإن أمر `ssh` هو نقطة دخولك. يغطي هذا الدليل كل شيء من الصيغة الأساسية إلى الأعلام المتقدمة والأنفاق وإعدادات ProxyJump — مع أمثلة حقيقية لـ Linux وmacOS وWindows.
+
+قبل تشغيل أوامر SSH، ستحتاج إلى مفاتيح SSH. راجع دليلنا حول <a href="/ar/what-is-an-ssh-key">ما هو مفتاح SSH</a> أو استخدم <a href="/">مولّد المفاتيح المجاني عبر الإنترنت</a> لإنشاء زوج مفاتيح.
+
+## صيغة أمر SSH
+
+الصيغة الأساسية لأمر `ssh` هي:
+
+```
+ssh [options] [user@]hostname [command]
+```
+
+تفصيل هذا:
+
+- **`[options]`** — صفر أو أكثر من الأعلام التي تعدّل السلوك (مغطاة في هذا الدليل)
+- **`[user@]`** — اسم مستخدم اختياري. إذا حُذف، يستخدم SSH اسم مستخدمك المحلي الحالي
+- **`hostname`** — المضيف البعيد للاتصال به. يمكن أن يكون عنوان IP أو اسم نطاق أو اسمًا مستعارًا محددًا في `~/.ssh/config`
+- **`[command]`** — أمر اختياري لتشغيله على المضيف البعيد. إذا حُذف، يبدأ SSH جلسة shell تفاعلية
+
+**أمثلة أساسية:**
+
+```bash
+# الاتصال باستخدام اسم مستخدمك الحالي
+ssh server.example.com
+
+# الاتصال بوصفك مستخدمًا محددًا
+ssh alice@server.example.com
+
+# الاتصال باستخدام عنوان IP
+ssh ubuntu@192.168.1.100
+
+# تشغيل أمر واحد والقطع فورًا
+ssh user@server.example.com "df -h"
+
+# الاتصال والبقاء متصلًا
+ssh user@server.example.com
+```
+
+## SSH على Linux وmacOS
+
+تشحن توزيعات Linux وmacOS مع **OpenSSH** مثبتًا مسبقًا. على Linux، هو جزء من حزمة `openssh-client` (Debian/Ubuntu) أو `openssh-clients` (RHEL/CentOS/Fedora). على macOS، مدمج مع النظام ومتاح فورًا من Terminal أو iTerm2.
+
+### التحقق من توافر SSH
+
+```bash
+ssh -V
+# المخرجات: OpenSSH_9.6p1, LibreSSL 3.3.6
+```
+
+### الاتصال الأساسي
+
+```bash
+# الاتصال بخادم
+ssh user@myserver.example.com
+
+# يتحقق SSH من ~/.ssh/known_hosts عند الاتصال الأول ويطلب:
+# The authenticity of host 'myserver.example.com' can't be established.
+# ED25519 key fingerprint is SHA256:abc123...
+# Are you sure you want to continue connecting (yes/no)? yes
+
+# تُحفظ بصمة المضيف في ~/.ssh/known_hosts
+```
+
+### استخدام ملف إعداد SSH للراحة
+
+بدلًا من كتابة تفاصيل الاتصال الكاملة في كل مرة، أنشئ `~/.ssh/config`:
+
+```
+Host myserver
+    HostName myserver.example.com
+    User alice
+    Port 22
+    IdentityFile ~/.ssh/id_ed25519
+
+Host dev
+    HostName dev.example.com
+    User ubuntu
+    Port 2222
+    IdentityFile ~/.ssh/id_ed25519_work
+```
+
+الآن `ssh myserver` يتوسع إلى الاتصال الكامل — دون الحاجة إلى أعلام.
+
+## SSH على Windows (PowerShell وOpenSSH)
+
+يتضمن Windows 10 (الإصدار 1809) وWindows 11 **عميل OpenSSH** كميزة اختيارية، مما يجعل أمر `ssh` متاحًا في PowerShell وCommand Prompt وWindows Terminal.
+
+### التحقق من تثبيت OpenSSH
+
+```powershell
+# في PowerShell
+ssh -V
+```
+
+إذا لم يُعثر على الأمر، ثبّته:
+
+**عبر الإعدادات:**
+1. افتح **Settings → Apps → Optional Features**
+2. انقر **Add a feature**
+3. ابحث عن **OpenSSH Client** وثبّته
+
+**عبر PowerShell (مسؤول):**
+
+```powershell
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+```
+
+### استخدام SSH في PowerShell
+
+بعد التثبيت، الصيغة مطابقة لـ Linux وmacOS:
+
+```powershell
+# الاتصال بخادم
+ssh user@server.example.com
+
+# الاتصال على منفذ مخصص
+ssh -p 2222 user@server.example.com
+
+# استخدام ملف مفتاح محدد
+ssh -i C:\Users\YourName\.ssh\id_ed25519 user@server.example.com
+```
+
+### موقع مفاتيح SSH على Windows
+
+تُخزَّن مفاتيح SSH على Windows في `C:\Users\YourUsername\.ssh\`. تتعرف PowerShell على `~` كاختصار:
+
+```powershell
+# هاتان متكافئتان
+ssh -i ~/.ssh/id_ed25519 user@server
+ssh -i C:\Users\YourUsername\.ssh\id_ed25519 user@server
+```
+
+### PuTTY مقابل OpenSSH على Windows
+
+قبل توافر OpenSSH على Windows، كان **PuTTY** عميل SSH القياسي. يستخدم PuTTY صيغة مفاتيح خاصة به (ملفات `.ppk`) ومولّد مفاتيح خاص (PuTTYgen). إذا كان لديك مفتاح `.ppk` وتحتاج تحويله إلى صيغة OpenSSH القياسية:
+
+```bash
+# باستخدام أدوات PuTTY
+puttygen mykey.ppk -O private-openssh -o id_ed25519
+```
+
+للإعدادات الجديدة، فضّل عميل OpenSSH المدمج على Windows — يصونه مشروع OpenSSH ويستخدم نفس صيغة المفاتيح وملف الإعداد كـ Linux وmacOS.
+
+## SSH مع مصادقة المفاتيح: علم -i
+
+بشكل افتراضي، يبحث SSH عن ملفات المفاتيح في `~/.ssh/` بأسماء قياسية (`id_ed25519` و`id_rsa` و`id_ecdsa` و`id_dsa`). **علم `-i`** (ملف الهوية) يتيح تحديد ملف مفتاح مختلف صراحةً.
+
+```bash
+# استخدام ملف مفتاح محدد
+ssh -i ~/.ssh/id_ed25519_production user@prod.example.com
+
+# استخدام مفتاح مخزّن في موقع غير قياسي
+ssh -i /path/to/my/custom_key deploy@server.example.com
+
+# الجمع مع خيارات أخرى
+ssh -i ~/.ssh/deploy_key -p 2222 -l deploy server.example.com
+```
+
+علم `-i` ضروري في عدة مواقف:
+- لديك أزواج مفاتيح متعددة لخوادم أو أغراض مختلفة
+- مفتاحك ليس في مجلد `~/.ssh/` الافتراضي
+- تحدد مفتاحًا في بيئة CI/CD حيث المسار صريح
+- نزّلت ملف `.pem` من AWS أو مزوّد سحابة آخر
+
+### مثال AWS EC2
+
+يوفر AWS ملف مفتاح `.pem` عند تشغيل نسخة EC2:
+
+```bash
+# الاتصال بنسخة AWS EC2 بمفتاح .pem
+ssh -i ~/Downloads/my-aws-key.pem ec2-user@54.123.456.789
+
+# إصلاح الصلاحيات إذا لزم (مطلوب — SSH يرفض المفاتيح القابلة للقراءة عالميًا)
+chmod 400 ~/Downloads/my-aws-key.pem
+```
+
+## خيارات وأعلام أوامر SSH الأساسية
+
+أمر `ssh` له عشرات الخيارات. إليك الخيارات التي ستستخدمها فعلًا.
+
+| العلم | الوصف | مثال |
+|---|---|---|
+| `-p PORT` | الاتصال على منفذ غير قياسي | `ssh -p 2222 user@host` |
+| `-i FILE` | استخدام ملف هوية (مفتاح) محدد | `ssh -i ~/.ssh/mykey user@host` |
+| `-l USER` | تحديد اسم مستخدم تسجيل الدخول | `ssh -l alice host` |
+| `-L local:host:remote` | إعادة توجيه المنفذ المحلي | `ssh -L 8080:localhost:80 host` |
+| `-R remote:host:local` | إعادة توجيه المنفذ البعيد | `ssh -R 9090:localhost:3000 host` |
+| `-D port` | وكيل ديناميكي (SOCKS) | `ssh -D 1080 host` |
+| `-N` | عدم تنفيذ أمر بعيد (للأنفاق فقط) | `ssh -N -L 3307:db:3306 host` |
+| `-f` | الانتقال للخلفية بعد المصادقة | `ssh -f -N -D 1080 host` |
+| `-v` | مخرجات تفصيلية (تصحيح أخطاء) | `ssh -v user@host` |
+| `-vv` أو `-vvv` | مخرجات أكثر تفصيلًا | `ssh -vvv user@host` |
+| `-A` | تمكين إعادة توجيه وكيل SSH | `ssh -A user@jump-host` |
+| `-X` | تمكين إعادة توجيه X11 | `ssh -X user@host xclock` |
+| `-C` | تمكين الضغط | `ssh -C user@host` |
+| `-T` | تعطيل تخصيص pseudo-terminal | `ssh -T git@github.com` |
+| `-q` | الوضع الهادئ (كتم التحذيرات) | `ssh -q user@host` |
+| `-o OPTION=VALUE` | تعيين خيار إعداد مباشرة | `ssh -o StrictHostKeyChecking=no host` |
+| `-J JUMP` | ProxyJump عبر خادم bastion | `ssh -J jump.host user@internal` |
+| `-W host:port` | إعادة توجيه stdio إلى host:port | يُستخدم داخليًا بواسطة `-J` |
+
+### الوضع التفصيلي لتصحيح الأخطاء
+
+حين يفشل SSH، يكشف `-v` (أو `-vv` أو `-vvv`) بالضبط ما يحدث:
+
+```bash
+ssh -v user@server.example.com
+# يعرض: المفاتيح التي يُجرّبها، وطرق المصادقة التي يقبلها الخادم،
+# وما إذا كان الوكيل متورطًا، وأين يفشل الاتصال
+
+ssh -vvv user@server.example.com
+# أقصى تفصيل — يعرض التفاوض التشفيري المفصّل
+```
+
+### تجاوز فحص مفتاح المضيف (استخدم بحذر)
+
+في بيئات الأتمتة والاختبار حيث التحقق من مفتاح المضيف غير مريح:
+
+```bash
+ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null user@host
+```
+
+**لا تستخدم هذا في الإنتاج.** يعطّل الحماية ضد هجمات الوسيط. بدلًا من ذلك، ملّئ `known_hosts` مسبقًا باستخدام `ssh-keyscan` في نصوص التوفير الخاصة بك.
+
+### إعادة توجيه الوكيل
+
+```bash
+# إعادة توجيه وكيل SSH المحلي إلى الخادم البعيد
+ssh -A user@jump-server
+
+# من jump-server، يمكنك الآن SSH إلى المضيفين الداخليين باستخدام مفاتيحك المحلية
+# لا حاجة لنسخ المفاتيح الخاصة إلى خادم القفز
+ssh internal-server.private
+```
+
+إعادة توجيه الوكيل مفيدة لكنها تنطوي على آثار أمنية: أي شخص لديه وصول root على الخادم الوسيط يمكنه استخدام وكيلك المُعاد توجيهه. استخدمها فقط مع الخوادم الموثوقة، وفضّل **ProxyJump** حين يكون متاحًا (لا يكشف وكيلك للمضيفين الوسيطين).
+
+## أوامر أنفاق SSH
+
+تُوجّه أنفاق SSH اتصالات TCP عبر قناة SSH مشفرة. للخلفية حول ما هي الأنفاق، راجع <a href="/ar/what-is-ssh">قسم الأنفاق في دليل SSH</a>.
+
+### إعادة توجيه المنافذ المحلية
+
+تجعل خدمة بعيدة متاحة على جهازك المحلي.
+
+```bash
+# الوصول إلى قاعدة بيانات MySQL بعيدة على المنفذ المحلي 3307
+ssh -L 3307:localhost:3306 user@db-server.example.com -N
+
+# الاتصال بخادم ويب بعيد متاح فقط من مضيف SSH
+ssh -L 8080:intranet.company.com:80 user@vpn.company.com -N
+
+# الوصول إلى نسخة Redis على شبكة خاصة
+ssh -L 6380:10.0.1.50:6379 user@bastion.example.com -N
+```
+
+بعد تشغيل أي من الأوامر أعلاه، وصّل تطبيقك المحلي بـ `127.0.0.1:LOCAL_PORT`.
+
+### إعادة توجيه المنافذ البعيدة
+
+تكشف خدمة محلية على الخادم البعيد.
+
+```bash
+# كشف خادم التطوير المحلي (المنفذ 3000) على المنفذ 9090 للخادم البعيد
+ssh -R 9090:localhost:3000 user@remote.example.com -N
+
+# السماح لأي واجهة على الخادم البعيد بالاتصال (يتطلب GatewayPorts yes في sshd_config)
+ssh -R 0.0.0.0:9090:localhost:3000 user@remote.example.com -N
+```
+
+### إعادة التوجيه الديناميكي للمنافذ (وكيل SOCKS)
+
+```bash
+# إنشاء وكيل SOCKS5 على المنفذ المحلي 1080، يعمل في الخلفية
+ssh -D 1080 -N -f user@remote.example.com
+
+# الآن أعدّ متصفحك أو نظامك لاستخدام وكيل SOCKS5: 127.0.0.1:1080
+# كل حركة المرور تُوجَّه عبر الخادم البعيد
+```
+
+للاستخدام مع curl:
+
+```bash
+curl --socks5 127.0.0.1:1080 https://api.example.com/
+```
+
+### تشغيل النفق في الخلفية
+
+```bash
+# -f يُرسل SSH إلى الخلفية، -N يعني عدم وجود أمر بعيد
+ssh -f -N -L 3307:localhost:3306 user@db-server
+
+# إيجاد عملية SSH في الخلفية
+ps aux | grep ssh
+
+# إنهاؤها
+kill PID
+```
+
+## SSH ProxyJump وخوادم Bastion
+
+في كثير من المؤسسات، توجد خوادم الإنتاج على شبكات خاصة غير متاحة مباشرةً من الإنترنت. **خادم bastion** (أو خادم القفز) هو خادم مُقوَّى على محيط الشبكة تتصل به عبر SSH أولًا، ثم تقفز إلى الخوادم الداخلية. علم `ssh -J` (ProxyJump، أُضيف في OpenSSH 7.3) يجعل هذا سلسًا.
+
+### ProxyJump الأساسي
+
+```bash
+# القفز عبر bastion واحد للوصول إلى خادم داخلي
+ssh -J ec2-user@bastion.example.com ubuntu@10.0.1.50
+
+# الصيغة المختصرة
+ssh -J user@jump-host user@internal-server
+```
+
+هذا ينشئ اتصالَي SSH: أولًا إلى bastion، ثم من bastion إلى الخادم الداخلي — كل ذلك في أمر واحد، مع تشفير من طرف إلى طرف. يتولى وكيل SSH المحلي المصادقة على كلا المضيفين.
+
+### تسلسل قفزات متعددة
+
+```bash
+# القفز عبر مضيفين وسيطين
+ssh -J user@jump1.example.com,user@jump2.example.com user@final-destination
+```
+
+### ProxyJump في ملف إعداد SSH
+
+للخوادم التي يُصل إليها بشكل متكرر، ضع إعداد ProxyJump في `~/.ssh/config`:
+
+```
+Host bastion
+    HostName bastion.example.com
+    User ec2-user
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host prod-web
+    HostName 10.0.1.100
+    User ubuntu
+    ProxyJump bastion
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host prod-db
+    HostName 10.0.2.50
+    User postgres
+    ProxyJump bastion
+    IdentityFile ~/.ssh/id_ed25519_aws
+```
+
+الآن `ssh prod-web` يتصل تلقائيًا عبر bastion. لا حاجة لأعلام `-J` يدوية.
+
+### ProxyJump مقابل إعادة توجيه الوكيل
+
+ProxyJump مُفضَّل على إعادة توجيه الوكيل (`-A`) لأن:
+- مفتاحك الخاص لا يُعاد توجيهه أبدًا إلى المضيف الوسيط
+- لا يستطيع خادم bastion استخدام بيانات اعتمادك للمصادقة في مكان آخر
+- الاتصال مُصادَق من طرف إلى طرف — يتحقق الخادم الوجهة منك مباشرةً
+
+لمزيد من تفاصيل الإعداد، راجع دليلنا الشامل حول <a href="/ar/how-to-set-up-ssh">كيفية إعداد SSH</a>.
+
+## الأسئلة الشائعة
+
+### كيف أشغّل أمر SSH بدون كلمة مرور؟
+
+أعدّ مصادقة مفتاح SSH. أنشئ زوج مفاتيح (`ssh-keygen -t ed25519`)، انسخ المفتاح العام إلى ملف `~/.ssh/authorized_keys` للخادم باستخدام `ssh-copy-id user@host`، وستستخدم الاتصالات اللاحقة مفتاحك بدون طلب كلمة مرور. إذا كان مفتاحك يمتلك عبارة مرور، استخدم `ssh-agent` و`ssh-add` لتخزينها مؤقتًا حتى تدخلها مرة واحدة فقط في الجلسة.
+
+### كيف أخرج من جلسة SSH؟
+
+اكتب `exit` أو اضغط **Ctrl+D** لإغلاق shell البعيد وقطع الاتصال. إذا كانت الجلسة متجمدة (مثلًا انقطعت الشبكة)، استخدم تسلسل الهروب SSH: اضغط **Enter**، ثم اكتب `~.` (مدّة بعد علامة التيلدة). سيُنهي SSH الاتصال فورًا. تسلسلات الهروب الأخرى: `~^Z` يعلّق SSH في الخلفية، `~?` يعرض جميع تسلسلات الهروب.
+
+### كيف أشغّل أمرًا على خادم بعيد عبر SSH؟
+
+ألحق الأمر بعد اسم المضيف:
+
+```bash
+ssh user@server "command to run"
+ssh user@server "ls -la /var/log/"
+ssh user@server "sudo systemctl status nginx"
+```
+
+للأوامر متعددة الأسطر أو النصوص البرمجية، استخدم heredoc:
+
+```bash
+ssh user@server << 'EOF'
+cd /var/www/html
+git pull origin main
+systemctl reload nginx
+EOF
+```
+
+للأوامر التفاعلية (مثل تلك التي تتطلب طرفية)، أضف علم `-t` لتخصيص pseudo-terminal: `ssh -t user@server sudo apt upgrade`.
+
+### ما الفرق بين ssh وscp؟
+
+يفتح `ssh` جلسة طرفية (أو يشغّل أمرًا واحدًا) على جهاز بعيد. `scp` (Secure Copy Protocol) ينسخ الملفات بين جهازك المحلي وجهاز بعيد، أو بين جهازَين بعيدَين، باستخدام SSH للتشفير والمصادقة. كلاهما يستخدم نفس بروتوكول SSH وبنية المفاتيح. لنقل الملفات، `scp` هو الأداة المخصصة:
+
+```bash
+# scp من المحلي إلى البعيد
+scp file.txt user@server:/destination/path/
+
+# scp من البعيد إلى المحلي
+scp user@server:/remote/file.txt ./local-copy.txt
+```
+
+لنقل الملفات المتقدم (تعاودي، قابل للاستئناف، تصفح الدلائل)، استخدم `sftp`. للنقل الكبير الحجم، `rsync -avz -e ssh` أكثر كفاءة.
+
+### كيف أستخدم SSH مع ملف إعداد؟
+
+أنشئ `~/.ssh/config` وأضف إدخالات المضيفين. كل كتلة `Host` تعرّف اسمًا مستعارًا للاتصال مع إعداداته الكاملة:
+
+```
+Host alias-name
+    HostName actual.server.com
+    User username
+    Port 22
+    IdentityFile ~/.ssh/specific_key
+```
+
+ثم `ssh alias-name` يستخدم جميع الإعدادات المحددة تلقائيًا. يدعم ملف الإعداد أحرف البدل: `Host *.example.com` يطبّق الإعدادات على جميع المضيفين المتطابقين. `Host *` في النهاية يطبّق الإعدادات الافتراضية على جميع الاتصالات. تتجاوز الخيارات في كتلة `Host` محددة الإعدادات الافتراضية العامة.
+
+## تحتاج مفاتيح SSH؟ أنشئها مجانًا
+
+لاستخدام مصادقة مفتاح SSH — التي تلغي الحاجة إلى كلمات المرور — تحتاج زوج مفاتيح. أنشئ مفاتيح Ed25519 أو RSA فورًا في متصفحك، دون إرسال أي شيء إلى خوادمنا.
+
+<a href="/">أنشئ مفاتيح SSH مجانًا ←</a>
+
+---
+
+**لمزيد من القراءة:**
+- <a href="/ar/what-is-ssh">ما هو SSH؟ الدليل الشامل للـ Secure Shell</a>
+- <a href="/ar/what-is-an-ssh-key">ما هو مفتاح SSH؟ المفاتيح العامة والخاصة وأزواج المفاتيح شرح</a>
+- <a href="/ar/how-to-set-up-ssh">كيفية إعداد SSH: دليل خطوة بخطوة شامل</a>

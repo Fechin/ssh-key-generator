@@ -1,0 +1,337 @@
+# Co je SSH klíč? Veřejné klíče, soukromé klíče a páry klíčů vysvětleny
+
+**SSH klíč** je kryptografická přihlašovací metoda sloužící k autentizaci na SSH serverech bez hesla. SSH klíče přicházejí v párech — **veřejný klíč** a **soukromý klíč** — a společně zajišťují vzdálený přístup bezpečnější a pohodlnější než tradiční autentizace heslem. Tento průvodce vysvětluje, co SSH klíč je, jak funguje systém párů klíčů, jaké typy klíčů zvolit a jak SSH klíče používat se službami jako GitHub a GitLab.
+
+## Jak SSH klíče fungují
+
+SSH klíče jsou založeny na **asymetrické kryptografii**, také nazývané kryptografie s veřejným klíčem. Na rozdíl od symetrické kryptografie (kde jediný tajný klíč jak šifruje, tak dešifruje data) používají asymetrické systémy matematicky propojené páry klíčů, kde data zašifrovaná jedním klíčem lze dešifrovat pouze druhým.
+
+Zde je průběh autentizace při použití SSH klíče pro přihlášení na server:
+
+1. Spustíte `ssh user@server.example.com`.
+2. Server vyhledá váš veřejný klíč v `~/.ssh/authorized_keys`.
+3. Server vygeneruje náhodnou výzvu a zašifruje ji vaším veřejným klíčem.
+4. Váš SSH klient dešifruje výzvu pomocí vašeho soukromého klíče.
+5. Klient odešle kryptografický důkaz (odvozený z dešifrované výzvy a ID relace) zpět serveru.
+6. Server ověří důkaz. Pouze držitel soukromého klíče ho mohl vytvořit.
+7. Autentizace proběhne úspěšně. Žádné heslo nikdy neopustí váš stroj.
+
+Toto je klíčový poznatek: **váš soukromý klíč nikdy necestuje po síti**. Server vidí pouze váš veřejný klíč a kryptografické důkazy, které vytváříte. I když někdo zachytí každý paket ve vaší SSH relaci, nezíská nic, co by mu pomohlo vydávat se za vás.
+
+Základní informace o SSH protokolu najdete v našem průvodci <a href="/cs/what-is-ssh">co je SSH</a>.
+
+## Veřejný klíč vs. soukromý klíč: jaký je rozdíl?
+
+Pochopení rozdílu mezi těmito dvěma klíči je zásadní pro správné používání SSH.
+
+### Veřejný klíč — váš zámek
+
+**Veřejný klíč** je navržen k volnému sdílení. Představte si ho jako visací zámek: rozdáváte kopie všem, jejichž systémy chcete mít přístup. Když server má váš veřejný klíč v souboru `authorized_keys`, může ověřit vaši identitu bez znalosti vašeho soukromého klíče.
+
+Veřejné klíče:
+- Jsou bezpečné ke sdílení — nemohou být použity k vydávání se za vás
+- Jsou umístěny na serverech v `~/.ssh/authorized_keys`
+- Jsou nahrávány na GitHub, GitLab a další služby
+- Mají obvykle příponu `.pub` (např. `id_ed25519.pub`)
+- Vypadají takto: `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAA... user@hostname`
+
+### Soukromý klíč — váš klíč
+
+**Soukromý klíč** je tajná polovina páru. Nikdy nesmí opustit váš stroj a nesmí být sdílen s nikým — ani s administrátory, poskytovateli cloudu, ani s pracovníky podpory. Pokud je váš soukromý klíč kompromitován, kdokoli, kdo ho získá, se může vydávat za vás na každém serveru, kde je nainstalován váš veřejný klíč.
+
+Soukromé klíče:
+- Musí být uchovávány v tajnosti a bezpečí
+- Jsou uloženy lokálně v `~/.ssh/` s omezenými oprávněními (600)
+- Jsou volitelně šifrovány heslem (passphrase)
+- Nemají příponu nebo mají příponu specifickou pro jazyk (např. `id_ed25519`)
+
+### Soubor `authorized_keys`
+
+Na straně serveru jsou veřejné klíče každého uživatele uloženy v `~/.ssh/authorized_keys`. Jedná se o prostý textový soubor, kde každý řádek obsahuje jeden veřejný klíč. Když se SSH klient pokusí o autentizaci, server zkontroluje, zda klient může prokázat vlastnictví soukromého klíče odpovídajícího jakémukoli záznamu v tomto souboru.
+
+```
+# formát ~/.ssh/authorized_keys
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGq... alice@laptop
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHr... alice@workstation
+ssh-rsa AAAAB3NzaC1yc2EAAAA... backup-deploy-key
+```
+
+V tomto souboru můžete mít libovolný počet veřejných klíčů, což umožňuje autentizaci více zařízení nebo automatizačních systémů na stejném serveru.
+
+## Algoritmy SSH klíčů: Ed25519 vs RSA
+
+Při generování páru SSH klíčů zvolíte algoritmus. Dnes jsou nejběžnějšími dvěma možnostmi **Ed25519** a **RSA**. Existují také ECDSA a DSA, ale DSA je zastaralý a ECDSA má implementační úskalí, proto se zaměříme na dvě doporučené možnosti.
+
+### Ed25519 — moderní volba
+
+Ed25519 byl představen v OpenSSH verze 6.5 (2014) a nyní je doporučeným výchozím nastavením. Používá kryptografii na eliptických křivkách na Twisted Edwardsově křivce (Curve25519), navrženou Danielem J. Bernsteinem.
+
+**Výhody Ed25519:**
+- **Kompaktní** — klíče mají pouze 68 znaků (veřejný klíč) a soubory jsou malé
+- **Rychlý** — generování a ověřování podpisů je extrémně rychlé
+- **Bezpečný svým designem** — není zranitelný vůči útokům postranními kanály, které postihují některé RSA implementace
+- **Pevná velikost klíče** — úroveň zabezpečení 256 bitů, není třeba volit velikost klíče
+- **Deterministický** — podpisy jsou deterministické, což eliminuje třídu selhání generátoru náhodných čísel
+
+```bash
+# Generování páru Ed25519 klíčů
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+### RSA — univerzální volba
+
+RSA je starší algoritmus (vynalezený v roce 1977) a i když je stále bezpečný při 4096 bitech, je pomalejší a produkuje větší klíče než Ed25519. RSA má však mnohem širší kompatibilitu — funguje s velmi starými SSH servery, staršími systémy a některými hardwarovými bezpečnostními klíči.
+
+**Kdy použít RSA:**
+- Potřebujete se připojit ke starším systémům se starými verzemi OpenSSH (před verzí 6.5)
+- Používáte čipovou kartu nebo HSM, která nepodporuje Ed25519
+- Je vyžadována kompatibilita se staršími nástroji
+
+```bash
+# Generování 4096bitového páru RSA klíčů
+ssh-keygen -t rsa -b 4096 -C "your@email.com"
+```
+
+**Nikdy nepoužívejte RSA s méně než 4096 bity.** RSA-1024 a RSA-2048 jsou stále více považovány za nedostatečné s rostoucím výpočetním výkonem. Ed25519 se 256 bity poskytuje rovnocenné nebo lepší zabezpečení při zlomku velikosti klíče.
+
+### Srovnávací přehled
+
+| Funkce | Ed25519 | RSA 4096 |
+|---|---|---|
+| Velikost klíče (veřejný) | ~68 znaků | ~725 znaků |
+| Úroveň zabezpečení | 128bitová (post-kvantově odolná struktura) | ~140bitová klasická |
+| Rychlost | Velmi rychlý | Pomalejší |
+| Kompatibilita | Moderní SSH (OpenSSH 6.5+) | Univerzální |
+| Doporučeno pro | Všechny nové klíče | Pouze starší systémy |
+
+**Závěr: generujte Ed25519 klíče pro jakýkoli moderní případ použití.** RSA používejte pouze v případě, kdy vás k tomu nutí požadavky na kompatibilitu.
+
+## Jak přidat SSH klíč na GitHub
+
+Přidání vašeho SSH veřejného klíče na GitHub umožňuje push a pull přes SSH bez zadávání uživatelského jména a hesla při každé operaci. Zde je postup krok za krokem.
+
+### Krok 1: Vygenerujte si pár klíčů
+
+Pokud ještě nemáte pár SSH klíčů, vygenerujte si ho. Můžete použít náš <a href="/">bezplatný online generátor SSH klíčů</a> nebo spustit:
+
+```bash
+ssh-keygen -t ed25519 -C "your-github-email@example.com"
+```
+
+Přijměte výchozí umístění souboru (`~/.ssh/id_ed25519`) a volitelně nastavte heslo passphrase.
+
+### Krok 2: Zkopírujte veřejný klíč
+
+Zobrazte veřejný klíč a zkopírujte ho do schránky:
+
+```bash
+# Linux
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+
+# macOS
+cat ~/.ssh/id_ed25519.pub | pbcopy
+
+# Windows (PowerShell)
+Get-Content ~/.ssh/id_ed25519.pub | Set-Clipboard
+```
+
+Nebo ho jednoduše zobrazte a zkopírujte ručně:
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+### Krok 3: Přidejte klíč na GitHub
+
+1. Přihlaste se na **GitHub.com**
+2. Klikněte na profilový obrázek → **Settings**
+3. V levém postranním panelu klikněte na **SSH and GPG keys**
+4. Klikněte na **New SSH key**
+5. Zadejte popisný název (např. „MacBook Pro 2024" nebo „Pracovní notebook")
+6. Vložte veřejný klíč do pole **Key**
+7. Klikněte na **Add SSH key**
+
+### Krok 4: Otestujte připojení
+
+```bash
+ssh -T git@github.com
+```
+
+Měli byste vidět: `Hi username! You've successfully authenticated, but GitHub does not provide shell access.`
+
+### Přepnutí existujícího repozitáře na SSH
+
+Pokud jste naklonovali repozitář pomocí HTTPS a chcete přejít na SSH:
+
+```bash
+# Zkontrolujte aktuální URL vzdáleného úložiště
+git remote -v
+
+# Aktualizujte na SSH
+git remote set-url origin git@github.com:username/repository.git
+```
+
+Pro GitLab je postup totožný — přejděte na **Preferences → SSH Keys** a postupujte podle stejných kroků.
+
+## Kde jsou SSH klíče uloženy?
+
+SSH klíče jsou uloženy v adresáři `.ssh` v domovské složce uživatele. Umístění se liší podle operačního systému.
+
+### Linux a macOS
+
+```
+~/.ssh/
+├── id_ed25519          # Váš soukromý klíč (oprávnění: 600)
+├── id_ed25519.pub      # Váš veřejný klíč (oprávnění: 644)
+├── id_rsa              # RSA soukromý klíč (pokud ho máte)
+├── id_rsa.pub          # RSA veřejný klíč
+├── authorized_keys     # Veřejné klíče oprávněné k přihlášení na tento stroj
+├── known_hosts         # Otisky serverů, ke kterým jste se připojili
+└── config              # Konfigurační soubor klienta
+```
+
+Samotný adresář `~/.ssh/` musí mít oprávnění **700** (čtení/zápis/spuštění pouze pro vlastníka). Soubory soukromých klíčů musí mít oprávnění **600** (čtení/zápis pouze pro vlastníka). SSH odmítne používat klíče s příliš otevřenými oprávněními.
+
+```bash
+# Opravte oprávnění v případě potřeby
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/id_ed25519
+chmod 644 ~/.ssh/id_ed25519.pub
+```
+
+### Windows
+
+Na Windows 10 a 11 s nainstalovaným OpenSSH jsou SSH klíče uloženy v:
+
+```
+C:\Users\YourUsername\.ssh\
+├── id_ed25519
+├── id_ed25519.pub
+├── authorized_keys
+├── known_hosts
+└── config
+```
+
+Na Windows máte přístup k adresáři `.ssh` z Průzkumníka souborů (možná budete muset povolit „Zobrazit skryté soubory") nebo z PowerShellu pomocí `~\.ssh\`.
+
+### Více souborů klíčů
+
+Pokud máte klíče pro různé účely (osobní GitHub, pracovní GitLab, produkční servery), použijte soubor `~/.ssh/config` k mapování každého hostu na jeho klíč:
+
+```
+Host github.com
+    IdentityFile ~/.ssh/id_ed25519_github
+
+Host gitlab.work.com
+    IdentityFile ~/.ssh/id_ed25519_work
+
+Host prod-server
+    HostName 203.0.113.10
+    User deploy
+    IdentityFile ~/.ssh/id_ed25519_production
+```
+
+## Hesla (passphrase) pro SSH klíče
+
+Při generování páru SSH klíčů se `ssh-keygen` zeptá, zda chcete nastavit **heslo passphrase**. Jedná se o volitelné heslo, které šifruje soubor soukromého klíče na disku.
+
+### Proč používat heslo passphrase?
+
+Pokud je soubor soukromého klíče chráněn silným heslem passphrase, pouhá krádež souboru nestačí k vydávání se za vás — útočník by musel heslo passphrase také prolomit. Tím se vytvoří kritická druhá vrstva zabezpečení, zejména na noteboocích, které by mohly být fyzicky odcizeny.
+
+Bez hesla passphrase je soukromý klíč uložen v otevřeném textu na disku. Kdokoli, kdo může soubor číst (prostřednictvím malwaru, fyzického přístupu nebo zálohy, která není řádně zabezpečena), ho může okamžitě použít.
+
+### Jak hesla passphrase interagují s ssh-agent
+
+Nevýhodou hesla passphrase je jeho zadávání pokaždé, když klíč použijete. **ssh-agent** toto řeší tím, že uchovává dešifrované klíče v paměti po dobu trvání relace.
+
+```bash
+# Spusťte ssh-agent a přidejte klíč
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+# Zadejte heslo passphrase jednou — nyní je uloženo v cache pro tuto relaci
+```
+
+Na macOS se systémová Klíčenka integruje s ssh-agent. Přidejte `--apple-use-keychain` pro zachování přes restartování:
+
+```bash
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+```
+
+### Změna hesla passphrase
+
+Heslo passphrase na existujícím klíči můžete změnit bez regenerování páru klíčů:
+
+```bash
+ssh-keygen -p -f ~/.ssh/id_ed25519
+```
+
+Tím se vyžádá staré heslo passphrase a poté můžete nastavit nové. Veřejný klíč se nemění, takže ho nemusíte aktualizovat na žádných serverech.
+
+## Otisky SSH klíčů
+
+Každý pár SSH klíčů má **otisk** (fingerprint) — krátký hash veřejného klíče, který ho jedinečně identifikuje. Otisky slouží několika účelům:
+
+- **Ověření identity hostu** — Při prvním připojení k serveru SSH zobrazí otisk hostitelského klíče. Pokud potvrdíte, že odpovídá tomu, co očekáváte (např. poskytnuté vaším poskytovatelem hostingu), víte, že se připojujete ke správnému serveru.
+- **Identifikace klíčů** — Při správě mnoha klíčů vám otisky pomáhají identifikovat, který fyzický klíč odpovídá kterému záznamu v `authorized_keys` nebo na službě jako GitHub.
+- **Audit a odvolání** — Auditní logy často zaznamenávají otisky místo celých klíčů. Znalost otisku klíče vám pomůže ho najít a odebrat v případě potřeby.
+
+### Zobrazení otisku klíče
+
+```bash
+# Zobrazení otisku veřejného klíče
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+# Výstup: 256 SHA256:abcdef1234567890... your@email.com (ED25519)
+
+# Zobrazení otisku hostitelského klíče serveru
+ssh-keyscan server.example.com | ssh-keygen -lf -
+```
+
+GitHub zobrazuje otisky všech přidaných SSH klíčů v **Settings → SSH and GPG keys**, což vám umožňuje ověřit, že klíč, který tam vidíte, odpovídá tomu na vašem stroji.
+
+### Soubor `known_hosts`
+
+Při prvním připojení k novému SSH serveru se zobrazí zpráva jako:
+
+```
+The authenticity of host 'example.com (203.0.113.10)' can't be established.
+ED25519 key fingerprint is SHA256:abcdef1234567890...
+Are you sure you want to continue connecting (yes/no/[fingerprint])?
+```
+
+Zadejte `yes` a otisk serveru se přidá do `~/.ssh/known_hosts`. Při dalších připojeních SSH tiše ověří, že klíč serveru odpovídá uloženému otisku. Pokud neodpovídá — což by mohlo naznačovat chybnou konfiguraci nebo útok man-in-the-middle — SSH vás důrazně upozorní a odmítne se připojit.
+
+## Často kladené otázky
+
+### K čemu se SSH klíč používá?
+
+SSH klíče vás autentizují na vzdálených serverech bez hesla. Nejběžnější použití jsou: přihlašování na linuxové/unixové servery pro správu, autentizace u Git hostingových služeb (GitHub, GitLab, Bitbucket) pro přístup k push/pull, automatizované deployment skripty vyžadující přístup k serveru bez hesla a CI/CD pipeline nasazující kód do produkce. SSH klíče jsou preferovány před hesly, protože jsou imunní vůči útokům hrubou silou, nelze je znovu použít po narušení bezpečnosti a lze je používat bez lidské interakce.
+
+### Kolik SSH klíčů bych měl mít?
+
+Neexistuje jediná správná odpověď, ale běžnou osvědčenou praxí je **jeden klíč na zařízení** (ne na službu). Váš notebook má jeden pár klíčů; váš desktop má jiný; váš CI server má další. Pokud je zařízení odcizeno nebo kompromitováno, odvoláte pouze klíč tohoto zařízení. Někteří lidé dále rozdělují podle kontextu (osobní vs. pracovní), což vede ke dvěma klíčům na zařízení. Vyhněte se sdílení jediného klíče na více strojích — pokud je tento klíč kompromitován, veškerý váš přístup je najednou ohrožen.
+
+### Mohu sdílet svůj SSH veřejný klíč?
+
+Ano. Veřejný klíč je navržen k sdílení. Je bezpečné ho poslat e-mailem, zveřejnit v dokumentaci GitHubu nebo přiložit k tiketu žádající o přístup k serveru. Samotný veřejný klíč nelze použít k autentizaci jako vy — k tomu je potřeba odpovídající soukromý klíč, který máte pouze vy. Toto je základní vlastnost asymetrické kryptografie. Nikdy nesdílejte svůj **soukromý** klíč s nikým.
+
+### Co se stane, pokud ztratím soukromý SSH klíč?
+
+Pokud ztratíte soukromý klíč a nemáte zálohu, ztratíte schopnost se s ním autentizovat. Váš veřejný klíč, stále nainstalovaný na serverech a službách, se stane osiřelým. Budete potřebovat alternativní způsob přístupu k serveru (autentizace heslem, pokud je povolena, přístup přes konzoli, nouzový přístupový mechanismus vašeho poskytovatele hostingu), abyste odstranili starý veřejný klíč z `authorized_keys` a přidali nový. Proto je zálohování soukromého klíče (ve správci hesel nebo šifrované záloze) důležité. Soukromý klíč nelze rekonstruovat z veřejného klíče.
+
+### Je Ed25519 nebo RSA lepší?
+
+**Ed25519 je lepší pro všechno nové generování klíčů.** Je rychlejší, produkuje menší klíče, není zranitelný vůči určitým implementačním slabinám postihujícím RSA a poskytuje rovnocenné nebo lepší zabezpečení s 256bitovým klíčem ve srovnání s RSA-4096. Jediným důvodem pro použití RSA dnes je kompatibilita se velmi starým SSH serverovým softwarem (OpenSSH před verzí 6.5, vydanou v roce 2014) nebo starší hardwarové bezpečnostní moduly. Pokud přistupujete k jakémukoli modernímu serveru nebo službě jako GitHub, použijte Ed25519.
+
+## Vygenerujte si pár SSH klíčů
+
+Jste připraveni vytvořit SSH klíče? Náš bezplatný online generátor vytváří páry klíčů Ed25519 nebo RSA přímo ve vašem prohlížeči. Soukromý klíč je generován lokálně a nikdy není odesílán na naše servery.
+
+<a href="/">Vygenerujte si pár SSH klíčů nyní →</a>
+
+---
+
+**Další čtení:**
+- <a href="/cs/what-is-ssh">Co je SSH? Kompletní průvodce protokolem Secure Shell</a>
+- <a href="/cs/ssh-command">Příkaz SSH: Kompletní přehled s příklady</a>
+- <a href="/cs/how-to-set-up-ssh">Jak nastavit SSH: Kompletní průvodce krok za krokem</a>

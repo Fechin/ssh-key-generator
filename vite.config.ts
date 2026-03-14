@@ -1,9 +1,12 @@
 import fs from 'node:fs'
 import { defineConfig } from 'vite'
+import mdx from '@mdx-js/rollup'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
 import path from 'path'
+import remarkGfm from 'remark-gfm'
+import rehypeSlug from 'rehype-slug'
 
 function escapeRegExp(value: string) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
@@ -26,12 +29,18 @@ const localeNavigationDenylist = [
   /^\/\.well-known\/llms\.txt$/,
   /^\/robots\.txt$/,
   /^\/sitemap\.xml$/,
+  /^\/(?:what-is-ssh|what-is-an-ssh-key|ssh-command|how-to-set-up-ssh)(?:\/.*)?$/,
 ]
 
 // https://vite.dev/config/
 export default defineConfig({
   base: '/',
   plugins: [
+    mdx({
+      remarkPlugins: [remarkGfm],
+      rehypePlugins: [rehypeSlug],
+      providerImportSource: '@mdx-js/react',
+    }),
     react(),
     tailwindcss(),
     VitePWA({

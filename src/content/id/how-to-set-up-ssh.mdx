@@ -1,0 +1,563 @@
+# Cara Mengatur SSH: Panduan Langkah demi Langkah yang Lengkap untuk Linux, Mac, dan Windows
+
+Mengatur SSH dengan benar membutuhkan sekitar sepuluh menit dan memberikan manfaat selama bertahun-tahun. Setelah dikonfigurasi, Anda dapat login ke server tanpa mengetik kata sandi, mengirim kode ke GitHub tanpa memasukkan kredensial di setiap operasi, dan mengotomasi deployment dengan percaya diri. Panduan ini memandu seluruh proses — mulai dari membuat pasangan kunci hingga memecahkan masalah error umum — untuk Linux, macOS, dan Windows.
+
+Jika Anda ingin memahami teknologi yang mendasarinya terlebih dahulu, baca panduan kami tentang <a href="/id/what-is-ssh">apa itu SSH</a> dan <a href="/id/what-is-an-ssh-key">apa itu kunci SSH</a>.
+
+## Prasyarat
+
+Sebelum memulai, pastikan Anda memiliki:
+
+**Untuk akses server:**
+- Aplikasi terminal (Terminal di macOS/Linux, Windows Terminal atau PowerShell di Windows)
+- Server jarak jauh yang menjalankan Linux/Unix dengan perangkat lunak server SSH (sshd) terpasang
+- Akun pengguna di server tersebut (atau akses root untuk membuatnya)
+- Alamat IP atau hostname server
+
+**Untuk akses GitHub/GitLab:**
+- Akun GitHub atau GitLab
+- Terminal dengan `ssh` tersedia
+- Opsional: git yang terpasang secara lokal
+
+**Persyaratan sistem operasi:**
+- **Linux**: Klien SSH sudah terpasang di hampir semua distribusi
+- **macOS**: Klien SSH sudah terpasang, dapat diakses dari Terminal
+- **Windows 10 versi 1809+ / Windows 11**: Klien OpenSSH tersedia sebagai fitur opsional
+
+Anda tidak perlu menginstal apa pun di Linux atau macOS. Di Windows, verifikasi OpenSSH terpasang dengan membuka PowerShell dan menjalankan `ssh -V`. Jika Anda mendapatkan string versi, Anda siap. Jika tidak, lihat Langkah 4 untuk instruksi instalasi.
+
+## Langkah 1: Buat Pasangan Kunci SSH Anda
+
+Anda memerlukan pasangan kunci sebelum dapat melakukan hal lain. Pasangan kunci terdiri dari **kunci privat** (tetap di mesin Anda) dan **kunci publik** (dikirim ke server atau layanan seperti GitHub).
+
+### Opsi A: Gunakan Generator Online
+
+Jika Anda lebih suka antarmuka grafis, <a href="/">generator kunci SSH online gratis</a> kami membuat pasangan kunci Ed25519 atau RSA di browser Anda. Kunci privat dibuat secara lokal menggunakan Web Crypto API — tidak ada yang dikirim ke server kami. Unduh kedua file dan simpan ke `~/.ssh/` (Linux/macOS) atau `C:\Users\YourName\.ssh\` (Windows).
+
+### Opsi B: Gunakan ssh-keygen di Baris Perintah
+
+Perintah `ssh-keygen` tersedia di Linux, macOS, dan Windows dengan OpenSSH:
+
+```bash
+# Buat pasangan kunci Ed25519 (direkomendasikan)
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+**Arti setiap flag:**
+- `-t ed25519` — jenis kunci (Ed25519 adalah modern, cepat, dan aman)
+- `-C "komentar"` — label yang disematkan dalam kunci publik, biasanya alamat email Anda
+
+Anda akan ditanya:
+
+```
+Generating public/private ed25519 key pair.
+Enter file in which to save the key (/home/user/.ssh/id_ed25519):
+```
+
+Tekan **Enter** untuk menerima lokasi default. Jika Anda memiliki beberapa kunci, Anda dapat menamainya secara deskriptif (misalnya `/home/user/.ssh/id_ed25519_github`).
+
+```
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+```
+
+Masukkan passphrase yang kuat. Ini mengenkripsi file kunci privat di disk — jika mesin Anda dicuri, kunci tidak dapat digunakan tanpa passphrase. Anda dapat membiarkannya kosong untuk kasus penggunaan otomasi di mana interaksi manusia tidak mungkin, tetapi untuk kunci pribadi, selalu gunakan passphrase.
+
+**Output:**
+
+```
+Your identification has been saved in /home/user/.ssh/id_ed25519
+Your public key has been saved in /home/user/.ssh/id_ed25519.pub
+The key fingerprint is:
+SHA256:abc123defghijk... your@email.com
+The key's randomart image is:
++--[ED25519 256]--+
+...
+```
+
+Dua file dibuat:
+- `~/.ssh/id_ed25519` — **kunci privat** Anda (jangan pernah bagikan ini)
+- `~/.ssh/id_ed25519.pub` — **kunci publik** Anda (aman untuk dibagikan)
+
+### Untuk RSA (Kompatibilitas Warisan)
+
+Jika Anda perlu terhubung ke sistem yang sangat lama yang tidak mendukung Ed25519:
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "your@email.com"
+```
+
+Gunakan minimal 4096 bit. Kunci RSA yang lebih kecil dari 4096 bit tidak lagi dianggap memiliki keamanan yang memadai.
+
+## Langkah 2: Mengatur SSH di Linux
+
+Bagian ini mencakup penyalinan kunci publik ke server Linux sehingga Anda dapat mengautentikasi tanpa kata sandi.
+
+### Metode 1: ssh-copy-id (Termudah)
+
+`ssh-copy-id` adalah cara termudah untuk menginstal kunci publik Anda di server jarak jauh. Ini terhubung menggunakan autentikasi kata sandi, menambahkan kunci publik Anda ke file `~/.ssh/authorized_keys` server, dan mengatur izin yang benar.
+
+```bash
+ssh-copy-id user@server.example.com
+
+# Tentukan file kunci secara eksplisit
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server.example.com
+
+# Hubungkan di port non-standar
+ssh-copy-id -p 2222 user@server.example.com
+```
+
+Anda akan diminta kata sandi server untuk terakhir kalinya. Setelah ini, Anda dapat terhubung dengan `ssh user@server.example.com` menggunakan kunci Anda.
+
+### Metode 2: Salin Manual
+
+Jika `ssh-copy-id` tidak tersedia (umum di beberapa sistem BSD atau instalasi Linux minimal):
+
+```bash
+# Tampilkan kunci publik Anda dan salin outputnya
+cat ~/.ssh/id_ed25519.pub
+
+# Kemudian SSH ke server (dengan kata sandi) dan jalankan:
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+echo "TEMPEL_KUNCI_PUBLIK_ANDA_DI_SINI" >> ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+```
+
+Atau lakukan semuanya dalam satu pipeline:
+
+```bash
+cat ~/.ssh/id_ed25519.pub | ssh user@server.example.com \
+  "mkdir -p ~/.ssh && chmod 700 ~/.ssh && \
+   cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+```
+
+### Memverifikasi Kunci Terpasang
+
+```bash
+ssh user@server.example.com
+# Harus terhubung tanpa meminta kata sandi (hanya passphrase jika Anda menetapkannya)
+```
+
+### Mengonfigurasi Server SSH (sshd)
+
+Di server jarak jauh, konfigurasi daemon SSH berada di `/etc/ssh/sshd_config`. Untuk pengaturan yang aman:
+
+```bash
+sudo nano /etc/ssh/sshd_config
+```
+
+Pengaturan yang direkomendasikan:
+
+```
+# Aktifkan autentikasi kunci publik
+PubkeyAuthentication yes
+
+# Nonaktifkan autentikasi kata sandi (setelah mengonfirmasi kunci berfungsi!)
+PasswordAuthentication no
+
+# Nonaktifkan login root melalui SSH
+PermitRootLogin no
+
+# Hanya izinkan pengguna tertentu
+AllowUsers alice bob deploy
+
+# Jaga sesi tetap aktif
+ClientAliveInterval 60
+ClientAliveCountMax 3
+```
+
+Setelah mengedit, muat ulang daemon SSH:
+
+```bash
+sudo systemctl reload sshd
+# Atau di sistem yang lebih lama:
+sudo service ssh reload
+```
+
+**Penting**: Jangan nonaktifkan `PasswordAuthentication` sampai Anda mengonfirmasi bahwa autentikasi berbasis kunci berfungsi. Jika Anda mengunci diri sendiri, Anda memerlukan akses konsol (atau mekanisme akses darurat penyedia hosting Anda) untuk memulihkan.
+
+### Mengatur ssh-agent di Linux
+
+Jika kunci Anda memiliki passphrase, tambahkan ke `ssh-agent` di awal sesi untuk menghindari memasukkannya kembali:
+
+```bash
+# Mulai agen (sering dimulai otomatis oleh lingkungan desktop)
+eval "$(ssh-agent -s)"
+
+# Tambahkan kunci Anda (masukkan passphrase sekali)
+ssh-add ~/.ssh/id_ed25519
+
+# Verifikasi kunci yang dimuat
+ssh-add -l
+```
+
+Untuk secara otomatis memulai `ssh-agent` dan menambahkan kunci Anda saat login, tambahkan ke `~/.bashrc` atau `~/.zshrc`:
+
+```bash
+# Auto-start ssh-agent
+if [ -z "$SSH_AUTH_SOCK" ]; then
+  eval "$(ssh-agent -s)"
+  ssh-add ~/.ssh/id_ed25519
+fi
+```
+
+## Langkah 3: Mengatur SSH di macOS
+
+macOS menyertakan klien OpenSSH lengkap. Proses untuk mengatur autentikasi berbasis kunci ke server jarak jauh identik dengan Linux (lihat Langkah 2 di atas). Tambahan spesifik macOS melibatkan integrasi Keychain.
+
+### Integrasi Keychain
+
+macOS dapat menyimpan passphrase Anda di Keychain sistem sehingga Anda tidak perlu memasukkannya setelah pertama kali:
+
+```bash
+# Tambahkan kunci ke ssh-agent dengan integrasi Keychain
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+
+# Untuk versi macOS yang lebih lama (sebelum Monterey)
+ssh-add -K ~/.ssh/id_ed25519
+```
+
+Untuk membuat macOS selalu memuat kunci Anda dari Keychain, tambahkan ini ke `~/.ssh/config`:
+
+```
+Host *
+    AddKeysToAgent yes
+    UseKeychain yes
+    IdentityFile ~/.ssh/id_ed25519
+```
+
+Setelah ini, passphrase disimpan di Keychain dan dimuat secara otomatis — Anda tidak akan ditanya lagi pada boot berikutnya.
+
+### Verifikasi Versi Klien SSH
+
+```bash
+ssh -V
+# OpenSSH_9.x, LibreSSL x.x.x
+```
+
+macOS hadir dengan OpenSSH yang relatif baru tetapi tidak selalu yang terbaru. Jika Anda memerlukan fitur yang lebih baru, instal melalui Homebrew: `brew install openssh`.
+
+## Langkah 4: Mengatur SSH di Windows
+
+Windows 10 (1809+) dan Windows 11 menyertakan OpenSSH. Berikut cara membuatnya berfungsi.
+
+### Instal Klien OpenSSH
+
+**Periksa apakah sudah terpasang:**
+
+```powershell
+ssh -V
+```
+
+**Instal melalui Pengaturan:**
+1. Buka **Settings → Apps → Optional Features**
+2. Cari **OpenSSH Client**
+3. Klik **Install**
+
+**Instal melalui PowerShell (Administrator):**
+
+```powershell
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+```
+
+### Buat Kunci di Windows
+
+Buka PowerShell dan jalankan:
+
+```powershell
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+Kunci disimpan ke `C:\Users\YourUsername\.ssh\`.
+
+### Salin Kunci Publik Anda ke Server Linux
+
+Windows tidak menyertakan `ssh-copy-id`, tetapi Anda dapat melakukannya secara manual dari PowerShell:
+
+```powershell
+# Tampilkan kunci publik Anda
+Get-Content ~/.ssh/id_ed25519.pub
+
+# Salin ke server jarak jauh (Anda akan diminta kata sandi server)
+$pubkey = Get-Content ~/.ssh/id_ed25519.pub -Raw
+ssh user@server.example.com "mkdir -p ~/.ssh && echo '$pubkey' >> ~/.ssh/authorized_keys && chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys"
+```
+
+Atau gunakan pipe:
+
+```powershell
+type $env:USERPROFILE\.ssh\id_ed25519.pub | ssh user@server.example.com "cat >> ~/.ssh/authorized_keys"
+```
+
+### Mengatur ssh-agent di Windows
+
+Untuk menghindari memasukkan passphrase berulang kali, mulai layanan OpenSSH Authentication Agent:
+
+```powershell
+# Mulai layanan
+Start-Service ssh-agent
+
+# Atur untuk memulai secara otomatis
+Set-Service -Name ssh-agent -StartupType Automatic
+
+# Tambahkan kunci Anda
+ssh-add ~/.ssh/id_ed25519
+```
+
+### PuTTY sebagai Alternatif
+
+Jika Anda lebih suka klien SSH grafis, PuTTY adalah opsi gratis untuk Windows. Gunakan **PuTTYgen** untuk membuat kunci (simpan dalam format `.ppk` untuk PuTTY dan ekspor dalam format OpenSSH). Namun, untuk pengaturan baru, klien OpenSSH bawaan lebih sederhana dan dapat dioperasikan bersama ekosistem lainnya.
+
+## Cara Mengatur Kunci SSH untuk GitHub dan GitLab
+
+Autentikasi kunci SSH ke GitHub dan GitLab bekerja serupa — Anda mengunggah kunci publik ke layanan dan menggunakan kunci privat yang sesuai saat melakukan operasi Git.
+
+### Mengatur SSH untuk GitHub
+
+**1. Salin kunci publik Anda:**
+
+```bash
+# Linux
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+
+# macOS
+cat ~/.ssh/id_ed25519.pub | pbcopy
+
+# Windows PowerShell
+Get-Content ~/.ssh/id_ed25519.pub | Set-Clipboard
+```
+
+Atau tampilkan dan salin secara manual:
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+**2. Tambahkan ke GitHub:**
+
+1. Pergi ke **github.com** dan login
+2. Klik avatar Anda → **Settings**
+3. Di sidebar kiri: **SSH and GPG keys**
+4. Klik **New SSH key**
+5. Beri **Title** yang deskriptif (misalnya "MacBook Pro" atau "PC Kerja")
+6. Atur **Key type** ke **Authentication Key**
+7. Tempel kunci publik Anda
+8. Klik **Add SSH key**
+
+**3. Uji koneksi:**
+
+```bash
+ssh -T git@github.com
+# Hi username! You've successfully authenticated, but GitHub does not provide shell access.
+```
+
+**4. Gunakan SSH untuk operasi Git:**
+
+```bash
+# Clone menggunakan SSH alih-alih HTTPS
+git clone git@github.com:username/repository.git
+
+# Jika repo yang ada menggunakan HTTPS, alihkan ke SSH
+git remote set-url origin git@github.com:username/repository.git
+```
+
+### Mengatur SSH untuk GitLab
+
+Prosesnya identik:
+
+1. Pergi ke **gitlab.com** → Klik avatar Anda → **Preferences**
+2. Di sidebar kiri: **SSH Keys**
+3. Tempel kunci publik Anda, beri judul, dan opsional tetapkan tanggal kedaluwarsa
+4. Klik **Add key**
+
+Uji dengan:
+
+```bash
+ssh -T git@gitlab.com
+# Welcome to GitLab, @username!
+```
+
+Untuk instansi GitLab yang di-hosting sendiri, ganti `gitlab.com` dengan hostname instansi Anda.
+
+### Menggunakan Kunci Terpisah untuk GitHub dan Layanan Lain
+
+Jika Anda menginginkan kunci khusus untuk GitHub (direkomendasikan untuk kebersihan kunci), buat kunci dengan nama tertentu:
+
+```bash
+ssh-keygen -t ed25519 -C "github" -f ~/.ssh/id_ed25519_github
+```
+
+Kemudian tambahkan blok `Host` ke `~/.ssh/config`:
+
+```
+Host github.com
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519_github
+    AddKeysToAgent yes
+```
+
+Sekarang `git clone git@github.com:...` secara otomatis menggunakan kunci khusus GitHub.
+
+## Pengujian dan Pemecahan Masalah SSH
+
+### Tes Konektivitas Dasar
+
+```bash
+ssh -v user@server.example.com
+```
+
+Flag `-v` (verbose) menampilkan persis apa yang terjadi di setiap langkah. Cari baris seperti:
+- `Offering public key: ~/.ssh/id_ed25519` — SSH mencoba kunci Anda
+- `Server accepts key` — kunci ada di `authorized_keys`
+- `Authenticated to server.example.com` — berhasil
+
+### Error Umum dan Perbaikannya
+
+**"Permission denied (publickey)"**
+
+Ini adalah error yang paling umum. Penyebab dan perbaikan:
+
+```bash
+# Periksa apakah kunci Anda dimuat di ssh-agent
+ssh-add -l
+
+# Jika tidak ada kunci yang terdaftar, tambahkan kunci Anda
+ssh-add ~/.ssh/id_ed25519
+
+# Di server jarak jauh, periksa authorized_keys
+cat ~/.ssh/authorized_keys
+# Pastikan kunci publik Anda ada di sana
+
+# Periksa izin di server jarak jauh
+ls -la ~/.ssh/
+# ~/.ssh harus 700
+# authorized_keys harus 600
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/authorized_keys
+
+# Periksa apakah server mengizinkan autentikasi kunci publik
+sudo grep PubkeyAuthentication /etc/ssh/sshd_config
+# Harus: PubkeyAuthentication yes
+```
+
+**"WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED"**
+
+Host key server berubah, yang SSH anggap sebagai potensi masalah keamanan. Jika Anda tahu ini sah (server dibangun ulang, IP dialihkan), hapus entri lama:
+
+```bash
+# Hapus entri host tertentu
+ssh-keygen -R server.example.com
+
+# Atau edit known_hosts secara manual dan hapus baris yang terpengaruh
+nano ~/.ssh/known_hosts
+```
+
+**"Bad permissions" atau "Permissions too open"**
+
+SSH ketat tentang izin file kunci:
+
+```bash
+# Perbaiki izin kunci privat
+chmod 600 ~/.ssh/id_ed25519
+
+# Perbaiki izin kunci publik
+chmod 644 ~/.ssh/id_ed25519.pub
+
+# Perbaiki izin direktori .ssh
+chmod 700 ~/.ssh
+```
+
+Di Windows, izin kunci privat dikelola secara berbeda. Klik kanan file kunci → Properties → Security → Advanced → Disable inheritance → Hapus semua kecuali akun pengguna Anda, berikan Full control hanya kepada diri sendiri.
+
+### Mengatur dan Menggunakan ssh-agent
+
+Jika Anda terus diminta passphrase, `ssh-agent` tidak berjalan atau kunci Anda belum ditambahkan:
+
+```bash
+# Mulai agen
+eval "$(ssh-agent -s)"
+# Agent pid 12345
+
+# Tambahkan kunci Anda
+ssh-add ~/.ssh/id_ed25519
+# Enter passphrase for /home/user/.ssh/id_ed25519:
+# Identity added: /home/user/.ssh/id_ed25519
+
+# Verifikasi
+ssh-add -l
+# 256 SHA256:abc123... your@email.com (ED25519)
+```
+
+### Mengisi Terlebih Dahulu known_hosts dalam Otomasi
+
+Dalam pipeline CI/CD, gunakan `ssh-keyscan` untuk menambahkan sidik jari host jarak jauh sebelum terhubung:
+
+```bash
+ssh-keyscan -H server.example.com >> ~/.ssh/known_hosts
+ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+```
+
+Ini mencegah prompt sidik jari interaktif dalam skrip otomatis.
+
+## Pertanyaan yang Sering Diajukan
+
+### Bagaimana cara memperbaiki "Permission denied (publickey)"?
+
+Kerjakan daftar periksa ini: (1) Verifikasi kunci Anda ada di agen SSH: `ssh-add -l`. Jika tidak, jalankan `ssh-add ~/.ssh/id_ed25519`. (2) Periksa bahwa kunci publik Anda ada di file `~/.ssh/authorized_keys` server. (3) Verifikasi izin: `~/.ssh` harus `700`, `authorized_keys` harus `600`. (4) Periksa bahwa server memiliki `PubkeyAuthentication yes` di `/etc/ssh/sshd_config`. (5) Gunakan `ssh -vvv user@server` untuk melihat persis di mana autentikasi gagal. Output verbose akan memberi tahu kunci mana yang dicoba dan apakah server menerimanya.
+
+### Bagaimana cara menambahkan kunci SSH saya ke ssh-agent?
+
+Jalankan `ssh-add ~/.ssh/id_ed25519` (ganti dengan nama file kunci Anda). Jika agen tidak berjalan, mulai terlebih dahulu dengan `eval "$(ssh-agent -s)"`. Di macOS, gunakan `ssh-add --apple-use-keychain ~/.ssh/id_ed25519` untuk menyimpan passphrase di Keychain. Di Windows, aktifkan layanan `ssh-agent` dengan `Start-Service ssh-agent` lalu jalankan `ssh-add`. Anda hanya perlu menjalankan `ssh-add` sekali per sesi (atau sekali selamanya, dengan Keychain di macOS).
+
+### Bisakah saya memiliki beberapa kunci SSH?
+
+Ya, dan itu praktik yang baik. Buat kunci terpisah untuk tujuan yang berbeda — misalnya, satu untuk GitHub pribadi, satu untuk GitLab kerja, satu untuk server produksi. Gunakan `~/.ssh/config` untuk memetakan setiap host ke kunci spesifiknya dengan `IdentityFile`. Memiliki kunci terpisah berarti mencabut satu (dengan menghapusnya dari layanan atau server) tidak memengaruhi yang lain, membatasi dampak dari kompromi kunci.
+
+### Bagaimana cara mengubah passphrase pada kunci SSH?
+
+Gunakan `ssh-keygen -p`:
+
+```bash
+ssh-keygen -p -f ~/.ssh/id_ed25519
+```
+
+Anda akan diminta passphrase saat ini, kemudian diminta untuk memasukkan dan mengonfirmasi yang baru. Kunci itu sendiri (dan oleh karena itu kunci publik) tidak berubah — Anda tidak perlu memperbaruinya di mana pun. Ini berguna jika Anda curiga passphrase Anda telah dikompromikan atau ingin merotasinya sebagai praktik keamanan rutin.
+
+### Bagaimana cara menghapus kunci SSH lama dari server?
+
+Buka `~/.ssh/authorized_keys` di server dan hapus baris yang berisi kunci publik lama:
+
+```bash
+# Edit authorized_keys di server jarak jauh
+ssh user@server.example.com
+nano ~/.ssh/authorized_keys
+# Hapus baris untuk kunci yang ingin Anda hapus
+# Simpan dan keluar
+```
+
+Setiap baris di `authorized_keys` adalah satu kunci publik. Komentar kunci (kolom terakhir, biasanya `user@hostname` atau email) membantu mengidentifikasi kunci mana. Jika Anda tidak tahu baris mana yang harus dihapus, bandingkan sidik jari:
+
+```bash
+# Di mesin lokal Anda, dapatkan sidik jari
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+
+# Di server, periksa sidik jari semua kunci yang diizinkan
+ssh-keygen -lf ~/.ssh/authorized_keys
+```
+
+Cocokkan sidik jari untuk mengidentifikasi dan menghapus kunci yang tepat.
+
+## Buat Kunci SSH Anda Secara Gratis
+
+Jika Anda belum membuat pasangan kunci SSH, generator online gratis kami membuat kunci Ed25519 atau RSA langsung di browser Anda dalam hitungan detik. Tidak perlu instalasi, tidak ada yang dikirim ke server kami — pembuatan sepenuhnya terjadi di perangkat Anda.
+
+<a href="/">Buat kunci SSH Anda secara gratis →</a>
+
+---
+
+**Bacaan lebih lanjut:**
+- <a href="/id/what-is-ssh">Apa Itu SSH? Panduan Lengkap Secure Shell</a>
+- <a href="/id/what-is-an-ssh-key">Apa Itu Kunci SSH? Kunci Publik, Kunci Privat, dan Pasangan Kunci Dijelaskan</a>
+- <a href="/id/ssh-command">Perintah SSH: Referensi Lengkap dengan Contoh</a>

@@ -1,0 +1,563 @@
+# Cách Thiết Lập SSH: Hướng Dẫn Từng Bước Đầy Đủ cho Linux, Mac và Windows
+
+Thiết lập SSH đúng cách mất khoảng mười phút và mang lại lợi ích trong nhiều năm. Sau khi được cấu hình, bạn có thể đăng nhập vào server mà không cần gõ mật khẩu, đẩy code lên GitHub mà không cần nhập thông tin đăng nhập ở mỗi thao tác và tự động hóa các triển khai một cách tự tin. Hướng dẫn này đi qua toàn bộ quá trình — từ tạo cặp khóa đến khắc phục các lỗi phổ biến — cho Linux, macOS và Windows.
+
+Nếu bạn muốn hiểu công nghệ cơ bản trước, hãy đọc hướng dẫn của chúng tôi về <a href="/vi/what-is-ssh">SSH là gì</a> và <a href="/vi/what-is-an-ssh-key">SSH key là gì</a>.
+
+## Điều Kiện Tiên Quyết
+
+Trước khi bắt đầu, hãy đảm bảo bạn có:
+
+**Để truy cập server:**
+- Ứng dụng terminal (Terminal trên macOS/Linux, Windows Terminal hoặc PowerShell trên Windows)
+- Server từ xa chạy Linux/Unix với phần mềm SSH server (sshd) được cài đặt
+- Tài khoản người dùng trên server đó (hoặc quyền root để tạo một tài khoản)
+- Địa chỉ IP hoặc tên host của server
+
+**Để truy cập GitHub/GitLab:**
+- Tài khoản GitHub hoặc GitLab
+- Terminal có `ssh` sẵn dùng
+- Tùy chọn: git được cài đặt cục bộ
+
+**Yêu cầu hệ điều hành:**
+- **Linux**: SSH client được cài đặt sẵn trên hầu hết mọi bản phân phối
+- **macOS**: SSH client tích hợp sẵn, truy cập từ Terminal
+- **Windows 10 phiên bản 1809+ / Windows 11**: OpenSSH client có sẵn như tính năng tùy chọn
+
+Bạn không cần cài đặt bất cứ thứ gì trên Linux hoặc macOS. Trên Windows, xác minh OpenSSH được cài đặt bằng cách mở PowerShell và chạy `ssh -V`. Nếu bạn nhận được chuỗi phiên bản, bạn đã sẵn sàng. Nếu không, xem Bước 4 để biết hướng dẫn cài đặt.
+
+## Bước 1: Tạo Cặp SSH Key Của Bạn
+
+Bạn cần cặp khóa trước khi có thể làm bất cứ điều gì khác. Cặp khóa bao gồm **khóa riêng tư** (ở lại trên máy của bạn) và **khóa công khai** (đi đến server hoặc các dịch vụ như GitHub).
+
+### Tùy Chọn A: Dùng Trình Tạo Trực Tuyến
+
+Nếu bạn thích giao diện đồ họa, <a href="/">trình tạo SSH key trực tuyến miễn phí</a> của chúng tôi tạo cặp khóa Ed25519 hoặc RSA trong trình duyệt của bạn. Khóa riêng tư được tạo cục bộ bằng Web Crypto API — không có gì được gửi đến server của chúng tôi. Tải xuống cả hai tệp và lưu vào `~/.ssh/` (Linux/macOS) hoặc `C:\Users\YourName\.ssh\` (Windows).
+
+### Tùy Chọn B: Dùng ssh-keygen trên Dòng Lệnh
+
+Lệnh `ssh-keygen` có sẵn trên Linux, macOS và Windows với OpenSSH:
+
+```bash
+# Tạo cặp khóa Ed25519 (được khuyến nghị)
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+**Ý nghĩa của mỗi flag:**
+- `-t ed25519` — loại khóa (Ed25519 là hiện đại, nhanh và an toàn)
+- `-C "chú thích"` — nhãn được nhúng trong khóa công khai, thường là địa chỉ email của bạn
+
+Bạn sẽ được hỏi:
+
+```
+Generating public/private ed25519 key pair.
+Enter file in which to save the key (/home/user/.ssh/id_ed25519):
+```
+
+Nhấn **Enter** để chấp nhận vị trí mặc định. Nếu bạn có nhiều khóa, bạn có thể đặt tên chúng theo mô tả (ví dụ `/home/user/.ssh/id_ed25519_github`).
+
+```
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+```
+
+Nhập passphrase mạnh. Điều này mã hóa file khóa riêng tư trên đĩa — nếu máy của bạn bị đánh cắp, khóa không thể dùng mà không có passphrase. Bạn có thể để trống cho các trường hợp sử dụng tự động hóa khi tương tác của con người không thể, nhưng cho các khóa cá nhân, luôn dùng passphrase.
+
+**Output:**
+
+```
+Your identification has been saved in /home/user/.ssh/id_ed25519
+Your public key has been saved in /home/user/.ssh/id_ed25519.pub
+The key fingerprint is:
+SHA256:abc123defghijk... your@email.com
+The key's randomart image is:
++--[ED25519 256]--+
+...
+```
+
+Hai tệp được tạo:
+- `~/.ssh/id_ed25519` — **khóa riêng tư** của bạn (không bao giờ chia sẻ điều này)
+- `~/.ssh/id_ed25519.pub` — **khóa công khai** của bạn (an toàn để chia sẻ)
+
+### Cho RSA (Tương Thích Kế Thừa)
+
+Nếu bạn cần kết nối với các hệ thống rất cũ không hỗ trợ Ed25519:
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "your@email.com"
+```
+
+Dùng tối thiểu 4096 bit. Khóa RSA nhỏ hơn 4096 bit không còn được coi là bảo mật đầy đủ.
+
+## Bước 2: Thiết Lập SSH trên Linux
+
+Phần này bao gồm việc sao chép khóa công khai của bạn đến server Linux để bạn có thể xác thực mà không cần mật khẩu.
+
+### Phương Pháp 1: ssh-copy-id (Dễ Nhất)
+
+`ssh-copy-id` là cách đơn giản nhất để cài đặt khóa công khai của bạn trên server từ xa. Nó kết nối bằng xác thực mật khẩu, thêm khóa công khai của bạn vào file `~/.ssh/authorized_keys` của server và đặt các quyền đúng.
+
+```bash
+ssh-copy-id user@server.example.com
+
+# Chỉ định file khóa một cách rõ ràng
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server.example.com
+
+# Kết nối trên cổng không chuẩn
+ssh-copy-id -p 2222 user@server.example.com
+```
+
+Bạn sẽ được hỏi mật khẩu server lần cuối cùng. Sau đó, bạn có thể kết nối bằng `ssh user@server.example.com` dùng khóa của bạn.
+
+### Phương Pháp 2: Sao Chép Thủ Công
+
+Nếu `ssh-copy-id` không có sẵn (phổ biến trên một số hệ thống BSD hoặc cài đặt Linux tối giản):
+
+```bash
+# Hiển thị khóa công khai của bạn và sao chép output
+cat ~/.ssh/id_ed25519.pub
+
+# Sau đó SSH đến server (với mật khẩu) và chạy:
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+echo "DÁN_KHÓA_CÔNG_KHAI_CỦA_BẠN_VÀO_ĐÂY" >> ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+```
+
+Hoặc thực hiện tất cả trong một pipeline:
+
+```bash
+cat ~/.ssh/id_ed25519.pub | ssh user@server.example.com \
+  "mkdir -p ~/.ssh && chmod 700 ~/.ssh && \
+   cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+```
+
+### Xác Minh Khóa Đã Được Cài Đặt
+
+```bash
+ssh user@server.example.com
+# Nên kết nối mà không hỏi mật khẩu (chỉ passphrase nếu bạn đặt)
+```
+
+### Cấu Hình SSH Server (sshd)
+
+Trên server từ xa, cấu hình SSH daemon nằm trong `/etc/ssh/sshd_config`. Để thiết lập an toàn:
+
+```bash
+sudo nano /etc/ssh/sshd_config
+```
+
+Cài đặt được khuyến nghị:
+
+```
+# Bật xác thực khóa công khai
+PubkeyAuthentication yes
+
+# Tắt xác thực mật khẩu (sau khi xác nhận khóa hoạt động!)
+PasswordAuthentication no
+
+# Tắt đăng nhập root qua SSH
+PermitRootLogin no
+
+# Chỉ cho phép người dùng cụ thể
+AllowUsers alice bob deploy
+
+# Giữ phiên hoạt động
+ClientAliveInterval 60
+ClientAliveCountMax 3
+```
+
+Sau khi chỉnh sửa, tải lại SSH daemon:
+
+```bash
+sudo systemctl reload sshd
+# Hoặc trên hệ thống cũ hơn:
+sudo service ssh reload
+```
+
+**Quan trọng**: Đừng tắt `PasswordAuthentication` cho đến khi bạn xác nhận rằng xác thực dựa trên khóa hoạt động. Nếu bạn bị khóa ra, bạn sẽ cần quyền truy cập console (hoặc cơ chế truy cập khẩn cấp của nhà cung cấp hosting) để khôi phục.
+
+### Thiết Lập ssh-agent trên Linux
+
+Nếu khóa của bạn có passphrase, thêm nó vào `ssh-agent` khi bắt đầu phiên để tránh nhập lại:
+
+```bash
+# Khởi động agent (thường được tự động khởi động bởi môi trường desktop)
+eval "$(ssh-agent -s)"
+
+# Thêm khóa của bạn (nhập passphrase một lần)
+ssh-add ~/.ssh/id_ed25519
+
+# Xác minh các khóa đã được tải
+ssh-add -l
+```
+
+Để tự động khởi động `ssh-agent` và thêm khóa khi đăng nhập, thêm vào `~/.bashrc` hoặc `~/.zshrc`:
+
+```bash
+# Tự động khởi động ssh-agent
+if [ -z "$SSH_AUTH_SOCK" ]; then
+  eval "$(ssh-agent -s)"
+  ssh-add ~/.ssh/id_ed25519
+fi
+```
+
+## Bước 3: Thiết Lập SSH trên macOS
+
+macOS bao gồm SSH client OpenSSH đầy đủ. Quy trình thiết lập xác thực dựa trên khóa đến server từ xa giống hệt Linux (xem Bước 2 ở trên). Các bổ sung dành riêng cho macOS liên quan đến tích hợp Keychain.
+
+### Tích Hợp Keychain
+
+macOS có thể lưu passphrase của bạn trong Keychain hệ thống để bạn không bao giờ cần nhập lại sau lần đầu:
+
+```bash
+# Thêm khóa vào ssh-agent với tích hợp Keychain
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+
+# Cho phiên bản macOS cũ hơn (trước Monterey)
+ssh-add -K ~/.ssh/id_ed25519
+```
+
+Để macOS luôn tải khóa của bạn từ Keychain, thêm vào `~/.ssh/config`:
+
+```
+Host *
+    AddKeysToAgent yes
+    UseKeychain yes
+    IdentityFile ~/.ssh/id_ed25519
+```
+
+Sau đó, passphrase được lưu trong Keychain và tải tự động — bạn sẽ không được hỏi lại khi khởi động lại.
+
+### Xác Minh Phiên Bản SSH Client
+
+```bash
+ssh -V
+# OpenSSH_9.x, LibreSSL x.x.x
+```
+
+macOS đi kèm với OpenSSH tương đối mới nhưng không phải lúc nào cũng là phiên bản mới nhất tuyệt đối. Nếu bạn cần tính năng mới hơn, cài đặt qua Homebrew: `brew install openssh`.
+
+## Bước 4: Thiết Lập SSH trên Windows
+
+Windows 10 (1809+) và Windows 11 bao gồm OpenSSH. Đây là cách làm cho nó hoạt động.
+
+### Cài Đặt OpenSSH Client
+
+**Kiểm tra xem đã được cài đặt chưa:**
+
+```powershell
+ssh -V
+```
+
+**Cài đặt qua Cài đặt:**
+1. Mở **Settings → Apps → Optional Features**
+2. Tìm **OpenSSH Client**
+3. Nhấp **Install**
+
+**Cài đặt qua PowerShell (Quản trị viên):**
+
+```powershell
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+```
+
+### Tạo Khóa trên Windows
+
+Mở PowerShell và chạy:
+
+```powershell
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+Khóa được lưu vào `C:\Users\YourUsername\.ssh\`.
+
+### Sao Chép Khóa Công Khai Đến Server Linux
+
+Windows không bao gồm `ssh-copy-id`, nhưng bạn có thể làm thủ công từ PowerShell:
+
+```powershell
+# Hiển thị khóa công khai của bạn
+Get-Content ~/.ssh/id_ed25519.pub
+
+# Sao chép đến server từ xa (bạn sẽ được hỏi mật khẩu server)
+$pubkey = Get-Content ~/.ssh/id_ed25519.pub -Raw
+ssh user@server.example.com "mkdir -p ~/.ssh && echo '$pubkey' >> ~/.ssh/authorized_keys && chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys"
+```
+
+Hoặc dùng pipe:
+
+```powershell
+type $env:USERPROFILE\.ssh\id_ed25519.pub | ssh user@server.example.com "cat >> ~/.ssh/authorized_keys"
+```
+
+### Thiết Lập ssh-agent trên Windows
+
+Để tránh nhập passphrase liên tục, khởi động dịch vụ OpenSSH Authentication Agent:
+
+```powershell
+# Khởi động dịch vụ
+Start-Service ssh-agent
+
+# Đặt để khởi động tự động
+Set-Service -Name ssh-agent -StartupType Automatic
+
+# Thêm khóa của bạn
+ssh-add ~/.ssh/id_ed25519
+```
+
+### PuTTY Như Một Lựa Chọn Thay Thế
+
+Nếu bạn thích SSH client đồ họa, PuTTY là tùy chọn miễn phí cho Windows. Dùng **PuTTYgen** để tạo khóa (lưu ở cả định dạng `.ppk` cho PuTTY và xuất sang định dạng OpenSSH). Tuy nhiên, đối với các thiết lập mới, OpenSSH client tích hợp đơn giản hơn và có thể tương tác với phần còn lại của hệ sinh thái.
+
+## Cách Thiết Lập SSH Key cho GitHub và GitLab
+
+Xác thực SSH key với GitHub và GitLab hoạt động tương tự — bạn tải khóa công khai lên dịch vụ và dùng khóa riêng tư tương ứng khi thực hiện các thao tác Git.
+
+### Thiết Lập SSH cho GitHub
+
+**1. Sao chép khóa công khai của bạn:**
+
+```bash
+# Linux
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+
+# macOS
+cat ~/.ssh/id_ed25519.pub | pbcopy
+
+# Windows PowerShell
+Get-Content ~/.ssh/id_ed25519.pub | Set-Clipboard
+```
+
+Hoặc chỉ hiển thị và sao chép thủ công:
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+**2. Thêm vào GitHub:**
+
+1. Truy cập **github.com** và đăng nhập
+2. Nhấp vào avatar của bạn → **Settings**
+3. Trong thanh bên trái: **SSH and GPG keys**
+4. Nhấp **New SSH key**
+5. Đặt **Title** mô tả (ví dụ "MacBook Pro" hoặc "PC Công Việc")
+6. Đặt **Key type** thành **Authentication Key**
+7. Dán khóa công khai của bạn
+8. Nhấp **Add SSH key**
+
+**3. Kiểm tra kết nối:**
+
+```bash
+ssh -T git@github.com
+# Hi username! You've successfully authenticated, but GitHub does not provide shell access.
+```
+
+**4. Dùng SSH cho các thao tác Git:**
+
+```bash
+# Clone bằng SSH thay vì HTTPS
+git clone git@github.com:username/repository.git
+
+# Nếu repo hiện có dùng HTTPS, chuyển sang SSH
+git remote set-url origin git@github.com:username/repository.git
+```
+
+### Thiết Lập SSH cho GitLab
+
+Quy trình giống hệt:
+
+1. Truy cập **gitlab.com** → Nhấp avatar của bạn → **Preferences**
+2. Trong thanh bên trái: **SSH Keys**
+3. Dán khóa công khai của bạn, đặt tiêu đề và tùy chọn đặt ngày hết hạn
+4. Nhấp **Add key**
+
+Kiểm tra với:
+
+```bash
+ssh -T git@gitlab.com
+# Welcome to GitLab, @username!
+```
+
+Đối với các instance GitLab tự lưu trữ, thay thế `gitlab.com` bằng tên host của instance của bạn.
+
+### Dùng Khóa Riêng Biệt cho GitHub và Các Dịch Vụ Khác
+
+Nếu bạn muốn khóa riêng cho GitHub (khuyến nghị để giữ vệ sinh khóa), tạo khóa có tên:
+
+```bash
+ssh-keygen -t ed25519 -C "github" -f ~/.ssh/id_ed25519_github
+```
+
+Sau đó thêm khối `Host` vào `~/.ssh/config`:
+
+```
+Host github.com
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519_github
+    AddKeysToAgent yes
+```
+
+Bây giờ `git clone git@github.com:...` tự động dùng khóa dành riêng cho GitHub.
+
+## Kiểm Tra và Khắc Phục Sự Cố SSH
+
+### Kiểm Tra Kết Nối Cơ Bản
+
+```bash
+ssh -v user@server.example.com
+```
+
+Flag `-v` (verbose) hiển thị chính xác những gì đang xảy ra ở mỗi bước. Tìm các dòng như:
+- `Offering public key: ~/.ssh/id_ed25519` — SSH đang thử khóa của bạn
+- `Server accepts key` — khóa có trong `authorized_keys`
+- `Authenticated to server.example.com` — thành công
+
+### Lỗi Phổ Biến và Cách Khắc Phục
+
+**"Permission denied (publickey)"**
+
+Đây là lỗi phổ biến nhất. Nguyên nhân và cách khắc phục:
+
+```bash
+# Kiểm tra xem khóa của bạn có được tải trong ssh-agent không
+ssh-add -l
+
+# Nếu không có khóa nào được liệt kê, thêm khóa của bạn
+ssh-add ~/.ssh/id_ed25519
+
+# Trên server từ xa, kiểm tra authorized_keys
+cat ~/.ssh/authorized_keys
+# Đảm bảo khóa công khai của bạn có ở đó
+
+# Kiểm tra quyền trên server từ xa
+ls -la ~/.ssh/
+# ~/.ssh phải là 700
+# authorized_keys phải là 600
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/authorized_keys
+
+# Kiểm tra xem server có cho phép xác thực khóa công khai không
+sudo grep PubkeyAuthentication /etc/ssh/sshd_config
+# Phải là: PubkeyAuthentication yes
+```
+
+**"WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED"**
+
+Host key của server đã thay đổi, điều mà SSH coi là vấn đề bảo mật tiềm ẩn. Nếu bạn biết điều này là hợp lệ (server được xây dựng lại, IP được gán lại), hãy xóa mục cũ:
+
+```bash
+# Xóa mục host cụ thể
+ssh-keygen -R server.example.com
+
+# Hoặc chỉnh sửa known_hosts thủ công và xóa dòng bị ảnh hưởng
+nano ~/.ssh/known_hosts
+```
+
+**"Bad permissions" hoặc "Permissions too open"**
+
+SSH nghiêm ngặt về quyền file khóa:
+
+```bash
+# Sửa quyền khóa riêng tư
+chmod 600 ~/.ssh/id_ed25519
+
+# Sửa quyền khóa công khai
+chmod 644 ~/.ssh/id_ed25519.pub
+
+# Sửa quyền thư mục .ssh
+chmod 700 ~/.ssh
+```
+
+Trên Windows, quyền khóa riêng tư được quản lý khác nhau. Nhấp chuột phải vào file khóa → Properties → Security → Advanced → Disable inheritance → Xóa tất cả trừ tài khoản người dùng của bạn, cấp Full control chỉ cho chính bạn.
+
+### Thiết Lập và Dùng ssh-agent
+
+Nếu bạn liên tục được hỏi passphrase, `ssh-agent` không chạy hoặc khóa của bạn chưa được thêm:
+
+```bash
+# Khởi động agent
+eval "$(ssh-agent -s)"
+# Agent pid 12345
+
+# Thêm khóa của bạn
+ssh-add ~/.ssh/id_ed25519
+# Enter passphrase for /home/user/.ssh/id_ed25519:
+# Identity added: /home/user/.ssh/id_ed25519
+
+# Xác minh
+ssh-add -l
+# 256 SHA256:abc123... your@email.com (ED25519)
+```
+
+### Điền Trước known_hosts trong Tự Động Hóa
+
+Trong pipeline CI/CD, dùng `ssh-keyscan` để thêm dấu vân tay host từ xa trước khi kết nối:
+
+```bash
+ssh-keyscan -H server.example.com >> ~/.ssh/known_hosts
+ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+```
+
+Điều này ngăn các prompt dấu vân tay tương tác trong các script tự động.
+
+## Câu Hỏi Thường Gặp
+
+### Làm thế nào để sửa lỗi "Permission denied (publickey)"?
+
+Thực hiện danh sách kiểm tra này: (1) Xác minh khóa của bạn có trong SSH agent: `ssh-add -l`. Nếu không, chạy `ssh-add ~/.ssh/id_ed25519`. (2) Kiểm tra xem khóa công khai của bạn có trong file `~/.ssh/authorized_keys` của server không. (3) Xác minh quyền: `~/.ssh` phải là `700`, `authorized_keys` phải là `600`. (4) Kiểm tra server có `PubkeyAuthentication yes` trong `/etc/ssh/sshd_config` không. (5) Dùng `ssh -vvv user@server` để thấy chính xác nơi xác thực thất bại. Output verbose sẽ cho bạn biết khóa nào đang được thử và liệu server có chấp nhận chúng không.
+
+### Làm thế nào để thêm SSH key của tôi vào ssh-agent?
+
+Chạy `ssh-add ~/.ssh/id_ed25519` (thay thế bằng tên file khóa của bạn). Nếu agent không chạy, khởi động trước bằng `eval "$(ssh-agent -s)"`. Trên macOS, dùng `ssh-add --apple-use-keychain ~/.ssh/id_ed25519` để lưu passphrase trong Keychain. Trên Windows, bật dịch vụ `ssh-agent` bằng `Start-Service ssh-agent` rồi chạy `ssh-add`. Bạn chỉ cần chạy `ssh-add` một lần mỗi phiên (hoặc một lần mãi mãi, với Keychain trên macOS).
+
+### Tôi có thể có nhiều SSH key không?
+
+Có, và đó là thực hành tốt. Tạo các khóa riêng biệt cho các mục đích khác nhau — ví dụ, một cho GitHub cá nhân, một cho GitLab công việc, một cho server sản xuất. Dùng `~/.ssh/config` để ánh xạ mỗi host với khóa cụ thể của nó bằng `IdentityFile`. Có các khóa riêng biệt có nghĩa là thu hồi một cái (bằng cách xóa nó khỏi dịch vụ hoặc server) không ảnh hưởng đến các cái khác, giới hạn phạm vi thiệt hại của việc khóa bị xâm phạm.
+
+### Làm thế nào để thay đổi passphrase trên SSH key?
+
+Dùng `ssh-keygen -p`:
+
+```bash
+ssh-keygen -p -f ~/.ssh/id_ed25519
+```
+
+Bạn sẽ được hỏi passphrase hiện tại, sau đó được yêu cầu nhập và xác nhận passphrase mới. Khóa (và do đó khóa công khai) không thay đổi — bạn không cần cập nhật nó ở bất kỳ đâu. Điều này hữu ích nếu bạn nghi ngờ passphrase của mình đã bị xâm phạm hoặc muốn xoay vòng nó như một thực hành bảo mật thường xuyên.
+
+### Làm thế nào để xóa SSH key cũ khỏi server?
+
+Mở `~/.ssh/authorized_keys` trên server và xóa dòng chứa khóa công khai cũ:
+
+```bash
+# Chỉnh sửa authorized_keys trên server từ xa
+ssh user@server.example.com
+nano ~/.ssh/authorized_keys
+# Xóa dòng cho khóa bạn muốn xóa
+# Lưu và thoát
+```
+
+Mỗi dòng trong `authorized_keys` là một khóa công khai. Chú thích của khóa (trường cuối cùng, thường là `user@hostname` hoặc email) giúp xác định khóa nào là khóa nào. Nếu bạn không biết dòng nào cần xóa, hãy so sánh dấu vân tay:
+
+```bash
+# Trên máy cục bộ của bạn, lấy dấu vân tay
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+
+# Trên server, kiểm tra dấu vân tay của tất cả khóa được ủy quyền
+ssh-keygen -lf ~/.ssh/authorized_keys
+```
+
+Khớp dấu vân tay để xác định và xóa khóa đúng.
+
+## Tạo SSH Key Của Bạn Miễn Phí
+
+Nếu bạn chưa tạo cặp SSH key, trình tạo trực tuyến miễn phí của chúng tôi tạo khóa Ed25519 hoặc RSA trực tiếp trong trình duyệt của bạn trong vài giây. Không cần cài đặt, không có gì được gửi đến server của chúng tôi — việc tạo hoàn toàn xảy ra trên thiết bị của bạn.
+
+<a href="/">Tạo SSH key của bạn miễn phí →</a>
+
+---
+
+**Đọc thêm:**
+- <a href="/vi/what-is-ssh">SSH Là Gì? Hướng Dẫn Đầy Đủ về Secure Shell</a>
+- <a href="/vi/what-is-an-ssh-key">SSH Key Là Gì? Khóa Công Khai, Khóa Riêng Tư và Cặp Khóa Được Giải Thích</a>
+- <a href="/vi/ssh-command">Lệnh SSH: Tài Liệu Tham Khảo Đầy Đủ với Ví Dụ</a>

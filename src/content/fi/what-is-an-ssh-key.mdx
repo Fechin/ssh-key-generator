@@ -1,0 +1,337 @@
+# Mikä on SSH-avain? Julkiset avaimet, yksityiset avaimet ja avainparit selitetty
+
+**SSH-avain** on salaustieto, jota käytetään SSH-palvelimien todentamiseen ilman salasanaa. SSH-avaimet tulevat pareittain — **julkinen avain** ja **yksityinen avain** — ja yhdessä ne tekevät etäkäytöstä turvallisempaa ja kätevämpää kuin perinteinen salasanatodennus. Tämä opas selittää, mikä SSH-avain on, kuinka avainparijärjestelmä toimii, mitkä avaintyypit valita ja kuinka SSH-avaimia käytetään GitHubin ja GitLabin kaltaisten palveluiden kanssa.
+
+## Kuinka SSH-avaimet toimivat
+
+SSH-avaimet perustuvat **epäsymmetriseen salaukseen**, jota kutsutaan myös julkisen avaimen salaukseksi. Toisin kuin symmetrinen salaus (jossa yksi salainen avain sekä salaa että purkaa tiedot), epäsymmetriset järjestelmät käyttävät matemaattisesti yhdistettyjä avainpareja, joissa yhdellä avaimella salatun tiedon salaus voidaan purkaa vain toisella.
+
+Tässä on todennuskulku, kun käytät SSH-avainta kirjautuessasi palvelimelle:
+
+1. Käytät `ssh user@server.example.com`.
+2. Palvelin etsii julkisen avaimesi osoitteesta `~/.ssh/authorized_keys`.
+3. Palvelin luo satunnaisen haasteen ja salaa sen julkisella avaimellasi.
+4. SSH-asiakkaasi purkaa haasteen salauksen käyttämällä yksityistä avaimesi.
+5. Asiakas lähettää salaustodisteen (johdettu salauksesta puretusta haasteesta ja istuntotunnuksesta) takaisin palvelimelle.
+6. Palvelin tarkistaa todisteen. Vain yksityisen avaimen haltija olisi voinut tuottaa sen.
+7. Todennus onnistuu. Mikään salasana ei koskaan poistu koneeltasi.
+
+Tämä on keskeinen näkemys: **yksityinen avaimesi ei koskaan kulje verkon yli**. Palvelin näkee vain julkisen avaimesi ja tuottamasi kryptografiset todisteet. Vaikka joku sieppaisi jokaisen SSH-istunnon paketin, hän ei saa mitään, mikä auttaisi häntä matkimaan sinua.
+
+Lisätietoja laajemmasta SSH-protokollasta on oppaassamme <a href="/fi/what-is-ssh">mitä SSH on</a>.
+
+## Julkinen avain vs. yksityinen avain: mitä eroa on?
+
+Näiden kahden avaimen eron ymmärtäminen on välttämätöntä SSH:n oikean käytön kannalta.
+
+### Julkinen avain – lukkosi
+
+**Julkinen avain** on suunniteltu jaettavaksi vapaasti. Ajattele sitä riippulukkona: jaat kopiot kaikille, joiden järjestelmiä haluat käyttää. Kun palvelimella on julkinen avaimesi `authorized_keys`-tiedostossaan, se voi vahvistaa henkilöllisyytesi tietämättä yksityistä avaimesi.
+
+Julkiset avaimet:
+- Ovat turvallisia jakaa – niitä ei voida käyttää esiintymään sinuna
+- Sijoitetaan palvelimille `~/.ssh/authorized_keys`
+- Ladataan GitHubiin, GitLabiin ja muihin palveluihin
+- Tyypillisesti `.pub`-tunniste (esim. `id_ed25519.pub`)
+- Näytä tältä: `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAA... user@hostname`
+
+### Yksityinen avain – Sinun avaimesi
+
+**yksityinen avain** on parin salainen puolisko. Se ei saa koskaan poistua koneeltasi, eikä sitä saa koskaan jakaa kenenkään kanssa – ei edes järjestelmänvalvojien, ei pilvipalveluntarjoajien tai tukihenkilöstön kanssa. Jos yksityinen avaimesi vaarantuu, kuka tahansa sen hankkinut voi esiintyä sinuna jokaisella palvelimella, jolle julkinen avaimesi on asennettu.
+
+Yksityiset avaimet:
+- Pitää pitää salassa ja turvassa
+- Tallennetaan paikallisesti osoitteeseen `~/.ssh/` rajoitetuin käyttöoikeuksin (600)
+- Vaihtoehtoisesti salataan tunnuslauseella
+- Ei laajennusta tai kielikohtainen laajennus (esim. `id_ed25519`)
+
+### `authorized_keys`-tiedosto
+
+Palvelinpuolella jokaisen käyttäjän julkiset avaimet on tallennettu `~/.ssh/authorized_keys`. Tämä on pelkkä tekstitiedosto, jossa jokainen rivi sisältää yhden julkisen avaimen. Kun SSH-asiakas yrittää todentaa, palvelin tarkistaa, pystyykö asiakas todistamaan hallussaan tämän tiedoston mitä tahansa merkintää vastaavan yksityisen avaimen.
+
+```
+# ~/.ssh/authorized_keys muodossa
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGq... alice@laptop
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHr... alice@workstation
+ssh-rsa AAAAB3NzaC1yc2EAAAA... backup-deploy-key
+```
+
+Tässä tiedostossa voi olla niin monta julkista avainta kuin tarvitset, jolloin useat laitteet tai automaatiojärjestelmät voivat todentaa samalle palvelimelle.
+
+## SSH-avainalgoritmit: Ed25519 vs RSA
+
+Kun luot SSH-avainparin, valitset algoritmin. Nykyään kaksi yleisintä vaihtoehtoa ovat **Ed25519** ja **RSA**. On myös ECDSA ja DSA, mutta DSA on vanhentunut ja ECDSA:ssa on täytäntöönpanoongelmia, joten keskitymme kahteen suositeltuun vaihtoehtoon.
+
+### Ed25519 – Moderni valinta
+
+Ed25519 otettiin käyttöön OpenSSH:n versiossa 6.5 (2014), ja se on nyt suositeltu oletusarvo. Se käyttää elliptisen käyrän kryptografiaa Daniel J. Bernsteinin suunnittelemassa Twisted Edwards -käyrässä (Curve25519).
+
+**Ed25519:n edut:**
+- **Compact** — avaimet ovat vain 68 merkin pituisia (julkinen avain) ja tiedostot ovat pieniä
+- **Nopea** — allekirjoitusten luominen ja vahvistus ovat erittäin nopeita
+- **Suunniteltu suojattu** – ei ole alttiina sivukanavahyökkäyksille, jotka vaikuttavat joihinkin RSA-toteutuksiin
+- **Kiinteä avainkoko** — 256-bittinen suojaustaso, avaimen kokoa ei tarvitse valita
+- **Deterministinen** — allekirjoitukset ovat deterministisiä, mikä eliminoi luokan satunnaislukugeneraattorin vikoja
+
+```bash
+# Luo Ed25519-avainpari
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+### RSA – universaali vaihtoehto
+
+RSA on vanhempi algoritmi (keksitty 1977), ja vaikka se on edelleen turvallinen 4096 bittiä, se on hitaampi ja tuottaa suurempia avaimia kuin Ed25519. RSA:lla on kuitenkin paljon laajempi yhteensopivuus – se toimii hyvin vanhojen SSH-palvelimien, vanhojen järjestelmien ja joidenkin laitteiston suojausavaimien kanssa.
+
+**Milloin RSA:ta käytetään:**
+- Sinun on muodostettava yhteys vanhoihin järjestelmiin, joissa on vanhoja OpenSSH-versioita (ennen 6.5:tä)
+- Käytät älykorttia tai HSM:ää, joka ei tue Ed25519:ää
+- Yhteensopivuus vanhempien työkalujen kanssa vaaditaan
+
+```bash
+# Luo RSA 4096-bittinen avainpari
+ssh-keygen -t rsa -b 4096 -C "your@email.com"
+```
+
+**Älä koskaan käytä alle 4096 bitin RSA:ta.** RSA-1024:ää ja RSA-2048:aa pidetään yhä useammin riittämättöminä laskentatehon kasvaessa. Ed25519 256 bittiä tarjoaa vastaavan tai paremman suojan avaimen koon murto-osalla.
+
+### Yhteenvetovertailu
+
+| Ominaisuus | Ed25519 | RSA 4096 |
+|---|---|---|
+| Avaimen koko (julkinen) | ~68 merkkiä | ~725 merkkiä |
+| Turvataso | 128-bittinen (kvantin jälkeinen kestävä rakenne) | ~140-bittinen klassinen |
+| Nopeus | Erittäin nopea | Hitaammin |
+| Yhteensopivuus | Moderni SSH (OpenSSH 6.5+) | Universaali |
+| Suositellaan | Kaikki uudet avaimet | Vain vanhat järjestelmät |
+
+**Alhainen rivi: luo Ed25519-avaimia mihin tahansa nykyaikaiseen käyttöön.** Käytä RSA:ta vain yhteensopivuusvaatimusten pakottaessa.
+
+## Kuinka lisätä SSH-avain GitHubiin
+
+Lisäämällä julkisen SSH-avaimesi GitHubiin voit työntää ja vetää SSH:ta syöttämättä käyttäjänimeäsi ja salasanaasi jokaisessa toiminnossa. Tässä on vaiheittainen prosessi.
+
+### Vaihe 1: Luo avainpari
+
+Jos sinulla ei vielä ole SSH-avainparia, luo sellainen. Voit käyttää <a href="/">ilmaista online-SSH-avaingeneraattoriamme</a> tai suorittaa:
+
+```bash
+ssh-keygen -t ed25519 -C "your-github-email@example.com"
+```
+
+Hyväksy tiedoston oletussijainti (`~/.ssh/id_ed25519`) ja aseta valinnaisesti tunnuslause.
+
+### Vaihe 2: Kopioi julkinen avaimesi
+
+Näytä julkinen avaimesi ja kopioi se leikepöydällesi:
+
+```bash
+# Linux
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+
+# macOS
+cat ~/.ssh/id_ed25519.pub | pbcopy
+
+# Windows (PowerShell)
+Get-Content ~/.ssh/id_ed25519.pub | Set-Clipboard
+```
+
+Tai näytä se ja kopioi manuaalisesti:
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+### Vaihe 3: Lisää avain GitHubiin
+
+1. Kirjaudu sisään **GitHub.com**
+2. Napsauta profiilikuvaasi → **Asetukset**
+3. Napsauta vasemmassa sivupalkissa **SSH- ja GPG-avaimet**
+4. Napsauta **Uusi SSH-avain**
+5. Anna sille kuvaava otsikko (esim. "MacBook Pro 2024" tai "työkannettava")
+6. Liitä julkinen avaimesi **Avain**-kenttään
+7. Napsauta **Lisää SSH-avain**
+
+### Vaihe 4: Testaa yhteys
+
+```bash
+ssh -T git@github.com
+```
+
+Sinun pitäisi nähdä: `Hi username! You've successfully authenticated, but GitHub does not provide shell access.`
+
+### Olemassa olevan arkiston vaihtaminen SSH:hon
+
+Jos kloonasit tietovaraston HTTPS:llä ja haluat vaihtaa SSH:han:
+
+```bash
+# Tarkista nykyinen etä-URL
+git remote -v
+
+# Päivitys SSH:hon
+git remote set-url origin git@github.com:username/repository.git
+```
+
+GitLabissa prosessi on identtinen - siirry kohtaan **Asetukset → SSH-avaimet** ja noudata samoja vaiheita.
+
+## Missä SSH-avaimet säilytetään?
+
+SSH-avaimet tallennetaan käyttäjän kotikansiossa olevaan hakemistoon `.ssh`. Sijainti vaihtelee käyttöjärjestelmän mukaan.
+
+### Linux ja macOS
+
+```
+~/.ssh/
+├── id_ed25519          # Your private key (permissions: 600)
+├── id_ed25519.pub      # Your public key (permissions: 644)
+├── id_rsa              # An RSA private key (if you have one)
+├── id_rsa.pub          # The RSA public key
+├── authorized_keys     # Public keys allowed to log into this machine
+├── known_hosts         # Fingerprints of servers you have connected to
+└── config              # Client configuration file
+```
+
+Itse `~/.ssh/`-hakemistolla on oltava **700**-oikeudet (vain omistajan luku-/kirjoitus-/suoritusoikeus). Yksityisillä avaintiedostoilla on oltava **600**-oikeudet (vain omistajan luku-/kirjoitusoikeus). SSH kieltäytyy käyttämästä avaimia, joilla on liian sallitut oikeudet.
+
+```bash
+# Korjaa käyttöoikeudet tarvittaessa
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/id_ed25519
+chmod 644 ~/.ssh/id_ed25519.pub
+```
+
+### Windows
+
+Windows 10- ja 11-käyttöjärjestelmissä, joissa OpenSSH on asennettu, SSH-avaimet tallennetaan:
+
+```
+C:\Users\YourUsername\.ssh\
+├── id_ed25519
+├── id_ed25519.pub
+├── authorized_keys
+├── known_hosts
+└── config
+```
+
+Windowsissa voit käyttää `.ssh`-hakemistoa Resurssienhallinnasta (sinun on ehkä otettava käyttöön "Näytä piilotetut tiedostot") tai PowerShellistä käyttämällä `~\.ssh\`.
+
+### Useita avaintiedostoja
+
+Jos sinulla on avaimia eri tarkoituksiin (henkilökohtainen GitHub, työ GitLab, tuotantopalvelimet), yhdistä kukin isäntä avaimeensa `~/.ssh/config`-tiedoston avulla:
+
+```
+Host github.com
+    IdentityFile ~/.ssh/id_ed25519_github
+
+Host gitlab.work.com
+    IdentityFile ~/.ssh/id_ed25519_work
+
+Host prod-server
+    HostName 203.0.113.10
+    User deploy
+    IdentityFile ~/.ssh/id_ed25519_production
+```
+
+## SSH-avainsalasanat
+
+Kun luot SSH-avainparin, `ssh-keygen` kysyy, haluatko asettaa **salalauseen**. Tämä on valinnainen salasana, joka salaa levyllä olevan yksityisen avaintiedoston.
+
+### Miksi käyttää tunnuslausetta?
+
+Jos yksityisen avaimen tiedostosi on suojattu vahvalla tunnuslauseella, tiedoston varastaminen ei riitä esiintymään sinuna – hyökkääjän tulee myös murtaa salasana. Tämä tarjoaa kriittisen toisen suojakerroksen, erityisesti kannettavissa tietokoneissa, jotka voidaan varastaa fyysisesti.
+
+Ilman salasanaa yksityinen avaimesi tallennetaan pelkkänä tekstinä levylle. Kuka tahansa, joka pystyy lukemaan tiedoston (haittaohjelman, fyysisen käytön tai varmuuskopion kautta, jota ei ole suojattu kunnolla), voi käyttää sitä välittömästi.
+
+### Kuinka salasanat ovat vuorovaikutuksessa ssh-agentin kanssa
+
+Tunnuslauseen haittapuoli on sen kirjoittaminen joka kerta, kun käytät avainta. **ssh-agent** ratkaisee tämän pitämällä salauksesta purettuja avaimia muistissa koko istunnon ajan.
+
+```bash
+# Käynnistä ssh-agent ja lisää avain
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+# Anna tunnuslause kerran – se on nyt istunnon välimuistissa
+```
+
+MacOS-käyttöjärjestelmässä Keychain-järjestelmä integroituu ssh-agentin kanssa. Lisää `-K` säilyttääksesi uudelleenkäynnistyksen:
+
+```bash
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+```
+
+### Salasanan vaihtaminen
+
+Voit muuttaa olemassa olevan avaimen tunnuslausetta luomatta avainparia uudelleen:
+
+```bash
+ssh-keygen -p -f ~/.ssh/id_ed25519
+```
+
+Tämä pyytää antamaan vanhan tunnuslauseen, jonka jälkeen voit asettaa uuden. Julkinen avain ei muutu, joten sinun ei tarvitse päivittää sitä millään palvelimilla.
+
+## SSH-avaimen sormenjäljet
+
+Jokaisella SSH-avainparilla on **sormenjälki** – lyhyt tiiviste julkisesta avaimesta, joka yksilöi sen. Sormenjäljet ​​palvelevat useita tarkoituksia:
+
+- **Tarkista isäntäidentiteetti** — Kun muodostat ensimmäisen yhteyden palvelimeen, SSH näyttää sinulle isäntäavaimen sormenjäljen. Jos vahvistat, että se vastaa odotuksiasi (esim. isännöintipalveluntarjoajaltasi), tiedät muodostavasi yhteyden oikeaan palvelimeen.
+- **Tunnista avaimet** — Kun hallitset useita avaimia, sormenjäljet ​​auttavat sinua tunnistamaan, mikä fyysinen avain vastaa mitäkin merkintää `authorized_keys` tai palvelussa, kuten GitHub.
+- **Tarkastus ja peruutus** — Tarkastuslokit tallentavat usein sormenjälkiä koko avainten sijaan. Avaimen sormenjäljen tunteminen auttaa sinua löytämään ja tarvittaessa poistamaan sen.
+
+### Avaimen sormenjäljen katsominen
+
+```bash
+# Tarkastele julkisen avaimesi sormenjälkeä
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+# Lähtö: 256 SHA256:abcdef1234567890... your@email.com (ED25519)
+
+# Näytä palvelimen isäntäavaimen sormenjälki
+ssh-keyscan server.example.com | ssh-keygen -lf -
+```
+
+GitHub näyttää kaikkien lisättyjen SSH-avainten sormenjäljet ​​kohdassa **Asetukset → SSH- ja GPG-avaimet**, jolloin voit varmistaa, että siellä näkemäsi avain vastaa koneesi avainta.
+
+### `known_hosts`-tiedosto
+
+Kun muodostat ensimmäisen yhteyden uuteen SSH-palvelimeen, näet seuraavanlaisen viestin:
+
+```
+The authenticity of host 'example.com (203.0.113.10)' can't be established.
+ED25519 key fingerprint is SHA256:abcdef1234567890...
+Are you sure you want to continue connecting (yes/no/[fingerprint])?
+```
+
+Kirjoita `yes` ja palvelimen sormenjälki lisätään `~/.ssh/known_hosts`. Seuraavissa yhteyksissä SSH tarkistaa hiljaa, että palvelimen avain vastaa tallennettua sormenjälkeä. Jos se ei täsmää – mikä voi olla merkki virheellisestä määrityksestä tai välimieshyökkäyksestä – SSH varoittaa sinua äänekkäästi ja kieltäytyy muodostamasta yhteyttä.
+
+## Usein kysyttyjä kysymyksiä
+
+### Mihin SSH-avainta käytetään?
+
+SSH-avaimet todentavat sinut etäpalvelimille ilman salasanaa. Yleisimmät käyttötavat ovat: kirjautuminen Linux/Unix-palvelimiin hallintaa varten, todennus Git-isännöintipalveluilla (GitHub, GitLab, Bitbucket) push/pull-käyttöä varten, automaattiset käyttöönottoskriptit, jotka vaativat salasanattoman palvelimen pääsyn, ja CI/CD-putkistot, jotka ottavat käyttöön koodin tuotantoon. SSH-avaimia suositaan salasanoihin verrattuna, koska ne ovat immuuneja raakaa voimaa vastaan, niitä ei voi käyttää uudelleen tietomurtojen yhteydessä ja niitä voidaan käyttää ilman ihmisen vuorovaikutusta.
+
+### Kuinka monta SSH-avainta minulla pitäisi olla?
+
+Ei ole yhtä oikeaa vastausta, mutta yleinen paras käytäntö on **yksi avain laitetta kohden** (ei palvelua kohti). Kannettavassasi on yksi avainpari; työpöydälläsi on toinen; CI-palvelimellasi on toinen. Tällä tavalla, jos laite varastetaan tai se vaarantuu, peruutat vain kyseisen laitteen avaimen. Jotkut ihmiset jakautuvat edelleen kontekstin mukaan (henkilökohtainen vs. työ), jolloin laitetta kohden on kaksi avainta. Vältä yhden avaimen jakamista useille koneille – jos avain vaarantuu, kaikki käyttöoikeutesi ovat vaarassa samanaikaisesti.
+
+### Voinko jakaa julkisen SSH-avaimeni?
+
+Kyllä. Julkinen avain on suunniteltu jaettavaksi. On turvallista lähettää se sähköpostitse, lähettää se GitHub-dokumentaatioon tai sisällyttää se lippuun, jossa pyydetään pääsyä palvelimelle. Pelkkää julkista avainta ei voida käyttää todentamiseen kuten sinä – se vaatii vastaavan yksityisen avaimen, joka vain sinulla on. Tämä on epäsymmetrisen kryptografian perusominaisuus. Älä koskaan jaa **yksityistä** avaintasi kenenkään kanssa.
+
+### Mitä tapahtuu, jos kadotan yksityisen SSH-avaimeni?
+
+Jos kadotat yksityisen avaimesi eikä sinulla ole varmuuskopiota, menetät kyvyn todentaa sillä. Julkisesta avaimestasi, joka on edelleen asennettu palvelimille ja palveluihin, tulee orpo. Tarvitset vaihtoehtoisen tavan käyttää palvelinta (salasanan todennus, jos käytössä, konsolikäyttö, palveluntarjoajasi hätäkäyttömekanismi), jotta voit poistaa vanhan julkisen avaimen `authorized_keys` ja lisätäksesi uuden. Tästä syystä yksityisen avaimesi varmuuskopiointi (salasanahallintaohjelmassa tai salatussa varmuuskopiossa) on tärkeää. Yksityistä avainta ei voida rekonstruoida julkisesta avaimesta.
+
+### Onko Ed25519 vai RSA parempi?
+
+**Ed25519 on parempi kaikille uusille avainten sukupolville.** Se on nopeampi, tuottaa pienempiä avaimia, ei ole alttiina tietyille RSA:han vaikuttaville toteutuksen heikkouksille ja tarjoaa vastaavan tai paremman suojan 256-bittisellä avaimella kuin RSA-4096. Ainoa syy käyttää RSA:ta nykyään on yhteensopivuus erittäin vanhojen SSH-palvelinohjelmistojen (OpenSSH ennen versiota 6.5, julkaistu vuonna 2014) tai vanhojen laitteistoturvamoduulien kanssa. Jos käytät modernia palvelinta tai palvelua, kuten GitHub, käytä Ed25519:ää.
+
+## Luo SSH-avainparisi
+
+Oletko valmis luomaan SSH-avaimet? Ilmainen online-generaattorimme luo Ed25519- tai RSA-avainparit suoraan selaimeesi. Yksityinen avain luodaan paikallisesti, eikä sitä koskaan lähetetä palvelimillemme.
+
+<a href="/">Luo ​​SSH-avainparisi nyt →</a>
+
+---
+
+**Lisälukemista:**
+- <a href="/fi/what-is-ssh">Mikä on SSH? Secure Shellin täydellinen opas</a>
+- <a href="/fi/ssh-command">SSH-komento: täydellinen viite esimerkkeineen</a>
+- <a href="/fi/how-to-set-up-ssh">SSH:n käyttöönotto: Täydellinen vaiheittainen opas</a>

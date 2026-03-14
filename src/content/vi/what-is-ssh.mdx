@@ -1,0 +1,283 @@
+# SSH Là Gì? Hướng Dẫn Đầy Đủ về Secure Shell
+
+SSH, viết tắt của **Secure Shell**, là giao thức mạng mã hóa cho phép bạn truy cập và quản lý máy tính từ xa một cách an toàn qua mạng không được bảo mật. Dù bạn đang đăng nhập vào máy chủ Linux, đẩy code lên GitHub hay truyền tệp giữa các máy, SSH gần như chắc chắn là giao thức đang làm việc đằng sau. Hướng dẫn này giải thích mọi thứ bạn cần biết về SSH: nó là gì, hoạt động như thế nào và tại sao nó trở thành tiêu chuẩn phổ quát cho truy cập từ xa an toàn.
+
+## SSH Là Viết Tắt Của Gì?
+
+**SSH là viết tắt của Secure Shell**. Cái tên mô tả chính xác giao thức này làm gì — nó cung cấp một phiên shell được mã hóa an toàn đến máy từ xa. Trước khi SSH tồn tại, các quản trị viên dùng các công cụ như Telnet và rsh (remote shell) để quản lý máy chủ từ xa. Những giao thức đó truyền mọi thứ dưới dạng văn bản thuần túy, bao gồm cả tên người dùng và mật khẩu, khiến chúng cực kỳ dễ bị nghe lén trên bất kỳ mạng dùng chung nào.
+
+SSH được tạo ra bởi nhà khoa học máy tính người Phần Lan **Tatu Ylönen** vào năm 1995, xuất phát trực tiếp từ một cuộc tấn công đánh cắp mật khẩu ông chứng kiến trên mạng của trường đại học. Ông phát hành SSH-1 dưới dạng phần mềm tự do và nó nhanh chóng được áp dụng rộng rãi trên internet. Giao thức sau đó được IETF chuẩn hóa thành SSH-2 (RFC 4251–4254), giới thiệu mật mã học mạnh hơn và khắc phục một số điểm yếu bảo mật trong thiết kế ban đầu.
+
+Ngày nay, khi mọi người nói "SSH", họ hầu như luôn có ý SSH-2. Triển khai được sử dụng rộng rãi nhất là **OpenSSH**, một dự án mã nguồn mở được duy trì bởi nhóm OpenBSD và đi kèm với hầu hết mọi bản phân phối Linux và cài đặt macOS.
+
+**Ý nghĩa thực tế của SSH** vượt ra ngoài chỉ là công cụ đăng nhập. Đây là một bộ giao thức đầy đủ làm nền tảng cho:
+- Truy cập terminal từ xa an toàn
+- Truyền tệp được mã hóa (SFTP và SCP)
+- Xác thực Git (GitHub, GitLab, Bitbucket)
+- Chuyển tiếp cổng và tạo tunnel an toàn
+- Pipeline triển khai tự động
+
+## SSH Hoạt Động Như Thế Nào
+
+**Giao thức secure shell** hoạt động trên kiến trúc phân lớp xử lý mã hóa, xác thực và ghép kênh riêng biệt. Hiểu các lớp này giúp làm rõ tại sao SSH được tin cậy cho các hoạt động nhạy cảm.
+
+### Ba Lớp Giao Thức
+
+**1. Lớp Transport (RFC 4253)**
+
+Khi bạn khởi tạo kết nối SSH, client và server đầu tiên thực hiện bắt tay để thương lượng các thuật toán mã hóa và thiết lập khóa bí mật chung. Điều này sử dụng thuật toán trao đổi khóa — SSH hiện đại mặc định dùng trao đổi khóa dựa trên Curve25519. Sau khi bắt tay, tất cả giao tiếp tiếp theo đều được mã hóa. Lớp transport cũng cung cấp tính toàn vẹn dữ liệu thông qua mã xác thực thông điệp (MAC), đảm bảo dữ liệu không thể bị giả mạo trong quá trình truyền.
+
+**2. Lớp Xác Thực Người Dùng (RFC 4252)**
+
+Sau khi kênh mã hóa được thiết lập, server yêu cầu client xác thực. SSH hỗ trợ nhiều phương thức xác thực:
+
+- **Xác thực khóa công khai** — Client chứng minh quyền sở hữu khóa riêng tư mà không bao giờ gửi nó qua mạng. Đây là phương thức an toàn và phổ biến nhất.
+- **Xác thực mật khẩu** — Mật khẩu của người dùng được gửi qua kênh mã hóa. Tiện lợi hơn nhưng dễ bị tấn công brute force.
+- **Keyboard-interactive** — Cơ chế thách thức/phản hồi, thường dùng cho xác thực đa yếu tố.
+- **GSSAPI/Kerberos** — Dùng trong môi trường doanh nghiệp với quản lý danh tính tập trung.
+
+**3. Lớp Kết Nối (RFC 4254)**
+
+Sau khi xác thực, lớp kết nối ghép kênh một kết nối mã hóa đơn thành nhiều kênh logic. Đây là điều cho phép bạn có shell tương tác, chạy lệnh từ xa, chuyển tiếp cổng và truyền tệp — tất cả qua một kết nối TCP duy nhất.
+
+### Chi Tiết Trao Đổi Khóa
+
+Khi bạn gõ `ssh user@example.com`, đây là những gì xảy ra trong vài mili giây đầu tiên:
+
+1. Client kết nối đến cổng TCP 22 trên server.
+2. Cả hai bên trao đổi chuỗi phiên bản giao thức.
+3. Cả hai bên gửi danh sách các thuật toán được hỗ trợ (trao đổi khóa, mã hóa, MAC, nén).
+4. Họ thực hiện trao đổi khóa Diffie-Hellman hoặc ECDH để tạo khóa phiên chung — đây là lý do tại sao ngay cả khi ai đó ghi lại lưu lượng đã mã hóa, họ không thể giải mã sau này.
+5. Server gửi **khóa host** (khóa công khai), mà client xác minh so với file `~/.ssh/known_hosts`.
+6. Xác thực tiến hành như mô tả ở trên.
+7. Phiên bắt đầu.
+
+## SSH vs Telnet: Tại Sao SSH Thắng
+
+Trước SSH, **Telnet** là giao thức tiêu chuẩn cho truy cập terminal từ xa. Telnet đơn giản và vẫn hoạt động, nhưng có một lỗ hổng nghiêm trọng: mọi thứ được truyền dưới dạng văn bản thuần túy. Tên người dùng, mật khẩu, mọi lệnh bạn gõ và mọi đầu ra — tất cả đều có thể nhìn thấy bởi bất kỳ ai có thể nghe lén lưu lượng mạng.
+
+Vào những năm 1990, khi xương sống internet là các mạng học thuật và nghiên cứu đáng tin cậy, điều này không được coi là vấn đề nghiêm trọng. Khi internet trở nên thương mại và có nhiều mối đe dọa hơn, các công cụ như Dsniff và Ettercap khiến việc bắt thông tin đăng nhập Telnet trên mạng nội bộ trở nên tầm thường.
+
+SSH giải quyết điều này bằng cách mã hóa mọi thứ. Đây là so sánh trực tiếp:
+
+| Tính năng | Telnet | SSH |
+|---|---|---|
+| Mã hóa | Không có | Mạnh (AES, ChaCha20) |
+| Xác thực | Mật khẩu văn bản thuần túy | Khóa công khai + mật khẩu mã hóa |
+| Tính toàn vẹn dữ liệu | Không có | Xác minh HMAC |
+| Cổng | 23 | 22 |
+| Vẫn được khuyến nghị | Không | Có |
+
+rsh (remote shell) và rlogin có vấn đề tương tự. Chúng cũng dựa vào sự tin cậy dựa trên IP, vốn dễ bị giả mạo. SSH đã thay thế tất cả những giao thức này và vẫn là tiêu chuẩn không thể tranh cãi trong hơn 25 năm.
+
+## SSH Key Là Gì?
+
+SSH hỗ trợ hai phương thức xác thực chính: mật khẩu và **SSH key**. SSH key là cặp khóa mật mã — **khóa công khai** và **khóa riêng tư** — dựa trên mật mã học bất đối xứng.
+
+**Khóa riêng tư** lưu trên máy cục bộ của bạn, được bảo vệ bằng passphrase tùy chọn. **Khóa công khai** được đặt trên bất kỳ server nào bạn muốn truy cập, trong file `~/.ssh/authorized_keys`. Khi bạn kết nối, server đưa ra thách thức mật mã mà chỉ người sở hữu khóa riêng tư tương ứng mới có thể trả lời. Không có mật khẩu nào được gửi qua mạng.
+
+Cách tiếp cận này có một số ưu điểm:
+- **Miễn nhiễm với brute force** — không có gì để đoán. Khóa Ed25519 256-bit có 2²⁵⁶ giá trị có thể.
+- **Không có mật khẩu để đánh cắp** — ngay cả khi ai đó chặn bắt tay, họ không thu được gì hữu ích.
+- **Có thể tự động hóa** — script và pipeline CI/CD có thể xác thực mà không cần tương tác của con người.
+- **Có thể thu hồi** — xóa khóa công khai khỏi `authorized_keys` ngay lập tức thu hồi quyền truy cập.
+
+Loại khóa hiện đại và được khuyến nghị nhất là **Ed25519**, sử dụng mật mã học đường cong elliptic trên đường cong Edwards. Khóa RSA cũng được hỗ trợ rộng rãi, dù bạn nên dùng tối thiểu 4096 bit.
+
+Để tìm hiểu sâu về các cặp khóa, xem hướng dẫn của chúng tôi về <a href="/vi/what-is-an-ssh-key">SSH key là gì</a>.
+
+## Các Trường Hợp Sử Dụng SSH Phổ Biến
+
+SSH được sử dụng trong nhiều tình huống đáng kinh ngạc. Đây là những tình huống quan trọng nhất.
+
+### Quản Trị Server Từ Xa
+
+Trường hợp sử dụng cơ bản nhất. Quản trị viên hệ thống đăng nhập vào server Linux và Unix để cài đặt phần mềm, chỉnh sửa tệp cấu hình, quản lý dịch vụ và chẩn đoán sự cố — tất cả qua phiên terminal SSH.
+
+```bash
+ssh user@192.168.1.100
+ssh admin@myserver.example.com
+ssh -p 2222 deploy@staging.example.com
+```
+
+### Truyền Tệp với SFTP và SCP
+
+SSH cung cấp hai giao thức truyền tệp xây dựng trên cùng kênh mã hóa:
+
+**SCP (Secure Copy Protocol)** là công cụ dòng lệnh đơn giản để sao chép tệp:
+
+```bash
+# Sao chép tệp cục bộ lên server từ xa
+scp report.pdf user@server:/home/user/documents/
+
+# Sao chép tệp từ xa về máy cục bộ
+scp user@server:/var/log/app.log ./local-copy.log
+
+# Sao chép toàn bộ thư mục đệ quy
+scp -r ./project/ user@server:/var/www/
+```
+
+**SFTP (SSH File Transfer Protocol)** cung cấp giao diện tương tác kiểu FTP với tính năng phong phú hơn SCP, bao gồm tiếp tục truyền và liệt kê thư mục.
+
+### Xác Thực Git
+
+Khi bạn thêm SSH key vào GitHub, GitLab hoặc Bitbucket, mọi lệnh `git clone`, `git push` và `git pull` qua SSH đều được xác thực bằng khóa riêng tư của bạn. Điều này loại bỏ nhu cầu nhập tên người dùng và mật khẩu với mỗi thao tác Git và là phương thức xác thực được khuyến nghị cho developer.
+
+```bash
+# Clone repository bằng SSH
+git clone git@github.com:username/repository.git
+
+# Xác minh kết nối SSH GitHub của bạn
+ssh -T git@github.com
+```
+
+### Triển Khai Tự Động và CI/CD
+
+Các script triển khai và hệ thống CI/CD như GitHub Actions, GitLab CI và Jenkins sử dụng SSH key để triển khai code lên server sản xuất mà không cần can thiệp thủ công. Khóa riêng tư được lưu trữ dưới dạng secret trong hệ thống CI, và khóa công khai tương ứng được thêm vào file `authorized_keys` của server.
+
+### Chuyển Tiếp Cổng Cơ Sở Dữ Liệu và Ứng Dụng
+
+SSH tunneling có thể an toàn hiển thị các dịch vụ từ xa cho máy cục bộ của bạn. Ví dụ, để truy cập cơ sở dữ liệu MySQL từ xa không được expose ra internet:
+
+```bash
+ssh -L 3307:localhost:3306 user@dbserver.example.com -N
+```
+
+Điều này tạo tunnel cục bộ: kết nối đến cổng 3307 trên máy của bạn trong suốt chuyển tiếp lưu lượng đến cổng 3306 trên server từ xa, được mã hóa trong tunnel SSH.
+
+## Cổng SSH và Các Tùy Chọn Cấu Hình
+
+### Cổng Mặc Định 22
+
+SSH lắng nghe trên **cổng TCP 22** theo mặc định. Đây là cổng nổi tiếng được IANA chỉ định đã được dành riêng cho SSH từ khi giao thức được tạo ra. Khi bạn chạy `ssh user@host` mà không chỉ định cổng, SSH client kết nối đến cổng 22.
+
+Một số quản trị viên thay đổi cổng SSH (ví dụ sang 2222 hoặc 8022) như biện pháp bảo mật nhỏ để giảm tiếng ồn quét tự động trong log. Điều này được gọi là "bảo mật qua mơ hồ" và không thay thế xác thực dựa trên khóa thích hợp, nhưng có thể giảm nhiễu log.
+
+```bash
+# Kết nối đến cổng SSH không chuẩn
+ssh -p 2222 user@example.com
+```
+
+### File Cấu Hình SSH Client
+
+Thay vì gõ các tùy chọn dòng lệnh dài mỗi lần, bạn có thể cấu hình kết nối SSH trong `~/.ssh/config`. File này cho phép bạn định nghĩa alias, đặt các tùy chọn theo từng host và đơn giản hóa đáng kể quy trình làm việc của bạn.
+
+```
+Host myserver
+    HostName 203.0.113.10
+    User deploy
+    Port 2222
+    IdentityFile ~/.ssh/id_ed25519_prod
+
+Host bastion
+    HostName jump.example.com
+    User ec2-user
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host internal
+    HostName 10.0.1.50
+    User ubuntu
+    ProxyJump bastion
+```
+
+Với cấu hình này, `ssh myserver` kết nối đến hostname đầy đủ trên cổng tùy chỉnh bằng khóa được chỉ định — không cần flag nào.
+
+Để tham khảo đầy đủ về các tùy chọn và flag lệnh SSH, xem <a href="/vi/ssh-command">hướng dẫn lệnh SSH</a> của chúng tôi.
+
+### Cấu Hình Phía Server (sshd_config)
+
+Daemon SSH server (sshd) được cấu hình qua `/etc/ssh/sshd_config`. Các cài đặt quan trọng bao gồm:
+
+```
+# Tắt xác thực mật khẩu — chỉ dùng khóa
+PasswordAuthentication no
+
+# Tắt đăng nhập root
+PermitRootLogin no
+
+# Thay đổi cổng lắng nghe
+Port 2222
+
+# Giới hạn cho người dùng cụ thể
+AllowUsers deploy admin
+
+# Bật xác thực khóa công khai
+PubkeyAuthentication yes
+```
+
+Sau khi chỉnh sửa, tải lại daemon: `sudo systemctl reload sshd`
+
+## SSH Tunneling
+
+SSH tunneling (còn gọi là chuyển tiếp cổng SSH) cho phép bạn định tuyến lưu lượng TCP tùy ý qua kết nối SSH được mã hóa. Đây là một trong những tính năng mạnh mẽ và ít được dùng nhất của SSH.
+
+### Chuyển Tiếp Cổng Cục Bộ
+
+Chuyển tiếp cục bộ làm cho một dịch vụ từ xa có thể truy cập trên máy cục bộ của bạn. Cú pháp là `-L cổng_cục_bộ:host_từ_xa:cổng_từ_xa`.
+
+```bash
+# Truy cập cơ sở dữ liệu PostgreSQL từ xa cục bộ
+ssh -L 5433:localhost:5432 user@dbserver -N
+
+# Truy cập ứng dụng web nội bộ qua jump server
+ssh -L 8080:internal-app.company.com:80 user@jump.company.com -N
+```
+
+Flag `-N` yêu cầu SSH không thực thi lệnh từ xa — hữu ích khi bạn chỉ muốn tunnel.
+
+### Chuyển Tiếp Cổng Từ Xa
+
+Chuyển tiếp từ xa hiển thị dịch vụ cục bộ trên server từ xa. Cú pháp là `-R cổng_từ_xa:host_cục_bộ:cổng_cục_bộ`.
+
+```bash
+# Hiển thị web server cục bộ của bạn cho máy từ xa
+ssh -R 9090:localhost:3000 user@server -N
+```
+
+Điều này hữu ích để tạm thời chia sẻ server phát triển cục bộ với đồng nghiệp có quyền truy cập vào host từ xa, hoặc cấp cho khách hàng quyền truy cập tạm thời vào công việc đang thực hiện của bạn.
+
+### Chuyển Tiếp Cổng Động (SOCKS Proxy)
+
+Flag `-D` tạo SOCKS proxy trên máy cục bộ của bạn, định tuyến tất cả lưu lượng tương thích SOCKS qua kết nối SSH. Điều này thực sự sử dụng server từ xa như điểm thoát VPN.
+
+```bash
+# Tạo SOCKS5 proxy trên cổng cục bộ 1080
+ssh -D 1080 user@remote-server -N -f
+```
+
+Cấu hình trình duyệt hoặc hệ thống của bạn để dùng `SOCKS5 proxy: 127.0.0.1:1080` và tất cả lưu lượng web sẽ được định tuyến qua server từ xa. Điều này thường được dùng để truy cập nội dung bị giới hạn theo địa lý hoặc để duyệt web an toàn từ mạng không đáng tin cậy.
+
+## Câu Hỏi Thường Gặp
+
+### SSH là viết tắt của gì?
+
+SSH là viết tắt của **Secure Shell**. Đây là giao thức mạng mật mã để vận hành các dịch vụ mạng một cách an toàn qua mạng không được bảo mật. Cái tên ám chỉ trường hợp sử dụng chính của nó: cung cấp phiên shell tương tác an toàn trên máy tính từ xa.
+
+### SSH có giống SSL không?
+
+Không. SSH và SSL/TLS đều là giao thức mật mã, nhưng chúng phục vụ các mục đích khác nhau. **SSL/TLS** (Secure Sockets Layer / Transport Layer Security) được dùng để bảo mật lưu lượng web (HTTPS), email và các giao thức ứng dụng khác. **SSH** được thiết kế đặc biệt cho truy cập shell từ xa an toàn, truyền tệp và tunneling. Chúng dùng các phần tử mật mã tương tự (mật mã học khóa công khai, mã hóa đối xứng) nhưng có cơ chế bắt tay và trường hợp sử dụng khác nhau. SSH không sử dụng SSL/TLS nội bộ.
+
+### SSH dùng cổng nào?
+
+SSH dùng **cổng TCP 22** theo mặc định. Đây là cổng nổi tiếng được IANA chỉ định. Bạn có thể cấu hình SSH server để lắng nghe trên cổng khác bằng chỉ thị `Port` trong `/etc/ssh/sshd_config`, và kết nối đến cổng không chuẩn bằng `ssh -p PORT user@host`.
+
+### SSH có thể bị hack không?
+
+Một SSH server được cấu hình đúng với xác thực dựa trên khóa cực kỳ khó bị xâm phạm. Mật mã học — khóa Ed25519, mã hóa AES-256, MAC SHA-2 — được coi là chống lượng tử cho xác thực khóa và không khả thi về mặt tính toán để brute force. Các vụ xâm phạm SSH trong thực tế thường liên quan đến: tệp khóa riêng tư bị đánh cắp, passphrase yếu, server bị cấu hình sai cho phép xác thực mật khẩu với mật khẩu yếu, phiên bản phần mềm dễ bị tấn công với CVE chưa được vá, hoặc kỹ thuật xã hội thay vì tấn công mật mã học. Hãy cập nhật server, tắt xác thực mật khẩu và bảo vệ tệp khóa riêng tư của bạn.
+
+### Sự khác biệt giữa SSH và HTTPS là gì?
+
+Cả SSH và HTTPS đều mã hóa lưu lượng mạng, nhưng được thiết kế cho các mục đích khác nhau. **HTTPS** bảo mật duyệt web — nó dùng TLS để mã hóa các yêu cầu và phản hồi HTTP giữa trình duyệt và web server. **SSH** bảo mật truy cập quản trị từ xa, truyền tệp và tunneling. Khi bạn đẩy code lên GitHub, bạn có thể dùng SSH (cổng 22, xác thực dựa trên khóa) hoặc HTTPS (cổng 443, xác thực dựa trên token). SSH thường được developer ưa chuộng hơn vì không cần nhập lại thông tin đăng nhập. HTTPS được hỗ trợ phổ quát qua tường lửa có thể chặn cổng 22.
+
+## Tạo SSH Key Của Bạn Ngay Bây Giờ
+
+Xác thực dựa trên SSH key an toàn hơn và tiện lợi hơn mật khẩu. Nếu bạn chưa thiết lập SSH key, trình tạo trực tuyến miễn phí của chúng tôi tạo cặp khóa Ed25519 hoặc RSA ngay lập tức trong trình duyệt — không cần cài đặt, không có gì được gửi đến server của chúng tôi.
+
+<a href="/">Tạo cặp SSH key của bạn ngay bây giờ →</a>
+
+---
+
+**Đọc thêm:**
+- <a href="/vi/what-is-an-ssh-key">SSH Key Là Gì? Khóa Công Khai, Khóa Riêng Tư và Cặp Khóa Được Giải Thích</a>
+- <a href="/vi/ssh-command">Lệnh SSH: Tài Liệu Tham Khảo Đầy Đủ với Ví Dụ</a>
+- <a href="/vi/how-to-set-up-ssh">Cách Thiết Lập SSH: Hướng Dẫn Từng Bước Đầy Đủ</a>

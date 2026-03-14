@@ -1,0 +1,563 @@
+# Hur man konfigurerar SSH: En komplett steg-för-steg-guide för Linux, Mac och Windows
+
+Att konfigurera SSH korrekt tar ungefär tio minuter och ger avkastning i åratal. När det är konfigurerat kan du logga in på servrar utan att skriva lösenord, pusha kod till GitHub utan att ange inloggningsuppgifter vid varje operation och automatisera driftsättningar med tillförsikt. Den här guiden går igenom hela processen — från att generera ett nyckelpar till att felsöka vanliga fel — för Linux, macOS och Windows.
+
+Om du vill förstå den underliggande tekniken först, läs våra guider om <a href="/sv/what-is-ssh">vad SSH är</a> och <a href="/sv/what-is-an-ssh-key">vad SSH-nycklar är</a>.
+
+## Förutsättningar
+
+Innan du börjar, se till att du har:
+
+**För serveråtkomst:**
+- En terminalapplikation (Terminal på macOS/Linux, Windows Terminal eller PowerShell på Windows)
+- En fjärrserver som kör Linux/Unix med SSH-serverprogramvara (sshd) installerad
+- Ett användarkonto på den servern (eller root-åtkomst för att skapa ett)
+- Serverns IP-adress eller värdnamn
+
+**För GitHub/GitLab-åtkomst:**
+- Ett GitHub- eller GitLab-konto
+- En terminal med `ssh` tillgängligt
+- Valfritt: git installerat lokalt
+
+**Krav på operativsystem:**
+- **Linux**: SSH-klienten är förinstallerad på praktiskt taget alla distributioner
+- **macOS**: SSH-klienten är inbyggd och tillgänglig från Terminal
+- **Windows 10 version 1809+ / Windows 11**: OpenSSH-klienten är tillgänglig som en valfri funktion
+
+Du behöver inte installera något på Linux eller macOS. På Windows, verifiera att OpenSSH är installerat genom att öppna PowerShell och köra `ssh -V`. Om du får en versionssträng är du redo. Om inte, se steg 4 för installationsanvisningar.
+
+## Steg 1: Generera ditt SSH-nyckelpar
+
+Du behöver ett nyckelpar innan du kan göra något annat. Nyckelparet består av en **privat nyckel** (stannar på din maskin) och en **publik nyckel** (hamnar på servrar eller tjänster som GitHub).
+
+### Alternativ A: Använd onlinegeneratorn
+
+Om du föredrar ett grafiskt gränssnitt skapar vår <a href="/">kostnadsfria SSH-nyckelgenerator online</a> Ed25519- eller RSA-nyckelpar i din webbläsare. Den privata nyckeln genereras lokalt med Web Crypto API — inget skickas till våra servrar. Ladda ner båda filerna och spara dem i `~/.ssh/` (Linux/macOS) eller `C:\Users\YourName\.ssh\` (Windows).
+
+### Alternativ B: Använd ssh-keygen på kommandoraden
+
+Kommandot `ssh-keygen` är tillgängligt på Linux, macOS och Windows med OpenSSH:
+
+```bash
+# Generera ett Ed25519-nyckelpar (rekommenderas)
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+**Vad varje flagga betyder:**
+- `-t ed25519` — nyckeltyp (Ed25519 är modern, snabb och säker)
+- `-C "kommentar"` — en etikett inbäddad i den publika nyckeln, vanligtvis din e-postadress
+
+Du uppmanas att ange:
+
+```
+Generating public/private ed25519 key pair.
+Enter file in which to save the key (/home/user/.ssh/id_ed25519):
+```
+
+Tryck **Enter** för att acceptera standardplatsen. Om du har flera nycklar kan du namnge dem beskrivande (t.ex. `/home/user/.ssh/id_ed25519_github`).
+
+```
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+```
+
+Ange en stark lösenfras. Den krypterar den privata nyckelfilen på disk — om din maskin stjäls kan nyckeln inte användas utan lösenfrasen. Du kan lämna den tom för automationsändamål där mänsklig interaktion inte är möjlig, men för personliga nycklar, använd alltid en lösenfras.
+
+**Utdata:**
+
+```
+Your identification has been saved in /home/user/.ssh/id_ed25519
+Your public key has been saved in /home/user/.ssh/id_ed25519.pub
+The key fingerprint is:
+SHA256:abc123defghijk... your@email.com
+The key's randomart image is:
++--[ED25519 256]--+
+...
+```
+
+Två filer skapas:
+- `~/.ssh/id_ed25519` — din **privata nyckel** (dela aldrig denna)
+- `~/.ssh/id_ed25519.pub` — din **publika nyckel** (säker att dela)
+
+### För RSA (äldre kompatibilitet)
+
+Om du behöver ansluta till mycket gamla system som inte stöder Ed25519:
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "your@email.com"
+```
+
+Använd minst 4096 bitar. RSA-nycklar mindre än 4096 bitar anses inte längre vara tillräcklig säkerhet.
+
+## Steg 2: Konfigurera SSH på Linux
+
+Det här avsnittet täcker kopiering av din publika nyckel till en Linux-server så att du kan autentisera utan lösenord.
+
+### Metod 1: ssh-copy-id (enklast)
+
+`ssh-copy-id` är det enklaste sättet att installera din publika nyckel på en fjärrserver. Det ansluter med lösenordsautentisering, lägger till din publika nyckel i serverns `~/.ssh/authorized_keys` och ställer in rätt behörigheter.
+
+```bash
+ssh-copy-id user@server.example.com
+
+# Ange en nyckelfil explicit
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server.example.com
+
+# Anslut på en icke-standardiserad port
+ssh-copy-id -p 2222 user@server.example.com
+```
+
+Du uppmanas att ange serverlösenordet en sista gång. Efter detta kan du ansluta med `ssh user@server.example.com` med din nyckel.
+
+### Metod 2: Manuell kopiering
+
+Om `ssh-copy-id` inte är tillgängligt (vanligt på vissa BSD-system eller minimala Linux-installationer):
+
+```bash
+# Visa din publika nyckel och kopiera utdata
+cat ~/.ssh/id_ed25519.pub
+
+# SSH sedan till servern (med lösenord) och kör:
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+echo "KLISTRA_IN_DIN_PUBLIKA_NYCKEL_HÄR" >> ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+```
+
+Eller gör det allt i en pipeline:
+
+```bash
+cat ~/.ssh/id_ed25519.pub | ssh user@server.example.com \
+  "mkdir -p ~/.ssh && chmod 700 ~/.ssh && \
+   cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+```
+
+### Verifiera att nyckeln installerades
+
+```bash
+ssh user@server.example.com
+# Bör ansluta utan att be om lösenord (bara lösenfras om du angav en)
+```
+
+### Konfigurera SSH-servern (sshd)
+
+På fjärrservern finns SSH-demonkonfigurationen i `/etc/ssh/sshd_config`. För en säker installation:
+
+```bash
+sudo nano /etc/ssh/sshd_config
+```
+
+Rekommenderade inställningar:
+
+```
+# Aktivera autentisering med publik nyckel
+PubkeyAuthentication yes
+
+# Inaktivera lösenordsautentisering (efter att ha bekräftat att nycklar fungerar!)
+ PasswordAuthentication no
+
+# Inaktivera root-inloggning via SSH
+ PermitRootLogin no
+
+# Tillåt bara specifika användare
+AllowUsers alice bob deploy
+
+# Håll sessioner vid liv
+ClientAliveInterval 60
+ClientAliveCountMax 3
+```
+
+Efter redigering, ladda om SSH-demonen:
+
+```bash
+sudo systemctl reload sshd
+# Eller på äldre system:
+sudo service ssh reload
+```
+
+**Viktigt**: Inaktivera inte `PasswordAuthentication` förrän du har bekräftat att nyckelbaserad autentisering fungerar. Om du låser ut dig själv behöver du konsolåtkomst (eller din värdleverantörs nödåtkomst) för att återhämta dig.
+
+### Konfigurera ssh-agent på Linux
+
+Om din nyckel har en lösenfras, lägg till den i `ssh-agent` i början av din session för att undvika att ange den igen:
+
+```bash
+# Starta agenten (startas ofta automatiskt av skrivbordsmiljöer)
+eval "$(ssh-agent -s)"
+
+# Lägg till din nyckel (ange lösenfras en gång)
+ssh-add ~/.ssh/id_ed25519
+
+# Verifiera att nycklar är laddade
+ssh-add -l
+```
+
+För att automatiskt starta `ssh-agent` och lägga till din nyckel vid inloggning, lägg till i `~/.bashrc` eller `~/.zshrc`:
+
+```bash
+# Autostart ssh-agent
+if [ -z "$SSH_AUTH_SOCK" ]; then
+  eval "$(ssh-agent -s)"
+  ssh-add ~/.ssh/id_ed25519
+fi
+```
+
+## Steg 3: Konfigurera SSH på macOS
+
+macOS inkluderar en komplett OpenSSH-klient. Processen för att konfigurera nyckelbaserad autentisering till en fjärrserver är identisk med Linux (se steg 2 ovan). De macOS-specifika tilläggen handlar om nyckelringsintegration.
+
+### Nyckelringsintegration
+
+macOS kan lagra din lösenfras i systemnyckelringen så att du aldrig behöver ange den efter den första gången:
+
+```bash
+# Lägg till nyckel i ssh-agent med nyckelringsintegration
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+
+# För äldre macOS-versioner (före Monterey)
+ssh-add -K ~/.ssh/id_ed25519
+```
+
+För att få macOS att alltid ladda dina nycklar från nyckelringen, lägg till detta i `~/.ssh/config`:
+
+```
+Host *
+    AddKeysToAgent yes
+    UseKeychain yes
+    IdentityFile ~/.ssh/id_ed25519
+```
+
+Efter detta lagras lösenfrasen i nyckelringen och laddas automatiskt — du uppmanas inte om den igen vid efterföljande starter.
+
+### Verifiera SSH-klientversionen
+
+```bash
+ssh -V
+# OpenSSH_9.x, LibreSSL x.x.x
+```
+
+macOS levereras med en relativt ny OpenSSH men inte alltid den absolut senaste. Om du behöver nyare funktioner, installera via Homebrew: `brew install openssh`.
+
+## Steg 4: Konfigurera SSH på Windows
+
+Windows 10 (1809+) och Windows 11 inkluderar OpenSSH. Här är hur du får det att fungera.
+
+### Installera OpenSSH-klienten
+
+**Kontrollera om det redan är installerat:**
+
+```powershell
+ssh -V
+```
+
+**Installera via Inställningar:**
+1. Öppna **Inställningar → Appar → Valfria funktioner**
+2. Sök efter **OpenSSH-klient**
+3. Klicka på **Installera**
+
+**Installera via PowerShell (administratör):**
+
+```powershell
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+```
+
+### Generera nycklar på Windows
+
+Öppna PowerShell och kör:
+
+```powershell
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+Nycklar sparas i `C:\Users\YourUsername\.ssh\`.
+
+### Kopiera din publika nyckel till en Linux-server
+
+Windows inkluderar inte `ssh-copy-id`, men du kan göra det manuellt från PowerShell:
+
+```powershell
+# Visa din publika nyckel
+Get-Content ~/.ssh/id_ed25519.pub
+
+# Kopiera den till fjärrservern (du uppmanas att ange serverlösenordet)
+$pubkey = Get-Content ~/.ssh/id_ed25519.pub -Raw
+ssh user@server.example.com "mkdir -p ~/.ssh && echo '$pubkey' >> ~/.ssh/authorized_keys && chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys"
+```
+
+Eller använd `Add-Content` för att leda det via:
+
+```powershell
+type $env:USERPROFILE\.ssh\id_ed25519.pub | ssh user@server.example.com "cat >> ~/.ssh/authorized_keys"
+```
+
+### Konfigurera ssh-agent på Windows
+
+För att undvika att ange din lösenfras upprepade gånger, starta OpenSSH Authentication Agent-tjänsten:
+
+```powershell
+# Starta tjänsten
+Start-Service ssh-agent
+
+# Ställ in den att starta automatiskt
+Set-Service -Name ssh-agent -StartupType Automatic
+
+# Lägg till din nyckel
+ssh-add ~/.ssh/id_ed25519
+```
+
+### PuTTY som alternativ
+
+Om du föredrar en grafisk SSH-klient är PuTTY ett gratis alternativ för Windows. Använd **PuTTYgen** för att generera nycklar (spara i både `.ppk`-format för PuTTY och exportera i OpenSSH-format). För nya installationer är den inbyggda OpenSSH-klienten dock enklare och kompatibel med resten av ekosystemet.
+
+## Hur man konfigurerar SSH-nycklar för GitHub och GitLab
+
+SSH-nyckelautentisering till GitHub och GitLab fungerar på liknande sätt — du laddar upp din publika nyckel till tjänsten och använder den motsvarande privata nyckeln när du utför Git-operationer.
+
+### Konfigurera SSH för GitHub
+
+**1. Kopiera din publika nyckel:**
+
+```bash
+# Linux
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+
+# macOS
+cat ~/.ssh/id_ed25519.pub | pbcopy
+
+# Windows PowerShell
+Get-Content ~/.ssh/id_ed25519.pub | Set-Clipboard
+```
+
+Eller visa och kopiera manuellt:
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+**2. Lägg till i GitHub:**
+
+1. Gå till **github.com** och logga in
+2. Klicka på din avatar → **Settings** (Inställningar)
+3. I vänster sidofält: **SSH and GPG keys**
+4. Klicka på **New SSH key**
+5. Ge den en beskrivande **Title** (t.ex. "MacBook Pro" eller "Jobbdator")
+6. Ställ in **Key type** till **Authentication Key**
+7. Klistra in din publika nyckel
+8. Klicka på **Add SSH key**
+
+**3. Testa anslutningen:**
+
+```bash
+ssh -T git@github.com
+# Hi username! You've successfully authenticated, but GitHub does not provide shell access.
+```
+
+**4. Använd SSH för Git-operationer:**
+
+```bash
+# Klona med SSH istället för HTTPS
+git clone git@github.com:username/repository.git
+
+# Om ett befintligt repo använder HTTPS, byt till SSH
+git remote set-url origin git@github.com:username/repository.git
+```
+
+### Konfigurera SSH för GitLab
+
+Processen är identisk:
+
+1. Gå till **gitlab.com** → Klicka på din avatar → **Preferences** (Preferenser)
+2. I vänster sidofält: **SSH Keys**
+3. Klistra in din publika nyckel, ge den en titel och ange valfritt ett utgångsdatum
+4. Klicka på **Add key**
+
+Testa med:
+
+```bash
+ssh -T git@gitlab.com
+# Welcome to GitLab, @username!
+```
+
+För självhostad GitLab, ersätt `gitlab.com` med ditt instansvärdnamn.
+
+### Använda en separat nyckel för GitHub och andra tjänster
+
+Om du vill ha en dedikerad nyckel för GitHub (rekommenderas för nyckelhantering), generera en namngiven nyckel:
+
+```bash
+ssh-keygen -t ed25519 -C "github" -f ~/.ssh/id_ed25519_github
+```
+
+Lägg sedan till ett `Host`-block i `~/.ssh/config`:
+
+```
+Host github.com
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519_github
+    AddKeysToAgent yes
+```
+
+Nu använder `git clone git@github.com:...` automatiskt den GitHub-specifika nyckeln.
+
+## Testa och felsöka SSH
+
+### Grundläggande anslutningstest
+
+```bash
+ssh -v user@server.example.com
+```
+
+Flaggan `-v` (utförlig) visar exakt vad som händer vid varje steg. Leta efter rader som:
+- `Offering public key: ~/.ssh/id_ed25519` — SSH provar din nyckel
+- `Server accepts key` — nyckeln finns i `authorized_keys`
+- `Authenticated to server.example.com` — lyckades
+
+### Vanliga fel och lösningar
+
+**"Permission denied (publickey)"**
+
+Det här är det vanligaste felet. Orsaker och lösningar:
+
+```bash
+# Kontrollera att din nyckel är laddad i ssh-agent
+ssh-add -l
+
+# Om inga nycklar listas, lägg till din nyckel
+ssh-add ~/.ssh/id_ed25519
+
+# På fjärrservern, kontrollera authorized_keys
+cat ~/.ssh/authorized_keys
+# Se till att din publika nyckel finns där
+
+# Kontrollera behörigheter på fjärrservern
+ls -la ~/.ssh/
+# ~/.ssh måste vara 700
+# authorized_keys måste vara 600
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/authorized_keys
+
+# Kontrollera att servern tillåter autentisering med publik nyckel
+sudo grep PubkeyAuthentication /etc/ssh/sshd_config
+# Måste vara: PubkeyAuthentication yes
+```
+
+**"WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED"**
+
+Serverns värdnyckel ändrades, vilket SSH behandlar som ett potentiellt säkerhetsproblem. Om du vet att detta är legitimt (servern byggdes om, IP tilldelades om), ta bort den gamla posten:
+
+```bash
+# Ta bort den specifika värdposten
+ssh-keygen -R server.example.com
+
+# Eller redigera known_hosts manuellt och ta bort den påverkade raden
+nano ~/.ssh/known_hosts
+```
+
+**"Bad permissions" eller "Permissions too open"**
+
+SSH är strikt med nyckelfils­behörigheter:
+
+```bash
+# Åtgärda privata nyckelbehörigheter
+chmod 600 ~/.ssh/id_ed25519
+
+# Åtgärda publika nyckelbehörigheter
+chmod 644 ~/.ssh/id_ed25519.pub
+
+# Åtgärda .ssh-katalogbehörigheter
+chmod 700 ~/.ssh
+```
+
+På Windows hanteras behörigheter för privata nycklar annorlunda. Högerklicka på nyckelfilen → Egenskaper → Säkerhet → Avancerat → Inaktivera arv → Ta bort alla utom ditt användarkonto och ge bara dig Full kontroll.
+
+### Konfigurera och använda ssh-agent
+
+Om du upprepade gånger uppmanas om din lösenfras körs inte `ssh-agent` eller din nyckel är inte tillagd:
+
+```bash
+# Starta agenten
+eval "$(ssh-agent -s)"
+# Agent pid 12345
+
+# Lägg till din nyckel
+ssh-add ~/.ssh/id_ed25519
+# Enter passphrase for /home/user/.ssh/id_ed25519:
+# Identity added: /home/user/.ssh/id_ed25519
+
+# Verifiera
+ssh-add -l
+# 256 SHA256:abc123... your@email.com (ED25519)
+```
+
+### Förifyll known_hosts i automation
+
+I CI/CD-pipelines, använd `ssh-keyscan` för att lägga till fjärrvärdfingeravtrycket innan du ansluter:
+
+```bash
+ssh-keyscan -H server.example.com >> ~/.ssh/known_hosts
+ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+```
+
+Detta förhindrar interaktiva fingeravtrycksprompter i automatiserade skript.
+
+## Vanliga frågor
+
+### Hur åtgärdar jag "Permission denied (publickey)"?
+
+Arbeta igenom den här checklistan: (1) Verifiera att din nyckel är i SSH-agenten: `ssh-add -l`. Om inte, kör `ssh-add ~/.ssh/id_ed25519`. (2) Kontrollera att din publika nyckel finns i serverns `~/.ssh/authorized_keys`-fil. (3) Verifiera behörigheter: `~/.ssh` måste vara `700`, `authorized_keys` måste vara `600`. (4) Kontrollera att servern har `PubkeyAuthentication yes` i `/etc/ssh/sshd_config`. (5) Använd `ssh -vvv user@server` för att se exakt var autentiseringen misslyckas. Den utförliga utdatan berättar vilka nycklar som provas och om servern accepterade dem.
+
+### Hur lägger jag till min SSH-nyckel i ssh-agent?
+
+Kör `ssh-add ~/.ssh/id_ed25519` (ersätt med ditt nyckelfilnamn). Om agenten inte körs, starta den först med `eval "$(ssh-agent -s)"`. På macOS, använd `ssh-add --apple-use-keychain ~/.ssh/id_ed25519` för att lagra lösenfrasen i nyckelringen. På Windows, aktivera `ssh-agent`-tjänsten med `Start-Service ssh-agent` och kör sedan `ssh-add`. Du behöver bara köra `ssh-add` en gång per session (eller en gång för alltid med nyckelringen på macOS).
+
+### Kan jag ha flera SSH-nycklar?
+
+Ja, och det är god praxis. Generera separata nycklar för olika ändamål — till exempel en för personlig GitHub, en för arbets-GitLab, en för produktionsservrar. Använd `~/.ssh/config` för att mappa varje värd till sin specifika nyckel med `IdentityFile`. Att ha separata nycklar innebär att återkalla en (genom att ta bort den från en tjänst eller server) inte påverkar andra, vilket begränsar skadeomfånget vid en nyckelkompromittering.
+
+### Hur ändrar jag lösenfrasen på en SSH-nyckel?
+
+Använd `ssh-keygen -p`:
+
+```bash
+ssh-keygen -p -f ~/.ssh/id_ed25519
+```
+
+Du uppmanas att ange den nuvarande lösenfrasen och sedan be dig ange och bekräfta den nya. Nyckeln själv (och därmed den publika nyckeln) ändras inte — du behöver inte uppdatera den någonstans. Det är användbart om du misstänker att din lösenfras har komprometterats eller om du vill rotera den som en rutinmässig säkerhetsåtgärd.
+
+### Hur tar jag bort en gammal SSH-nyckel från en server?
+
+Öppna `~/.ssh/authorized_keys` på servern och ta bort raden med den gamla publika nyckeln:
+
+```bash
+# Redigera authorized_keys på fjärrservern
+ssh user@server.example.com
+nano ~/.ssh/authorized_keys
+# Ta bort raden för den nyckel du vill ta bort
+# Spara och avsluta
+```
+
+Varje rad i `authorized_keys` är en publik nyckel. Nyckelns kommentar (det sista fältet, vanligtvis `user@hostname` eller en e-post) hjälper till att identifiera vilken nyckel som är vilken. Om du inte vet vilken rad du ska ta bort, jämför fingeravtrycket:
+
+```bash
+# På din lokala maskin, hämta fingeravtrycket
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+
+# På servern, kontrollera fingeravtryck för alla auktoriserade nycklar
+ssh-keygen -lf ~/.ssh/authorized_keys
+```
+
+Matcha fingeravtrycken för att identifiera och ta bort rätt nyckel.
+
+## Generera dina SSH-nycklar gratis
+
+Om du ännu inte har genererat ditt SSH-nyckelpar skapar vår kostnadsfria onlinegenerator Ed25519- eller RSA-nycklar direkt i din webbläsare på sekunder. Ingen installation krävs, inget skickas till våra servrar — generering sker helt på din enhet.
+
+<a href="/">Generera dina SSH-nycklar gratis →</a>
+
+---
+
+**Vidare läsning:**
+- <a href="/sv/what-is-ssh">Vad är SSH? Den kompletta guiden till Secure Shell</a>
+- <a href="/sv/what-is-an-ssh-key">Vad är en SSH-nyckel? Publika nycklar, privata nycklar och nyckelpar förklarade</a>
+- <a href="/sv/ssh-command">SSH-kommandot: Komplett referens med exempel</a>

@@ -17,6 +17,7 @@ import {
   type Language,
 } from '@/i18n'
 import { buildHomePageMetadata, syncPageMetadata } from '@/lib/seo'
+import { ARTICLE_SLUGS, type ArticleSlug } from '@/content/articles'
 import { useThemeStore } from '@/store/themeStore'
 import type { KeyPair } from '@/types/keys'
 
@@ -48,6 +49,11 @@ const SEOContent = lazy(async () => {
 const NotFound = lazy(async () => {
   const module = await import('@/components/pages/NotFound')
   return { default: module.NotFound }
+})
+
+const ArticlePage = lazy(async () => {
+  const module = await import('@/components/blog/ArticlePage')
+  return { default: module.ArticlePage }
 })
 
 function TabContentFallback() {
@@ -193,6 +199,36 @@ function App() {
 
   return (
     <Routes>
+      {/* English article routes */}
+      {ARTICLE_SLUGS.map((slug: ArticleSlug) => (
+        <Route
+          key={`en-${slug}`}
+          path={`/${slug}`}
+          element={
+            <Suspense fallback={null}>
+              <ArticlePage slug={slug} lang="en" />
+            </Suspense>
+          }
+        />
+      ))}
+
+      {/* All non-default language article routes (must be before wildcard routes) */}
+      {NON_DEFAULT_LANGUAGE_CONFIG.flatMap((language) => {
+        const langPath = getLanguagePathname(language.code).replace(/\/$/, '')
+        return ARTICLE_SLUGS.map((slug: ArticleSlug) => (
+          <Route
+            key={`${language.code}-${slug}`}
+            path={`${langPath}/${slug}`}
+            element={
+              <Suspense fallback={null}>
+                <ArticlePage slug={slug} lang={language.code} />
+              </Suspense>
+            }
+          />
+        ))
+      })}
+
+      {/* Non-default language main pages (wildcard — must be after article routes) */}
       {NON_DEFAULT_LANGUAGE_CONFIG.flatMap((language) => {
         const path = getLanguagePathname(language.code).replace(/\/$/, '')
         return [
@@ -205,7 +241,7 @@ function App() {
             key={`${language.code}-root`}
             path={path}
             element={<LanguageRoute lang={language.code} />}
-          />
+          />,
         ]
       })}
 

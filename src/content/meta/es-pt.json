@@ -1,0 +1,54 @@
+{
+  "es": {
+    "what-is-ssh": {
+      "title": "¿Qué es SSH? La guía completa sobre Secure Shell",
+      "description": "SSH (Secure Shell) es el protocolo criptográfico estándar para el acceso remoto seguro. Aprende cómo funciona, la diferencia entre SSH y Telnet, el tunelado y por qué SSH es esencial para desarrolladores y administradores de sistemas.",
+      "keywords": ["qué es SSH", "Secure Shell", "protocolo SSH", "SSH vs Telnet", "cómo funciona SSH", "SSH cifrado", "tunelado SSH", "puerto SSH 22", "OpenSSH", "acceso remoto seguro"],
+      "publishDate": "2026-03-14"
+    },
+    "what-is-an-ssh-key": {
+      "title": "¿Qué es una clave SSH? Claves públicas, privadas y pares de claves explicados",
+      "description": "Una clave SSH es una credencial criptográfica para la autenticación sin contraseña. Esta guía explica cómo funcionan los pares de claves pública/privada, Ed25519 vs RSA, cómo añadir tu clave SSH a GitHub y dónde se almacenan las claves.",
+      "keywords": ["qué es una clave SSH", "clave pública SSH", "clave privada SSH", "par de claves SSH", "Ed25519 vs RSA", "autenticación SSH", "añadir clave SSH a GitHub", "authorized_keys", "huella dactilar SSH", "ssh-keygen"],
+      "publishDate": "2026-03-14"
+    },
+    "ssh-command": {
+      "title": "El comando SSH: referencia completa con ejemplos para Linux, Mac y Windows",
+      "description": "Referencia completa del comando SSH con ejemplos reales. Cubre la sintaxis, indicadores esenciales (-i, -p, -L, -R, -D, -J), tunelado, ProxyJump, bastiones y depuración en Linux, macOS y Windows.",
+      "keywords": ["comando SSH", "opciones ssh", "ssh -i", "ssh -p", "ssh -L", "reenvío de puertos SSH", "ProxyJump SSH", "bastión SSH", "tunelado SSH", "SSH Windows PowerShell"],
+      "publishDate": "2026-03-14"
+    },
+    "how-to-set-up-ssh": {
+      "title": "Cómo configurar SSH: guía completa paso a paso para Linux, Mac y Windows",
+      "description": "Guía paso a paso para configurar SSH en Linux, macOS y Windows. Aprende a generar claves SSH, copiarlas al servidor, configurar sshd, configurar SSH para GitHub y GitLab, y solucionar los errores más comunes.",
+      "keywords": ["cómo configurar SSH", "configurar claves SSH", "ssh-copy-id", "SSH GitHub", "SSH GitLab", "ssh-agent", "Permission denied publickey", "configurar SSH Linux", "configurar SSH macOS", "configurar SSH Windows"],
+      "publishDate": "2026-03-14"
+    }
+  },
+  "pt": {
+    "what-is-ssh": {
+      "title": "O Que é SSH? O Guia Completo sobre Secure Shell",
+      "description": "SSH (Secure Shell) é o protocolo criptográfico padrão para acesso remoto seguro. Aprenda como funciona, a diferença entre SSH e Telnet, tunelamento e por que o SSH é essencial para desenvolvedores e administradores de sistemas.",
+      "keywords": ["o que é SSH", "Secure Shell", "protocolo SSH", "SSH vs Telnet", "como funciona SSH", "SSH criptografia", "tunelamento SSH", "porta SSH 22", "OpenSSH", "acesso remoto seguro"],
+      "publishDate": "2026-03-14"
+    },
+    "what-is-an-ssh-key": {
+      "title": "O Que é uma Chave SSH? Chaves Públicas, Privadas e Pares de Chaves Explicados",
+      "description": "Uma chave SSH é uma credencial criptográfica para autenticação sem senha. Este guia explica como funcionam os pares de chaves pública/privada, Ed25519 vs RSA, como adicionar sua chave SSH ao GitHub e onde as chaves são armazenadas.",
+      "keywords": ["o que é chave SSH", "chave pública SSH", "chave privada SSH", "par de chaves SSH", "Ed25519 vs RSA", "autenticação SSH", "adicionar chave SSH GitHub", "authorized_keys", "impressão digital SSH", "ssh-keygen"],
+      "publishDate": "2026-03-14"
+    },
+    "ssh-command": {
+      "title": "O Comando SSH: Referência Completa com Exemplos para Linux, Mac e Windows",
+      "description": "Referência completa do comando SSH com exemplos reais. Abrange sintaxe, flags essenciais (-i, -p, -L, -R, -D, -J), tunelamento, ProxyJump, hosts bastiões e depuração no Linux, macOS e Windows.",
+      "keywords": ["comando SSH", "opções ssh", "ssh -i", "ssh -p", "ssh -L", "encaminhamento de portas SSH", "ProxyJump SSH", "bastião SSH", "tunelamento SSH", "SSH Windows PowerShell"],
+      "publishDate": "2026-03-14"
+    },
+    "how-to-set-up-ssh": {
+      "title": "Como Configurar SSH: Um Guia Completo Passo a Passo para Linux, Mac e Windows",
+      "description": "Guia passo a passo para configurar SSH no Linux, macOS e Windows. Aprenda a gerar chaves SSH, copiá-las para o servidor, configurar sshd, configurar SSH para GitHub e GitLab e resolver os erros mais comuns.",
+      "keywords": ["como configurar SSH", "configurar chaves SSH", "ssh-copy-id", "SSH GitHub", "SSH GitLab", "ssh-agent", "Permission denied publickey", "configurar SSH Linux", "configurar SSH macOS", "configurar SSH Windows"],
+      "publishDate": "2026-03-14"
+    }
+  }
+}

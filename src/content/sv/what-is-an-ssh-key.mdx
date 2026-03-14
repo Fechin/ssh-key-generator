@@ -1,0 +1,337 @@
+# Vad är en SSH-nyckel? Publika nycklar, privata nycklar och nyckelpar förklarade
+
+En **SSH-nyckel** är en kryptografisk inloggningsuppgift som används för att autentisera mot SSH-servrar utan lösenord. SSH-nycklar kommer i par — en **publik nyckel** och en **privat nyckel** — och tillsammans gör de fjärråtkomst säkrare och bekvämare än traditionell lösenordsautentisering. Den här guiden förklarar vad en SSH-nyckel är, hur nyckelparssystemet fungerar, vilka nyckeltyper du ska välja och hur du använder SSH-nycklar med tjänster som GitHub och GitLab.
+
+## Hur SSH-nycklar fungerar
+
+SSH-nycklar baseras på **asymmetrisk kryptografi**, även kallad publik-nyckelkryptografi. Till skillnad från symmetrisk kryptografi (där en enda hemlig nyckel både krypterar och dekrypterar data), använder asymmetriska system matematiskt länkade nyckelpar där data krypterad med en nyckel bara kan dekrypteras med den andra.
+
+Här är autentiseringsflödet när du använder en SSH-nyckel för att logga in på en server:
+
+1. Du kör `ssh user@server.example.com`.
+2. Servern söker upp din publika nyckel i `~/.ssh/authorized_keys`.
+3. Servern genererar en slumpmässig utmaning och krypterar den med din publika nyckel.
+4. Din SSH-klient dekrypterar utmaningen med din privata nyckel.
+5. Klienten skickar ett kryptografiskt bevis (härlett från den dekrypterade utmaningen och sessions-ID:t) tillbaka till servern.
+6. Servern verifierar beviset. Bara innehavaren av den privata nyckeln kunde ha producerat det.
+7. Autentiseringen lyckas. Inget lösenord lämnar din maskin.
+
+Detta är den viktigaste insikten: **din privata nyckel reser aldrig via nätverket**. Servern ser bara din publika nyckel och de kryptografiska bevis du producerar. Även om någon avlyssnar varje paket i din SSH-session får de ingenting som hjälper dem att utge sig för att vara dig.
+
+För bakgrund om det bredare SSH-protokollet, se vår guide om <a href="/sv/what-is-ssh">vad SSH är</a>.
+
+## Publik nyckel vs. privat nyckel: Vad är skillnaden?
+
+Att förstå skillnaden mellan de två nycklarna är avgörande för att använda SSH korrekt.
+
+### Den publika nyckeln — ditt lås
+
+Den **publika nyckeln** är utformad för att delas fritt. Tänk på den som ett hänglås: du delar ut kopior till alla vars system du vill komma åt. När en server har din publika nyckel i sin `authorized_keys`-fil kan den verifiera din identitet utan att känna till din privata nyckel.
+
+Publika nycklar:
+- Är säkra att dela — de kan inte användas för att utge sig för att vara dig
+- Placeras på servrar i `~/.ssh/authorized_keys`
+- Laddas upp till GitHub, GitLab och andra tjänster
+- Har vanligtvis en `.pub`-ändelse (t.ex. `id_ed25519.pub`)
+- Ser ut så här: `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAA... user@hostname`
+
+### Den privata nyckeln — din nyckel
+
+Den **privata nyckeln** är den hemliga halvan av paret. Den får aldrig lämna din maskin och ska aldrig delas med någon — inte ens administratörer, molnleverantörer eller supportpersonal. Om din privata nyckel komprometteras kan vem som helst som får tag i den utge sig för att vara dig på varje server där din publika nyckel är installerad.
+
+Privata nycklar:
+- Måste hållas hemliga och säkra
+- Lagras lokalt i `~/.ssh/` med begränsade behörigheter (600)
+- Krypteras valfritt med en lösenfras
+- Har ingen ändelse eller en språkspecifik ändelse (t.ex. `id_ed25519`)
+
+### Filen `authorized_keys`
+
+På serversidan lagras varje användares publika nycklar i `~/.ssh/authorized_keys`. Det är en vanlig textfil där varje rad innehåller en publik nyckel. När en SSH-klient försöker autentisera kontrollerar servern om klienten kan bevisa att den har den privata nyckel som motsvarar någon post i den här filen.
+
+```
+# ~/.ssh/authorized_keys format
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGq... alice@laptop
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHr... alice@workstation
+ssh-rsa AAAAB3NzaC1yc2EAAAA... backup-deploy-key
+```
+
+Du kan ha så många publika nycklar som du behöver i den här filen, vilket gör att flera enheter eller automationssystem kan autentisera mot samma server.
+
+## SSH-nyckelalgoritmer: Ed25519 vs RSA
+
+När du genererar ett SSH-nyckelpar väljer du en algoritm. De två vanligaste alternativen idag är **Ed25519** och **RSA**. Det finns också ECDSA och DSA, men DSA är föråldrat och ECDSA har implementationsfel, så vi fokuserar på de två rekommenderade alternativen.
+
+### Ed25519 — Det moderna valet
+
+Ed25519 introducerades i OpenSSH version 6.5 (2014) och är nu den rekommenderade standarden. Den använder elliptisk kurvkryptografi på Twisted Edwards-kurvan (Curve25519), utformad av Daniel J. Bernstein.
+
+**Fördelar med Ed25519:**
+- **Kompakt** — nycklar är bara 68 tecken (publik nyckel) och filerna är minimala
+- **Snabb** — signaturgenerering och -verifiering är extremt snabb
+- **Säker by design** — inte sårbar för sidokanalattacker som påverkar vissa RSA-implementationer
+- **Fast nyckelstorlek** — 256-bitars säkerhetsnivå, inget behov av att välja en nyckelstorlek
+- **Deterministisk** — signaturer är deterministiska, vilket eliminerar en klass av slumptalsgeneratorfel
+
+```bash
+# Generera ett Ed25519-nyckelpar
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+### RSA — Det universella alternativet
+
+RSA är den äldre algoritmen (uppfunnen 1977), och även om den fortfarande är säker vid 4096 bitar är den långsammare och producerar större nycklar än Ed25519. RSA har dock mycket bredare kompatibilitet — det fungerar med väldigt gamla SSH-servrar, äldre system och vissa hårdvarusäkerhetsnycklar.
+
+**När ska RSA användas:**
+- Du behöver ansluta till äldre system som kör gamla versioner av OpenSSH (före 6.5)
+- Du använder ett smartkort eller HSM som inte stöder Ed25519
+- Kompatibilitet med äldre verktyg krävs
+
+```bash
+# Generera ett RSA 4096-bitars nyckelpar
+ssh-keygen -t rsa -b 4096 -C "your@email.com"
+```
+
+**Använd aldrig RSA med färre än 4096 bitar.** RSA-1024 och RSA-2048 anses i allt högre grad vara otillräckliga i takt med att beräkningskraften ökar. Ed25519 vid 256 bitar ger likvärdig eller bättre säkerhet med en bråkdel av nyckelstorlek.
+
+### Sammanfattande jämförelse
+
+| Funktion | Ed25519 | RSA 4096 |
+|---|---|---|
+| Nyckelstorlek (publik) | ~68 tecken | ~725 tecken |
+| Säkerhetsnivå | 128-bit (post-kvanttålig struktur) | ~140-bit klassisk |
+| Hastighet | Mycket snabb | Långsammare |
+| Kompatibilitet | Modern SSH (OpenSSH 6.5+) | Universell |
+| Rekommenderas för | Alla nya nycklar | Endast äldre system |
+
+**Slutsats: generera Ed25519-nycklar för alla moderna användningsfall.** Använd RSA bara när du tvingas av kompatibilitetskrav.
+
+## Hur man lägger till en SSH-nyckel till GitHub
+
+Att lägga till din publika SSH-nyckel till GitHub gör att du kan pusha och dra via SSH utan att ange ditt användarnamn och lösenord vid varje operation. Här är steg-för-steg-processen.
+
+### Steg 1: Generera ditt nyckelpar
+
+Om du inte redan har ett SSH-nyckelpar, generera ett. Du kan använda vår <a href="/">kostnadsfria SSH-nyckelgenerator online</a> eller köra:
+
+```bash
+ssh-keygen -t ed25519 -C "your-github-email@example.com"
+```
+
+Acceptera standardfilplatsen (`~/.ssh/id_ed25519`) och ange valfritt en lösenfras.
+
+### Steg 2: Kopiera din publika nyckel
+
+Visa din publika nyckel och kopiera den till urklipp:
+
+```bash
+# Linux
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+
+# macOS
+cat ~/.ssh/id_ed25519.pub | pbcopy
+
+# Windows (PowerShell)
+Get-Content ~/.ssh/id_ed25519.pub | Set-Clipboard
+```
+
+Eller visa den helt enkelt och kopiera manuellt:
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+### Steg 3: Lägg till nyckeln i GitHub
+
+1. Logga in på **GitHub.com**
+2. Klicka på din profilbild → **Settings** (Inställningar)
+3. I den vänstra sidofältet, klicka på **SSH and GPG keys**
+4. Klicka på **New SSH key**
+5. Ge den en beskrivande titel (t.ex. "MacBook Pro 2024" eller "Jobbdator")
+6. Klistra in din publika nyckel i fältet **Key**
+7. Klicka på **Add SSH key**
+
+### Steg 4: Testa anslutningen
+
+```bash
+ssh -T git@github.com
+```
+
+Du bör se: `Hi username! You've successfully authenticated, but GitHub does not provide shell access.`
+
+### Byta ett befintligt repo till SSH
+
+Om du klonade ett repo med HTTPS och vill byta till SSH:
+
+```bash
+# Kontrollera nuvarande fjärr-URL
+git remote -v
+
+# Uppdatera till SSH
+git remote set-url origin git@github.com:username/repository.git
+```
+
+För GitLab är processen identisk — navigera till **Preferences → SSH Keys** och följ samma steg.
+
+## Var lagras SSH-nycklar?
+
+SSH-nycklar lagras i en katalog som heter `.ssh` i din användares hemkatalog. Platsen varierar beroende på operativsystem.
+
+### Linux och macOS
+
+```
+~/.ssh/
+├── id_ed25519          # Din privata nyckel (behörigheter: 600)
+├── id_ed25519.pub      # Din publika nyckel (behörigheter: 644)
+├── id_rsa              # En RSA-privat nyckel (om du har en)
+├── id_rsa.pub          # Den publika RSA-nyckeln
+├── authorized_keys     # Publika nycklar som tillåts logga in på den här maskinen
+├── known_hosts         # Fingeravtryck från servrar du har anslutit till
+└── config              # Klientkonfigurationsfil
+```
+
+Själva katalogen `~/.ssh/` måste ha **700**-behörigheter (ägare läs/skriv/kör). Privata nyckelfiler måste ha **600**-behörigheter (ägare läs/skriv). SSH vägrar använda nycklar med alltför tillåtande behörigheter.
+
+```bash
+# Åtgärda behörigheter vid behov
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/id_ed25519
+chmod 644 ~/.ssh/id_ed25519.pub
+```
+
+### Windows
+
+På Windows 10 och 11 med OpenSSH installerat lagras SSH-nycklar i:
+
+```
+C:\Users\YourUsername\.ssh\
+├── id_ed25519
+├── id_ed25519.pub
+├── authorized_keys
+├── known_hosts
+└── config
+```
+
+På Windows kan du komma åt `.ssh`-katalogen från Utforskaren (du kan behöva aktivera "Visa dolda filer") eller från PowerShell med `~\.ssh\`.
+
+### Flera nyckelfiler
+
+Om du har nycklar för olika ändamål (personlig GitHub, arbets-GitLab, produktionsservrar) kan du använda filen `~/.ssh/config` för att mappa varje värd till sin nyckel:
+
+```
+Host github.com
+    IdentityFile ~/.ssh/id_ed25519_github
+
+Host gitlab.work.com
+    IdentityFile ~/.ssh/id_ed25519_work
+
+Host prod-server
+    HostName 203.0.113.10
+    User deploy
+    IdentityFile ~/.ssh/id_ed25519_production
+```
+
+## SSH-nyckellösenfraser
+
+När du genererar ett SSH-nyckelpar frågar `ssh-keygen` om du vill ange en **lösenfras**. Detta är ett valfritt lösenord som krypterar den privata nyckelfilen på disken.
+
+### Varför använda en lösenfras?
+
+Om din privata nyckelfil är skyddad av en stark lösenfras räcker det inte att stjäla filen för att utge sig för att vara dig — angriparen måste också knäcka lösenfrasen. Detta ger ett kritiskt andra säkerhetsskikt, särskilt på bärbara datorer som kan stjälas fysiskt.
+
+Utan en lösenfras lagras din privata nyckel i klartext på disk. Vem som helst som kan läsa filen (via skadlig programvara, fysisk åtkomst eller en säkerhetskopia som inte är ordentligt säkrad) kan omedelbart använda den.
+
+### Hur lösensfraser interagerar med ssh-agent
+
+Nackdelen med en lösenfras är att du måste skriva in den varje gång du använder nyckeln. **ssh-agent** löser detta genom att hålla dekrypterade nycklar i minnet under din sessions varaktighet.
+
+```bash
+# Starta ssh-agent och lägg till din nyckel
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+# Ange lösenfrasen en gång — den cachas nu för sessionen
+```
+
+På macOS integreras systemets nyckelring med ssh-agent. Lägg till `-K` för att bevara mellan omstarter:
+
+```bash
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+```
+
+### Ändra en lösenfras
+
+Du kan ändra lösenfrasen på en befintlig nyckel utan att återskapa nyckelparet:
+
+```bash
+ssh-keygen -p -f ~/.ssh/id_ed25519
+```
+
+Detta uppmanar dig att ange den gamla lösenfrasen och låter dig sedan ange en ny. Den publika nyckeln ändras inte, så du behöver inte uppdatera den på några servrar.
+
+## SSH-nyckelfingeravtryck
+
+Varje SSH-nyckelpar har ett **fingeravtryck** — en kort hash av den publika nyckeln som identifierar den unikt. Fingeravtryck tjänar flera syften:
+
+- **Verifiera värdidentitet** — När du ansluter till en server för första gången visar SSH dig dess värdnyckelfingeravtryck. Om du bekräftar att det matchar det du förväntar dig (t.ex. tillhandahållet av din värdleverantör) vet du att du ansluter till rätt server.
+- **Identifiera nycklar** — När du hanterar många nycklar hjälper fingeravtryck dig att identifiera vilken fysisk nyckel som motsvarar vilken post i `authorized_keys` eller på en tjänst som GitHub.
+- **Granskning och återkallande** — Granskningsloggar registrerar ofta fingeravtryck snarare än fullständiga nycklar. Att känna till en nyckels fingeravtryck hjälper dig att hitta och ta bort den vid behov.
+
+### Visa ett nyckelfingeravtryck
+
+```bash
+# Visa fingeravtrycket för din publika nyckel
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+# Utdata: 256 SHA256:abcdef1234567890... your@email.com (ED25519)
+
+# Visa fingeravtrycket för en servers värdnyckel
+ssh-keyscan server.example.com | ssh-keygen -lf -
+```
+
+GitHub visar fingeravtrycken för alla tillagda SSH-nycklar i **Settings → SSH and GPG keys**, vilket gör det möjligt för dig att verifiera att nyckeln du ser där matchar den på din maskin.
+
+### Filen `known_hosts`
+
+Första gången du ansluter till en ny SSH-server ser du ett meddelande som:
+
+```
+The authenticity of host 'example.com (203.0.113.10)' can't be established.
+ED25519 key fingerprint is SHA256:abcdef1234567890...
+Are you sure you want to continue connecting (yes/no/[fingerprint])?
+```
+
+Skriv `yes` och serverns fingeravtryck läggs till i `~/.ssh/known_hosts`. Vid efterföljande anslutningar verifierar SSH tyst att serverns nyckel matchar det lagrade fingeravtrycket. Om det inte matchar — vilket kan indikera en felkonfiguration eller en man-i-mitten-attack — varnar SSH dig högt och vägrar ansluta.
+
+## Vanliga frågor
+
+### Vad används en SSH-nyckel till?
+
+SSH-nycklar autentiserar dig mot fjärrservrar utan lösenord. De vanligaste användningsområdena är: att logga in på Linux/Unix-servrar för administration, autentisering med Git-värdtjänster (GitHub, GitLab, Bitbucket) för push/pull-åtkomst, automatiserade driftsättningsskript som behöver lösenordsfri serveråtkomst och CI/CD-pipelines som driftsätter kod till produktion. SSH-nycklar föredras framför lösenord eftersom de är immuna mot brute force, inte kan återanvändas vid intrång och kan användas utan mänsklig interaktion.
+
+### Hur många SSH-nycklar ska jag ha?
+
+Det finns inget enda rätt svar, men en vanlig bästa praxis är **en nyckel per enhet** (inte per tjänst). Din laptop har ett nyckelpar; din stationär dator har ett annat; din CI-server har ett annat. På så sätt, om en enhet stjäls eller komprometteras, återkallar du bara den enhetens nyckel. Vissa delar ytterligare efter sammanhang (personligt vs. arbete), vilket resulterar i två nycklar per enhet. Undvik att dela en enda nyckel mellan flera maskiner — om den nyckeln komprometteras är all din åtkomst i riskzonen samtidigt.
+
+### Kan jag dela min publika SSH-nyckel?
+
+Ja. Den publika nyckeln är utformad för att delas. Det är säkert att e-posta den, publicera den i GitHub-dokumentation eller inkludera den i en biljett som begär serveråtkomst. Den publika nyckeln ensam kan inte användas för att autentisera som du — det kräver den motsvarande privata nyckeln, som bara du har. Det är den grundläggande egenskapen hos asymmetrisk kryptografi. Dela aldrig din **privata** nyckel med någon.
+
+### Vad händer om jag tappar bort min privata SSH-nyckel?
+
+Om du tappar bort din privata nyckel och inte har en säkerhetskopia förlorar du möjligheten att autentisera med den. Din publika nyckel, fortfarande installerad på servrar och tjänster, blir föräldralös. Du behöver ett alternativt sätt att komma åt servern (lösenordsautentisering om aktiverat, konsolåtkomst, din värdleverantörs nödåtkomstmekanism) för att ta bort den gamla publika nyckeln från `authorized_keys` och lägga till en ny. Det är därför det är viktigt att säkerhetskopiera din privata nyckel (i en lösenordshanterare eller krypterad säkerhetskopia). Den privata nyckeln kan inte rekonstrueras från den publika nyckeln.
+
+### Är Ed25519 eller RSA bättre?
+
+**Ed25519 är bättre för all ny nyckelgenerering.** Det är snabbare, producerar mindre nycklar, är inte sårbart för vissa implementationssvagheter som påverkar RSA och ger likvärdig eller överlägsen säkerhet med en 256-bitars nyckel jämfört med RSA-4096. Den enda anledningen att använda RSA idag är kompatibilitet med mycket gamla SSH-serverprogramvara (OpenSSH före version 6.5, utgiven 2014) eller äldre hårdvarusäkerhetsmoduler. Om du ansluter till en modern server eller tjänst som GitHub, använd Ed25519.
+
+## Generera ditt SSH-nyckelpar
+
+Redo att skapa dina SSH-nycklar? Vår kostnadsfria onlinegenerator skapar Ed25519- eller RSA-nyckelpar direkt i din webbläsare. Den privata nyckeln genereras lokalt och skickas aldrig till våra servrar.
+
+<a href="/">Generera ditt SSH-nyckelpar nu →</a>
+
+---
+
+**Vidare läsning:**
+- <a href="/sv/what-is-ssh">Vad är SSH? Den kompletta guiden till Secure Shell</a>
+- <a href="/sv/ssh-command">SSH-kommandot: Komplett referens med exempel</a>
+- <a href="/sv/how-to-set-up-ssh">Hur man konfigurerar SSH: En komplett steg-för-steg-guide</a>

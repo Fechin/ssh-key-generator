@@ -1,0 +1,80 @@
+{
+  "it": {
+    "what-is-ssh": {
+      "title": "Cos'è SSH? La Guida Completa al Secure Shell",
+      "description": "Scopri cos'è SSH (Secure Shell), come funziona il protocollo, la differenza con Telnet e SSL, e perché è diventato lo standard universale per l'accesso remoto sicuro.",
+      "keywords": ["SSH", "Secure Shell", "protocollo SSH", "cos'è SSH", "SSH vs Telnet", "SSH tunneling", "OpenSSH", "chiave SSH", "porta SSH", "accesso remoto sicuro"],
+      "publishDate": "2026-03-14"
+    },
+    "what-is-an-ssh-key": {
+      "title": "Cos'è una Chiave SSH? Chiavi Pubbliche, Private e Coppie di Chiavi Spiegate",
+      "description": "Guida completa alle chiavi SSH: come funzionano le coppie di chiavi, differenze tra Ed25519 e RSA, come aggiungere una chiave SSH a GitHub e GitLab, e dove vengono memorizzate.",
+      "keywords": ["chiave SSH", "chiave pubblica SSH", "chiave privata SSH", "coppia di chiavi SSH", "Ed25519", "RSA", "authorized_keys", "SSH GitHub", "fingerprint SSH", "ssh-keygen"],
+      "publishDate": "2026-03-14"
+    },
+    "ssh-command": {
+      "title": "Il Comando SSH: Riferimento Completo con Esempi per Linux, Mac e Windows",
+      "description": "Riferimento completo al comando ssh con tutti i flag, opzioni ed esempi pratici. Tunneling SSH, ProxyJump, bastion host e configurazione per Linux, macOS e Windows.",
+      "keywords": ["comando SSH", "ssh -i", "ssh -p", "SSH port forwarding", "SSH tunneling", "ProxyJump", "bastion host", "ssh config", "SSH Windows", "OpenSSH"],
+      "publishDate": "2026-03-14"
+    },
+    "how-to-set-up-ssh": {
+      "title": "Come Configurare SSH: Una Guida Completa Passo dopo Passo",
+      "description": "Guida passo dopo passo per configurare SSH su Linux, macOS e Windows. Generazione chiavi, ssh-copy-id, configurazione sshd, GitHub, GitLab e risoluzione degli errori comuni.",
+      "keywords": ["configurare SSH", "installare SSH", "ssh-keygen", "ssh-copy-id", "authorized_keys", "SSH GitHub", "SSH GitLab", "sshd_config", "permission denied publickey", "ssh-agent"],
+      "publishDate": "2026-03-14"
+    }
+  },
+  "nl": {
+    "what-is-ssh": {
+      "title": "Wat Is SSH? De Volledige Gids voor Secure Shell",
+      "description": "Leer wat SSH (Secure Shell) is, hoe het protocol werkt, het verschil met Telnet en SSL, en waarom het de universele standaard voor veilige externe toegang is geworden.",
+      "keywords": ["SSH", "Secure Shell", "SSH protocol", "wat is SSH", "SSH vs Telnet", "SSH tunneling", "OpenSSH", "SSH sleutel", "SSH poort", "veilige externe toegang"],
+      "publishDate": "2026-03-14"
+    },
+    "what-is-an-ssh-key": {
+      "title": "Wat Is een SSH-sleutel? Openbare Sleutels, Privésleutels en Sleutelparen Uitgelegd",
+      "description": "Volledige gids over SSH-sleutels: hoe sleutelparen werken, verschil tussen Ed25519 en RSA, SSH-sleutel toevoegen aan GitHub en GitLab, en waar ze worden opgeslagen.",
+      "keywords": ["SSH sleutel", "openbare sleutel SSH", "privésleutel SSH", "SSH sleutelpaar", "Ed25519", "RSA", "authorized_keys", "SSH GitHub", "SSH vingerafdruk", "ssh-keygen"],
+      "publishDate": "2026-03-14"
+    },
+    "ssh-command": {
+      "title": "Het SSH-commando: Volledige Referentie met Voorbeelden voor Linux, Mac en Windows",
+      "description": "Volledige referentie voor het ssh-commando met alle vlaggen, opties en praktische voorbeelden. SSH-tunneling, ProxyJump, bastionhosts en configuratie voor Linux, macOS en Windows.",
+      "keywords": ["SSH commando", "ssh -i", "ssh -p", "SSH port forwarding", "SSH tunneling", "ProxyJump", "bastionhost", "ssh config", "SSH Windows", "OpenSSH"],
+      "publishDate": "2026-03-14"
+    },
+    "how-to-set-up-ssh": {
+      "title": "SSH Instellen: Een Volledige Stapsgewijze Handleiding voor Linux, Mac en Windows",
+      "description": "Stapsgewijze handleiding voor het instellen van SSH op Linux, macOS en Windows. Sleutels genereren, ssh-copy-id, sshd configureren, GitHub, GitLab en veelvoorkomende fouten oplossen.",
+      "keywords": ["SSH instellen", "SSH configureren", "ssh-keygen", "ssh-copy-id", "authorized_keys", "SSH GitHub", "SSH GitLab", "sshd_config", "permission denied publickey", "ssh-agent"],
+      "publishDate": "2026-03-14"
+    }
+  },
+  "pl": {
+    "what-is-ssh": {
+      "title": "Czym Jest SSH? Kompletny Przewodnik po Secure Shell",
+      "description": "Dowiedz się, czym jest SSH (Secure Shell), jak działa protokół, jaka jest różnica między SSH a Telnetem i SSL oraz dlaczego stał się powszechnym standardem bezpiecznego dostępu zdalnego.",
+      "keywords": ["SSH", "Secure Shell", "protokół SSH", "czym jest SSH", "SSH vs Telnet", "tunelowanie SSH", "OpenSSH", "klucz SSH", "port SSH", "bezpieczny dostęp zdalny"],
+      "publishDate": "2026-03-14"
+    },
+    "what-is-an-ssh-key": {
+      "title": "Czym Jest Klucz SSH? Klucze Publiczne, Prywatne i Pary Kluczy Wyjaśnione",
+      "description": "Kompletny przewodnik po kluczach SSH: jak działają pary kluczy, różnica między Ed25519 a RSA, jak dodać klucz SSH do GitHub i GitLab oraz gdzie są przechowywane.",
+      "keywords": ["klucz SSH", "klucz publiczny SSH", "klucz prywatny SSH", "para kluczy SSH", "Ed25519", "RSA", "authorized_keys", "SSH GitHub", "odcisk palca SSH", "ssh-keygen"],
+      "publishDate": "2026-03-14"
+    },
+    "ssh-command": {
+      "title": "Polecenie SSH: Kompletny Przewodnik z Przykładami dla Linux, Mac i Windows",
+      "description": "Kompletny przewodnik po poleceniu ssh ze wszystkimi flagami, opcjami i praktycznymi przykładami. Tunelowanie SSH, ProxyJump, serwery bastion i konfiguracja dla Linux, macOS i Windows.",
+      "keywords": ["polecenie SSH", "ssh -i", "ssh -p", "przekierowywanie portów SSH", "tunelowanie SSH", "ProxyJump", "serwer bastion", "konfiguracja ssh", "SSH Windows", "OpenSSH"],
+      "publishDate": "2026-03-14"
+    },
+    "how-to-set-up-ssh": {
+      "title": "Jak Skonfigurować SSH: Kompletny Przewodnik Krok po Kroku dla Linux, Mac i Windows",
+      "description": "Przewodnik krok po kroku do konfiguracji SSH na Linux, macOS i Windows. Generowanie kluczy, ssh-copy-id, konfiguracja sshd, GitHub, GitLab i rozwiązywanie typowych błędów.",
+      "keywords": ["konfiguracja SSH", "instalacja SSH", "ssh-keygen", "ssh-copy-id", "authorized_keys", "SSH GitHub", "SSH GitLab", "sshd_config", "permission denied publickey", "ssh-agent"],
+      "publishDate": "2026-03-14"
+    }
+  }
+}

@@ -1,0 +1,563 @@
+# SSH Instellen: Een Volledige Stapsgewijze Handleiding voor Linux, Mac en Windows
+
+SSH correct instellen duurt ongeveer tien minuten en brengt jarenlang voordelen. Eenmaal geconfigureerd kun je inloggen op servers zonder wachtwoorden te typen, code pushen naar GitHub zonder bij elke bewerking inloggegevens in te voeren en implementaties vol vertrouwen automatiseren. Deze gids doorloopt het volledige proces — van het genereren van een sleutelpaar tot het oplossen van veelvoorkomende fouten — voor Linux, macOS en Windows.
+
+Als je eerst de onderliggende technologie wilt begrijpen, lees dan onze gidsen over <a href="/nl/what-is-ssh">wat SSH is</a> en <a href="/nl/what-is-an-ssh-key">wat SSH-sleutels zijn</a>.
+
+## Vereisten
+
+Zorg voordat je begint dat je het volgende hebt:
+
+**Voor servertoegang:**
+- Een terminalapplicatie (Terminal op macOS/Linux, Windows Terminal of PowerShell op Windows)
+- Een externe server met Linux/Unix waarop SSH-serversoftware (sshd) is geïnstalleerd
+- Een gebruikersaccount op die server (of root-toegang om een account aan te maken)
+- Het IP-adres of de hostnaam van de server
+
+**Voor GitHub/GitLab-toegang:**
+- Een GitHub- of GitLab-account
+- Een terminal met `ssh` beschikbaar
+- Optioneel: git lokaal geïnstalleerd
+
+**Vereisten voor het besturingssysteem:**
+- **Linux**: SSH-client is vooraf geïnstalleerd op vrijwel alle distributies
+- **macOS**: SSH-client is ingebouwd, toegankelijk vanuit Terminal
+- **Windows 10 versie 1809+ / Windows 11**: OpenSSH-client is beschikbaar als optionele functie
+
+Je hoeft niets te installeren op Linux of macOS. Verifieer op Windows of OpenSSH is geïnstalleerd door PowerShell te openen en `ssh -V` uit te voeren. Als je een versiestring krijgt, ben je klaar. Als niet, zie Stap 4 voor installatie-instructies.
+
+## Stap 1: Genereer Je SSH-sleutelpaar
+
+Je hebt een sleutelpaar nodig voordat je iets anders kunt doen. Het sleutelpaar bestaat uit een **privésleutel** (blijft op je machine) en een **openbare sleutel** (gaat op servers of diensten zoals GitHub).
+
+### Optie A: Gebruik de Online Generator
+
+Als je de voorkeur geeft aan een grafische interface, maakt onze <a href="/">gratis online SSH-sleutelgenerator</a> Ed25519- of RSA-sleutelparen in je browser. De privésleutel wordt lokaal gegenereerd via de Web Crypto API — niets wordt naar onze servers gestuurd. Download beide bestanden en sla ze op in `~/.ssh/` (Linux/macOS) of `C:\Users\JouwNaam\.ssh\` (Windows).
+
+### Optie B: Gebruik ssh-keygen op de Opdrachtregel
+
+Het commando `ssh-keygen` is beschikbaar op Linux, macOS en Windows met OpenSSH:
+
+```bash
+# Genereer een Ed25519-sleutelpaar (aanbevolen)
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+**Wat elke vlag betekent:**
+- `-t ed25519` — sleuteltype (Ed25519 is modern, snel en veilig)
+- `-C "opmerking"` — een label ingebed in de openbare sleutel, meestal je e-mailadres
+
+Je wordt gevraagd:
+
+```
+Generating public/private ed25519 key pair.
+Enter file in which to save the key (/home/user/.ssh/id_ed25519):
+```
+
+Druk op **Enter** om de standaardlocatie te accepteren. Als je meerdere sleutels hebt, kun je ze beschrijvende namen geven (bijv. `/home/user/.ssh/id_ed25519_github`).
+
+```
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+```
+
+Voer een sterke wachtwoordzin in. Dit versleutelt het privésleutelbestand op schijf — als je machine wordt gestolen, kan de sleutel niet worden gebruikt zonder de wachtwoordzin. Je kunt het leeg laten voor automatiseringsgebruik waarbij menselijke tussenkomst niet mogelijk is, maar voor persoonlijke sleutels, gebruik altijd een wachtwoordzin.
+
+**Uitvoer:**
+
+```
+Your identification has been saved in /home/user/.ssh/id_ed25519
+Your public key has been saved in /home/user/.ssh/id_ed25519.pub
+The key fingerprint is:
+SHA256:abc123defghijk... your@email.com
+The key's randomart image is:
++--[ED25519 256]--+
+...
+```
+
+Er worden twee bestanden aangemaakt:
+- `~/.ssh/id_ed25519` — je **privésleutel** (nooit delen)
+- `~/.ssh/id_ed25519.pub` — je **openbare sleutel** (veilig om te delen)
+
+### Voor RSA (Legacy-compatibiliteit)
+
+Als je verbinding moet maken met zeer oude systemen die Ed25519 niet ondersteunen:
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "your@email.com"
+```
+
+Gebruik minimaal 4096 bits. RSA-sleutels kleiner dan 4096 bits worden niet langer beschouwd als adequate beveiliging.
+
+## Stap 2: SSH Instellen op Linux
+
+Dit gedeelte behandelt het kopiëren van je openbare sleutel naar een Linux-server zodat je zonder wachtwoord kunt authenticeren.
+
+### Methode 1: ssh-copy-id (Eenvoudigst)
+
+`ssh-copy-id` is de eenvoudigste manier om je openbare sleutel op een externe server te installeren. Het verbindt via wachtwoordauthenticatie, voegt je openbare sleutel toe aan het bestand `~/.ssh/authorized_keys` van de server en stelt de juiste rechten in.
+
+```bash
+ssh-copy-id user@server.example.com
+
+# Geef expliciet een sleutelbestand op
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server.example.com
+
+# Verbind op een niet-standaard poort
+ssh-copy-id -p 2222 user@server.example.com
+```
+
+Je wordt één laatste keer gevraagd om het serverwachtwoord. Daarna kun je verbinding maken met `ssh user@server.example.com` met je sleutel.
+
+### Methode 2: Handmatig Kopiëren
+
+Als `ssh-copy-id` niet beschikbaar is (gebruikelijk op sommige BSD-systemen of minimale Linux-installaties):
+
+```bash
+# Toon je openbare sleutel en kopieer de uitvoer
+cat ~/.ssh/id_ed25519.pub
+
+# SSH dan naar de server (met wachtwoord) en voer uit:
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+echo "PLAK_JE_OPENBARE_SLEUTEL_HIER" >> ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+```
+
+Of doe het allemaal in één pijplijn:
+
+```bash
+cat ~/.ssh/id_ed25519.pub | ssh user@server.example.com \
+  "mkdir -p ~/.ssh && chmod 700 ~/.ssh && \
+   cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+```
+
+### Controleer of de Sleutel Is Geïnstalleerd
+
+```bash
+ssh user@server.example.com
+# Zou moeten verbinden zonder om een wachtwoord te vragen (alleen wachtwoordzin als je er een hebt ingesteld)
+```
+
+### De SSH-server Configureren (sshd)
+
+Op de externe server bevindt de SSH-daemonconfiguratie zich in `/etc/ssh/sshd_config`. Voor een veilige installatie:
+
+```bash
+sudo nano /etc/ssh/sshd_config
+```
+
+Aanbevolen instellingen:
+
+```
+# Schakel authenticatie met openbare sleutel in
+PubkeyAuthentication yes
+
+# Schakel wachtwoordauthenticatie uit (na bevestiging dat sleutels werken!)
+ PasswordAuthentication no
+
+# Schakel root-aanmelding via SSH uit
+ PermitRootLogin no
+
+# Sta alleen specifieke gebruikers toe
+AllowUsers alice bob deploy
+
+# Houd sessies actief
+ClientAliveInterval 60
+ClientAliveCountMax 3
+```
+
+Na bewerking, herlaad de SSH-daemon:
+
+```bash
+sudo systemctl reload sshd
+# Of op oudere systemen:
+sudo service ssh reload
+```
+
+**Belangrijk**: Schakel `PasswordAuthentication` pas uit nadat je hebt bevestigd dat authenticatie op basis van sleutels werkt. Als je jezelf buitensluit, heb je consoletoegang (of noodtoegang van je hostingprovider) nodig om te herstellen.
+
+### ssh-agent Instellen op Linux
+
+Als je sleutel een wachtwoordzin heeft, voeg deze toe aan `ssh-agent` aan het begin van je sessie om te voorkomen dat je hem opnieuw moet invoeren:
+
+```bash
+# Start de agent (vaak automatisch gestart door desktopomgevingen)
+eval "$(ssh-agent -s)"
+
+# Voeg je sleutel toe (voer de wachtwoordzin eenmaal in)
+ssh-add ~/.ssh/id_ed25519
+
+# Controleer geladen sleutels
+ssh-add -l
+```
+
+Om `ssh-agent` automatisch te starten en je sleutel toe te voegen bij aanmelden, voeg toe aan `~/.bashrc` of `~/.zshrc`:
+
+```bash
+# Automatisch ssh-agent starten
+if [ -z "$SSH_AUTH_SOCK" ]; then
+  eval "$(ssh-agent -s)"
+  ssh-add ~/.ssh/id_ed25519
+fi
+```
+
+## Stap 3: SSH Instellen op macOS
+
+macOS bevat een volledige OpenSSH-client. Het proces voor het instellen van authenticatie op basis van sleutels naar een externe server is identiek aan Linux (zie Stap 2 hierboven). De macOS-specifieke toevoegingen hebben betrekking op sleutelhangerintegratie.
+
+### Sleutelhangerintegratie
+
+macOS kan je wachtwoordzin opslaan in de systeemsleutelhanger zodat je deze na de eerste keer nooit meer hoeft in te voeren:
+
+```bash
+# Voeg sleutel toe aan ssh-agent met sleutelhangerintegratie
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+
+# Voor oudere macOS-versies (voor Monterey)
+ssh-add -K ~/.ssh/id_ed25519
+```
+
+Om macOS altijd je sleutels uit de sleutelhanger te laten laden, voeg dit toe aan `~/.ssh/config`:
+
+```
+Host *
+    AddKeysToAgent yes
+    UseKeychain yes
+    IdentityFile ~/.ssh/id_ed25519
+```
+
+Hierna wordt de wachtwoordzin opgeslagen in de sleutelhanger en automatisch geladen — je wordt er niet meer om gevraagd bij volgende opstart.
+
+### Verifieer de SSH-clientversie
+
+```bash
+ssh -V
+# OpenSSH_9.x, LibreSSL x.x.x
+```
+
+macOS wordt geleverd met een relatief recente OpenSSH, maar niet altijd de allerlaatste. Als je nieuwere functies nodig hebt, installeer dan via Homebrew: `brew install openssh`.
+
+## Stap 4: SSH Instellen op Windows
+
+Windows 10 (1809+) en Windows 11 bevatten OpenSSH. Hier is hoe je het aan de praat krijgt.
+
+### OpenSSH-client Installeren
+
+**Controleer of het al is geïnstalleerd:**
+
+```powershell
+ssh -V
+```
+
+**Installeer via Instellingen:**
+1. Open **Instellingen → Apps → Optionele functies**
+2. Zoek naar **OpenSSH-client**
+3. Klik op **Installeren**
+
+**Installeer via PowerShell (Beheerder):**
+
+```powershell
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+```
+
+### Sleutels Genereren op Windows
+
+Open PowerShell en voer uit:
+
+```powershell
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+Sleutels worden opgeslagen in `C:\Users\JouwGebruikersnaam\.ssh\`.
+
+### Kopieer Je Openbare Sleutel naar een Linux-server
+
+Windows heeft geen `ssh-copy-id`, maar je kunt dit handmatig doen vanuit PowerShell:
+
+```powershell
+# Toon je openbare sleutel
+Get-Content ~/.ssh/id_ed25519.pub
+
+# Kopieer het naar de externe server (je wordt gevraagd om het serverwachtwoord)
+$pubkey = Get-Content ~/.ssh/id_ed25519.pub -Raw
+ssh user@server.example.com "mkdir -p ~/.ssh && echo '$pubkey' >> ~/.ssh/authorized_keys && chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys"
+```
+
+Of gebruik `Add-Content` om het door te sluizen:
+
+```powershell
+type $env:USERPROFILE\.ssh\id_ed25519.pub | ssh user@server.example.com "cat >> ~/.ssh/authorized_keys"
+```
+
+### ssh-agent Instellen op Windows
+
+Om te voorkomen dat je herhaaldelijk je wachtwoordzin invoert, start de OpenSSH-authenticatieagentservice:
+
+```powershell
+# Start de service
+Start-Service ssh-agent
+
+# Stel in om automatisch te starten
+Set-Service -Name ssh-agent -StartupType Automatic
+
+# Voeg je sleutel toe
+ssh-add ~/.ssh/id_ed25519
+```
+
+### PuTTY als Alternatief
+
+Als je de voorkeur geeft aan een grafische SSH-client, is PuTTY een gratis optie voor Windows. Gebruik **PuTTYgen** om sleutels te genereren (sla op in zowel `.ppk`-formaat voor PuTTY als exporteer in OpenSSH-formaat). Voor nieuwe installaties is de ingebouwde OpenSSH-client echter eenvoudiger en interoperabel met de rest van het ecosysteem.
+
+## SSH-sleutels Instellen voor GitHub en GitLab
+
+SSH-sleutelauthenticatie voor GitHub en GitLab werkt op vergelijkbare wijze — je uploadt je openbare sleutel naar de dienst en gebruikt de bijbehorende privésleutel bij Git-bewerkingen.
+
+### SSH Instellen voor GitHub
+
+**1. Kopieer je openbare sleutel:**
+
+```bash
+# Linux
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+
+# macOS
+cat ~/.ssh/id_ed25519.pub | pbcopy
+
+# Windows PowerShell
+Get-Content ~/.ssh/id_ed25519.pub | Set-Clipboard
+```
+
+Of toon en kopieer handmatig:
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+**2. Voeg toe aan GitHub:**
+
+1. Ga naar **github.com** en log in
+2. Klik op je avatar → **Instellingen**
+3. In de linker zijbalk: **SSH en GPG-sleutels**
+4. Klik op **Nieuwe SSH-sleutel**
+5. Geef het een beschrijvende **Titel** (bijv. "MacBook Pro" of "Werk-pc")
+6. Stel **Sleuteltype** in op **Authenticatiesleutel**
+7. Plak je openbare sleutel
+8. Klik op **SSH-sleutel toevoegen**
+
+**3. Test de verbinding:**
+
+```bash
+ssh -T git@github.com
+# Hi username! You've successfully authenticated, but GitHub does not provide shell access.
+```
+
+**4. Gebruik SSH voor Git-bewerkingen:**
+
+```bash
+# Kloon via SSH in plaats van HTTPS
+git clone git@github.com:username/repository.git
+
+# Als een bestaande repo HTTPS gebruikt, schakel over naar SSH
+git remote set-url origin git@github.com:username/repository.git
+```
+
+### SSH Instellen voor GitLab
+
+Het proces is identiek:
+
+1. Ga naar **gitlab.com** → Klik op je avatar → **Voorkeuren**
+2. In de linker zijbalk: **SSH-sleutels**
+3. Plak je openbare sleutel, geef het een titel en stel optioneel een vervaldatum in
+4. Klik op **Sleutel toevoegen**
+
+Test met:
+
+```bash
+ssh -T git@gitlab.com
+# Welcome to GitLab, @username!
+```
+
+Voor zelf gehoste GitLab-instanties, vervang `gitlab.com` door de hostnaam van je instantie.
+
+### Een Aparte Sleutel Gebruiken voor GitHub en Andere Diensten
+
+Als je een speciale sleutel wilt voor GitHub (aanbevolen voor sleutelhygiëne), genereer dan een benoemde sleutel:
+
+```bash
+ssh-keygen -t ed25519 -C "github" -f ~/.ssh/id_ed25519_github
+```
+
+Voeg vervolgens een `Host`-blok toe aan `~/.ssh/config`:
+
+```
+Host github.com
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519_github
+    AddKeysToAgent yes
+```
+
+Nu gebruikt `git clone git@github.com:...` automatisch de GitHub-specifieke sleutel.
+
+## SSH Testen en Problemen Oplossen
+
+### Basisconnectiviteitstest
+
+```bash
+ssh -v user@server.example.com
+```
+
+De vlag `-v` (uitgebreid) toont precies wat er bij elke stap gebeurt. Zoek naar regels als:
+- `Offering public key: ~/.ssh/id_ed25519` — SSH probeert je sleutel
+- `Server accepts key` — de sleutel staat in `authorized_keys`
+- `Authenticated to server.example.com` — succes
+
+### Veelvoorkomende Fouten en Oplossingen
+
+**"Permission denied (publickey)"**
+
+Dit is de meest voorkomende fout. Oorzaken en oplossingen:
+
+```bash
+# Controleer of je sleutel is geladen in ssh-agent
+ssh-add -l
+
+# Als er geen sleutels zijn, voeg dan je sleutel toe
+ssh-add ~/.ssh/id_ed25519
+
+# Controleer op de externe server authorized_keys
+cat ~/.ssh/authorized_keys
+# Zorg dat je openbare sleutel er staat
+
+# Controleer rechten op de externe server
+ls -la ~/.ssh/
+# ~/.ssh moet 700 zijn
+# authorized_keys moet 600 zijn
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/authorized_keys
+
+# Controleer of de server authenticatie met openbare sleutel toestaat
+sudo grep PubkeyAuthentication /etc/ssh/sshd_config
+# Moet zijn: PubkeyAuthentication yes
+```
+
+**"WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED"**
+
+De hostsleutel van de server is gewijzigd, wat SSH behandelt als een potentieel beveiligingsprobleem. Als je weet dat dit legitiem is (server werd herbouwd, IP werd opnieuw toegewezen), verwijder dan de oude vermelding:
+
+```bash
+# Verwijder de specifieke hostvermelding
+ssh-keygen -R server.example.com
+
+# Of bewerk known_hosts handmatig en verwijder de betrokken regel
+nano ~/.ssh/known_hosts
+```
+
+**"Bad permissions" of "Permissions too open"**
+
+SSH is streng over rechten van sleutelbestanden:
+
+```bash
+# Herstel rechten privésleutel
+chmod 600 ~/.ssh/id_ed25519
+
+# Herstel rechten openbare sleutel
+chmod 644 ~/.ssh/id_ed25519.pub
+
+# Herstel rechten .ssh-map
+chmod 700 ~/.ssh
+```
+
+Op Windows worden rechten voor privésleutels anders beheerd. Klik met de rechtermuisknop op het sleutelbestand → Eigenschappen → Beveiliging → Geavanceerd → Overname uitschakelen → Verwijder alles behalve je eigen gebruikersaccount, waarbij je alleen aan jezelf Volledig beheer verleent.
+
+### ssh-agent Instellen en Gebruiken
+
+Als je herhaaldelijk om je wachtwoordzin wordt gevraagd, is `ssh-agent` niet actief of is je sleutel niet toegevoegd:
+
+```bash
+# Start de agent
+eval "$(ssh-agent -s)"
+# Agent pid 12345
+
+# Voeg je sleutel toe
+ssh-add ~/.ssh/id_ed25519
+# Enter passphrase for /home/user/.ssh/id_ed25519:
+# Identity added: /home/user/.ssh/id_ed25519
+
+# Controleer
+ssh-add -l
+# 256 SHA256:abc123... your@email.com (ED25519)
+```
+
+### known_hosts Vooraf Invullen bij Automatisering
+
+Gebruik in CI/CD-pijplijnen `ssh-keyscan` om de vingerafdruk van de externe host toe te voegen vóór verbinding:
+
+```bash
+ssh-keyscan -H server.example.com >> ~/.ssh/known_hosts
+ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+```
+
+Dit voorkomt interactieve vingerafdrukprompts in geautomatiseerde scripts.
+
+## Veelgestelde Vragen
+
+### Hoe los ik "Permission denied (publickey)" op?
+
+Doorloop deze checklist: (1) Verifieer dat je sleutel in de SSH-agent staat: `ssh-add -l`. Als niet, voer dan `ssh-add ~/.ssh/id_ed25519` uit. (2) Controleer of je openbare sleutel in het bestand `~/.ssh/authorized_keys` van de server staat. (3) Verifieer rechten: `~/.ssh` moet `700` zijn, `authorized_keys` moet `600` zijn. (4) Controleer of de server `PubkeyAuthentication yes` heeft in `/etc/ssh/sshd_config`. (5) Gebruik `ssh -vvv user@server` om precies te zien waar authenticatie mislukt. De uitgebreide uitvoer vertelt je welke sleutels worden geprobeerd en of de server ze heeft geaccepteerd.
+
+### Hoe voeg ik mijn SSH-sleutel toe aan ssh-agent?
+
+Voer `ssh-add ~/.ssh/id_ed25519` uit (vervang door je sleutelbestandsnaam). Als de agent niet actief is, start hem dan eerst met `eval "$(ssh-agent -s)"`. Gebruik op macOS `ssh-add --apple-use-keychain ~/.ssh/id_ed25519` om de wachtwoordzin in de sleutelhanger op te slaan. Schakel op Windows de `ssh-agent`-service in met `Start-Service ssh-agent` en voer dan `ssh-add` uit. Je hoeft `ssh-add` slechts één keer per sessie uit te voeren (of eenmalig, met de sleutelhanger op macOS).
+
+### Kan ik meerdere SSH-sleutels hebben?
+
+Ja, en het is een goede praktijk. Genereer aparte sleutels voor verschillende doeleinden — bijvoorbeeld één voor persoonlijk GitHub, één voor werk GitLab, één voor productieservers. Gebruik `~/.ssh/config` om elke host aan zijn specifieke sleutel te koppelen met `IdentityFile`. Aparte sleutels betekenen dat het intrekken van één (door het van een dienst of server te verwijderen) de anderen niet beïnvloedt, waardoor de impact van een sleutelcompromittering wordt beperkt.
+
+### Hoe wijzig ik de wachtwoordzin op een SSH-sleutel?
+
+Gebruik `ssh-keygen -p`:
+
+```bash
+ssh-keygen -p -f ~/.ssh/id_ed25519
+```
+
+Je wordt gevraagd om de huidige wachtwoordzin, daarna kun je een nieuwe instellen en bevestigen. De sleutel zelf (en dus de openbare sleutel) verandert niet — je hoeft hem nergens bij te werken. Dit is handig als je vermoedt dat je wachtwoordzin is gecompromitteerd of als je hem als routineuze beveiligingspraktijk wilt rouleren.
+
+### Hoe verwijder ik een oude SSH-sleutel van een server?
+
+Open `~/.ssh/authorized_keys` op de server en verwijder de regel met de oude openbare sleutel:
+
+```bash
+# Bewerk authorized_keys op de externe server
+ssh user@server.example.com
+nano ~/.ssh/authorized_keys
+# Verwijder de regel voor de sleutel die je wilt verwijderen
+# Sla op en sluit
+```
+
+Elke regel in `authorized_keys` is één openbare sleutel. De opmerking van de sleutel (het laatste veld, gewoonlijk `user@hostname` of een e-mail) helpt te identificeren welke sleutel welke is. Als je niet weet welke regel te verwijderen, vergelijk dan de vingerafdruk:
+
+```bash
+# Op je lokale machine, haal de vingerafdruk op
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+
+# Op de server, controleer vingerafdrukken van alle geautoriseerde sleutels
+ssh-keygen -lf ~/.ssh/authorized_keys
+```
+
+Vergelijk de vingerafdrukken om de juiste sleutel te identificeren en te verwijderen.
+
+## Genereer Je SSH-sleutels Gratis
+
+Als je nog geen SSH-sleutelpaar hebt gegenereerd, maakt onze gratis online generator Ed25519- of RSA-sleutels direct in je browser binnen enkele seconden. Geen installatie vereist, niets naar onze servers gestuurd — generatie vindt volledig op je apparaat plaats.
+
+<a href="/">Genereer je SSH-sleutels gratis →</a>
+
+---
+
+**Verder lezen:**
+- <a href="/nl/what-is-ssh">Wat Is SSH? De Volledige Gids voor Secure Shell</a>
+- <a href="/nl/what-is-an-ssh-key">Wat Is een SSH-sleutel? Openbare Sleutels, Privésleutels en Sleutelparen Uitgelegd</a>
+- <a href="/nl/ssh-command">Het SSH-commando: Volledige Referentie met Voorbeelden</a>

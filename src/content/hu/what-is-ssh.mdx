@@ -1,0 +1,283 @@
+# Mi az SSH? A Secure Shell teljes útmutatója
+
+Az SSH, amely a **Secure Shell** rövidítése, egy kriptográfiai hálózati protokoll, amely lehetővé teszi a távoli számítógépek biztonságos elérését és kezelését nem biztonságos hálózaton keresztül. Akár egy Linux-kiszolgálóra jelentkezik be, kódot küld a GitHubba, vagy fájlokat visz át a gépek között, az SSH szinte biztosan az a protokoll, amely a színfalak mögött végzi a munkát. Ez az útmutató mindent elmagyaráz, amit az SSH-ról tudni kell: mi az, hogyan működik, és miért vált a biztonságos távoli hozzáférés univerzális szabványává.
+
+## Mit jelent az SSH?
+
+**SSH a Secure Shell** rövidítése. A név pontosan leírja, mit csinál a protokoll – biztonságos, titkosított shell-munkamenetet biztosít egy távoli gépnek. Az SSH létezése előtt a rendszergazdák olyan eszközöket használtak a távoli kiszolgálók kezelésére, mint a Telnet és az rsh (távoli shell). Ezek a protokollok mindent egyszerű szövegben továbbítottak, beleértve a felhasználóneveket és a jelszavakat is, így triviálisan könnyen elfoghatók voltak bármely megosztott hálózaton.
+
+Az SSH-t **Tatu Ylönen** finn informatikus hozta létre 1995-ben, közvetlenül az egyetemi hálózatán tapasztalt jelszószaglásos támadás hatására. Kiadta az SSH-1-et ingyenes szoftverként, és gyorsan elterjedt az interneten. A protokollt később az IETF SSH-2 néven szabványosította (RFC 4251–4254), amely erősebb kriptográfiát vezetett be, és számos biztonsági hiányosságot javított ki az eredeti tervben.
+
+Ma, amikor az emberek azt mondják, hogy "SSH", szinte mindig az SSH-2-re gondolnak. A legszélesebb körben használt implementáció az **OpenSSH**, egy nyílt forráskódú projekt, amelyet az OpenBSD csapata tart fenn, és gyakorlatilag minden Linux disztribúcióhoz és macOS telepítéshez kötődik.
+
+Az **SSH** jelentése a gyakorlatban túlmutat egy bejelentkezési eszközön. Ez egy teljes protokollcsomag, amely a következőket támasztja alá:
+- Biztonságos távoli terminál hozzáférés
+- Titkosított fájlátvitel (SFTP és SCP)
+- Git hitelesítés (GitHub, GitLab, Bitbucket)
+- Biztonságos port továbbítás és alagút
+- Automatizált telepítési csővezetékek
+
+## Hogyan működik az SSH
+
+A **biztonságos shell protokoll** olyan réteges architektúrán működik, amely külön kezeli a titkosítást, a hitelesítést és a csatorna multiplexelést. Ezeknek a rétegeknek a megértése segít tisztázni, hogy miért megbízható az SSH az érzékeny műveleteknél.
+
+### A három protokollréteg
+
+**1. Szállítási réteg (RFC 4253)**
+
+Amikor SSH-kapcsolatot kezdeményez, az ügyfél és a kiszolgáló először kézfogást hajt végre a titkosítási algoritmusok egyeztetése és a megosztott titok létrehozása érdekében. Ez egy kulcscsere algoritmust használ – a modern SSH alapértelmezés szerint a Curve25519-alapú kulcscserét használja. A kézfogás után minden további kommunikáció titkosítva lesz. A szállítási réteg üzenethitelesítési kódokon (MAC) keresztül is biztosítja az adatok integritását, biztosítva, hogy az adatok továbbítása során ne lehessen manipulálni.
+
+**2. Felhasználó hitelesítési réteg (RFC 4252)**
+
+A titkosított csatorna létrehozása után a szerver hitelesítést kér az ügyféltől. Az SSH többféle hitelesítési módszert támogat:
+
+- **Nyilvános kulcsú hitelesítés** — A kliens bizonyítja a magánkulcs birtoklását anélkül, hogy vezetékes úton elküldené. Ez a legbiztonságosabb és legelterjedtebb módszer.
+- **Jelszó hitelesítés** — A felhasználó jelszava a titkosított csatornán keresztül kerül elküldésre. Kényelmesebb, de sebezhető a nyers erő támadásaival szemben.
+- **Interaktív billentyűzet** – Kihívás/válasz mechanizmus, amelyet gyakran használnak többtényezős hitelesítésre.
+- **GSSAPI/Kerberos** – Központi identitáskezeléssel rendelkező vállalati környezetekben használatos.
+
+**3. Csatlakozási réteg (RFC 4254)**
+
+A hitelesítés után a kapcsolati réteg az egyetlen titkosított kapcsolatot több logikai csatornára multiplexeli. Ez teszi lehetővé az interaktív héj használatát, távoli parancsok futtatását, portok továbbítását és fájlok átvitelét egyetlen TCP-kapcsolaton keresztül.
+
+### A kulcscsere részleteiben
+
+Amikor beírja, hogy `ssh user@example.com`, ez történik az első néhány ezredmásodpercben:
+
+1. Az ügyfél csatlakozik a kiszolgáló 22-es TCP-portjához.
+2. Mindkét fél protokollverziós karakterláncokat cserél.
+3. Mindkét fél elküldi a támogatott algoritmusok listáját (kulcscsere, rejtjelek, MAC-ok, tömörítés).
+4. Diffie-Hellman vagy ECDH kulcscserét hajtanak végre a megosztott munkamenet kulcsának származtatása érdekében – ezért még ha valaki rögzíti is a titkosított forgalmat, nem tudja később visszafejteni.
+5. A szerver elküldi a **host kulcsát** (nyilvános kulcsot), amelyet a kliens a `~/.ssh/known_hosts` fájljával ellenőrzi.
+6. A hitelesítés a fent leírtak szerint történik.
+7. Az ülés elkezdődik.
+
+## SSH kontra Telnet: Miért nyert az SSH?
+
+Az SSH előtt a **Telnet** volt a szabványos protokoll a távoli terminálhozzáféréshez. A Telnet egyszerű és továbbra is működik, de van egy végzetes hibája: mindent egyszerű szövegben továbbítanak. Az Ön felhasználóneve, jelszava, minden beírt parancs és minden kimenet – mindez mindenki számára látható, aki el tudja fogadni a hálózati forgalmat.
+
+Az 1990-es években, amikor az internet gerincét az akadémia és a kutatói hálózatok jelentették, ezt nem tekintették komoly problémának. Ahogy az internet kereskedelmi és ellenségessé vált, az olyan eszközök, mint a Dsniff és az Ettercap, triviálissá tették a Telnet hitelesítő adatainak rögzítését a helyi hálózatokon.
+
+Az SSH ezt úgy oldotta meg, hogy mindent titkosított. Itt egy közvetlen összehasonlítás:
+
+| Funkció | Telnet | SSH |
+|---|---|---|
+| Titkosítás | Nincs | Erős (AES, ChaCha20) |
+| Hitelesítés | Egyszerű szöveges jelszó | Nyilvános kulcs + titkosított jelszó |
+| Adatintegritás | Nincs | HMAC ellenőrzés |
+| Kikötő | 23 | 22 |
+| Még mindig ajánlott | Nem | Igen |
+
+Az rsh (távoli shell) és az rlogin hasonló problémákkal küzdött. Az IP-alapú bizalomra is támaszkodtak, amelyet triviálisan hamisítanak. Az SSH felváltotta ezeket a protokollokat, és több mint 25 éve kifogástalan szabvány maradt.
+
+## Mi az SSH-kulcs?
+
+Az SSH két elsődleges hitelesítési módszert támogat: a jelszavakat és az **SSH-kulcsokat**. Az SSH-kulcsok kriptográfiai kulcspárok – egy **nyilvános kulcs** és egy **privát kulcs** –, amelyek aszimmetrikus kriptográfián alapulnak.
+
+A **privát kulcs** a helyi gépen marad, opcionális jelmondattal védve. A **nyilvános kulcs** minden elérni kívánt szerveren elhelyezhető egy `~/.ssh/authorized_keys` nevű fájlban. Csatlakozáskor a szerver kriptográfiai kihívást ad ki, amelyre csak a megfelelő privát kulcs birtokosa tud válaszolni. A hálózaton keresztül nem küldenek jelszót.
+
+Ennek a megközelítésnek számos előnye van:
+- **Immunis a nyers erővel szemben** – nincs mit kitalálni. Egy 256 bites Ed25519 kulcsnak 2²⁵6 lehetséges értéke van.
+- **Nincs ellopható jelszó** – még ha valaki el is hárítja a kézfogást, semmi hasznosat nem nyer.
+- **Automatizálható** – a szkriptek és a CI/CD-folyamatok emberi beavatkozás nélkül is hitelesíthetők.
+- **Visszavonható** – a nyilvános kulcs eltávolítása a `authorized_keys` címről azonnal visszavonja a hozzáférést.
+
+A legmodernebb és legajánlottabb kulcstípus az **Ed25519**, amely elliptikus görbe kriptográfiát használ az Edwards-görbe felett. Az RSA kulcsok is széles körben támogatottak, bár legalább 4096 bitet kell használni.
+
+A kulcspárok mélyebb megismeréséhez tekintse meg az <a href="/hu/what-is-an-ssh-key">mi az SSH-kulcs</a> című útmutatónkat.
+
+## Gyakori SSH használati esetek
+
+Az SSH-t rendkívül sokféle forgatókönyvben használják. Itt vannak a legfontosabbak.
+
+### Távoli szerveradminisztráció
+
+A legalapvetőbb használati eset. A rendszergazdák a Linux és Unix szerverekre bejelentkezve szoftvereket telepíthetnek, konfigurációs fájlokat szerkeszthetnek, szolgáltatásokat kezelhetnek és problémákat diagnosztizálhatnak – mindezt egy SSH terminál munkameneten keresztül.
+
+```bash
+ssh user@192.168.1.100
+ssh admin@myserver.example.com
+ssh -p 2222 deploy@staging.example.com
+```
+
+### Fájlátvitel SFTP-vel és SCP-vel
+
+Az SSH két fájlátviteli protokollt biztosít ugyanazon a titkosított csatornán:
+
+Az **SCP (Secure Copy Protocol)** egy egyszerű parancssori eszköz fájlok másolására:
+
+```bash
+# Helyi fájl másolása távoli szerverre
+scp report.pdf user@server:/home/user/documents/
+
+# Másolja a távoli fájlt a helyi gépre
+scp user@server:/var/log/app.log ./local-copy.log
+
+# A teljes könyvtár rekurzív másolása
+scp -r ./project/ user@server:/var/www/
+```
+
+Az **SFTP (SSH File Transfer Protocol)** interaktív FTP-szerű interfészt biztosít az SCP-nél gazdagabb szolgáltatáskészlettel, beleértve a folytatható átviteleket és a címtárlistákat.
+
+### Git hitelesítés
+
+Ha SSH-kulcsot ad hozzá a GitHubhoz, a GitLabhoz vagy a Bitbuckethez, minden `git clone`, `git push` és `git pull` SSH-n keresztül hitelesítve lesz az Ön privát kulcsával. Ez kiküszöböli a felhasználónév és jelszó megadását minden Git-műveletnél, és ez a javasolt hitelesítési módszer a fejlesztők számára.
+
+```bash
+# Leraktár klónozása SSH használatával
+git clone git@github.com:username/repository.git
+
+# Ellenőrizze a GitHub SSH-kapcsolatát
+ssh -T git@github.com
+```
+
+### Automatikus telepítés és CI/CD
+
+A telepítési szkriptek és a CI/CD rendszerek, például a GitHub Actions, a GitLab CI és a Jenkins SSH-kulcsokat használnak a kódok emberi beavatkozás nélkül történő üzembe helyezéséhez az éles szervereken. A privát kulcs titkos kulcsként kerül tárolásra a CI rendszerben, és a megfelelő nyilvános kulcs hozzáadódik a szerver `authorized_keys` fájljához.
+
+### Adatbázis- és alkalmazásportok továbbítása
+
+Az SSH-alagút biztonságosan elérhetővé teheti a távoli szolgáltatásokat a helyi gép számára. Például egy távoli MySQL adatbázis eléréséhez, amely nincs kitéve az internetnek:
+
+```bash
+ssh -L 3307:localhost:3306 user@dbserver.example.com -N
+```
+
+Ez létrehoz egy helyi alagutat: a gép 3307-es portjához csatlakozva transzparensen továbbítja a forgalmat a távoli szerver 3306-os portjára, az SSH-alagútban titkosítva.
+
+## SSH-port és konfigurációs lehetőségek
+
+### Alapértelmezett port 22
+
+Az SSH alapértelmezés szerint a **22-es TCP-porton** figyel. Ez egy IANA által hozzárendelt jól ismert port, amely a protokoll létrehozása óta le van foglalva az SSH számára. Ha a `ssh user@host` port megadása nélkül futtatja, az SSH-kliens a 22-es porthoz csatlakozik.
+
+Egyes adminisztrátorok kisebb biztonsági intézkedésként módosítják az SSH-portot (például 2222-re vagy 8022-re), hogy csökkentsék az automatikus vizsgálati zajt a naplókban. Ezt "biztonság a homályon keresztül" nevezik, és nem helyettesíti a megfelelő kulcsalapú hitelesítést, de csökkentheti a naplók rendetlenségét.
+
+```bash
+# Csatlakoztasson egy nem szabványos SSH-porthoz
+ssh -p 2222 user@example.com
+```
+
+### Az SSH-kliens konfigurációs fájlja
+
+Ahelyett, hogy minden alkalommal beírná a hosszú parancssori paramétereket, az SSH-kapcsolatokat `~/.ssh/config`-ban konfigurálhatja. Ez a fájl lehetővé teszi álnevek meghatározását, gazdagépenkénti beállítások megadását, és jelentősen leegyszerűsíti a munkafolyamatot.
+
+```
+Host myserver
+    HostName 203.0.113.10
+    User deploy
+    Port 2222
+    IdentityFile ~/.ssh/id_ed25519_prod
+
+Host bastion
+    HostName jump.example.com
+    User ec2-user
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host internal
+    HostName 10.0.1.50
+    User ubuntu
+    ProxyJump bastion
+```
+
+Ezzel a konfigurációval a `ssh myserver` a megadott kulccsal csatlakozik az egyéni port teljes gazdagépnevéhez – nincs szükség zászlókra.
+
+Az SSH-parancsbeállításokról és -jelzőkről szóló teljes tájékoztatásért tekintse meg az <a href="/hu/ssh-command">SSH-parancsok útmutatóját</a>.
+
+### Szerveroldali konfiguráció (sshd_config)
+
+Az SSH szerver démon (sshd) a `/etc/ssh/sshd_config` címen keresztül konfigurálható. A legfontosabb beállítások a következők:
+
+```
+# Jelszavas hitelesítés letiltása – csak kulcsok
+PasswordAuthentication no
+
+# A root bejelentkezés letiltása
+PermitRootLogin no
+
+# Változtassa meg a hallgatási portot
+Port 2222
+
+# Konkrét felhasználókra korlátozva
+AllowUsers deploy admin
+
+# Nyilvános kulcsú hitelesítés engedélyezése
+PubkeyAuthentication yes
+```
+
+Szerkesztés után töltse be újra a démont: `sudo systemctl reload sshd`
+
+## SSH Tunneling
+
+Az SSH-alagút (más néven SSH-porttovábbítás) lehetővé teszi, hogy tetszőleges TCP-forgalmat irányítson egy titkosított SSH-kapcsolaton keresztül. Ez az SSH egyik legerősebb és legkevésbé kihasznált funkciója.
+
+### Helyi porttovábbítás
+
+A helyi továbbítás lehetővé teszi a távoli szolgáltatás elérhetőségét a helyi gépen. A szintaxis `-L local_port:remote_host:remote_port`.
+
+```bash
+# Hozzáférés egy távoli PostgreSQL adatbázishoz helyben
+ssh -L 5433:localhost:5432 user@dbserver -N
+
+# Hozzáférés egy belső webalkalmazáshoz egy jump szerveren keresztül
+ssh -L 8080:internal-app.company.com:80 user@jump.company.com -N
+```
+
+Az `-N` jelző azt mondja az SSH-nak, hogy ne hajtson végre távoli parancsot – akkor hasznos, ha csak az alagutat szeretné.
+
+### Távoli porttovábbítás
+
+A távoli továbbítás helyi szolgáltatást tesz elérhetővé a távoli kiszolgálón. A szintaxis `-R remote_port:local_host:local_port`.
+
+```bash
+# Tegye elérhetővé a helyi webkiszolgálót a távoli gép számára
+ssh -R 9090:localhost:3000 user@server -N
+```
+
+Ez akkor hasznos, ha ideiglenesen megosztja a helyi fejlesztési kiszolgálót egy kollégával, aki hozzáfér a távoli gazdagéphez, vagy ideiglenes hozzáférést biztosít egy kliensnek a folyamatban lévő munkához.
+
+### Dinamikus porttovábbítás (SOCKS proxy)
+
+A `-D` jelző SOCKS proxyt hoz létre a helyi gépen, amely az összes SOCKS-kompatibilis forgalmat az SSH-kapcsolaton keresztül irányítja. Ez hatékonyan használja a távoli kiszolgálót VPN kilépési csomópontként.
+
+```bash
+# Hozzon létre egy SOCKS5 proxyt az 1080-as helyi porton
+ssh -D 1080 user@remote-server -N -f
+```
+
+Állítsa be böngészőjét vagy rendszerét a `SOCKS5 proxy: 127.0.0.1:1080` használatára, és az összes webes forgalom a távoli kiszolgálón keresztül lesz irányítva. Ezt gyakran használják földrajzilag korlátozott tartalmak eléréséhez vagy biztonságos böngészéshez egy nem megbízható hálózatról.
+
+## Gyakran Ismételt Kérdések
+
+### Mit jelent az SSH?
+
+Az SSH a **Secure Shell** rövidítése. Ez egy kriptográfiai hálózati protokoll a hálózati szolgáltatások biztonságos működtetésére nem biztonságos hálózaton keresztül. A név az elsődleges használati esetre utal: biztonságos interaktív shell-munkamenet biztosítása távoli számítógépen.
+
+### Az SSH ugyanaz, mint az SSL?
+
+Nem. Az SSH és az SSL/TLS egyaránt kriptográfiai protokoll, de eltérő célokat szolgálnak. **SSL/TLS** (Secure Sockets Layer / Transport Layer Security) a webes forgalom (HTTPS), az e-mailek és más alkalmazásprotokollok védelmére szolgál. Az **SSH** kifejezetten biztonságos távoli shell-hozzáféréshez, fájlátvitelhez és alagútkezeléshez készült. Hasonló kriptográfiai primitíveket használnak (nyilvános kulcsú titkosítás, szimmetrikus titkosítás), de eltérő kézfogási mechanizmusokkal és használati esetekkel rendelkeznek. Az SSH belsőleg nem használja az SSL/TLS-t.
+
+### Milyen portot használ az SSH?
+
+Az SSH alapértelmezés szerint a **22-es TCP-portot** használja. Ez egy jól ismert, az IANA által kijelölt port. Az SSH-kiszolgálót beállíthatja úgy, hogy egy másik porton figyeljen a `/etc/ssh/sshd_config` `Port` direktívájával, és csatlakozzon a nem szabványos portokhoz a `ssh -p PORT user@host` segítségével.
+
+### Feltörhető az SSH?
+
+Egy megfelelően konfigurált SSH-kiszolgáló kulcsalapú hitelesítéssel rendkívül nehéz kompromisszumot kötni. A kriptográfia – Ed25519 kulcsok, AES-256 titkosítás, SHA-2 MAC-ok – a kulcshitelesítés szempontjából kvantumellenállónak tekinthető, és számításilag nem kivitelezhető a nyers erővel szemben. A valós SSH-kompromisszumok jellemzően a következőket foglalják magukban: ellopott privát kulcsfájlok, gyenge jelszavak, rosszul konfigurált szerverek, amelyek gyenge jelszavakkal lehetővé teszik a jelszavas hitelesítést, sebezhető szoftververziók javítatlan CVE-kkel, vagy kriptográfiai támadások helyett társadalmi manipuláció. Tartsa naprakészen szerverét, tiltsa le a jelszavas hitelesítést, és védje meg privát kulcsfájlját.
+
+### Mi a különbség az SSH és a HTTPS között?
+
+Mind az SSH, mind a HTTPS titkosítja a hálózati forgalmat, de különböző célokra készültek. A **HTTPS** védi a webböngészést – TLS-t használ a HTTP-kérések és válaszok titkosítására a böngészők és webszerverek között. Az **SSH** biztosítja a távoli adminisztrációs hozzáférést, a fájlátvitelt és az alagútkezelést. Amikor kódot küld a GitHubba, használhatja az SSH-t (22-es port, kulcsalapú hitelesítés) vagy a HTTPS-t (443-as port, token-alapú hitelesítés). A fejlesztők általában az SSH-t részesítik előnyben, mivel nem igényel újbóli hitelesítő adatokat. A HTTPS általánosan támogatott tűzfalakon keresztül, amelyek blokkolhatják a 22-es portot.
+
+## Készítse elő SSH-kulcsait most
+
+Az SSH kulcs alapú hitelesítés biztonságosabb és kényelmesebb, mint a jelszavak. Ha még nem állította be az SSH-kulcsokat, ingyenes online generátorunk azonnal létrehozza az Ed25519 vagy RSA kulcspárokat a böngészőjében – nincs szükség telepítésre, semmit sem küldünk el szervereinknek.
+
+<a href="/">Hozza létre az SSH-kulcspárt most →</a>
+
+---
+
+**További olvasnivalók:**
+- <a href="/hu/what-is-an-ssh-key">Mi az SSH-kulcs? Nyilvános kulcsok, privát kulcsok és kulcspárok magyarázata</a>
+- <a href="/hu/ssh-command">Az SSH-parancs: teljes hivatkozás példákkal</a>
+- <a href="/hu/how-to-set-up-ssh">Hogyan állítsuk be az SSH-t: teljes, lépésről lépésre szóló útmutató</a>

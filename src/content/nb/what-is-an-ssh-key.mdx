@@ -1,0 +1,337 @@
+# Hva er en SSH-nøkkel? Offentlige nøkler, private nøkler og nøkkelpar forklart
+
+En **SSH-nøkkel** er en kryptografisk legitimasjon som brukes til å autentisere seg mot SSH-servere uten passord. SSH-nøkler kommer i par — en **offentlig nøkkel** og en **privat nøkkel** — og til sammen gjør de ekstern tilgang sikrere og mer praktisk enn tradisjonell passordautentisering. Denne guiden forklarer hva en SSH-nøkkel er, hvordan nøkkelparsystemet fungerer, hvilke nøkkeltyper du bør velge, og hvordan du bruker SSH-nøkler med tjenester som GitHub og GitLab.
+
+## Hvordan SSH-nøkler fungerer
+
+SSH-nøkler er basert på **asymmetrisk kryptografi**, også kalt offentlig-nøkkelkryptografi. I motsetning til symmetrisk kryptografi (der en enkelt hemmelig nøkkel både krypterer og dekrypterer data), bruker asymmetriske systemer matematisk koblede nøkkelpar der data kryptert med én nøkkel bare kan dekrypteres med den andre.
+
+Her er autentiseringsflytene når du bruker en SSH-nøkkel til å logge inn på en server:
+
+1. Du kjører `ssh user@server.example.com`.
+2. Serveren slår opp din offentlige nøkkel i `~/.ssh/authorized_keys`.
+3. Serveren genererer en tilfeldig utfordring og krypterer den med din offentlige nøkkel.
+4. SSH-klienten din dekrypterer utfordringen ved hjelp av din private nøkkel.
+5. Klienten sender et kryptografisk bevis (utledet fra den dekrypterte utfordringen og sesjons-ID-en) tilbake til serveren.
+6. Serveren verifiserer beviset. Bare innehaveren av den private nøkkelen kunne ha produsert det.
+7. Autentiseringen lykkes. Ingen passord forlater maskinen din.
+
+Dette er den viktigste innsikten: **din private nøkkel reiser aldri over nettverket**. Serveren ser bare din offentlige nøkkel og de kryptografiske bevisene du produserer. Selv om noen avlytter hvert eneste pakke i SSH-sesjonen din, oppnår de ingenting som hjelper dem med å utgi seg for å være deg.
+
+For bakgrunn om den bredere SSH-protokollen, se vår guide om <a href="/nb/what-is-ssh">hva SSH er</a>.
+
+## Offentlig nøkkel vs. privat nøkkel: Hva er forskjellen?
+
+Å forstå skillet mellom de to nøklene er avgjørende for korrekt bruk av SSH.
+
+### Den offentlige nøkkelen — din hengelås
+
+Den **offentlige nøkkelen** er designet for å deles fritt. Tenk på den som en hengelås: du deler ut kopier til alle hvis systemer du ønsker tilgang til. Når en server har din offentlige nøkkel i sin `authorized_keys`-fil, kan den verifisere identiteten din uten å kjenne din private nøkkel.
+
+Offentlige nøkler:
+- Er trygge å dele — de kan ikke brukes til å utgi seg for å være deg
+- Plasseres på servere i `~/.ssh/authorized_keys`
+- Lastes opp til GitHub, GitLab og andre tjenester
+- Har vanligvis en `.pub`-endelse (f.eks. `id_ed25519.pub`)
+- Ser slik ut: `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAA... user@hostname`
+
+### Den private nøkkelen — din nøkkel
+
+Den **private nøkkelen** er den hemmelige halvdelen av paret. Den må aldri forlate maskinen din og bør aldri deles med noen — ikke engang administratorer, skyleverandører eller supportpersonell. Hvis din private nøkkel blir kompromittert, kan alle som får tak i den utgi seg for å være deg på enhver server der din offentlige nøkkel er installert.
+
+Private nøkler:
+- Må holdes hemmelige og sikre
+- Lagres lokalt i `~/.ssh/` med begrensede tillatelser (600)
+- Krypteres valgfritt med en passfrase
+- Har ingen endelse eller en språkspesifikk endelse (f.eks. `id_ed25519`)
+
+### Filen `authorized_keys`
+
+På serversiden lagres hver brukers offentlige nøkler i `~/.ssh/authorized_keys`. Dette er en vanlig tekstfil der hver linje inneholder én offentlig nøkkel. Når en SSH-klient forsøker å autentisere, sjekker serveren om klienten kan bevise besittelse av den private nøkkelen som tilsvarer en oppføring i denne filen.
+
+```
+# ~/.ssh/authorized_keys format
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGq... alice@laptop
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHr... alice@workstation
+ssh-rsa AAAAB3NzaC1yc2EAAAA... backup-deploy-key
+```
+
+Du kan ha så mange offentlige nøkler som du trenger i denne filen, noe som lar flere enheter eller automatiseringssystemer autentisere seg mot den samme serveren.
+
+## SSH-nøkkelalgoritmer: Ed25519 vs RSA
+
+Når du genererer et SSH-nøkkelpar, velger du en algoritme. De to vanligste alternativene i dag er **Ed25519** og **RSA**. Det finnes også ECDSA og DSA, men DSA er foreldet og ECDSA har implementasjonsfallgruver, så vi fokuserer på de to anbefalte alternativene.
+
+### Ed25519 — Det moderne valget
+
+Ed25519 ble introdusert i OpenSSH versjon 6.5 (2014) og er nå den anbefalte standarden. Den bruker elliptisk kurvekryptografi på Twisted Edwards-kurven (Curve25519), designet av Daniel J. Bernstein.
+
+**Fordeler med Ed25519:**
+- **Kompakt** — nøkler er bare 68 tegn (offentlig nøkkel) og filer er minimale
+- **Rask** — signaturgenerering og -verifisering er ekstremt rask
+- **Sikker by design** — ikke sårbar for sidekanalangrep som påvirker visse RSA-implementasjoner
+- **Fast nøkkelstørrelse** — 256-bits sikkerhetsnivå, ingen grunn til å velge en nøkkelstørrelse
+- **Deterministisk** — signaturer er deterministiske, noe som eliminerer en klasse av tilfeldige tallgeneratorfeil
+
+```bash
+# Generer et Ed25519-nøkkelpar
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+### RSA — Det universelle alternativet
+
+RSA er den eldre algoritmen (oppfunnet 1977), og selv om den fortsatt er sikker ved 4096 bits, er den tregere og produserer større nøkler enn Ed25519. RSA har imidlertid mye bredere kompatibilitet — det fungerer med svært gamle SSH-servere, eldre systemer og noen hardware-sikkerhetsnøkler.
+
+**Når RSA bør brukes:**
+- Du må koble til eldre systemer som kjører gamle versjoner av OpenSSH (før 6.5)
+- Du bruker et smartkort eller HSM som ikke støtter Ed25519
+- Kompatibilitet med eldre verktøy er nødvendig
+
+```bash
+# Generer et RSA 4096-bits nøkkelpar
+ssh-keygen -t rsa -b 4096 -C "your@email.com"
+```
+
+**Bruk aldri RSA med færre enn 4096 bits.** RSA-1024 og RSA-2048 anses i økende grad som utilstrekkelige ettersom beregningskraften vokser. Ed25519 ved 256 bits gir tilsvarende eller bedre sikkerhet med en brøkdel av nøkkelstørrelsen.
+
+### Sammendragssammenligning
+
+| Funksjon | Ed25519 | RSA 4096 |
+|---|---|---|
+| Nøkkelstørrelse (offentlig) | ~68 tegn | ~725 tegn |
+| Sikkerhetsnivå | 128-bit (post-kvante-resistent struktur) | ~140-bit klassisk |
+| Hastighet | Svært rask | Tregere |
+| Kompatibilitet | Moderne SSH (OpenSSH 6.5+) | Universell |
+| Anbefalt for | Alle nye nøkler | Bare eldre systemer |
+
+**Konklusjon: generer Ed25519-nøkler for alle moderne brukstilfeller.** Bruk RSA bare når du tvinges av kompatibilitetskrav.
+
+## Slik legger du til en SSH-nøkkel på GitHub
+
+Å legge til din offentlige SSH-nøkkel på GitHub lar deg pushe og pulle via SSH uten å angi brukernavnet og passordet ditt ved hver operasjon. Her er trinn-for-trinn-prosessen.
+
+### Trinn 1: Generer nøkkelparet ditt
+
+Hvis du ikke allerede har et SSH-nøkkelpar, generer ett. Du kan bruke vår <a href="/">gratis SSH-nøkkelgenerator på nett</a> eller kjøre:
+
+```bash
+ssh-keygen -t ed25519 -C "your-github-email@example.com"
+```
+
+Godta standard filplassering (`~/.ssh/id_ed25519`) og angi valgfritt en passfrase.
+
+### Trinn 2: Kopier din offentlige nøkkel
+
+Vis din offentlige nøkkel og kopier den til utklippstavlen:
+
+```bash
+# Linux
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+
+# macOS
+cat ~/.ssh/id_ed25519.pub | pbcopy
+
+# Windows (PowerShell)
+Get-Content ~/.ssh/id_ed25519.pub | Set-Clipboard
+```
+
+Eller vis den enkelt og kopier manuelt:
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+### Trinn 3: Legg til nøkkelen på GitHub
+
+1. Logg inn på **GitHub.com**
+2. Klikk på profilbildet ditt → **Settings** (Innstillinger)
+3. I venstre sidepanel, klikk på **SSH and GPG keys**
+4. Klikk på **New SSH key**
+5. Gi den en beskrivende tittel (f.eks. «MacBook Pro 2024» eller «Jobbmaskin»)
+6. Lim inn din offentlige nøkkel i feltet **Key**
+7. Klikk på **Add SSH key**
+
+### Trinn 4: Test tilkoblingen
+
+```bash
+ssh -T git@github.com
+```
+
+Du bør se: `Hi username! You've successfully authenticated, but GitHub does not provide shell access.`
+
+### Bytte et eksisterende repository til SSH
+
+Hvis du klonet et repository med HTTPS og ønsker å bytte til SSH:
+
+```bash
+# Sjekk gjeldende ekstern URL
+git remote -v
+
+# Oppdater til SSH
+git remote set-url origin git@github.com:username/repository.git
+```
+
+For GitLab er prosessen identisk — naviger til **Preferences → SSH Keys** og følg de samme trinnene.
+
+## Hvor lagres SSH-nøkler?
+
+SSH-nøkler lagres i en katalog kalt `.ssh` i brukerens hjemmekatalog. Plasseringen varierer etter operativsystem.
+
+### Linux og macOS
+
+```
+~/.ssh/
+├── id_ed25519          # Din private nøkkel (tillatelser: 600)
+├── id_ed25519.pub      # Din offentlige nøkkel (tillatelser: 644)
+├── id_rsa              # En RSA-privat nøkkel (hvis du har en)
+├── id_rsa.pub          # Den offentlige RSA-nøkkelen
+├── authorized_keys     # Offentlige nøkler som har tillatelse til å logge inn på denne maskinen
+├── known_hosts         # Fingeravtrykk av servere du har koblet til
+└── config              # Klientkonfigurasjonsfil
+```
+
+Selve katalogen `~/.ssh/` må ha **700**-tillatelser (bare eier les/skriv/kjør). Private nøkkelfiler må ha **600**-tillatelser (bare eier les/skriv). SSH nekter å bruke nøkler med altfor åpne tillatelser.
+
+```bash
+# Fiks tillatelser om nødvendig
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/id_ed25519
+chmod 644 ~/.ssh/id_ed25519.pub
+```
+
+### Windows
+
+På Windows 10 og 11 med OpenSSH installert, lagres SSH-nøkler i:
+
+```
+C:\Users\YourUsername\.ssh\
+├── id_ed25519
+├── id_ed25519.pub
+├── authorized_keys
+├── known_hosts
+└── config
+```
+
+På Windows kan du få tilgang til `.ssh`-katalogen fra Filutforsker (du må kanskje aktivere «Vis skjulte filer») eller fra PowerShell ved hjelp av `~\.ssh\`.
+
+### Flere nøkkelfiler
+
+Hvis du har nøkler for forskjellige formål (personlig GitHub, jobb-GitLab, produksjonsservere), bruk filen `~/.ssh/config` til å tilordne hver vert til sin nøkkel:
+
+```
+Host github.com
+    IdentityFile ~/.ssh/id_ed25519_github
+
+Host gitlab.work.com
+    IdentityFile ~/.ssh/id_ed25519_work
+
+Host prod-server
+    HostName 203.0.113.10
+    User deploy
+    IdentityFile ~/.ssh/id_ed25519_production
+```
+
+## SSH-nøkkelpassfraserord
+
+Når du genererer et SSH-nøkkelpar, spør `ssh-keygen` om du vil angi en **passfrase**. Dette er et valgfritt passord som krypterer den private nøkkelfilen på disken.
+
+### Hvorfor bruke en passfrase?
+
+Hvis din private nøkkelfil er beskyttet av en sterk passfrase, er det ikke nok å stjele filen for å utgi seg for å være deg — angriperen må også knekke passfrasen. Dette gir et kritisk andre sikkerhetslag, spesielt på bærbare datamaskiner som kan stjeles fysisk.
+
+Uten en passfrase lagres din private nøkkel i klartekst på disk. Alle som kan lese filen (via skadelig programvare, fysisk tilgang eller en sikkerhetskopi som ikke er ordentlig sikret) kan umiddelbart bruke den.
+
+### Hvordan passfraser samhandler med ssh-agent
+
+Ulempen med en passfrase er å måtte skrive den inn hver gang du bruker nøkkelen. **ssh-agent** løser dette ved å holde dekrypterte nøkler i minnet for varigheten av sesjonen din.
+
+```bash
+# Start ssh-agent og legg til nøkkelen din
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+# Skriv inn passfrasen én gang — den er nå bufret for sesjonen
+```
+
+På macOS integreres systemets nøkkelring med ssh-agent. Legg til `-K` for å bevare på tvers av oppstart:
+
+```bash
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+```
+
+### Endre en passfrase
+
+Du kan endre passfrasen på en eksisterende nøkkel uten å regenerere nøkkelparet:
+
+```bash
+ssh-keygen -p -f ~/.ssh/id_ed25519
+```
+
+Dette ber om den gamle passfrasen og lar deg deretter angi en ny. Den offentlige nøkkelen endres ikke, så du trenger ikke å oppdatere den på noen servere.
+
+## SSH-nøkkelfingeravtrykk
+
+Hvert SSH-nøkkelpar har et **fingeravtrykk** — en kort hash av den offentlige nøkkelen som identifiserer det unikt. Fingeravtrykk tjener flere formål:
+
+- **Verifiser vertsidentitet** — Når du første gang kobler til en server, viser SSH deg dens vertsnøkkelfingeravtrykk. Hvis du bekrefter at det samsvarer med det du forventer (f.eks. gitt av vertsleverandøren din), vet du at du kobler til riktig server.
+- **Identifiser nøkler** — Når du administrerer mange nøkler, hjelper fingeravtrykk deg med å identifisere hvilken fysisk nøkkel som tilsvarer hvilken oppføring i `authorized_keys` eller på en tjeneste som GitHub.
+- **Revisjon og tilbakekalling** — Revisjonslogger registrerer ofte fingeravtrykk snarere enn fullstendige nøkler. Å kjenne en nøkkels fingeravtrykk hjelper deg med å finne og fjerne den om nødvendig.
+
+### Vise et nøkkelfingeravtrykk
+
+```bash
+# Vis fingeravtrykk av din offentlige nøkkel
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+# Output: 256 SHA256:abcdef1234567890... your@email.com (ED25519)
+
+# Vis fingeravtrykk av en servers vertsnøkkel
+ssh-keyscan server.example.com | ssh-keygen -lf -
+```
+
+GitHub viser fingeravtrykkene til alle lagt til SSH-nøkler i **Settings → SSH and GPG keys**, noe som lar deg verifisere at nøkkelen du ser der samsvarer med den på maskinen din.
+
+### Filen `known_hosts`
+
+Første gang du kobler til en ny SSH-server, ser du en melding som:
+
+```
+The authenticity of host 'example.com (203.0.113.10)' can't be established.
+ED25519 key fingerprint is SHA256:abcdef1234567890...
+Are you sure you want to continue connecting (yes/no/[fingerprint])?
+```
+
+Skriv `yes` og serverens fingeravtrykk legges til i `~/.ssh/known_hosts`. Ved etterfølgende tilkoblinger verifiserer SSH stille at serverens nøkkel samsvarer med det lagrede fingeravtrykket. Hvis det ikke samsvarer — noe som kan indikere en feilkonfigurasjon eller et mann-i-midten-angrep — advarer SSH deg høylytt og nekter å koble til.
+
+## Ofte stilte spørsmål
+
+### Hva brukes en SSH-nøkkel til?
+
+SSH-nøkler autentiserer deg mot eksterne servere uten passord. De vanligste bruksområdene er: å logge inn på Linux/Unix-servere for administrasjon, autentisering med Git-vertingstjenester (GitHub, GitLab, Bitbucket) for push/pull-tilgang, automatiserte deployment-skript som trenger passordfri servertilgang, og CI/CD-pipelines som deployer kode til produksjon. SSH-nøkler foretrekkes fremfor passord fordi de er immune mot brute force, ikke kan gjenbrukes på tvers av brudd og kan brukes uten menneskelig interaksjon.
+
+### Hvor mange SSH-nøkler bør jeg ha?
+
+Det finnes ikke ett riktig svar, men en vanlig beste praksis er **én nøkkel per enhet** (ikke per tjeneste). Din bærbare har ett nøkkelpar; din stasjonære har et annet; CI-serveren din har et annet. På den måten, hvis en enhet stjeles eller kompromitteres, tilbakekaller du bare den enhetens nøkkel. Noen deler ytterligere etter kontekst (personlig vs. jobb), noe som resulterer i to nøkler per enhet. Unngå å dele en enkelt nøkkel på tvers av flere maskiner — hvis den nøkkelen kompromitteres, er all din tilgang i fare samtidig.
+
+### Kan jeg dele min offentlige SSH-nøkkel?
+
+Ja. Den offentlige nøkkelen er designet for å deles. Det er trygt å sende den på e-post, legge den ut i GitHub-dokumentasjon eller inkludere den i en billett som ber om servertilgang. Den offentlige nøkkelen alene kan ikke brukes til å autentisere som deg — det krever den tilsvarende private nøkkelen, som bare du har. Dette er den grunnleggende egenskapen til asymmetrisk kryptografi. Del aldri din **private** nøkkel med noen.
+
+### Hva skjer hvis jeg mister min private SSH-nøkkel?
+
+Hvis du mister din private nøkkel og ikke har en sikkerhetskopi, mister du evnen til å autentisere med den. Din offentlige nøkkel, fortsatt installert på servere og tjenester, blir en foreldreløs. Du vil trenge en alternativ måte å få tilgang til serveren på (passordautentisering hvis aktivert, konsolltilgang, vertsleverandørens nødtilgangsmekanisme) for å fjerne den gamle offentlige nøkkelen fra `authorized_keys` og legge til en ny. Det er grunnen til at det er viktig å sikkerhetskopiere din private nøkkel (i en passordbehandler eller kryptert sikkerhetskopi). Den private nøkkelen kan ikke rekonstrueres fra den offentlige nøkkelen.
+
+### Er Ed25519 eller RSA bedre?
+
+**Ed25519 er bedre for all ny nøkkelgenerering.** Det er raskere, produserer mindre nøkler, er ikke sårbart for visse implementasjonssårbarheter som påvirker RSA, og gir tilsvarende eller overlegen sikkerhet med en 256-bits nøkkel sammenlignet med RSA-4096. Den eneste grunnen til å bruke RSA i dag er kompatibilitet med svært gammel SSH-serverprogramvare (OpenSSH før versjon 6.5, utgitt i 2014) eller eldre hardware-sikkerhetsmoduler. Hvis du kobler til en moderne server eller tjeneste som GitHub, bruk Ed25519.
+
+## Generer ditt SSH-nøkkelpar
+
+Klar til å opprette SSH-nøklene dine? Vår gratis nettbaserte generator oppretter Ed25519- eller RSA-nøkkelpar direkte i nettleseren din. Den private nøkkelen genereres lokalt og sendes aldri til serverne våre.
+
+<a href="/">Generer ditt SSH-nøkkelpar nå →</a>
+
+---
+
+**Videre lesning:**
+- <a href="/nb/what-is-ssh">Hva er SSH? Den komplette guiden til Secure Shell</a>
+- <a href="/nb/ssh-command">SSH-kommandoen: Komplett referanse med eksempler</a>
+- <a href="/nb/how-to-set-up-ssh">Slik setter du opp SSH: En komplett trinn-for-trinn-guide</a>

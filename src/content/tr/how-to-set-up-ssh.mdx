@@ -1,0 +1,563 @@
+# SSH Nasıl Kurulur: Linux, Mac ve Windows için Eksiksiz Adım Adım Kılavuz
+
+SSH'yi doğru kurmak yaklaşık on dakika sürer ve yıllarca fayda sağlar. Bir kez yapılandırıldığında, parola yazmadan sunuculara giriş yapabilir, her işlemde kimlik bilgisi girmeden GitHub'a kod gönderebilir ve güvenle dağıtımları otomatize edebilirsiniz. Bu kılavuz, Linux, macOS ve Windows için anahtar çifti oluşturmaktan yaygın hataları gidermeye kadar tüm süreci adım adım ele alır.
+
+Önce temel teknolojiyi anlamak istiyorsanız <a href="/tr/what-is-ssh">SSH nedir</a> ve <a href="/tr/what-is-an-ssh-key">SSH anahtarları nedir</a> kılavuzlarımızı okuyun.
+
+## Ön Koşullar
+
+Başlamadan önce şunlara sahip olduğunuzdan emin olun:
+
+**Sunucu erişimi için:**
+- Terminal uygulaması (macOS/Linux'ta Terminal, Windows'ta Windows Terminal veya PowerShell)
+- SSH sunucu yazılımı (sshd) yüklü, Linux/Unix çalıştıran uzak bir sunucu
+- O sunucuda bir kullanıcı hesabı (veya bir tane oluşturmak için root erişimi)
+- Sunucunun IP adresi veya host adı
+
+**GitHub/GitLab erişimi için:**
+- Bir GitHub veya GitLab hesabı
+- `ssh`'nin mevcut olduğu bir terminal
+- İsteğe bağlı: yerel olarak yüklü git
+
+**İşletim sistemi gereksinimleri:**
+- **Linux**: SSH istemcisi neredeyse tüm dağıtımlarda önceden yüklüdür
+- **macOS**: SSH istemcisi yerleşiktir, Terminal'den erişilebilir
+- **Windows 10 sürüm 1809+ / Windows 11**: OpenSSH istemcisi isteğe bağlı özellik olarak mevcuttur
+
+Linux veya macOS'ta herhangi bir şey yüklemenize gerek yoktur. Windows'ta PowerShell'i açıp `ssh -V` çalıştırarak OpenSSH'nin yüklü olup olmadığını doğrulayın. Sürüm dizesi alıyorsanız hazırsınız. Almıyorsanız kurulum talimatları için Adım 4'e bakın.
+
+## Adım 1: SSH Anahtar Çiftinizi Oluşturun
+
+Anahtar çifti olmadan başka hiçbir şey yapamazsınız. Anahtar çifti bir **özel anahtardan** (makinenizde kalır) ve bir **açık anahtardan** (sunuculara veya GitHub gibi hizmetlere gönderilir) oluşur.
+
+### Seçenek A: Çevrimiçi Oluşturucuyu Kullan
+
+Grafik arayüz tercih ediyorsanız, <a href="/">ücretsiz çevrimiçi SSH anahtar oluşturucumuz</a> tarayıcınızda Ed25519 veya RSA anahtar çiftleri oluşturur. Özel anahtar, Web Crypto API kullanılarak yerel olarak oluşturulur — sunucularımıza hiçbir şey gönderilmez. Her iki dosyayı da indirip `~/.ssh/` (Linux/macOS) veya `C:\Users\YourName\.ssh\` (Windows) dizinine kaydedin.
+
+### Seçenek B: Komut Satırında ssh-keygen Kullan
+
+`ssh-keygen` komutu Linux, macOS ve OpenSSH'li Windows'ta mevcuttur:
+
+```bash
+# Ed25519 anahtar çifti oluştur (önerilen)
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+**Her bayrağın anlamı:**
+- `-t ed25519` — anahtar türü (Ed25519 modern, hızlı ve güvenlidir)
+- `-C "yorum"` — açık anahtara gömülü bir etiket, genellikle e-posta adresiniz
+
+Şunlar sorulacak:
+
+```
+Generating public/private ed25519 key pair.
+Enter file in which to save the key (/home/user/.ssh/id_ed25519):
+```
+
+Varsayılan konumu kabul etmek için **Enter**'a basın. Birden fazla anahtarınız varsa açıklayıcı adlar kullanabilirsiniz (örn. `/home/user/.ssh/id_ed25519_github`).
+
+```
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+```
+
+Güçlü bir parola ifadesi girin. Bu, diskteki özel anahtar dosyasını şifreler — makineniz çalınırsa anahtar, parola ifadesi olmadan kullanılamaz. İnsan etkileşiminin mümkün olmadığı otomasyon kullanım durumları için boş bırakabilirsiniz; ancak kişisel anahtarlar için her zaman parola ifadesi kullanın.
+
+**Çıktı:**
+
+```
+Your identification has been saved in /home/user/.ssh/id_ed25519
+Your public key has been saved in /home/user/.ssh/id_ed25519.pub
+The key fingerprint is:
+SHA256:abc123defghijk... your@email.com
+The key's randomart image is:
++--[ED25519 256]--+
+...
+```
+
+İki dosya oluşturulur:
+- `~/.ssh/id_ed25519` — **özel anahtarınız** (bunu asla paylaşmayın)
+- `~/.ssh/id_ed25519.pub` — **açık anahtarınız** (paylaşmak güvenlidir)
+
+### RSA için (Eski Sistem Uyumluluğu)
+
+Ed25519'u desteklemeyen çok eski sistemlere bağlanmanız gerekiyorsa:
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "your@email.com"
+```
+
+Minimum 4096 bit kullanın. 4096 bitten küçük RSA anahtarları artık yeterli güvenlik sağlamadığı kabul edilmektedir.
+
+## Adım 2: Linux'ta SSH Kurma
+
+Bu bölüm, açık anahtarınızı bir Linux sunucusuna kopyalamayı kapsar; böylece parola olmadan kimlik doğrulaması yapabilirsiniz.
+
+### Yöntem 1: ssh-copy-id (En Kolay)
+
+`ssh-copy-id`, açık anahtarınızı uzak sunucuya yüklemenin en basit yoludur. Parola kimlik doğrulamasını kullanarak bağlanır, açık anahtarınızı sunucunun `~/.ssh/authorized_keys` dosyasına ekler ve doğru izinleri ayarlar.
+
+```bash
+ssh-copy-id user@server.example.com
+
+# Anahtar dosyasını açıkça belirt
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server.example.com
+
+# Standart olmayan bir porta bağlan
+ssh-copy-id -p 2222 user@server.example.com
+```
+
+Son kez sunucu parolası sorulacak. Bundan sonra `ssh user@server.example.com` komutuyla anahtarınızı kullanarak bağlanabilirsiniz.
+
+### Yöntem 2: Manuel Kopyalama
+
+`ssh-copy-id` mevcut değilse (bazı BSD sistemlerinde veya minimal Linux kurulumlarında yaygın):
+
+```bash
+# Açık anahtarınızı görüntüle ve çıktıyı kopyala
+cat ~/.ssh/id_ed25519.pub
+
+# Ardından sunucuya SSH yapın (parola ile) ve şunu çalıştırın:
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+echo "AÇIK_ANAHTARINIZI_BURAYA_YAPIŞTIRIN" >> ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+```
+
+Ya da tek bir komut satırıyla yapın:
+
+```bash
+cat ~/.ssh/id_ed25519.pub | ssh user@server.example.com \
+  "mkdir -p ~/.ssh && chmod 700 ~/.ssh && \
+   cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+```
+
+### Anahtarın Yüklendiğini Doğrulama
+
+```bash
+ssh user@server.example.com
+# Parola sorulmadan bağlanmalı (yalnızca parola ifadesi ayarladıysanız o sorulur)
+```
+
+### SSH Sunucusunu Yapılandırma (sshd)
+
+Uzak sunucuda, SSH daemon yapılandırması `/etc/ssh/sshd_config` dosyasında bulunur. Güvenli bir kurulum için:
+
+```bash
+sudo nano /etc/ssh/sshd_config
+```
+
+Önerilen ayarlar:
+
+```
+# Açık anahtar kimlik doğrulamasını etkinleştir
+PubkeyAuthentication yes
+
+# Parola kimlik doğrulamasını devre dışı bırak (anahtarların çalıştığını doğruladıktan sonra!)
+PasswordAuthentication no
+
+# SSH ile root girişini devre dışı bırak
+PermitRootLogin no
+
+# Yalnızca belirli kullanıcılara izin ver
+AllowUsers alice bob deploy
+
+# Oturumları canlı tut
+ClientAliveInterval 60
+ClientAliveCountMax 3
+```
+
+Düzenledikten sonra SSH arka plan programını yeniden yükleyin:
+
+```bash
+sudo systemctl reload sshd
+# Veya daha eski sistemlerde:
+sudo service ssh reload
+```
+
+**Önemli**: Anahtar tabanlı kimlik doğrulamasının çalıştığını onaylamadan `PasswordAuthentication`'ı devre dışı bırakmayın. Kendinizi kilitlerseniz kurtarabilmek için konsol erişimine (veya barındırma sağlayıcınızın acil erişimine) ihtiyacınız olacak.
+
+### Linux'ta ssh-agent Kurma
+
+Anahtarınızda parola ifadesi varsa, her seferinde yeniden girmemek için oturumun başında `ssh-agent`'a ekleyin:
+
+```bash
+# Ajanı başlat (genellikle masaüstü ortamları tarafından otomatik başlatılır)
+eval "$(ssh-agent -s)"
+
+# Anahtarınızı ekleyin (parola ifadesini bir kez girin)
+ssh-add ~/.ssh/id_ed25519
+
+# Yüklü anahtarları doğrula
+ssh-add -l
+```
+
+Giriş sırasında `ssh-agent`'ı otomatik başlatmak ve anahtarınızı eklemek için `~/.bashrc` veya `~/.zshrc` dosyasına ekleyin:
+
+```bash
+# ssh-agent'ı otomatik başlat
+if [ -z "$SSH_AUTH_SOCK" ]; then
+  eval "$(ssh-agent -s)"
+  ssh-add ~/.ssh/id_ed25519
+fi
+```
+
+## Adım 3: macOS'ta SSH Kurma
+
+macOS, tam bir OpenSSH istemcisi içerir. Uzak bir sunucuya anahtar tabanlı kimlik doğrulama kurma süreci Linux ile aynıdır (yukarıdaki Adım 2'ye bakın). macOS'a özgü eklemeler Anahtarlık entegrasyonunu içerir.
+
+### Anahtarlık Entegrasyonu
+
+macOS, parola ifadenizi sistem Anahtarlığında saklayarak ilk seferden sonra asla girmenize gerek kalmamasını sağlayabilir:
+
+```bash
+# Anahtarlık entegrasyonuyla ssh-agent'a anahtar ekle
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+
+# Eski macOS sürümleri için (Monterey öncesi)
+ssh-add -K ~/.ssh/id_ed25519
+```
+
+macOS'un anahtarlarınızı her zaman Anahtarlık'tan yüklemesini sağlamak için `~/.ssh/config` dosyasına şunu ekleyin:
+
+```
+Host *
+    AddKeysToAgent yes
+    UseKeychain yes
+    IdentityFile ~/.ssh/id_ed25519
+```
+
+Bundan sonra parola ifadesi Anahtarlık'ta saklanır ve otomatik olarak yüklenir — sonraki başlatmalarda bir daha sorulmaz.
+
+### SSH İstemci Sürümünü Doğrulama
+
+```bash
+ssh -V
+# OpenSSH_9.x, LibreSSL x.x.x
+```
+
+macOS, görece güncel bir OpenSSH ile birlikte gelir ancak her zaman en son sürüm olmayabilir. Daha yeni özelliklere ihtiyacınız varsa Homebrew aracılığıyla yükleyin: `brew install openssh`.
+
+## Adım 4: Windows'ta SSH Kurma
+
+Windows 10 (1809+) ve Windows 11, OpenSSH içerir. İşte nasıl çalıştırılır.
+
+### OpenSSH İstemcisini Yükleme
+
+**Zaten yüklü olup olmadığını kontrol edin:**
+
+```powershell
+ssh -V
+```
+
+**Ayarlar aracılığıyla yükleme:**
+1. **Settings → Apps → Optional Features** bölümünü açın
+2. **OpenSSH Client**'ı arayın
+3. **Install**'a tıklayın
+
+**PowerShell aracılığıyla yükleme (Yönetici):**
+
+```powershell
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+```
+
+### Windows'ta Anahtar Oluşturma
+
+PowerShell'i açın ve şunu çalıştırın:
+
+```powershell
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+Anahtarlar `C:\Users\YourUsername\.ssh\` dizinine kaydedilir.
+
+### Açık Anahtarı Linux Sunucusuna Kopyalama
+
+Windows `ssh-copy-id` içermez, ancak bunu PowerShell'den elle yapabilirsiniz:
+
+```powershell
+# Açık anahtarınızı görüntüle
+Get-Content ~/.ssh/id_ed25519.pub
+
+# Uzak sunucuya kopyala (sunucu parolası sorulacak)
+$pubkey = Get-Content ~/.ssh/id_ed25519.pub -Raw
+ssh user@server.example.com "mkdir -p ~/.ssh && echo '$pubkey' >> ~/.ssh/authorized_keys && chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys"
+```
+
+Veya şu şekilde pipe kullanın:
+
+```powershell
+type $env:USERPROFILE\.ssh\id_ed25519.pub | ssh user@server.example.com "cat >> ~/.ssh/authorized_keys"
+```
+
+### Windows'ta ssh-agent Kurma
+
+Parola ifadesini tekrar tekrar girmekten kaçınmak için OpenSSH Kimlik Doğrulama Ajanı servisini başlatın:
+
+```powershell
+# Servisi başlat
+Start-Service ssh-agent
+
+# Otomatik başlayacak şekilde ayarla
+Set-Service -Name ssh-agent -StartupType Automatic
+
+# Anahtarınızı ekle
+ssh-add ~/.ssh/id_ed25519
+```
+
+### Alternatif Olarak PuTTY
+
+Grafik SSH istemcisi tercih ediyorsanız PuTTY, Windows için ücretsiz bir seçenektir. Anahtar oluşturmak için **PuTTYgen** kullanın (hem `.ppk` biçiminde hem de OpenSSH biçiminde dışa aktararak kaydedin). Ancak yeni kurulumlar için yerleşik OpenSSH istemcisi daha basit ve ekosistemin geri kalanıyla birlikte çalışabilirdir.
+
+## GitHub ve GitLab için SSH Anahtarlarını Kurma
+
+GitHub ve GitLab'a SSH anahtar kimlik doğrulaması benzer çalışır — açık anahtarınızı hizmete yüklersiniz ve Git işlemleri gerçekleştirirken karşılık gelen özel anahtarı kullanırsınız.
+
+### GitHub için SSH Kurma
+
+**1. Açık anahtarınızı kopyalayın:**
+
+```bash
+# Linux
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+
+# macOS
+cat ~/.ssh/id_ed25519.pub | pbcopy
+
+# Windows PowerShell
+Get-Content ~/.ssh/id_ed25519.pub | Set-Clipboard
+```
+
+Ya da sadece görüntüleyip elle kopyalayın:
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+**2. GitHub'a ekleyin:**
+
+1. **github.com** adresine gidin ve giriş yapın
+2. Avatarınıza tıklayın → **Settings**
+3. Sol kenar çubuğunda: **SSH and GPG keys**
+4. **New SSH key**'e tıklayın
+5. Açıklayıcı bir **Title** verin (örn. "MacBook Pro" veya "İş PC'si")
+6. **Key type** olarak **Authentication Key** seçin
+7. Açık anahtarınızı yapıştırın
+8. **Add SSH key**'e tıklayın
+
+**3. Bağlantıyı test edin:**
+
+```bash
+ssh -T git@github.com
+# Hi username! You've successfully authenticated, but GitHub does not provide shell access.
+```
+
+**4. Git işlemleri için SSH kullanın:**
+
+```bash
+# HTTPS yerine SSH kullanarak klonla
+git clone git@github.com:username/repository.git
+
+# Mevcut bir repo HTTPS kullanıyorsa SSH'ye geçirin
+git remote set-url origin git@github.com:username/repository.git
+```
+
+### GitLab için SSH Kurma
+
+Süreç aynıdır:
+
+1. **gitlab.com**'a gidin → Avatarınıza tıklayın → **Preferences**
+2. Sol kenar çubuğunda: **SSH Keys**
+3. Açık anahtarınızı yapıştırın, bir başlık verin ve isteğe bağlı olarak son kullanma tarihi ayarlayın
+4. **Add key**'e tıklayın
+
+Şununla test edin:
+
+```bash
+ssh -T git@gitlab.com
+# Welcome to GitLab, @username!
+```
+
+Kendi barındırılan GitLab örnekleri için `gitlab.com`'u örnek host adınızla değiştirin.
+
+### GitHub ve Diğer Hizmetler için Ayrı Anahtar Kullanma
+
+GitHub için özel bir anahtar istiyorsanız (anahtar hijyeni için önerilir), adlandırılmış bir anahtar oluşturun:
+
+```bash
+ssh-keygen -t ed25519 -C "github" -f ~/.ssh/id_ed25519_github
+```
+
+Ardından `~/.ssh/config` dosyasına bir `Host` bloğu ekleyin:
+
+```
+Host github.com
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519_github
+    AddKeysToAgent yes
+```
+
+Artık `git clone git@github.com:...` otomatik olarak GitHub'a özgü anahtarı kullanır.
+
+## SSH'yi Test Etme ve Sorun Giderme
+
+### Temel Bağlantı Testi
+
+```bash
+ssh -v user@server.example.com
+```
+
+`-v` (ayrıntılı) bayrağı, her adımda tam olarak ne olduğunu gösterir. Şu satırlara bakın:
+- `Offering public key: ~/.ssh/id_ed25519` — SSH anahtarınızı deniyor
+- `Server accepts key` — anahtar `authorized_keys` dosyasında
+- `Authenticated to server.example.com` — başarılı
+
+### Yaygın Hatalar ve Çözümleri
+
+**"Permission denied (publickey)"**
+
+En yaygın hata. Nedenler ve çözümler:
+
+```bash
+# Anahtarınızın ssh-agent'ta yüklü olup olmadığını kontrol et
+ssh-add -l
+
+# Anahtar listelenmiyorsa ekleyin
+ssh-add ~/.ssh/id_ed25519
+
+# Uzak sunucuda authorized_keys dosyasını kontrol edin
+cat ~/.ssh/authorized_keys
+# Açık anahtarınızın orada olduğundan emin olun
+
+# Uzak sunucuda izinleri kontrol edin
+ls -la ~/.ssh/
+# ~/.ssh 700 olmalı
+# authorized_keys 600 olmalı
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/authorized_keys
+
+# Sunucunun açık anahtar kimlik doğrulamasına izin verip vermediğini kontrol edin
+sudo grep PubkeyAuthentication /etc/ssh/sshd_config
+# Şöyle olmalı: PubkeyAuthentication yes
+```
+
+**"WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED"**
+
+Sunucunun host anahtarı değişti; SSH bunu olası bir güvenlik sorunu olarak değerlendirir. Bunun meşru olduğunu biliyorsanız (sunucu yeniden oluşturuldu, IP yeniden atandı), eski girişi kaldırın:
+
+```bash
+# Belirli host girdisini kaldır
+ssh-keygen -R server.example.com
+
+# Veya known_hosts dosyasını manuel düzenleyip etkilenen satırı silin
+nano ~/.ssh/known_hosts
+```
+
+**"Bad permissions" veya "Permissions too open"**
+
+SSH, anahtar dosyası izinleri konusunda katıdır:
+
+```bash
+# Özel anahtar izinlerini düzelt
+chmod 600 ~/.ssh/id_ed25519
+
+# Açık anahtar izinlerini düzelt
+chmod 644 ~/.ssh/id_ed25519.pub
+
+# .ssh dizin izinlerini düzelt
+chmod 700 ~/.ssh
+```
+
+Windows'ta özel anahtar izinleri farklı yönetilir. Anahtar dosyasına sağ tıklayın → Properties → Security → Advanced → Disable inheritance → Yalnızca kendi kullanıcı hesabınızı bırakarak tam denetim verin.
+
+### ssh-agent Kurma ve Kullanma
+
+Parola ifadeniz sürekli soruluyorsa, `ssh-agent` çalışmıyor veya anahtarınız eklenmemiş demektir:
+
+```bash
+# Ajanı başlat
+eval "$(ssh-agent -s)"
+# Agent pid 12345
+
+# Anahtarınızı ekleyin
+ssh-add ~/.ssh/id_ed25519
+# Enter passphrase for /home/user/.ssh/id_ed25519:
+# Identity added: /home/user/.ssh/id_ed25519
+
+# Doğrula
+ssh-add -l
+# 256 SHA256:abc123... your@email.com (ED25519)
+```
+
+### Otomasyonda known_hosts Önceden Doldurma
+
+CI/CD hatlarında, bağlanmadan önce `ssh-keyscan` kullanarak uzak host parmak izini ekleyin:
+
+```bash
+ssh-keyscan -H server.example.com >> ~/.ssh/known_hosts
+ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+```
+
+Bu, otomatik betiklerdeki etkileşimli parmak izi istemlerini engeller.
+
+## Sık Sorulan Sorular
+
+### "Permission denied (publickey)" hatasını nasıl düzeltirim?
+
+Bu kontrol listesini izleyin: (1) Anahtarınızın SSH ajanında olup olmadığını doğrulayın: `ssh-add -l`. Yoksa `ssh-add ~/.ssh/id_ed25519` çalıştırın. (2) Açık anahtarınızın sunucunun `~/.ssh/authorized_keys` dosyasında olup olmadığını kontrol edin. (3) İzinleri doğrulayın: `~/.ssh` `700` olmalı, `authorized_keys` `600` olmalı. (4) Sunucunun `/etc/ssh/sshd_config` dosyasında `PubkeyAuthentication yes` olup olmadığını kontrol edin. (5) Kimlik doğrulamasının tam olarak nerede başarısız olduğunu görmek için `ssh -vvv user@server` kullanın. Ayrıntılı çıktı, hangi anahtarların denendiğini ve sunucunun bunları kabul edip etmediğini söyleyecektir.
+
+### SSH anahtarımı ssh-agent'a nasıl eklerim?
+
+`ssh-add ~/.ssh/id_ed25519` çalıştırın (kendi anahtar dosya adınızla değiştirin). Ajan çalışmıyorsa önce `eval "$(ssh-agent -s)"` ile başlatın. macOS'ta parola ifadesini Anahtarlık'ta saklamak için `ssh-add --apple-use-keychain ~/.ssh/id_ed25519` kullanın. Windows'ta `Start-Service ssh-agent` ile `ssh-agent` servisini etkinleştirip ardından `ssh-add` çalıştırın. `ssh-add`'ı oturum başına yalnızca bir kez çalıştırmanız yeterlidir (macOS'ta Anahtarlık ile her zaman için bir kez).
+
+### Birden fazla SSH anahtarım olabilir mi?
+
+Evet ve bu iyi bir uygulamadır. Farklı amaçlar için ayrı anahtarlar oluşturun — örneğin kişisel GitHub için bir, iş GitLab için bir, üretim sunucuları için bir tane. Her hostu belirli anahtarına eşleştirmek için `~/.ssh/config` dosyasında `IdentityFile` kullanın. Ayrı anahtarlara sahip olmak, bir tanesini iptal etmenin (bir hizmetten veya sunucudan kaldırarak) diğerlerini etkilemediği anlamına gelir; bu da anahtar tehlikesinin hasar alanını sınırlar.
+
+### SSH anahtarındaki parola ifadesini nasıl değiştiririm?
+
+`ssh-keygen -p` kullanın:
+
+```bash
+ssh-keygen -p -f ~/.ssh/id_ed25519
+```
+
+Mevcut parola ifadesi sorulacak, ardından yenisini girmeniz ve onaylamanız istenecek. Anahtarın kendisi (ve dolayısıyla açık anahtar) değişmez — herhangi bir yerde güncellemenize gerek yoktur. Bu, parola ifadenizin tehlikeye girdiğinden şüpheleniyorsanız veya rutin güvenlik uygulaması olarak değiştirmek istiyorsanız kullanışlıdır.
+
+### Eski bir SSH anahtarını sunucudan nasıl kaldırırım?
+
+Sunucudaki `~/.ssh/authorized_keys` dosyasını açın ve eski açık anahtarı içeren satırı silin:
+
+```bash
+# Uzak sunucuda authorized_keys dosyasını düzenle
+ssh user@server.example.com
+nano ~/.ssh/authorized_keys
+# Kaldırmak istediğiniz anahtarın satırını silin
+# Kaydedin ve çıkın
+```
+
+`authorized_keys` dosyasındaki her satır bir açık anahtardır. Anahtarın yorumu (son alan, genellikle `user@hostname` veya bir e-posta) hangi anahtarın hangisi olduğunu belirlemeye yardımcı olur. Hangi satırı sileceğinizi bilmiyorsanız parmak izini karşılaştırın:
+
+```bash
+# Yerel makinenizde parmak izini alın
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+
+# Sunucuda tüm yetkili anahtarların parmak izlerini kontrol edin
+ssh-keygen -lf ~/.ssh/authorized_keys
+```
+
+Doğru anahtarı tanımlamak ve silmek için parmak izlerini eşleştirin.
+
+## SSH Anahtarlarınızı Ücretsiz Oluşturun
+
+Henüz SSH anahtar çiftinizi oluşturmadıysanız, ücretsiz çevrimiçi oluşturucumuz saniyeler içinde doğrudan tarayıcınızda Ed25519 veya RSA anahtarları oluşturur. Kurulum gerekmez, sunucularımıza hiçbir şey gönderilmez — oluşturma tamamen cihazınızda gerçekleşir.
+
+<a href="/">SSH anahtarlarınızı ücretsiz oluşturun →</a>
+
+---
+
+**Daha fazla okuma:**
+- <a href="/tr/what-is-ssh">SSH Nedir? Güvenli Kabuk'a Tam Kılavuz</a>
+- <a href="/tr/what-is-an-ssh-key">SSH Anahtarı Nedir? Açık Anahtarlar, Özel Anahtarlar ve Anahtar Çiftleri Açıklandı</a>
+- <a href="/tr/ssh-command">SSH Komutu: Örneklerle Tam Başvuru Kılavuzu</a>

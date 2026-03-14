@@ -1,0 +1,337 @@
+# Apa Itu Kunci SSH? Kunci Publik, Kunci Privat, dan Pasangan Kunci Dijelaskan
+
+**Kunci SSH** adalah kredensial kriptografi yang digunakan untuk mengautentikasi ke server SSH tanpa kata sandi. Kunci SSH hadir berpasangan — **kunci publik** dan **kunci privat** — dan bersama-sama membuat akses jarak jauh lebih aman dan lebih nyaman daripada autentikasi kata sandi tradisional. Panduan ini menjelaskan apa itu kunci SSH, cara kerja sistem pasangan kunci, jenis kunci mana yang dipilih, dan cara menggunakan kunci SSH dengan layanan seperti GitHub dan GitLab.
+
+## Cara Kerja Kunci SSH
+
+Kunci SSH didasarkan pada **kriptografi asimetris**, juga disebut kriptografi kunci publik. Berbeda dengan kriptografi simetris (di mana satu kunci rahasia mengenkripsi dan mendekripsi data), sistem asimetris menggunakan pasangan kunci yang terhubung secara matematis di mana data yang dienkripsi dengan satu kunci hanya dapat didekripsi dengan kunci lainnya.
+
+Berikut alur autentikasi saat Anda menggunakan kunci SSH untuk login ke server:
+
+1. Anda menjalankan `ssh user@server.example.com`.
+2. Server mencari kunci publik Anda di `~/.ssh/authorized_keys`.
+3. Server menghasilkan tantangan acak dan mengenkripsinya dengan kunci publik Anda.
+4. Klien SSH Anda mendekripsi tantangan menggunakan kunci privat Anda.
+5. Klien mengirimkan bukti kriptografis (diturunkan dari tantangan yang didekripsi dan ID sesi) kembali ke server.
+6. Server memverifikasi bukti tersebut. Hanya pemegang kunci privat yang dapat menghasilkannya.
+7. Autentikasi berhasil. Tidak ada kata sandi yang meninggalkan mesin Anda.
+
+Inilah wawasan utamanya: **kunci privat Anda tidak pernah melewati jaringan**. Server hanya melihat kunci publik Anda dan bukti kriptografis yang Anda hasilkan. Bahkan jika seseorang mengintersep setiap paket dalam sesi SSH Anda, mereka tidak mendapatkan apa pun yang membantu mereka menyamar sebagai Anda.
+
+Untuk latar belakang tentang protokol SSH yang lebih luas, lihat panduan kami tentang <a href="/id/what-is-ssh">apa itu SSH</a>.
+
+## Kunci Publik vs. Kunci Privat: Apa Bedanya?
+
+Memahami perbedaan antara kedua kunci ini sangat penting untuk menggunakan SSH dengan benar.
+
+### Kunci Publik — Gembok Anda
+
+**Kunci publik** dirancang untuk dibagikan secara bebas. Anggap saja sebagai gembok: Anda membagikan salinannya kepada semua orang yang sistemnya ingin Anda akses. Ketika server memiliki kunci publik Anda di file `authorized_keys`-nya, server dapat memverifikasi identitas Anda tanpa mengetahui kunci privat Anda.
+
+Kunci publik:
+- Aman untuk dibagikan — tidak dapat digunakan untuk menyamar sebagai Anda
+- Ditempatkan di server dalam `~/.ssh/authorized_keys`
+- Diunggah ke GitHub, GitLab, dan layanan lainnya
+- Biasanya memiliki ekstensi `.pub` (misalnya `id_ed25519.pub`)
+- Terlihat seperti: `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAA... user@hostname`
+
+### Kunci Privat — Kunci Anda
+
+**Kunci privat** adalah bagian rahasia dari pasangan kunci. Kunci ini tidak boleh meninggalkan mesin Anda dan tidak boleh dibagikan kepada siapa pun — bahkan administrator, penyedia cloud, atau staf dukungan sekalipun. Jika kunci privat Anda disusupi, siapa pun yang mendapatkannya dapat menyamar sebagai Anda di setiap server tempat kunci publik Anda terpasang.
+
+Kunci privat:
+- Harus disimpan dengan rahasia dan aman
+- Disimpan secara lokal di `~/.ssh/` dengan izin yang dibatasi (600)
+- Opsional dienkripsi dengan passphrase
+- Tidak memiliki ekstensi atau memiliki ekstensi spesifik bahasa (misalnya `id_ed25519`)
+
+### File `authorized_keys`
+
+Di sisi server, kunci publik setiap pengguna disimpan di `~/.ssh/authorized_keys`. Ini adalah file teks biasa di mana setiap baris berisi satu kunci publik. Ketika klien SSH mencoba mengautentikasi, server memeriksa apakah klien dapat membuktikan kepemilikan kunci privat yang sesuai dengan entri mana pun dalam file ini.
+
+```
+# Format ~/.ssh/authorized_keys
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGq... alice@laptop
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHr... alice@workstation
+ssh-rsa AAAAB3NzaC1yc2EAAAA... backup-deploy-key
+```
+
+Anda dapat memiliki sebanyak mungkin kunci publik yang Anda butuhkan dalam file ini, memungkinkan beberapa perangkat atau sistem otomasi untuk mengautentikasi ke server yang sama.
+
+## Algoritma Kunci SSH: Ed25519 vs RSA
+
+Saat Anda membuat pasangan kunci SSH, Anda memilih algoritma. Dua pilihan paling umum saat ini adalah **Ed25519** dan **RSA**. Ada juga ECDSA dan DSA, tetapi DSA sudah usang dan ECDSA memiliki jebakan implementasi, jadi kita akan fokus pada dua opsi yang direkomendasikan.
+
+### Ed25519 — Pilihan Modern
+
+Ed25519 diperkenalkan ke OpenSSH pada versi 6.5 (2014) dan sekarang menjadi default yang direkomendasikan. Ia menggunakan kriptografi kurva eliptik pada kurva Twisted Edwards (Curve25519), yang dirancang oleh Daniel J. Bernstein.
+
+**Keunggulan Ed25519:**
+- **Kompak** — kunci hanya 68 karakter (kunci publik) dan file sangat kecil
+- **Cepat** — pembuatan dan verifikasi tanda tangan sangat cepat
+- **Aman berdasarkan desain** — tidak rentan terhadap serangan side-channel yang memengaruhi beberapa implementasi RSA
+- **Ukuran kunci tetap** — tingkat keamanan 256-bit, tidak perlu memilih ukuran kunci
+- **Deterministik** — tanda tangan bersifat deterministik, menghilangkan kelas kegagalan generator bilangan acak
+
+```bash
+# Buat pasangan kunci Ed25519
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+### RSA — Opsi Universal
+
+RSA adalah algoritma yang lebih lama (ditemukan tahun 1977), dan meskipun masih aman pada 4096 bit, lebih lambat dan menghasilkan kunci yang lebih besar dari Ed25519. Namun, RSA memiliki kompatibilitas yang jauh lebih luas — bekerja dengan server SSH yang sangat lama, sistem warisan, dan beberapa kunci keamanan hardware.
+
+**Kapan menggunakan RSA:**
+- Anda perlu terhubung ke sistem warisan yang menjalankan versi OpenSSH lama (sebelum 6.5)
+- Anda menggunakan smartcard atau HSM yang tidak mendukung Ed25519
+- Kompatibilitas dengan alat lama diperlukan
+
+```bash
+# Buat pasangan kunci RSA 4096-bit
+ssh-keygen -t rsa -b 4096 -C "your@email.com"
+```
+
+**Jangan pernah menggunakan RSA dengan kurang dari 4096 bit.** RSA-1024 dan RSA-2048 semakin dianggap tidak memadai seiring kekuatan komputasi berkembang. Ed25519 pada 256 bit memberikan keamanan yang setara atau lebih baik dengan sebagian kecil ukuran kunci.
+
+### Perbandingan Ringkasan
+
+| Fitur | Ed25519 | RSA 4096 |
+|---|---|---|
+| Ukuran kunci (publik) | ~68 karakter | ~725 karakter |
+| Tingkat keamanan | 128-bit (struktur tahan pasca-kuantum) | ~140-bit klasik |
+| Kecepatan | Sangat cepat | Lebih lambat |
+| Kompatibilitas | SSH modern (OpenSSH 6.5+) | Universal |
+| Direkomendasikan untuk | Semua kunci baru | Hanya sistem warisan |
+
+**Kesimpulan: buat kunci Ed25519 untuk semua kasus penggunaan modern.** Gunakan RSA hanya saat dipaksa oleh persyaratan kompatibilitas.
+
+## Cara Menambahkan Kunci SSH ke GitHub
+
+Menambahkan kunci publik SSH Anda ke GitHub memungkinkan Anda push dan pull melalui SSH tanpa memasukkan nama pengguna dan kata sandi di setiap operasi. Berikut prosesnya langkah demi langkah.
+
+### Langkah 1: Buat Pasangan Kunci Anda
+
+Jika Anda belum memiliki pasangan kunci SSH, buat satu. Anda dapat menggunakan <a href="/">generator kunci SSH online gratis</a> kami atau jalankan:
+
+```bash
+ssh-keygen -t ed25519 -C "your-github-email@example.com"
+```
+
+Terima lokasi file default (`~/.ssh/id_ed25519`) dan opsional atur passphrase.
+
+### Langkah 2: Salin Kunci Publik Anda
+
+Tampilkan kunci publik Anda dan salin ke clipboard:
+
+```bash
+# Linux
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+
+# macOS
+cat ~/.ssh/id_ed25519.pub | pbcopy
+
+# Windows (PowerShell)
+Get-Content ~/.ssh/id_ed25519.pub | Set-Clipboard
+```
+
+Atau tampilkan saja dan salin secara manual:
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+### Langkah 3: Tambahkan Kunci ke GitHub
+
+1. Login ke **GitHub.com**
+2. Klik foto profil Anda → **Settings**
+3. Di sidebar kiri, klik **SSH and GPG keys**
+4. Klik **New SSH key**
+5. Beri judul yang deskriptif (misalnya "MacBook Pro 2024" atau "Laptop Kerja")
+6. Tempel kunci publik Anda ke kolom **Key**
+7. Klik **Add SSH key**
+
+### Langkah 4: Uji Koneksi
+
+```bash
+ssh -T git@github.com
+```
+
+Anda seharusnya melihat: `Hi username! You've successfully authenticated, but GitHub does not provide shell access.`
+
+### Mengalihkan Repositori yang Ada ke SSH
+
+Jika Anda mengkloning repositori menggunakan HTTPS dan ingin beralih ke SSH:
+
+```bash
+# Periksa URL remote saat ini
+git remote -v
+
+# Perbarui ke SSH
+git remote set-url origin git@github.com:username/repository.git
+```
+
+Untuk GitLab, prosesnya identik — navigasi ke **Preferences → SSH Keys** dan ikuti langkah yang sama.
+
+## Di Mana Kunci SSH Disimpan?
+
+Kunci SSH disimpan dalam direktori bernama `.ssh` di folder home pengguna Anda. Lokasinya bervariasi tergantung sistem operasi.
+
+### Linux dan macOS
+
+```
+~/.ssh/
+├── id_ed25519          # Kunci privat Anda (izin: 600)
+├── id_ed25519.pub      # Kunci publik Anda (izin: 644)
+├── id_rsa              # Kunci privat RSA (jika ada)
+├── id_rsa.pub          # Kunci publik RSA
+├── authorized_keys     # Kunci publik yang diizinkan login ke mesin ini
+├── known_hosts         # Sidik jari server yang pernah Anda hubungi
+└── config              # File konfigurasi klien
+```
+
+Direktori `~/.ssh/` sendiri harus memiliki izin **700** (hanya pemilik yang dapat membaca/menulis/mengeksekusi). File kunci privat harus memiliki izin **600** (hanya pemilik yang dapat membaca/menulis). SSH akan menolak menggunakan kunci dengan izin yang terlalu longgar.
+
+```bash
+# Perbaiki izin jika diperlukan
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/id_ed25519
+chmod 644 ~/.ssh/id_ed25519.pub
+```
+
+### Windows
+
+Di Windows 10 dan 11 dengan OpenSSH terpasang, kunci SSH disimpan di:
+
+```
+C:\Users\YourUsername\.ssh\
+├── id_ed25519
+├── id_ed25519.pub
+├── authorized_keys
+├── known_hosts
+└── config
+```
+
+Di Windows, Anda dapat mengakses direktori `.ssh` dari File Explorer (Anda mungkin perlu mengaktifkan "Tampilkan file tersembunyi") atau dari PowerShell menggunakan `~\.ssh\`.
+
+### Beberapa File Kunci
+
+Jika Anda memiliki kunci untuk tujuan yang berbeda (GitHub pribadi, GitLab kerja, server produksi), gunakan file `~/.ssh/config` untuk memetakan setiap host ke kuncinya:
+
+```
+Host github.com
+    IdentityFile ~/.ssh/id_ed25519_github
+
+Host gitlab.work.com
+    IdentityFile ~/.ssh/id_ed25519_work
+
+Host prod-server
+    HostName 203.0.113.10
+    User deploy
+    IdentityFile ~/.ssh/id_ed25519_production
+```
+
+## Passphrase Kunci SSH
+
+Saat Anda membuat pasangan kunci SSH, `ssh-keygen` menanyakan apakah Anda ingin menetapkan **passphrase**. Ini adalah kata sandi opsional yang mengenkripsi file kunci privat di disk.
+
+### Mengapa Menggunakan Passphrase?
+
+Jika file kunci privat Anda dilindungi oleh passphrase yang kuat, mencuri file tersebut saja tidak cukup untuk menyamar sebagai Anda — penyerang juga perlu memecahkan passphrase. Ini memberikan lapisan keamanan kedua yang penting, terutama pada laptop yang dapat dicuri secara fisik.
+
+Tanpa passphrase, kunci privat Anda disimpan dalam teks biasa di disk. Siapa pun yang dapat membaca file tersebut (melalui malware, akses fisik, atau backup yang tidak diamankan dengan benar) dapat langsung menggunakannya.
+
+### Cara Passphrase Berinteraksi dengan ssh-agent
+
+Kelemahan passphrase adalah harus mengetikkannya setiap kali menggunakan kunci. **ssh-agent** menyelesaikan ini dengan menyimpan kunci yang sudah didekripsi di memori selama durasi sesi Anda.
+
+```bash
+# Mulai ssh-agent dan tambahkan kunci Anda
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+# Masukkan passphrase sekali — sekarang di-cache untuk sesi ini
+```
+
+Di macOS, Keychain sistem terintegrasi dengan ssh-agent. Tambahkan `-K` untuk bertahan setelah reboot:
+
+```bash
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+```
+
+### Mengubah Passphrase
+
+Anda dapat mengubah passphrase pada kunci yang ada tanpa membuat ulang pasangan kunci:
+
+```bash
+ssh-keygen -p -f ~/.ssh/id_ed25519
+```
+
+Ini meminta passphrase lama, kemudian membiarkan Anda menetapkan yang baru. Kunci publik tidak berubah, jadi Anda tidak perlu memperbaruinya di server mana pun.
+
+## Sidik Jari Kunci SSH
+
+Setiap pasangan kunci SSH memiliki **sidik jari** — hash pendek dari kunci publik yang secara unik mengidentifikasinya. Sidik jari melayani beberapa tujuan:
+
+- **Verifikasi identitas host** — Saat pertama kali terhubung ke server, SSH menunjukkan sidik jari host key-nya. Jika Anda mengonfirmasi bahwa itu cocok dengan yang Anda harapkan (misalnya, disediakan oleh penyedia hosting Anda), Anda tahu Anda terhubung ke server yang tepat.
+- **Identifikasi kunci** — Saat mengelola banyak kunci, sidik jari membantu Anda mengidentifikasi kunci fisik mana yang sesuai dengan entri mana di `authorized_keys` atau di layanan seperti GitHub.
+- **Audit dan pencabutan** — Log audit sering mencatat sidik jari daripada kunci lengkap. Mengetahui sidik jari kunci membantu Anda menemukannya dan menghapusnya jika diperlukan.
+
+### Melihat Sidik Jari Kunci
+
+```bash
+# Lihat sidik jari kunci publik Anda
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+# Output: 256 SHA256:abcdef1234567890... your@email.com (ED25519)
+
+# Lihat sidik jari host key server
+ssh-keyscan server.example.com | ssh-keygen -lf -
+```
+
+GitHub menampilkan sidik jari semua kunci SSH yang ditambahkan di **Settings → SSH and GPG keys**, memungkinkan Anda memverifikasi bahwa kunci yang Anda lihat di sana cocok dengan yang ada di mesin Anda.
+
+### File `known_hosts`
+
+Pertama kali Anda terhubung ke server SSH baru, Anda melihat pesan seperti:
+
+```
+The authenticity of host 'example.com (203.0.113.10)' can't be established.
+ED25519 key fingerprint is SHA256:abcdef1234567890...
+Are you sure you want to continue connecting (yes/no/[fingerprint])?
+```
+
+Ketik `yes` dan sidik jari server ditambahkan ke `~/.ssh/known_hosts`. Pada koneksi berikutnya, SSH secara diam-diam memverifikasi bahwa kunci server cocok dengan sidik jari yang tersimpan. Jika tidak cocok — yang bisa mengindikasikan kesalahan konfigurasi atau serangan man-in-the-middle — SSH memperingatkan Anda dengan keras dan menolak untuk terhubung.
+
+## Pertanyaan yang Sering Diajukan
+
+### Untuk apa kunci SSH digunakan?
+
+Kunci SSH mengautentikasi Anda ke server jarak jauh tanpa kata sandi. Penggunaan paling umum adalah: login ke server Linux/Unix untuk administrasi, mengautentikasi dengan layanan hosting Git (GitHub, GitLab, Bitbucket) untuk akses push/pull, skrip deployment otomatis yang membutuhkan akses server tanpa kata sandi, dan pipeline CI/CD yang men-deploy kode ke produksi. Kunci SSH lebih disukai daripada kata sandi karena kebal terhadap brute force, tidak dapat digunakan ulang di berbagai pelanggaran, dan dapat digunakan tanpa interaksi manusia.
+
+### Berapa banyak kunci SSH yang harus saya miliki?
+
+Tidak ada satu jawaban yang benar, tetapi praktik terbaik yang umum adalah **satu kunci per perangkat** (bukan per layanan). Laptop Anda memiliki satu pasangan kunci; desktop Anda memiliki satu lagi; server CI Anda memiliki satu lagi. Dengan cara ini, jika perangkat dicuri atau dikompromikan, Anda hanya mencabut kunci perangkat tersebut. Beberapa orang lebih lanjut membagi berdasarkan konteks (pribadi vs. kerja), menghasilkan dua kunci per perangkat. Hindari berbagi satu kunci di beberapa mesin — jika kunci tersebut dikompromikan, semua akses Anda berisiko secara bersamaan.
+
+### Bisakah saya berbagi kunci publik SSH saya?
+
+Ya. Kunci publik dirancang untuk dibagikan. Aman untuk mengirimnya melalui email, mempostingnya di dokumentasi GitHub, atau menyertakannya dalam tiket yang meminta akses server. Kunci publik saja tidak dapat digunakan untuk mengautentikasi sebagai Anda — itu membutuhkan kunci privat yang sesuai, yang hanya Anda miliki. Ini adalah properti fundamental dari kriptografi asimetris. Jangan pernah membagikan kunci **privat** Anda kepada siapa pun.
+
+### Apa yang terjadi jika saya kehilangan kunci privat SSH saya?
+
+Jika Anda kehilangan kunci privat dan tidak memiliki cadangan, Anda kehilangan kemampuan untuk mengautentikasi dengannya. Kunci publik Anda, yang masih terpasang di server dan layanan, menjadi yatim piatu. Anda memerlukan cara alternatif untuk mengakses server (autentikasi kata sandi jika diaktifkan, akses konsol, mekanisme akses darurat penyedia hosting Anda) untuk menghapus kunci publik lama dari `authorized_keys` dan menambahkan yang baru. Inilah mengapa mem-backup kunci privat Anda (di pengelola kata sandi atau backup terenkripsi) itu penting. Kunci privat tidak dapat direkonstruksi dari kunci publik.
+
+### Mana yang lebih baik, Ed25519 atau RSA?
+
+**Ed25519 lebih baik untuk semua pembuatan kunci baru.** Lebih cepat, menghasilkan kunci yang lebih kecil, tidak rentan terhadap kelemahan implementasi tertentu yang memengaruhi RSA, dan memberikan keamanan yang setara atau lebih unggul dengan kunci 256-bit dibandingkan RSA-4096. Satu-satunya alasan menggunakan RSA hari ini adalah kompatibilitas dengan perangkat lunak server SSH yang sangat lama (OpenSSH sebelum versi 6.5, dirilis tahun 2014) atau modul keamanan hardware warisan. Jika Anda mengakses server modern atau layanan seperti GitHub, gunakan Ed25519.
+
+## Buat Pasangan Kunci SSH Anda
+
+Siap membuat kunci SSH Anda? Generator online gratis kami membuat pasangan kunci Ed25519 atau RSA langsung di browser Anda. Kunci privat dibuat secara lokal dan tidak pernah dikirim ke server kami.
+
+<a href="/">Buat pasangan kunci SSH Anda sekarang →</a>
+
+---
+
+**Bacaan lebih lanjut:**
+- <a href="/id/what-is-ssh">Apa Itu SSH? Panduan Lengkap Secure Shell</a>
+- <a href="/id/ssh-command">Perintah SSH: Referensi Lengkap dengan Contoh</a>
+- <a href="/id/how-to-set-up-ssh">Cara Mengatur SSH: Panduan Langkah demi Langkah yang Lengkap</a>

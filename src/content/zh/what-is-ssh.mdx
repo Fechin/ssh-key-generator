@@ -1,0 +1,322 @@
+# SSH 是什么？Secure Shell 安全外壳协议完整指南
+
+SSH（Secure Shell，安全外壳协议）是一种加密网络协议，用于在不安全的网络上安全地操作网络服务。它是开发人员、系统管理员和 DevOps 工程师连接远程服务器、传输文件和管理基础设施不可或缺的工具。
+
+SSH 由芬兰研究员 **Tatu Ylönen** 于 **1995 年**开发，用以替代明文传输协议 Telnet、rsh 和 rlogin。如今，SSH 已成为远程系统管理的标准协议，被全球数以亿计的服务器所使用。
+
+## SSH 代表什么？
+
+SSH 是 **Secure Shell**（安全外壳）的缩写。这个名字揭示了它的两个核心特性：
+
+- **Secure（安全）**：所有通信均经过加密，无法被窃听
+- **Shell（外壳）**：提供对远程计算机命令行界面（shell）的访问
+
+SSH 以客户端-服务器模型运行。您的本地计算机运行 SSH 客户端（通常是 `ssh` 命令），而远程计算机运行 SSH 服务端（通常是 `sshd` 守护进程）。
+
+SSH 协议有两个主要版本：
+
+- **SSH-1**：1995 年的原始版本，现已废弃，存在安全漏洞
+- **SSH-2**：2006 年标准化的现代版本，当前所有系统默认使用
+
+## SSH 的工作原理
+
+SSH 使用多层加密和认证机制来保障连接安全，其架构由以下三层协议组成：
+
+### 传输层协议
+
+传输层负责建立加密通道。当您发起 SSH 连接时，客户端与服务器进行握手，协商加密算法（如 AES-256）和消息认证码（HMAC），并交换密钥材料以建立共享密钥。整个过程使用 Diffie-Hellman 密钥交换，即使网络被监听，共享密钥也无法被还原。
+
+### 用户认证协议
+
+传输层建立完成后，进入用户认证阶段。SSH 支持多种认证方式：
+
+- **密码认证**：输入远程账户密码（不推荐，容易受到暴力破解攻击）
+- **公钥认证**：使用 SSH 密钥对进行认证（推荐方式）
+- **基于主机的认证**：以整台机器为单位进行信任认证
+- **键盘交互认证**：支持多因素认证（MFA）的交互式认证
+
+### 连接协议
+
+连接协议在单个加密通道上多路复用多个逻辑通道，允许同时运行多个 SSH 会话、端口转发和文件传输，而无需建立多个 TCP 连接。
+
+### 连接建立流程
+
+```
+客户端                          服务器
+  |                               |
+  |-------- TCP 连接 (端口 22) -->|
+  |<------- 版本交换 ------------>|
+  |<------- 密钥交换 ------------>|
+  |<------- 服务器认证 ---------->|
+  |-------- 用户认证 ------------>|
+  |<------- 认证成功 ------------>|
+  |<===== 加密会话开始 ==========>|
+```
+
+## SSH 与 Telnet：为什么 SSH 胜出
+
+在 SSH 出现之前，Telnet 是远程登录的主流协议。理解它们之间的差异，有助于明白为何 SSH 迅速取代了 Telnet。
+
+| 特性 | Telnet | SSH |
+|------|--------|-----|
+| 加密 | 无（明文传输） | 全程加密（AES-256） |
+| 认证 | 仅密码 | 密码 + 密钥 + MFA |
+| 数据完整性 | 无保护 | HMAC 校验 |
+| 端口转发 | 不支持 | 支持 |
+| 文件传输 | 不支持 | SFTP/SCP |
+| 默认端口 | 23 | 22 |
+| 安全性 | 极低 | 高 |
+
+使用 Telnet 时，您输入的每一个字符——包括密码——都以纯文本形式在网络上传输。同一网络中的任何人都可以使用 Wireshark 等工具捕获这些数据。SSH 通过端对端加密从根本上解决了这一问题。
+
+1995 年，Tatu Ylönen 所在的赫尔辛基理工大学遭受了一次密码嗅探攻击，他因此意识到需要一个加密替代方案，SSH 就此诞生。
+
+## 什么是 SSH 密钥？
+
+SSH 密钥是一种基于公钥密码学的认证凭证，比密码更安全。SSH 密钥以**密钥对**的形式存在：
+
+- **公钥**：可以公开分享，存储在远程服务器的 `~/.ssh/authorized_keys` 文件中
+- **私钥**：必须严格保密，保存在您的本地计算机上（通常位于 `~/.ssh/id_ed25519` 或 `~/.ssh/id_rsa`）
+
+当您尝试连接时，服务器用公钥向客户端发出挑战，只有持有对应私钥的客户端才能正确响应，从而完成认证。这种方式不需要在网络上传输任何密钥材料。
+
+常用的 SSH 密钥算法包括：
+
+- **Ed25519**：现代椭圆曲线算法，推荐首选，密钥短小且安全性高
+- **RSA**：最广泛支持的传统算法，建议使用 4096 位密钥
+- **ECDSA**：椭圆曲线 DSA，性能介于两者之间
+- **DSA**：已废弃，不再推荐使用
+
+了解更多关于 SSH 密钥的详细信息，请阅读<a href="/zh-Hans/what-is-an-ssh-key">SSH 密钥是什么？</a>
+
+## SSH 的常见使用场景
+
+SSH 的应用场景远不止远程登录，以下是它在实际工作中的主要用途：
+
+### 1. 远程服务器管理
+
+这是 SSH 最基本的用途：
+
+```bash
+# 以用户名连接远程服务器
+ssh username@192.168.1.100
+
+# 连接特定端口
+ssh -p 2222 username@example.com
+
+# 以其他用户身份连接
+ssh admin@server.example.com
+```
+
+### 2. 安全文件传输
+
+SSH 衍生出了两种文件传输协议：
+
+**SCP（安全复制协议）**：
+
+```bash
+# 将本地文件上传到远程服务器
+scp local-file.txt username@server:/remote/path/
+
+# 从远程服务器下载文件
+scp username@server:/remote/path/file.txt ./local-dir/
+
+# 递归复制整个目录
+scp -r ./local-folder username@server:/remote/path/
+```
+
+**SFTP（SSH 文件传输协议）**：
+
+```bash
+# 启动交互式 SFTP 会话
+sftp username@server.example.com
+
+# 在 SFTP 会话中上传文件
+sftp> put local-file.txt
+sftp> get remote-file.txt
+```
+
+### 3. Git（GitHub 和 GitLab）
+
+所有主流 Git 托管平台都支持通过 SSH 进行认证。配置好 SSH 密钥后，推送代码无需每次输入密码：
+
+```bash
+# 克隆 GitHub 仓库（SSH 方式）
+git clone git@github.com:username/repository.git
+
+# 推送代码
+git push origin main
+```
+
+### 4. 端口转发与隧道
+
+SSH 可以将网络流量通过加密隧道传输，实现端口转发：
+
+```bash
+# 本地端口转发：访问本地 8080 即访问远程服务器的 80 端口
+ssh -L 8080:localhost:80 username@server
+
+# 远程端口转发：让远程服务器访问本地服务
+ssh -R 9090:localhost:3000 username@server
+```
+
+### 5. 自动化脚本与 CI/CD
+
+在持续集成/持续部署流程中，SSH 密钥用于自动化部署：
+
+```bash
+# 在远程服务器上执行单条命令
+ssh username@server "sudo systemctl restart nginx"
+
+# 执行多条命令
+ssh username@server << 'EOF'
+  cd /var/www/html
+  git pull origin main
+  npm install
+  pm2 restart app
+EOF
+```
+
+## SSH 端口与配置选项
+
+### 默认端口
+
+SSH 默认使用 **TCP 端口 22**。这是在 1995 年由 Tatu Ylönen 向 IANA（互联网号码分配机构）申请并获批的。
+
+许多管理员会将 SSH 端口改为非标准端口（如 2222 或 22222），以减少自动化扫描和暴力破解尝试，但这只是"默默无闻的安全"，并不能真正提高安全性。
+
+### SSH 客户端配置文件
+
+SSH 客户端配置文件位于 `~/.ssh/config`，可以大幅简化 SSH 命令：
+
+```
+# 为常用服务器定义别名
+Host myserver
+    HostName 192.168.1.100
+    User deploy
+    Port 2222
+    IdentityFile ~/.ssh/id_ed25519
+
+Host github
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/github_key
+```
+
+配置完成后，只需输入 `ssh myserver` 即可连接，无需记住 IP、端口和用户名。
+
+### SSH 服务端配置文件
+
+服务端配置文件位于 `/etc/ssh/sshd_config`，常用安全配置：
+
+```
+# 禁用 root 直接登录
+PermitRootLogin no
+
+# 禁用密码认证（仅允许密钥认证）
+PasswordAuthentication no
+
+# 更改默认端口
+Port 2222
+
+# 限制可登录的用户
+AllowUsers deploy webmaster
+
+# 设置最大认证尝试次数
+MaxAuthTries 3
+```
+
+修改服务端配置后，需要重启 SSH 服务：
+
+```bash
+sudo systemctl restart sshd
+```
+
+## SSH 隧道
+
+SSH 隧道是 SSH 最强大的功能之一，它允许您通过加密的 SSH 连接传输其他协议的网络流量。
+
+### 本地端口转发
+
+本地端口转发将远程服务"引入"到您的本地计算机：
+
+```bash
+# 语法：ssh -L [本地端口]:[目标主机]:[目标端口] [SSH 服务器]
+ssh -L 5432:db-server:5432 jump-host.example.com
+```
+
+这个命令让您可以通过 `localhost:5432` 访问 `db-server` 上的 PostgreSQL 数据库，即使该数据库服务器不对外网开放。
+
+### 远程端口转发
+
+远程端口转发将本地服务"暴露"到远程服务器：
+
+```bash
+# 语法：ssh -R [远程端口]:[本地主机]:[本地端口] [SSH 服务器]
+ssh -R 8080:localhost:3000 public-server.example.com
+```
+
+这在需要临时公开本地开发服务器时非常有用（类似 ngrok 的效果）。
+
+### 动态端口转发（SOCKS 代理）
+
+动态端口转发创建一个 SOCKS 代理，所有流量通过 SSH 服务器转发：
+
+```bash
+# 创建 SOCKS5 代理，监听本地 1080 端口
+ssh -D 1080 username@proxy-server.example.com
+```
+
+配置浏览器使用 `localhost:1080` 作为 SOCKS 代理后，所有浏览流量将通过 SSH 服务器路由。
+
+### 跳板主机（ProxyJump）
+
+在多层网络环境中，经常需要通过跳板机访问内网服务器：
+
+```bash
+# 通过跳板机连接内网服务器
+ssh -J jump.example.com internal-server.example.com
+
+# 多跳连接
+ssh -J user@jump1,user@jump2 user@final-server
+```
+
+了解更多 SSH 命令的详细用法，请参阅<a href="/zh-Hans/ssh-command">SSH 命令完整参考</a>。
+
+## 常见问题解答
+
+### SSH 代表什么？
+
+SSH 代表 **Secure Shell**（安全外壳）。它是一种加密网络协议，由芬兰研究员 Tatu Ylönen 于 1995 年开发，用于在不安全的网络上安全地进行远程登录和命令执行。
+
+### SSH 和 SSL 相同吗？
+
+不，SSH 和 SSL（现已演进为 TLS）是不同的协议，尽管它们都使用加密技术。**SSL/TLS** 主要用于保护 Web 流量（HTTPS），工作在传输层；而 **SSH** 用于远程命令行访问、文件传输和端口转发，工作在应用层。两者使用的加密技术类似，但目的和协议设计完全不同。
+
+### SSH 使用哪个端口？
+
+SSH 默认使用 **TCP 端口 22**。这是 IANA 为 SSH 协议保留的标准端口。部分服务器管理员会将 SSH 改为非标准端口（如 2222）以减少自动化攻击，但这只是辅助安全措施，不能替代强认证机制。
+
+### SSH 可以被黑客攻击吗？
+
+SSH 协议本身是安全的，但配置不当可能导致安全漏洞。常见的 SSH 安全风险包括：弱密码（可通过禁用密码认证解决）、过时的 SSH 软件版本（存在已知漏洞）、配置错误（如允许 root 登录）。建议：禁用密码认证、仅使用密钥认证、保持软件更新、配置防火墙限制访问来源。
+
+### SSH 和 HTTPS 有什么区别？
+
+**HTTPS** 是 HTTP + TLS，专为 Web 浏览设计，用于浏览器与 Web 服务器之间的加密通信，无需事先的密钥配置。**SSH** 是为系统管理员设计的协议，提供交互式命令行访问、文件传输和隧道功能，通常使用密钥对进行认证。两者都能保障通信安全，但应用场景完全不同：HTTPS 用于 Web 浏览，SSH 用于服务器管理。
+
+---
+
+## 立即生成您的 SSH 密钥
+
+现在您已经了解了 SSH 的工作原理，是时候生成您自己的 SSH 密钥对了。我们的在线工具完全在浏览器中运行，密钥不会上传到任何服务器，安全可靠。
+
+<a href="/">访问 SSH 密钥生成器</a>
+
+---
+
+## 相关文章
+
+- <a href="/zh-Hans/what-is-an-ssh-key">SSH 密钥是什么？公钥、私钥与密钥对完整说明</a>
+- <a href="/zh-Hans/ssh-command">SSH 命令完整参考：Linux、Mac 和 Windows 示例</a>
+- <a href="/zh-Hans/how-to-set-up-ssh">如何设置 SSH：Linux、Mac 和 Windows 完整分步指南</a>

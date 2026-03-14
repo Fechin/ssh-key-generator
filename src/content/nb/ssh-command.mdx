@@ -1,0 +1,430 @@
+# SSH-kommandoen: Komplett referanse med eksempler for Linux, Mac og Windows
+
+Kommandoen `ssh` er det primære verktøyet for å initiere SSH-tilkoblinger fra kommandolinjen. Enten du logger inn på en ekstern Linux-server, videresender en port for databasetilgang eller hopper gjennom en bastionvert for å nå et internt nettverk, er kommandoen `ssh` inngangspunktet ditt. Denne guiden dekker alt fra den grunnleggende syntaksen til avanserte flagg, tunneling og ProxyJump-konfigurasjoner — med virkelige eksempler for Linux, macOS og Windows.
+
+Før du kjører SSH-kommandoer, trenger du SSH-nøkler. Se vår guide om <a href="/nb/what-is-an-ssh-key">hva en SSH-nøkkel er</a> eller bruk den <a href="/">gratis nettbaserte generatoren</a> for å opprette et nøkkelpar.
+
+## SSH-kommandosyntaks
+
+Den grunnleggende syntaksen for kommandoen `ssh` er:
+
+```
+ssh [alternativer] [user@]hostname [kommando]
+```
+
+Delt opp:
+
+- **`[alternativer]`** — Null eller flere flagg som endrer atferd (dekket i hele denne guiden)
+- **`[user@]`** — Valgfritt brukernavn. Hvis utelatt, bruker SSH ditt gjeldende lokale brukernavn
+- **`hostname`** — Den eksterne verten å koble til. Kan være en IP-adresse, domenenavn eller et alias definert i `~/.ssh/config`
+- **`[kommando]`** — Valgfri kommando som skal kjøres på den eksterne verten. Hvis utelatt, starter SSH en interaktiv skallesjon
+
+**Grunnleggende eksempler:**
+
+```bash
+# Koble til med ditt gjeldende brukernavn
+ssh server.example.com
+
+# Koble til som en spesifikk bruker
+ssh alice@server.example.com
+
+# Koble til med en IP-adresse
+ssh ubuntu@192.168.1.100
+
+# Kjør en enkelt kommando og koble fra umiddelbart
+ssh user@server.example.com "df -h"
+
+# Kjør en kommando og forbli tilkoblet
+ssh user@server.example.com
+```
+
+## SSH på Linux og macOS
+
+Linux-distribusjoner og macOS leveres med **OpenSSH** forhåndsinstallert. På Linux er det en del av pakken `openssh-client` (Debian/Ubuntu) eller `openssh-clients` (RHEL/CentOS/Fedora). På macOS leveres det med systemet og er umiddelbart tilgjengelig fra Terminal eller iTerm2.
+
+### Verifiser at SSH er tilgjengelig
+
+```bash
+ssh -V
+# Output: OpenSSH_9.6p1, LibreSSL 3.3.6
+```
+
+### Grunnleggende tilkobling
+
+```bash
+# Koble til en server
+ssh user@myserver.example.com
+
+# SSH sjekker ~/.ssh/known_hosts ved første tilkobling og spør:
+# The authenticity of host 'myserver.example.com' can't be established.
+# ED25519 key fingerprint is SHA256:abc123...
+# Are you sure you want to continue connecting (yes/no)? yes
+
+# Vertsfingeravtrykket lagres i ~/.ssh/known_hosts
+```
+
+### Bruk av en SSH-konfigurasjonsfil for bekvemmelighet
+
+I stedet for å skrive fullstendige tilkoblingsdetaljer hver gang, opprett `~/.ssh/config`:
+
+```
+Host myserver
+    HostName myserver.example.com
+    User alice
+    Port 22
+    IdentityFile ~/.ssh/id_ed25519
+
+Host dev
+    HostName dev.example.com
+    User ubuntu
+    Port 2222
+    IdentityFile ~/.ssh/id_ed25519_work
+```
+
+Nå utvider `ssh myserver` til den fullstendige tilkoblingen — ingen flagg nødvendig.
+
+## SSH på Windows (PowerShell og OpenSSH)
+
+Windows 10 (versjon 1809) og Windows 11 inkluderer **OpenSSH-klienten** som en valgfri funksjon, noe som gjør kommandoen `ssh` tilgjengelig i PowerShell, Ledetekst og Windows Terminal.
+
+### Sjekk om OpenSSH er installert
+
+```powershell
+# I PowerShell
+ssh -V
+```
+
+Hvis kommandoen ikke finnes, installer den:
+
+**Via Innstillinger:**
+1. Åpne **Innstillinger → Apper → Valgfrie funksjoner**
+2. Klikk på **Legg til en funksjon**
+3. Finn **OpenSSH-klient** og installer den
+
+**Via PowerShell (administrator):**
+
+```powershell
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+```
+
+### Bruk av SSH i PowerShell
+
+Når det er installert, er syntaksen identisk med Linux og macOS:
+
+```powershell
+# Koble til en server
+ssh user@server.example.com
+
+# Koble til på en tilpasset port
+ssh -p 2222 user@server.example.com
+
+# Bruk en spesifikk nøkkelfil
+ssh -i C:\Users\YourName\.ssh\id_ed25519 user@server.example.com
+```
+
+### Windows SSH-nøkkelplassering
+
+SSH-nøkler på Windows lagres i `C:\Users\YourUsername\.ssh\`. PowerShell gjenkjenner `~` som en forkortelse:
+
+```powershell
+# Disse er likeverdige
+ssh -i ~/.ssh/id_ed25519 user@server
+ssh -i C:\Users\YourUsername\.ssh\id_ed25519 user@server
+```
+
+### PuTTY vs OpenSSH på Windows
+
+Før OpenSSH var tilgjengelig på Windows, var **PuTTY** standard-SSH-klienten. PuTTY bruker sitt eget nøkkelformat (`.ppk`-filer) og sin egen nøkkelgenerator (PuTTYgen). Hvis du har en `.ppk`-nøkkel og trenger å konvertere den til standard OpenSSH-format:
+
+```bash
+# Med PuTTY-verktøy
+puttygen mykey.ppk -O private-openssh -o id_ed25519
+```
+
+For nye oppsett, foretrekk den innebygde OpenSSH-klienten på Windows — den vedlikeholdes av OpenSSH-prosjektet og bruker det samme nøkkelformatet og konfigurasjonsfilen som Linux og macOS.
+
+## SSH med nøkkelautentisering: Flagget -i
+
+Som standard søker SSH etter nøkkelfiler i `~/.ssh/` med standardnavn (`id_ed25519`, `id_rsa`, `id_ecdsa`, `id_dsa`). **Flagget `-i`** (identitetsfil) lar deg angi en annen nøkkelfil eksplisitt.
+
+```bash
+# Bruk en spesifikk nøkkelfil
+ssh -i ~/.ssh/id_ed25519_production user@prod.example.com
+
+# Bruk en nøkkel lagret på en ikke-standard plassering
+ssh -i /path/to/my/custom_key deploy@server.example.com
+
+# Kombiner med andre alternativer
+ssh -i ~/.ssh/deploy_key -p 2222 -l deploy server.example.com
+```
+
+Flagget `-i` er essensielt i flere situasjoner:
+- Du har flere nøkkelpar for forskjellige servere eller formål
+- Nøkkelen din er ikke i standardkatalogen `~/.ssh/`
+- Du angir en nøkkel i et CI/CD-miljø der stien er eksplisitt
+- Du lastet ned en `.pem`-nøkkel fra AWS eller en annen skyleverandør
+
+### AWS EC2-eksempel
+
+AWS gir en `.pem`-nøkkelfil når du starter en EC2-instans:
+
+```bash
+# Koble til en AWS EC2-instans med en .pem-nøkkel
+ssh -i ~/Downloads/my-aws-key.pem ec2-user@54.123.456.789
+
+# Fiks tillatelser om nødvendig (påkrevd — SSH avviser world-readable nøkler)
+chmod 400 ~/Downloads/my-aws-key.pem
+```
+
+## Viktige SSH-kommandoalternativer og flagg
+
+Kommandoen `ssh` har dusinvis av alternativer. Her er de du faktisk vil bruke.
+
+| Flagg | Lang form / Beskrivelse | Eksempel |
+|---|---|---|
+| `-p PORT` | Koble til på en ikke-standard port | `ssh -p 2222 user@host` |
+| `-i FIL` | Bruk en spesifikk identitets-(nøkkel)fil | `ssh -i ~/.ssh/mykey user@host` |
+| `-l BRUKER` | Angi innloggingsbrukernavn (alternativ til `user@`) | `ssh -l alice host` |
+| `-L lokal:vert:ekstern` | Lokal portviderekobling | `ssh -L 8080:localhost:80 host` |
+| `-R ekstern:vert:lokal` | Ekstern portviderekobling | `ssh -R 9090:localhost:3000 host` |
+| `-D port` | Dynamisk (SOCKS) proxy | `ssh -D 1080 host` |
+| `-N` | Ikke kjør en ekstern kommando (bare tunneling) | `ssh -N -L 3307:db:3306 host` |
+| `-f` | Gå til bakgrunnen etter autentisering | `ssh -f -N -D 1080 host` |
+| `-v` | Detaljert (feilsøkings)utdata | `ssh -v user@host` |
+| `-vv` eller `-vvv` | Mer detaljert utdata | `ssh -vvv user@host` |
+| `-A` | Aktiver SSH-agentviderekobling | `ssh -A user@jump-host` |
+| `-X` | Aktiver X11-viderekobling | `ssh -X user@host xclock` |
+| `-C` | Aktiver komprimering | `ssh -C user@host` |
+| `-T` | Deaktiver pseudo-terminalallokering | `ssh -T git@github.com` |
+| `-q` | Stille modus (undertrykk advarsler) | `ssh -q user@host` |
+| `-o ALTERNATIV=VERDI` | Angi et konfigurasjonsalternativ inline | `ssh -o StrictHostKeyChecking=no host` |
+| `-J HOPP` | ProxyJump gjennom en bastionvert | `ssh -J jump.host user@internal` |
+| `-W vert:port` | Videresend stdio til en vert:port (for ProxyJump) | Brukes internt av `-J` |
+
+### Detaljert modus for feilsøking
+
+Når SSH mislykkes, avslører `-v` (eller `-vv` eller `-vvv`) nøyaktig hva som skjer:
+
+```bash
+ssh -v user@server.example.com
+# Viser: hvilke nøkler som prøves, hvilke autentiseringsmetoder serveren aksepterer,
+# om agent er involvert, og hvor tilkoblingen mislykkes
+
+ssh -vvv user@server.example.com
+# Maksimal detaljnivå — viser detaljert kryptografisk forhandling
+```
+
+### Omgå vertsnøkkelsjekking (bruk med forsiktighet)
+
+I automatiserings- og testmiljøer der vertsnøkkelverifisering er upraktisk:
+
+```bash
+ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null user@host
+```
+
+**Ikke bruk dette i produksjon.** Det deaktiverer beskyttelsen mot mann-i-midten-angrep. Forhåndsutfyll i stedet `known_hosts` ved hjelp av `ssh-keyscan` i provisioneringssskriptene dine.
+
+### Agentviderekobling
+
+```bash
+# Videresend din lokale SSH-agent til den eksterne serveren
+ssh -A user@jump-server
+
+# Fra jump-serveren kan du nå SSH til interne verter ved hjelp av dine lokale nøkler
+# Ikke nødvendig å kopiere private nøkler til jump-serveren
+ssh internal-server.private
+```
+
+Agentviderekobling er nyttig, men har sikkerhetsimplikasjoner: alle med root-tilgang på den mellomliggende serveren kan bruke din videresendte agent. Bruk den bare med betrodde servere, og foretrekk **ProxyJump** når det er mulig (den eksponerer ikke agenten din for mellomliggende verter).
+
+## SSH-tunnelingkommandoer
+
+SSH-tunneling ruter TCP-tilkoblinger gjennom en kryptert SSH-kanal. For bakgrunn om hva tunneling er, se <a href="/nb/what-is-ssh">tunnelingseksjonen i SSH-guiden vår</a>.
+
+### Lokal portviderekobling
+
+Gjør en ekstern tjeneste tilgjengelig på din lokale maskin.
+
+```bash
+# Få tilgang til en ekstern MySQL-database på lokal port 3307
+ssh -L 3307:localhost:3306 user@db-server.example.com -N
+
+# Koble til en ekstern webserver som bare er tilgjengelig fra SSH-verten
+ssh -L 8080:intranet.company.com:80 user@vpn.company.com -N
+
+# Få tilgang til en Redis-instans på et privat nettverk
+ssh -L 6380:10.0.1.50:6379 user@bastion.example.com -N
+```
+
+Etter å ha kjørt noen av de ovennevnte, koble din lokale applikasjon til `127.0.0.1:LOKAL_PORT`.
+
+### Ekstern portviderekobling
+
+Eksponerer en lokal tjeneste på den eksterne serveren.
+
+```bash
+# Eksponer din lokale utviklingsserver (port 3000) på den eksterne serverens port 9090
+ssh -R 9090:localhost:3000 user@remote.example.com -N
+
+# Tillat ethvert grensesnitt på den eksterne serveren å koble til (krever GatewayPorts yes i sshd_config)
+ssh -R 0.0.0.0:9090:localhost:3000 user@remote.example.com -N
+```
+
+### Dynamisk portviderekobling (SOCKS-proxy)
+
+```bash
+# Opprett en SOCKS5-proxy på lokal port 1080, kjøring i bakgrunnen
+ssh -D 1080 -N -f user@remote.example.com
+
+# Konfigurer nå nettleseren eller systemet til å bruke SOCKS5-proxy: 127.0.0.1:1080
+# All trafikk rutes gjennom den eksterne serveren
+```
+
+Bruk med curl:
+
+```bash
+curl --socks5 127.0.0.1:1080 https://api.example.com/
+```
+
+### Kjøre tunnelen i bakgrunnen
+
+```bash
+# -f sender SSH til bakgrunnen, -N betyr ingen ekstern kommando
+ssh -f -N -L 3307:localhost:3306 user@db-server
+
+# Finn SSH-bakgrunnsprosessen
+ps aux | grep ssh
+
+# Drep den
+kill PID
+```
+
+## SSH ProxyJump og bastionverter
+
+I mange organisasjoner er produksjonsservere på private nettverk som ikke er direkte tilgjengelige fra internett. En **bastionvert** (eller jump-vert) er en herdet server på nettverkets periferi som du SSH-er til først, og deretter hopper til interne servere. Flagget `ssh -J` (ProxyJump, lagt til i OpenSSH 7.3) gjør dette sømløst.
+
+### Grunnleggende ProxyJump
+
+```bash
+# Hopp gjennom én bastion for å nå en intern server
+ssh -J ec2-user@bastion.example.com ubuntu@10.0.1.50
+
+# Kortform
+ssh -J user@jump-host user@internal-server
+```
+
+Dette oppretter to SSH-tilkoblinger: først til basjonen, deretter fra bastionen til den interne serveren — alt i én enkelt kommando, med ende-til-ende-kryptering. Din lokale SSH-agent håndterer autentisering til begge verter.
+
+### Kjeding av flere hopp
+
+```bash
+# Hopp gjennom to mellomliggende verter
+ssh -J user@jump1.example.com,user@jump2.example.com user@final-destination
+```
+
+### ProxyJump i SSH-konfigurasjonsfilen
+
+For hyppig brukte servere, legg ProxyJump-konfigurasjonen i `~/.ssh/config`:
+
+```
+Host bastion
+    HostName bastion.example.com
+    User ec2-user
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host prod-web
+    HostName 10.0.1.100
+    User ubuntu
+    ProxyJump bastion
+    IdentityFile ~/.ssh/id_ed25519_aws
+
+Host prod-db
+    HostName 10.0.2.50
+    User postgres
+    ProxyJump bastion
+    IdentityFile ~/.ssh/id_ed25519_aws
+```
+
+Nå kobler `ssh prod-web` automatisk til gjennom bastionen. Ingen manuelle `-J`-flagg nødvendig.
+
+### ProxyJump vs agentviderekobling
+
+ProxyJump foretrekkes fremfor agentviderekobling (`-A`) fordi:
+- Din private nøkkel videresendes aldri til den mellomliggende verten
+- Bastionverten kan ikke bruke legitimasjonene dine til å autentisere seg andre steder
+- Tilkoblingen er ende-til-ende autentisert — destinasjonsserveren verifiserer deg direkte
+
+For mer oppsettdetaljer, se vår komplette guide om <a href="/nb/how-to-set-up-ssh">slik setter du opp SSH</a>.
+
+## Ofte stilte spørsmål
+
+### Hvordan kjører jeg en SSH-kommando uten passord?
+
+Sett opp SSH-nøkkelautentisering. Generer et nøkkelpar (`ssh-keygen -t ed25519`), kopier den offentlige nøkkelen til serverens `~/.ssh/authorized_keys`-fil ved hjelp av `ssh-copy-id user@host`, og etterfølgende tilkoblinger vil bruke nøkkelen din uten å be om passord. Hvis nøkkelen din har en passfrase, bruk `ssh-agent` og `ssh-add` for å bufre den slik at du bare skriver den inn én gang per sesjon.
+
+### Hvordan avslutter jeg en SSH-sesjon?
+
+Skriv `exit` eller trykk **Ctrl+D** for å lukke fjernshellen og koble fra. Hvis sesjonen er fryst (f.eks. nettverket droppet), bruk SSH-escape-sekvensen: trykk **Enter**, skriv deretter `~.` (tilde etterfulgt av et punktum). SSH avslutter tilkoblingen umiddelbart. Andre escape-sekvenser: `~^Z` suspenderer SSH til bakgrunnen, `~?` viser alle escape-sekvenser.
+
+### Hvordan kjører jeg en kommando på en ekstern server via SSH?
+
+Legg til kommandoen etter vertsnavnet:
+
+```bash
+ssh user@server "kommando som skal kjøres"
+ssh user@server "ls -la /var/log/"
+ssh user@server "sudo systemctl status nginx"
+```
+
+For flerlinje-kommandoer eller skript, bruk et heredoc:
+
+```bash
+ssh user@server << 'EOF'
+cd /var/www/html
+git pull origin main
+systemctl reload nginx
+EOF
+```
+
+For interaktive kommandoer (som de som krever en terminal), legg til flagget `-t` for å allokere en pseudo-terminal: `ssh -t user@server sudo apt upgrade`.
+
+### Hva er forskjellen mellom ssh og scp?
+
+`ssh` åpner en terminalsesjon (eller kjører en enkelt kommando) på en ekstern maskin. `scp` (Secure Copy Protocol) kopierer filer mellom din lokale maskin og en ekstern maskin, eller mellom to eksterne maskiner, ved hjelp av SSH for kryptering og autentisering. Begge bruker den samme SSH-protokollen og nøkkelinfrastrukturen. For filoverføringer er `scp` det dedikerte verktøyet:
+
+```bash
+# scp lokal til ekstern
+scp file.txt user@server:/destination/path/
+
+# scp ekstern til lokal
+scp user@server:/remote/file.txt ./local-copy.txt
+```
+
+For mer avanserte filoverføringer (rekursive, gjenopptakbare, katalogbrowsing), bruk `sftp`. For storskalaoverføringer er `rsync -avz -e ssh` enda mer effektivt.
+
+### Hvordan bruker jeg SSH med en konfigurasjonsfil?
+
+Opprett `~/.ssh/config` og legg til vertsposter. Hvert `Host`-blokk definerer et tilkoblingsalias med sine fullstendige innstillinger:
+
+```
+Host aliasnavn
+    HostName actual.server.com
+    User brukernavn
+    Port 22
+    IdentityFile ~/.ssh/specific_key
+```
+
+Deretter bruker `ssh aliasnavn` alle definerte innstillinger automatisk. Konfigurasjonsfilen støtter jokertegn: `Host *.example.com` bruker innstillinger på alle samsvarende verter. `Host *` på slutten bruker standardinnstillinger på alle tilkoblinger. Alternativer i et spesifikt `Host`-blokk overstyrer globale standarder.
+
+## Trenger du SSH-nøkler? Generer dem gratis
+
+For å bruke SSH-nøkkelautentisering — som eliminerer behovet for passord — trenger du et nøkkelpar. Generer Ed25519- eller RSA-nøkler umiddelbart i nettleseren din, med ingenting sendt til serverne våre.
+
+<a href="/">Generer dine SSH-nøkler gratis →</a>
+
+---
+
+**Videre lesning:**
+- <a href="/nb/what-is-ssh">Hva er SSH? Den komplette guiden til Secure Shell</a>
+- <a href="/nb/what-is-an-ssh-key">Hva er en SSH-nøkkel? Offentlige nøkler, private nøkler og nøkkelpar forklart</a>
+- <a href="/nb/how-to-set-up-ssh">Slik setter du opp SSH: En komplett trinn-for-trinn-guide</a>

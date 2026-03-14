@@ -1,0 +1,80 @@
+{
+  "zh-Hant": {
+    "what-is-ssh": {
+      "title": "什麼是 SSH？安全外殼協定完整指南",
+      "description": "深入了解 SSH（安全外殼協定）：這個加密網路協定的運作原理、傳輸層與驗證層架構、通道功能，以及為何它成為安全遠端存取的通用標準。",
+      "keywords": ["SSH", "安全外殼", "SSH 協定", "什麼是 SSH", "安全遠端存取", "SSH 與 Telnet", "SSH 金鑰", "SSH 連接埠", "SSH 通道", "OpenSSH"],
+      "publishDate": "2026-03-14"
+    },
+    "what-is-an-ssh-key": {
+      "title": "什麼是 SSH 金鑰？公開金鑰、私密金鑰與金鑰對詳解",
+      "description": "了解 SSH 金鑰的運作原理：公開金鑰與私密金鑰的差異、Ed25519 與 RSA 演算法比較、如何將 SSH 金鑰加入 GitHub，以及金鑰儲存位置與密碼短語的最佳實踐。",
+      "keywords": ["SSH 金鑰", "公開金鑰", "私密金鑰", "Ed25519", "RSA 金鑰", "SSH 金鑰對", "authorized_keys", "ssh-keygen", "GitHub SSH 金鑰", "非對稱加密"],
+      "publishDate": "2026-03-14"
+    },
+    "ssh-command": {
+      "title": "SSH 命令：Linux、Mac 和 Windows 含範例的完整參考指南",
+      "description": "SSH 命令的完整參考指南，包含所有常用選項與旗標、連接埠轉送、ProxyJump 設定，以及適用於 Linux、macOS 和 Windows 的實際操作範例。",
+      "keywords": ["SSH 命令", "ssh 指令", "SSH 連接埠轉送", "ProxyJump", "SSH 跳板主機", "SSH 通道", "SSH -i 旗標", "SSH 設定檔", "ssh-agent", "OpenSSH 命令"],
+      "publishDate": "2026-03-14"
+    },
+    "how-to-set-up-ssh": {
+      "title": "如何設定 SSH：Linux、Mac 和 Windows 完整的逐步指南",
+      "description": "從產生 SSH 金鑰對到設定金鑰驗證的完整指南，涵蓋 Linux、macOS 和 Windows，包括 GitHub、GitLab 設定與常見錯誤排除。",
+      "keywords": ["設定 SSH", "SSH 金鑰設定", "ssh-keygen", "ssh-copy-id", "SSH 免密碼", "GitHub SSH 設定", "GitLab SSH", "SSH 權限", "SSH 故障排除", "authorized_keys 設定"],
+      "publishDate": "2026-03-14"
+    }
+  },
+  "ja": {
+    "what-is-ssh": {
+      "title": "SSHとは何か？セキュアシェル完全ガイド",
+      "description": "SSH（セキュアシェル）の仕組みを徹底解説：暗号化ネットワークプロトコルのトランスポート層・認証層・トンネリング機能、そしてなぜSSHがセキュアなリモートアクセスの標準となったのかを詳しく説明します。",
+      "keywords": ["SSH", "セキュアシェル", "SSHプロトコル", "SSHとは", "セキュアリモートアクセス", "SSH対Telnet", "SSH鍵", "SSHポート", "SSHトンネリング", "OpenSSH"],
+      "publishDate": "2026-03-14"
+    },
+    "what-is-an-ssh-key": {
+      "title": "SSH鍵とは？公開鍵・秘密鍵・鍵ペアを解説",
+      "description": "SSH鍵の仕組みを解説：公開鍵と秘密鍵の違い、Ed25519とRSAの比較、GitHubへのSSH鍵の追加方法、そして鍵の保管場所とパスフレーズのベストプラクティスを詳しく説明します。",
+      "keywords": ["SSH鍵", "公開鍵", "秘密鍵", "Ed25519", "RSA鍵", "SSH鍵ペア", "authorized_keys", "ssh-keygen", "GitHub SSH鍵", "非対称暗号"],
+      "publishDate": "2026-03-14"
+    },
+    "ssh-command": {
+      "title": "SSHコマンド：Linux・Mac・Windows向け実例付き完全リファレンス",
+      "description": "SSHコマンドの完全リファレンス。よく使うオプションとフラグ、ポートフォワーディング、ProxyJump設定、Linux・macOS・Windows向けの実践的な使用例を詳しく解説します。",
+      "keywords": ["SSHコマンド", "ssh コマンド", "SSHポートフォワーディング", "ProxyJump", "SSH踏み台ホスト", "SSHトンネル", "SSH -iフラグ", "SSH設定ファイル", "ssh-agent", "OpenSSHコマンド"],
+      "publishDate": "2026-03-14"
+    },
+    "how-to-set-up-ssh": {
+      "title": "SSHのセットアップ方法：Linux・Mac・Windows向けステップバイステップ完全ガイド",
+      "description": "SSH鍵ペアの生成から鍵ベース認証の設定まで、Linux・macOS・Windows向けの完全なステップバイステップガイド。GitHub・GitLab設定、よくあるエラーのトラブルシューティングも網羅しています。",
+      "keywords": ["SSHセットアップ", "SSH鍵設定", "ssh-keygen", "ssh-copy-id", "SSHパスワードなし", "GitHub SSH設定", "GitLab SSH", "SSHパーミッション", "SSHトラブルシューティング", "authorized_keys設定"],
+      "publishDate": "2026-03-14"
+    }
+  },
+  "ko": {
+    "what-is-ssh": {
+      "title": "SSH란 무엇인가? 시큐어 셸 완전 가이드",
+      "description": "SSH(시큐어 셸)의 동작 방식 완전 해설: 암호화 네트워크 프로토콜의 트랜스포트 계층, 인증 계층, 터널링 기능, 그리고 SSH가 안전한 원격 접속의 표준이 된 이유를 상세히 설명합니다.",
+      "keywords": ["SSH", "시큐어 셸", "SSH 프로토콜", "SSH란", "안전한 원격 접속", "SSH 대 Telnet", "SSH 키", "SSH 포트", "SSH 터널링", "OpenSSH"],
+      "publishDate": "2026-03-14"
+    },
+    "what-is-an-ssh-key": {
+      "title": "SSH 키란? 공개키, 개인키, 키 쌍 완전 해설",
+      "description": "SSH 키의 동작 방식 완전 해설: 공개키와 개인키의 차이, Ed25519 대 RSA 비교, GitHub에 SSH 키 추가 방법, 그리고 키 저장 위치와 패스프레이즈 모범 사례를 자세히 설명합니다.",
+      "keywords": ["SSH 키", "공개키", "개인키", "Ed25519", "RSA 키", "SSH 키 쌍", "authorized_keys", "ssh-keygen", "GitHub SSH 키", "비대칭 암호화"],
+      "publishDate": "2026-03-14"
+    },
+    "ssh-command": {
+      "title": "SSH 명령어: Linux, Mac, Windows 예제가 포함된 완전 참조 가이드",
+      "description": "SSH 명령어 완전 참조 가이드. 자주 사용하는 옵션과 플래그, 포트 포워딩, ProxyJump 설정, Linux·macOS·Windows에서의 실용적인 사용 예제를 상세히 설명합니다.",
+      "keywords": ["SSH 명령어", "ssh 명령", "SSH 포트 포워딩", "ProxyJump", "SSH 배스천 호스트", "SSH 터널", "SSH -i 플래그", "SSH 설정 파일", "ssh-agent", "OpenSSH 명령어"],
+      "publishDate": "2026-03-14"
+    },
+    "how-to-set-up-ssh": {
+      "title": "SSH 설정 방법: Linux, Mac, Windows 단계별 완전 가이드",
+      "description": "SSH 키 쌍 생성부터 키 기반 인증 설정까지, Linux·macOS·Windows를 위한 완전한 단계별 가이드. GitHub·GitLab 설정과 일반적인 오류 해결 방법도 포함합니다.",
+      "keywords": ["SSH 설정", "SSH 키 설정", "ssh-keygen", "ssh-copy-id", "SSH 비밀번호 없이", "GitHub SSH 설정", "GitLab SSH", "SSH 권한", "SSH 문제 해결", "authorized_keys 설정"],
+      "publishDate": "2026-03-14"
+    }
+  }
+}

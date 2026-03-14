@@ -3,6 +3,7 @@ import {
   LANGUAGE_BY_CODE,
   SITE_URL,
   getAbsoluteLanguageUrl,
+  getLanguagePathname,
   getOpenGraphLocale,
   type Language,
 } from '@/i18n/languageConfig'
@@ -15,8 +16,9 @@ export interface PageMetadata {
   title: string
   description: string
   canonicalUrl: string
+  alternatePath: string | null
   robots: string
-  ogType: 'website'
+  ogType: 'website' | 'article'
   structuredData: {
     website: JsonLdValue
     page: JsonLdValue
@@ -104,23 +106,36 @@ function upsertStructuredDataScript(id: string, value: JsonLdValue | null) {
   script.textContent = value ? toJsonLd(value) : ''
 }
 
-function syncAlternateLinks() {
+function getAlternateUrl(language: Language, alternatePath: string) {
+  const normalizedPath = alternatePath.replace(/^\/+/, '')
+  const localizedPath = normalizedPath
+    ? `${getLanguagePathname(language)}${normalizedPath}`
+    : getLanguagePathname(language)
+
+  return normalizeAbsoluteUrl(localizedPath)
+}
+
+function syncAlternateLinks(alternatePath: string | null) {
   document
     .querySelectorAll('link[rel="alternate"][hreflang]')
     .forEach((element) => element.remove())
+
+  if (alternatePath === null) {
+    return
+  }
 
   for (const language of Object.values(LANGUAGE_BY_CODE)) {
     const link = document.createElement('link')
     link.setAttribute('rel', 'alternate')
     link.setAttribute('hreflang', language.hreflang)
-    link.setAttribute('href', getAbsoluteLanguageUrl(language.code))
+    link.setAttribute('href', getAlternateUrl(language.code, alternatePath))
     document.head.appendChild(link)
   }
 
   const xDefaultLink = document.createElement('link')
   xDefaultLink.setAttribute('rel', 'alternate')
   xDefaultLink.setAttribute('hreflang', 'x-default')
-  xDefaultLink.setAttribute('href', getAbsoluteLanguageUrl(DEFAULT_LANGUAGE))
+  xDefaultLink.setAttribute('href', getAlternateUrl(DEFAULT_LANGUAGE, alternatePath))
   document.head.appendChild(xDefaultLink)
 }
 
@@ -288,6 +303,7 @@ export function buildHomePageMetadata(language: Language, t: TranslationFn): Pag
     title,
     description,
     canonicalUrl,
+    alternatePath: '',
     robots: 'index, follow',
     ogType: 'website',
     structuredData: {
@@ -295,6 +311,42 @@ export function buildHomePageMetadata(language: Language, t: TranslationFn): Pag
       page: buildSoftwareApplicationSchema(language, title, description, canonicalUrl, t),
       faq: buildFaqSchema(language, t, canonicalUrl),
       howTo: buildHowToSchema(language, t('seo.howTo.title'), description, canonicalUrl, t),
+      organization: buildOrganizationSchema(),
+    },
+  }
+}
+
+export function buildArticlePageMetadata(
+  slug: string,
+  language: Language,
+  meta: { title: string; description: string; keywords: string[]; publishDate: string },
+): PageMetadata {
+  const canonicalUrl = getAlternateUrl(language, slug)
+
+  return {
+    title: meta.title,
+    description: meta.description,
+    canonicalUrl,
+    alternatePath: slug,
+    robots: 'index, follow',
+    ogType: 'article',
+    structuredData: {
+      website: buildWebsiteSchema(language),
+      page: {
+        '@context': 'https://schema.org',
+        '@type': 'TechArticle',
+        headline: meta.title,
+        description: meta.description,
+        datePublished: meta.publishDate,
+        dateModified: meta.publishDate,
+        url: canonicalUrl,
+        keywords: meta.keywords.join(', '),
+        author: { '@id': ORGANIZATION_ID },
+        publisher: { '@id': ORGANIZATION_ID },
+        inLanguage: LANGUAGE_BY_CODE[language].hreflang,
+      },
+      faq: null,
+      howTo: null,
       organization: buildOrganizationSchema(),
     },
   }
@@ -313,6 +365,7 @@ export function buildNotFoundPageMetadata(
     title,
     description,
     canonicalUrl,
+    alternatePath: null,
     robots: 'noindex, nofollow',
     ogType: 'website',
     structuredData: {
@@ -326,7 +379,7 @@ export function buildNotFoundPageMetadata(
 }
 
 export function syncPageMetadata(language: Language, metadata: PageMetadata) {
-  const { title, description, canonicalUrl, robots, ogType, structuredData } = metadata
+  const { title, description, canonicalUrl, alternatePath, robots, ogType, structuredData } = metadata
 
   document.title = title
 
@@ -345,7 +398,7 @@ export function syncPageMetadata(language: Language, metadata: PageMetadata) {
   upsertMetaByProperty('twitter:description', description)
   upsertMetaByProperty('twitter:image', SOCIAL_IMAGE_URL)
   upsertCanonicalLink(canonicalUrl)
-  syncAlternateLinks()
+  syncAlternateLinks(alternatePath)
   upsertStructuredDataScript('structured-data-website', structuredData.website)
   upsertStructuredDataScript('structured-data-page', structuredData.page)
   upsertStructuredDataScript('structured-data-faq', structuredData.faq)

@@ -1,0 +1,337 @@
+# SSH Key কী? Public Key, Private Key, ও Key Pair ব্যাখ্যা
+
+একটি **SSH key** হলো একটি ক্রিপ্টোগ্রাফিক credential যা পাসওয়ার্ড ছাড়াই SSH সার্ভারে authenticate করতে ব্যবহৃত হয়। SSH key জোড়ায় আসে — একটি **public key** এবং একটি **private key** — এবং একসাথে তারা রিমোট অ্যাক্সেসকে ঐতিহ্যগত পাসওয়ার্ড authentication-এর চেয়ে আরও নিরাপদ ও সুবিধাজনক করে। এই গাইডটি ব্যাখ্যা করে যে SSH key কী, key pair সিস্টেম কীভাবে কাজ করে, কোন key type বেছে নেবেন, এবং GitHub ও GitLab-এর মতো সার্ভিসে SSH key কীভাবে ব্যবহার করবেন।
+
+## SSH Key কীভাবে কাজ করে
+
+SSH key **asymmetric cryptography**-র উপর ভিত্তি করে, যাকে public-key cryptography-ও বলা হয়। Symmetric cryptography (যেখানে একটি single secret key data এনক্রিপ্ট ও ডিক্রিপ্ট উভয়ই করে)-র বিপরীতে, asymmetric সিস্টেম গণিতগতভাবে যুক্ত key pair ব্যবহার করে যেখানে একটি key দিয়ে এনক্রিপ্ট করা data কেবল অন্য key দিয়ে ডিক্রিপ্ট করা যায়।
+
+আপনি যখন কোনো সার্ভারে লগ ইন করতে SSH key ব্যবহার করেন তখন authentication flow এরকম:
+
+১. আপনি `ssh user@server.example.com` চালান।
+২. সার্ভার `~/.ssh/authorized_keys`-এ আপনার public key খোঁজে।
+৩. সার্ভার একটি random challenge তৈরি করে এবং আপনার public key দিয়ে এনক্রিপ্ট করে।
+৪. আপনার SSH client আপনার private key ব্যবহার করে challenge ডিক্রিপ্ট করে।
+৫. Client একটি ক্রিপ্টোগ্রাফিক proof (ডিক্রিপ্টেড challenge ও session ID থেকে derived) সার্ভারে ফেরত পাঠায়।
+৬. সার্ভার proof যাচাই করে। কেবল private key-এর ধারকই এটি produce করতে পারতেন।
+৭. Authentication সফল হয়। আপনার মেশিন থেকে কোনো পাসওয়ার্ড বের হয় না।
+
+এটাই মূল বিষয়: **আপনার private key কখনো নেটওয়ার্কে যায় না।** সার্ভার কেবল আপনার public key এবং আপনার produce করা ক্রিপ্টোগ্রাফিক proof দেখে। কেউ আপনার SSH সেশনের প্রতিটি packet ইন্টারসেপ্ট করলেও, তারা আপনার পরিচয় নকল করতে সাহায্য করবে এমন কিছু পায় না।
+
+SSH প্রোটোকলের বৃহত্তর পটভূমির জন্য, আমাদের গাইড দেখুন: <a href="/bn/what-is-ssh">SSH কী</a>।
+
+## Public Key বনাম Private Key: পার্থক্য কী?
+
+SSH সঠিকভাবে ব্যবহার করার জন্য দুটি key-এর মধ্যে পার্থক্য বোঝা অপরিহার্য।
+
+### Public Key — আপনার তালা
+
+**Public key** স্বাধীনভাবে শেয়ার করার জন্য ডিজাইন করা হয়েছে। এটিকে একটি তালার মতো ভাবুন: আপনি প্রত্যেককে কপি দেন যার সিস্টেম আপনি অ্যাক্সেস করতে চান। কোনো সার্ভার তার `authorized_keys` ফাইলে আপনার public key রাখলে, এটি আপনার private key না জেনেই আপনার পরিচয় যাচাই করতে পারে।
+
+Public key-গুলি:
+- শেয়ার করা নিরাপদ — এগুলি দিয়ে আপনার পরিচয় নকল করা যায় না
+- সার্ভারে `~/.ssh/authorized_keys`-এ রাখা হয়
+- GitHub, GitLab, এবং অন্যান্য সার্ভিসে আপলোড করা হয়
+- সাধারণত `.pub` এক্সটেনশন থাকে (যেমন `id_ed25519.pub`)
+- এভাবে দেখায়: `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAA... user@hostname`
+
+### Private Key — আপনার চাবি
+
+**Private key** হলো pair-এর গোপন অর্ধেক। এটি কখনো আপনার মেশিন ছাড়া উচিত নয় এবং কারো সাথে শেয়ার করা উচিত নয় — administrator, cloud provider, বা support staff-এর সাথেও নয়। আপনার private key compromise হলে, যে কেউ এটি পেলে প্রতিটি সার্ভারে আপনার পরিচয় নকল করতে পারবে যেখানে আপনার public key ইনস্টল আছে।
+
+Private key-গুলি:
+- গোপন ও নিরাপদ রাখতে হবে
+- restricted permissions (600) সহ `~/.ssh/`-এ locally সংরক্ষিত
+- ঐচ্ছিকভাবে passphrase দিয়ে এনক্রিপ্ট করা
+- কোনো extension নেই বা language-specific extension (যেমন `id_ed25519`)
+
+### `authorized_keys` ফাইল
+
+সার্ভার side-এ, প্রতিটি user-এর public key `~/.ssh/authorized_keys`-এ সংরক্ষিত। এটি একটি plain text ফাইল যেখানে প্রতিটি লাইনে একটি public key থাকে। SSH client authenticate করার চেষ্টা করলে, সার্ভার পরীক্ষা করে যে client এই ফাইলের কোনো entry-র সংশ্লিষ্ট private key-এর possession প্রমাণ করতে পারে কিনা।
+
+```
+# ~/.ssh/authorized_keys format
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGq... alice@laptop
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHr... alice@workstation
+ssh-rsa AAAAB3NzaC1yc2EAAAA... backup-deploy-key
+```
+
+এই ফাইলে আপনার প্রয়োজন অনুযায়ী যতগুলি public key রাখা যায়, একই সার্ভারে একাধিক ডিভাইস বা automation সিস্টেমকে authenticate করতে দেয়।
+
+## SSH Key Algorithm: Ed25519 বনাম RSA
+
+আপনি SSH key pair তৈরি করলে, একটি algorithm বেছে নেন। আজকে সবচেয়ে সাধারণ দুটি option হলো **Ed25519** এবং **RSA**। ECDSA ও DSA-ও আছে, কিন্তু DSA deprecated এবং ECDSA-তে implementation pitfall আছে, তাই আমরা দুটি প্রস্তাবিত option-এ মনোযোগ দেব।
+
+### Ed25519 — আধুনিক পছন্দ
+
+Ed25519 OpenSSH version 6.5 (2014)-এ চালু হয়েছিল এবং এখন প্রস্তাবিত ডিফল্ট। এটি Daniel J. Bernstein ডিজাইন করা Twisted Edwards curve (Curve25519)-এ elliptic curve cryptography ব্যবহার করে।
+
+**Ed25519-এর সুবিধা:**
+- **Compact** — key মাত্র 68 অক্ষর (public key) এবং ফাইল ছোট
+- **Fast** — signature তৈরি ও যাচাই অত্যন্ত দ্রুত
+- **Secure by design** — side-channel attack-এর প্রতি দুর্বল নয় যা কিছু RSA implementation-কে প্রভাবিত করে
+- **Fixed key size** — 256-bit security level, key size বেছে নেওয়ার প্রয়োজন নেই
+- **Deterministic** — signature deterministic, random number generator failure-এর একটি শ্রেণি দূর করে
+
+```bash
+# Ed25519 key pair তৈরি করুন
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+### RSA — Universal Option
+
+RSA পুরোনো algorithm (1977-এ উদ্ভাবিত), এবং 4096 bits-এ এখনও নিরাপদ হলেও, এটি ধীর এবং Ed25519-এর চেয়ে বড় key তৈরি করে। তবে RSA-র অনেক বেশি compatibility আছে — এটি খুব পুরোনো SSH সার্ভার, legacy সিস্টেম, এবং কিছু hardware security key-এর সাথে কাজ করে।
+
+**RSA কখন ব্যবহার করবেন:**
+- আপনাকে পুরোনো OpenSSH version (6.5-এর আগে) চালানো legacy সিস্টেমে সংযোগ করতে হবে
+- আপনি এমন smartcard বা HSM ব্যবহার করছেন যা Ed25519 সমর্থন করে না
+- পুরোনো টুলের সাথে compatibility প্রয়োজন
+
+```bash
+# RSA 4096-bit key pair তৈরি করুন
+ssh-keygen -t rsa -b 4096 -C "your@email.com"
+```
+
+**RSA কখনো 4096 bits-এর কম দিয়ে ব্যবহার করবেন না।** RSA-1024 ও RSA-2048 computational power বাড়ার সাথে ক্রমশ অপর্যাপ্ত মনে করা হচ্ছে। 256 bits-এ Ed25519 key size-এর একটি ভগ্নাংশে সমতুল্য বা উন্নততর নিরাপত্তা প্রদান করে।
+
+### সারসংক্ষেপ তুলনা
+
+| বৈশিষ্ট্য | Ed25519 | RSA 4096 |
+|---|---|---|
+| Key size (public) | ~68 অক্ষর | ~725 অক্ষর |
+| Security level | 128-bit (post-quantum resistant structure) | ~140-bit classical |
+| Speed | খুব দ্রুত | ধীর |
+| Compatibility | Modern SSH (OpenSSH 6.5+) | Universal |
+| প্রস্তাবিত | সমস্ত নতুন key-এর জন্য | শুধু legacy সিস্টেমের জন্য |
+
+**উপসংহার: যেকোনো modern ব্যবহারের জন্য Ed25519 key তৈরি করুন।** RSA শুধুমাত্র তখন ব্যবহার করুন যখন compatibility প্রয়োজনীয়তা বাধ্য করে।
+
+## GitHub-এ SSH Key কীভাবে যোগ করবেন
+
+আপনার SSH public key GitHub-এ যোগ করলে প্রতিটি অপারেশনে username ও পাসওয়ার্ড না দিয়েই SSH-এর মাধ্যমে push ও pull করতে পারবেন। এখানে ধাপে ধাপে প্রক্রিয়া।
+
+### ধাপ ১: আপনার Key Pair তৈরি করুন
+
+যদি আপনার কাছে SSH key pair না থাকে, একটি তৈরি করুন। আপনি আমাদের <a href="/">বিনামূল্যের online SSH key generator</a> ব্যবহার করতে পারেন বা চালাতে পারেন:
+
+```bash
+ssh-keygen -t ed25519 -C "your-github-email@example.com"
+```
+
+ডিফল্ট file location (`~/.ssh/id_ed25519`) গ্রহণ করুন এবং ঐচ্ছিকভাবে passphrase সেট করুন।
+
+### ধাপ ২: আপনার Public Key Copy করুন
+
+আপনার public key প্রদর্শন করুন এবং clipboard-এ copy করুন:
+
+```bash
+# Linux
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+
+# macOS
+cat ~/.ssh/id_ed25519.pub | pbcopy
+
+# Windows (PowerShell)
+Get-Content ~/.ssh/id_ed25519.pub | Set-Clipboard
+```
+
+বা শুধু প্রদর্শন করুন এবং manually copy করুন:
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+### ধাপ ৩: GitHub-এ Key যোগ করুন
+
+১. **GitHub.com**-এ লগ ইন করুন
+২. আপনার profile picture-এ ক্লিক করুন → **Settings**
+৩. বাম sidebar-এ, **SSH and GPG keys**-এ ক্লিক করুন
+৪. **New SSH key**-এ ক্লিক করুন
+৫. একটি descriptive title দিন (যেমন "MacBook Pro 2024" বা "Work Laptop")
+৬. **Key** ফিল্ডে আপনার public key paste করুন
+৭. **Add SSH key**-এ ক্লিক করুন
+
+### ধাপ ৪: সংযোগ পরীক্ষা করুন
+
+```bash
+ssh -T git@github.com
+```
+
+আপনার এটি দেখা উচিত: `Hi username! You've successfully authenticated, but GitHub does not provide shell access.`
+
+### বিদ্যমান Repository SSH-এ Switch করা
+
+আপনি HTTPS ব্যবহার করে repository clone করলে এবং SSH-এ switch করতে চাইলে:
+
+```bash
+# Current remote URL পরীক্ষা করুন
+git remote -v
+
+# SSH-এ update করুন
+git remote set-url origin git@github.com:username/repository.git
+```
+
+GitLab-এর জন্য প্রক্রিয়া identical — **Preferences → SSH Keys**-এ যান এবং একই ধাপ অনুসরণ করুন।
+
+## SSH Key কোথায় সংরক্ষিত হয়?
+
+SSH key আপনার user-এর home folder-এ `.ssh` নামক directory-তে সংরক্ষিত হয়। অবস্থান operating system অনুযায়ী পরিবর্তিত হয়।
+
+### Linux ও macOS
+
+```
+~/.ssh/
+├── id_ed25519          # আপনার private key (permissions: 600)
+├── id_ed25519.pub      # আপনার public key (permissions: 644)
+├── id_rsa              # RSA private key (থাকলে)
+├── id_rsa.pub          # RSA public key
+├── authorized_keys     # এই মেশিনে লগ ইন করার অনুমতি প্রাপ্ত public key
+├── known_hosts         # আপনি সংযুক্ত হয়েছেন এমন সার্ভারের fingerprint
+└── config              # Client configuration ফাইল
+```
+
+`~/.ssh/` directory-তে নিজেই **700** permissions (owner read/write/execute only) থাকতে হবে। Private key ফাইলে **600** permissions (owner read/write only) থাকতে হবে। SSH অত্যধিক permissive permissions সহ key ব্যবহার করতে অস্বীকার করে।
+
+```bash
+# প্রয়োজনে permissions ঠিক করুন
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/id_ed25519
+chmod 644 ~/.ssh/id_ed25519.pub
+```
+
+### Windows
+
+OpenSSH ইনস্টল করা Windows 10 ও 11-এ, SSH key এখানে সংরক্ষিত:
+
+```
+C:\Users\YourUsername\.ssh\
+├── id_ed25519
+├── id_ed25519.pub
+├── authorized_keys
+├── known_hosts
+└── config
+```
+
+Windows-এ, File Explorer থেকে `.ssh` directory অ্যাক্সেস করতে পারেন ("Show hidden files" সক্ষম করতে হতে পারে) বা PowerShell থেকে `~\.ssh\` ব্যবহার করে।
+
+### Multiple Key ফাইল
+
+আপনার ভিন্ন উদ্দেশ্যে key থাকলে (personal GitHub, work GitLab, production সার্ভার), প্রতিটি host-কে তার key-এ map করতে `~/.ssh/config` ফাইল ব্যবহার করুন:
+
+```
+Host github.com
+    IdentityFile ~/.ssh/id_ed25519_github
+
+Host gitlab.work.com
+    IdentityFile ~/.ssh/id_ed25519_work
+
+Host prod-server
+    HostName 203.0.113.10
+    User deploy
+    IdentityFile ~/.ssh/id_ed25519_production
+```
+
+## SSH Key Passphrase
+
+আপনি SSH key pair তৈরি করলে, `ssh-keygen` জিজ্ঞেস করে আপনি **passphrase** সেট করতে চান কিনা। এটি একটি ঐচ্ছিক পাসওয়ার্ড যা disk-এ private key ফাইল এনক্রিপ্ট করে।
+
+### Passphrase কেন ব্যবহার করবেন?
+
+আপনার private key ফাইল একটি শক্তিশালী passphrase দিয়ে সুরক্ষিত থাকলে, ফাইল চুরি করা যথেষ্ট নয় — attacker-কে passphrase-ও crack করতে হবে। এটি একটি critical দ্বিতীয় স্তরের নিরাপত্তা প্রদান করে, বিশেষত laptop-এ যা physically চুরি হতে পারে।
+
+Passphrase ছাড়া, আপনার private key disk-এ plain text-এ সংরক্ষিত। যে কেউ ফাইলটি read করতে পারে (malware, physical অ্যাক্সেস, বা properly secured না হওয়া backup-এর মাধ্যমে) তাৎক্ষণিকভাবে এটি ব্যবহার করতে পারে।
+
+### Passphrase ও ssh-agent-এর মিথস্ক্রিয়া
+
+Passphrase-এর অসুবিধা হলো প্রতিবার key ব্যবহার করার সময় টাইপ করতে হয়। **ssh-agent** আপনার সেশনের মেয়াদের জন্য decrypted key মেমরিতে ধরে রেখে এটি সমাধান করে।
+
+```bash
+# ssh-agent start করুন এবং আপনার key যোগ করুন
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+# একবার passphrase দিন — এখন সেশনের জন্য cached
+```
+
+macOS-এ, সিস্টেম Keychain ssh-agent-এর সাথে integrate হয়। Reboot-এর পরও persist করতে `-K` যোগ করুন:
+
+```bash
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+```
+
+### Passphrase পরিবর্তন করা
+
+আপনি key pair পুনরায় তৈরি না করে বিদ্যমান key-এর passphrase পরিবর্তন করতে পারেন:
+
+```bash
+ssh-keygen -p -f ~/.ssh/id_ed25519
+```
+
+এটি পুরোনো passphrase চাইবে, তারপর নতুন সেট করতে দেবে। Public key পরিবর্তন হয় না, তাই কোনো সার্ভারে এটি update করার প্রয়োজন নেই।
+
+## SSH Key Fingerprint
+
+প্রতিটি SSH key pair-এর একটি **fingerprint** আছে — public key-এর একটি সংক্ষিপ্ত hash যা এটিকে uniquely identify করে। Fingerprint বেশ কিছু উদ্দেশ্য পূরণ করে:
+
+- **Host পরিচয় যাচাই করুন** — আপনি প্রথমবার কোনো সার্ভারে সংযোগ করলে, SSH তার host key fingerprint দেখায়। আপনি confirm করলে এটি আপনার প্রত্যাশার সাথে মেলে (যেমন আপনার hosting provider প্রদত্ত), আপনি জানেন সঠিক সার্ভারে সংযুক্ত হচ্ছেন।
+- **Key সনাক্ত করুন** — অনেক key পরিচালনা করার সময়, fingerprint আপনাকে চিহ্নিত করতে সাহায্য করে কোন physical key `authorized_keys`-এ বা GitHub-এর মতো সার্ভিসে কোন entry-র সাথে correspond করে।
+- **Audit ও revocation** — Audit log প্রায়ই full key-এর পরিবর্তে fingerprint রেকর্ড করে। একটি key-এর fingerprint জানা প্রয়োজনে এটি খুঁজে বের করতে ও সরাতে সাহায্য করে।
+
+### Key-এর Fingerprint দেখা
+
+```bash
+# আপনার public key-এর fingerprint দেখুন
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+# Output: 256 SHA256:abcdef1234567890... your@email.com (ED25519)
+
+# কোনো সার্ভারের host key-এর fingerprint দেখুন
+ssh-keyscan server.example.com | ssh-keygen -lf -
+```
+
+GitHub **Settings → SSH and GPG keys**-এ সমস্ত যোগ করা SSH key-এর fingerprint প্রদর্শন করে, যা আপনাকে সেখানে দেখা key আপনার মেশিনের key-এর সাথে মিলছে কিনা যাচাই করতে দেয়।
+
+### `known_hosts` ফাইল
+
+আপনি প্রথমবার কোনো নতুন SSH সার্ভারে সংযোগ করলে, এরকম একটি বার্তা দেখেন:
+
+```
+The authenticity of host 'example.com (203.0.113.10)' can't be established.
+ED25519 key fingerprint is SHA256:abcdef1234567890...
+Are you sure you want to continue connecting (yes/no/[fingerprint])?
+```
+
+`yes` টাইপ করলে সার্ভারের fingerprint `~/.ssh/known_hosts`-এ যোগ হয়। পরবর্তী সংযোগে, SSH নীরবে যাচাই করে সার্ভারের key সংরক্ষিত fingerprint-এর সাথে মেলে কিনা। না মিললে — যা misconfiguration বা man-in-the-middle আক্রমণ নির্দেশ করতে পারে — SSH আপনাকে জোরালোভাবে সতর্ক করে এবং সংযোগ করতে অস্বীকার করে।
+
+## প্রায়শ জিজ্ঞাসিত প্রশ্ন
+
+### SSH key কীসের জন্য ব্যবহৃত হয়?
+
+SSH key পাসওয়ার্ড ছাড়াই remote সার্ভারে আপনাকে authenticate করে। সবচেয়ে সাধারণ ব্যবহার: administration-এর জন্য Linux/Unix সার্ভারে লগ ইন, push/pull অ্যাক্সেসের জন্য Git hosting সার্ভিস (GitHub, GitLab, Bitbucket)-এর সাথে authenticate করা, passwordless সার্ভার অ্যাক্সেস প্রয়োজন automated deployment স্ক্রিপ্ট, এবং production-এ কোড deploy করা CI/CD pipeline। SSH key পাসওয়ার্ডের চেয়ে পছন্দের কারণ এগুলি brute force-এর প্রতি immune, breach-এ reusable নয়, এবং মানুষের হস্তক্ষেপ ছাড়াই ব্যবহার করা যায়।
+
+### আমার কতটি SSH key থাকা উচিত?
+
+কোনো একক সঠিক উত্তর নেই, কিন্তু একটি সাধারণ best practice হলো **প্রতি ডিভাইসে একটি key** (প্রতি সার্ভিসে নয়)। আপনার laptop-এ একটি key pair; আপনার desktop-এ আরেকটি; আপনার CI সার্ভারে আরেকটি। এইভাবে, কোনো ডিভাইস চুরি বা compromise হলে, কেবল সেই ডিভাইসের key revoke করুন। কিছু মানুষ আরও context (personal বনাম work) অনুযায়ী বিভাজন করেন, ফলে প্রতি ডিভাইসে দুটি key হয়। একাধিক মেশিনে একটি single key শেয়ার করা এড়িয়ে চলুন — সেই key compromise হলে, আপনার সমস্ত অ্যাক্সেস একসাথে ঝুঁকিতে পড়ে।
+
+### আমি কি আমার SSH public key শেয়ার করতে পারি?
+
+হ্যাঁ। Public key শেয়ার করার জন্যই ডিজাইন করা হয়েছে। এটি ইমেইল করা, GitHub documentation-এ পোস্ট করা, বা সার্ভার অ্যাক্সেস চাইতে ticket-এ include করা নিরাপদ। Public key একা আপনাকে authenticate করতে ব্যবহার করা যায় না — এর জন্য সংশ্লিষ্ট private key প্রয়োজন, যা কেবল আপনার কাছে আছে। এটি asymmetric cryptography-র মৌলিক property। আপনার **private** key কখনো কারো সাথে শেয়ার করবেন না।
+
+### আমার SSH private key হারিয়ে গেলে কী হবে?
+
+আপনি private key হারালে এবং backup না থাকলে, আপনি এটি দিয়ে authenticate করার ক্ষমতা হারান। আপনার public key, এখনও সার্ভার ও সার্ভিসে ইনস্টল, orphan হয়ে যায়। সার্ভারে বিকল্প অ্যাক্সেস প্রয়োজন হবে (password authentication সক্ষম থাকলে, console অ্যাক্সেস, আপনার hosting provider-এর emergency অ্যাক্সেস mechanism) `authorized_keys` থেকে পুরোনো public key সরাতে ও নতুন যোগ করতে। এই কারণেই private key-এর backup (password manager বা encrypted backup-এ) রাখা গুরুত্বপূর্ণ। Private key public key থেকে পুনর্গঠন করা যায় না।
+
+### Ed25519 নাকি RSA ভালো?
+
+**Ed25519 সমস্ত নতুন key generation-এর জন্য ভালো।** এটি দ্রুত, ছোট key তৈরি করে, RSA-কে প্রভাবিত করা কিছু implementation দুর্বলতার প্রতি দুর্বল নয়, এবং 256-bit key দিয়ে RSA-4096-এর তুলনায় সমতুল্য বা উন্নততর নিরাপত্তা প্রদান করে। আজকে RSA ব্যবহার করার একমাত্র কারণ খুব পুরোনো SSH সার্ভার সফটওয়্যার (OpenSSH 6.5-এর আগে, 2014-এ প্রকাশিত) বা legacy hardware security module-এর সাথে compatibility। আপনি যদি কোনো modern সার্ভার বা GitHub-এর মতো সার্ভিস অ্যাক্সেস করছেন, Ed25519 ব্যবহার করুন।
+
+## আপনার SSH Key Pair তৈরি করুন
+
+আপনার SSH key তৈরি করতে প্রস্তুত? আমাদের বিনামূল্যের online generator সরাসরি আপনার browser-এ Ed25519 বা RSA key pair তৈরি করে। Private key locally তৈরি হয় এবং কখনো আমাদের সার্ভারে পাঠানো হয় না।
+
+<a href="/">এখনই আপনার SSH key pair তৈরি করুন →</a>
+
+---
+
+**আরও পড়ুন:**
+- <a href="/bn/what-is-ssh">SSH কী? Secure Shell-এর সম্পূর্ণ গাইড</a>
+- <a href="/bn/ssh-command">SSH Command: উদাহরণসহ সম্পূর্ণ রেফারেন্স</a>
+- <a href="/bn/how-to-set-up-ssh">SSH কীভাবে সেট আপ করবেন: সম্পূর্ণ ধাপে ধাপে গাইড</a>
