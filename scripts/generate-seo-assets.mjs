@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const projectRoot = path.resolve(__dirname, '..')
 const configPath = path.join(projectRoot, 'src', 'i18n', 'languageConfig.json')
+const articleMetaDirectory = path.join(projectRoot, 'src', 'content', 'meta')
 const publicSitemapPath = path.join(projectRoot, 'public', 'sitemap.xml')
 const distDirectory = path.join(projectRoot, 'dist')
 const distIndexPath = path.join(distDirectory, 'index.html')
@@ -79,6 +80,10 @@ const articleSlugs = ['what-is-ssh', 'what-is-an-ssh-key', 'ssh-command', 'how-t
 const englishTranslations = JSON.parse(
   await fs.readFile(path.join(projectRoot, 'src', 'i18n', 'locales', defaultLanguage.localeFile), 'utf8'),
 )
+const articleMeta = await loadArticleMeta()
+
+const crawlableLinksStartMarker = '<!-- SEO_CRAWLABLE_LINKS_START -->'
+const crawlableLinksEndMarker = '<!-- SEO_CRAWLABLE_LINKS_END -->'
 
 function getPathname(language) {
   return language.basePath === '' ? '/' : `${language.basePath}/`
@@ -94,6 +99,10 @@ function getArticlePathname(language, slug) {
 
 function getArticleAbsoluteUrl(language, slug) {
   return new URL(getArticlePathname(language, slug), siteUrl).toString()
+}
+
+function getLocalizedPageUrl(language, alternatePath = '') {
+  return alternatePath ? getArticleAbsoluteUrl(language, alternatePath) : getAbsoluteUrl(language)
 }
 
 function getTextDirection(language) {
@@ -147,32 +156,34 @@ function stripStepLabel(stepText) {
   return stepText.split(/:|：/)[0]?.trim() || stepText
 }
 
-function buildHtmlAlternateLinks() {
+function buildHtmlAlternateLinks(alternatePath = '') {
   const links = languages.map(
     (language) =>
-      `    <link rel="alternate" hreflang="${language.hreflang}" href="${escapeAttribute(getAbsoluteUrl(language))}" />`,
+      `    <link rel="alternate" hreflang="${language.hreflang}" href="${escapeAttribute(
+        getLocalizedPageUrl(language, alternatePath),
+      )}" />`,
   )
 
   links.push(
     `    <link rel="alternate" hreflang="x-default" href="${escapeAttribute(
-      getAbsoluteUrl(defaultLanguage),
+      getLocalizedPageUrl(defaultLanguage, alternatePath),
     )}" />`,
   )
 
   return links.join('\n')
 }
 
-function buildSitemapAlternateLinks(slug = '') {
+function buildSitemapAlternateLinks(alternatePath = '') {
   const links = languages.map(
     (language) =>
       `    <xhtml:link rel="alternate" hreflang="${language.hreflang}" href="${escapeAttribute(
-        slug ? getArticleAbsoluteUrl(language, slug) : getAbsoluteUrl(language),
+        getLocalizedPageUrl(language, alternatePath),
       )}"/>`,
   )
 
   links.push(
     `    <xhtml:link rel="alternate" hreflang="x-default" href="${escapeAttribute(
-      slug ? getArticleAbsoluteUrl(defaultLanguage, slug) : getAbsoluteUrl(defaultLanguage),
+      getLocalizedPageUrl(defaultLanguage, alternatePath),
     )}"/>`,
   )
 
@@ -218,6 +229,44 @@ async function loadTranslations(language) {
   return JSON.parse(await fs.readFile(translationPath, 'utf8'))
 }
 
+async function loadArticleMeta() {
+  const fileNames = (await fs.readdir(articleMetaDirectory))
+    .filter((fileName) => fileName.endsWith('.json'))
+    .sort()
+
+  const merged = Object.fromEntries(articleSlugs.map((slug) => [slug, {}]))
+
+  for (const fileName of fileNames) {
+    const batch = JSON.parse(await fs.readFile(path.join(articleMetaDirectory, fileName), 'utf8'))
+
+    for (const [languageCode, localizedArticles] of Object.entries(batch)) {
+      if (!localizedArticles || typeof localizedArticles !== 'object') {
+        continue
+      }
+
+      for (const [slug, meta] of Object.entries(localizedArticles)) {
+        if (!articleSlugs.includes(slug)) {
+          throw new Error(`Unknown article slug "${slug}" in ${fileName}`)
+        }
+
+        merged[slug][languageCode] = meta
+      }
+    }
+  }
+
+  for (const slug of articleSlugs) {
+    if (!merged[slug].en) {
+      throw new Error(`Missing English article metadata for "${slug}"`)
+    }
+  }
+
+  return merged
+}
+
+function getArticleMeta(slug, language) {
+  return articleMeta[slug][language.code] ?? articleMeta[slug][defaultLanguage.code]
+}
+
 function buildFaqEntities(t) {
   return faqKeys.map((faqKey) => ({
     '@type': 'Question',
@@ -249,6 +298,9 @@ function buildHomeMetadata(language, translations) {
     title,
     description,
     canonicalUrl,
+    alternatePath: '',
+    robots: 'index, follow',
+    ogType: 'website',
     ogLocale: getOpenGraphLocale(language),
     structuredData: {
       website: {
@@ -334,15 +386,81 @@ function buildHomeMetadata(language, translations) {
   }
 }
 
-function buildCrawlableLinksMarkup(language, translations) {
-  const languageLinks = languages
-    .map(
-      (candidate) =>
-        `<a href="${escapeAttribute(getPathname(candidate))}">${escapeHtml(candidate.label)}</a>`,
-    )
-    .join('\n        ')
+function buildArticleMetadata(language, slug) {
+  const meta = getArticleMeta(slug, language)
+  const canonicalUrl = getArticleAbsoluteUrl(language, slug)
 
-  const resourceLinks = [
+  return {
+    title: meta.title,
+    description: meta.description,
+    canonicalUrl,
+    alternatePath: slug,
+    robots: 'index, follow',
+    ogType: 'article',
+    ogLocale: getOpenGraphLocale(language),
+    structuredData: {
+      website: {
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        '@id': websiteId,
+        url: `${siteUrl}/`,
+        name: 'SSH Key Generator',
+        inLanguage: language.hreflang,
+        publisher: {
+          '@id': organizationId,
+        },
+      },
+      page: {
+        '@context': 'https://schema.org',
+        '@type': 'TechArticle',
+        '@id': `${canonicalUrl}#article`,
+        headline: meta.title,
+        description: meta.description,
+        datePublished: meta.publishDate,
+        dateModified: meta.publishDate,
+        image: socialImageUrl,
+        url: canonicalUrl,
+        mainEntityOfPage: {
+          '@type': 'WebPage',
+          '@id': canonicalUrl,
+        },
+        keywords: meta.keywords.join(', '),
+        author: {
+          '@id': organizationId,
+        },
+        publisher: {
+          '@id': organizationId,
+        },
+        inLanguage: language.hreflang,
+      },
+      faq: null,
+      howTo: null,
+      organization: {
+        '@context': 'https://schema.org',
+        '@type': 'Organization',
+        '@id': organizationId,
+        name: 'SSH Key Generator',
+        url: siteUrl,
+        logo: `${siteUrl}/favicon/android-chrome-512x512.png`,
+        sameAs: [
+          'https://github.com/Fechin/ssh-key-generator',
+        ],
+      },
+    },
+  }
+}
+
+function buildGuideLinksMarkup(language) {
+  return articleSlugs
+    .map((slug) => {
+      const meta = getArticleMeta(slug, language)
+      return `<a href="${escapeAttribute(getArticlePathname(language, slug))}">${escapeHtml(meta.title)}</a>`
+    })
+    .join('\n        ')
+}
+
+function buildResourceLinksMarkup(translations) {
+  return [
     {
       href: 'https://docs.github.com/en/authentication/connecting-to-github-with-ssh',
       label: translations.footer?.sshKeyGuide ?? 'GitHub SSH Docs',
@@ -355,10 +473,23 @@ function buildCrawlableLinksMarkup(language, translations) {
       href: 'https://www.ssh.com/academy/ssh',
       label: translations.footer?.bestPractices ?? 'SSH Academy',
     },
+    {
+      href: 'https://cheatsheets.zip/ssh',
+      label: translations.footer?.sshCheatSheet ?? 'SSH Cheat Sheet',
+    },
   ]
     .map(
       ({ href, label }) =>
         `<a href="${escapeAttribute(href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(label)}</a>`,
+    )
+    .join('\n        ')
+}
+
+function buildHomeCrawlableLinksMarkup(language, translations) {
+  const languageLinks = languages
+    .map(
+      (candidate) =>
+        `<a href="${escapeAttribute(getPathname(candidate))}">${escapeHtml(candidate.label)}</a>`,
     )
     .join('\n        ')
 
@@ -372,14 +503,59 @@ function buildCrawlableLinksMarkup(language, translations) {
         ${languageLinks}
       </div>
     </nav>
+    <nav aria-label="SSH guides" class="seo-crawlable-links__group">
+      <strong>${escapeHtml(translations.guides?.title ?? 'SSH Guides')}</strong>
+      <div class="seo-crawlable-links__list">
+        ${buildGuideLinksMarkup(language)}
+      </div>
+    </nav>
     <nav aria-label="SSH resources" class="seo-crawlable-links__group">
       <strong>${escapeHtml(translations.footer?.resources ?? 'Resources')}</strong>
       <div class="seo-crawlable-links__list">
-        ${resourceLinks}
+        ${buildResourceLinksMarkup(translations)}
       </div>
     </nav>
     <a class="seo-crawlable-links__canonical" href="${escapeAttribute(
       getAbsoluteUrl(language),
+    )}">${escapeHtml(translations.hero?.title ?? 'SSH Key Generator Online')}</a>
+  </div>`
+}
+
+function buildArticleCrawlableLinksMarkup(language, slug, translations) {
+  const meta = getArticleMeta(slug, language)
+  const languageLinks = languages
+    .map(
+      (candidate) =>
+        `<a href="${escapeAttribute(getArticlePathname(candidate, slug))}">${escapeHtml(candidate.label)}</a>`,
+    )
+    .join('\n        ')
+
+  return `  <div id="seo-crawlable-links">
+    <h1 class="seo-crawlable-links__title">${escapeHtml(meta.title)}</h1>
+    <p class="seo-crawlable-links__summary">${escapeHtml(meta.description)}</p>
+    <nav aria-label="SSH guides" class="seo-crawlable-links__group">
+      <strong>${escapeHtml(translations.guides?.title ?? 'SSH Guides')}</strong>
+      <div class="seo-crawlable-links__list">
+        ${buildGuideLinksMarkup(language)}
+      </div>
+    </nav>
+    <nav aria-label="Article languages" class="seo-crawlable-links__group">
+      <strong>${escapeHtml(translations.header?.title ?? 'Language versions')}</strong>
+      <div class="seo-crawlable-links__list">
+        ${languageLinks}
+      </div>
+    </nav>
+    <nav aria-label="SSH resources" class="seo-crawlable-links__group">
+      <strong>${escapeHtml(translations.footer?.resources ?? 'Resources')}</strong>
+      <div class="seo-crawlable-links__list">
+        ${buildResourceLinksMarkup(translations)}
+      </div>
+    </nav>
+    <a class="seo-crawlable-links__canonical" href="${escapeAttribute(
+      getArticleAbsoluteUrl(language, slug),
+    )}">${escapeHtml(meta.title)}</a>
+    <a class="seo-crawlable-links__home" href="${escapeAttribute(
+      getPathname(language),
     )}">${escapeHtml(translations.hero?.title ?? 'SSH Key Generator Online')}</a>
   </div>`
 }
@@ -410,6 +586,12 @@ function injectCrawlableLinksHead(html) {
       .seo-crawlable-links__summary {
         margin: 0 0 1rem;
       }
+      .seo-crawlable-links__title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        line-height: 1.25;
+        margin: 0 0 0.75rem;
+      }
       .seo-crawlable-links__group + .seo-crawlable-links__group {
         margin-top: 1rem;
       }
@@ -423,10 +605,34 @@ function injectCrawlableLinksHead(html) {
         display: inline-block;
         margin-top: 1rem;
       }
+      .seo-crawlable-links__home {
+        display: inline-block;
+        margin-left: 1rem;
+        margin-top: 1rem;
+      }
     </style>
 `
 
   return html.replace('</head>', `${snippet}</head>`)
+}
+
+function upsertCrawlableLinksMarkup(html, markup) {
+  const wrappedMarkup = `${crawlableLinksStartMarker}
+${markup}
+${crawlableLinksEndMarker}`
+
+  if (html.includes(crawlableLinksStartMarker) && html.includes(crawlableLinksEndMarker)) {
+    return html.replace(
+      /<!-- SEO_CRAWLABLE_LINKS_START -->[\s\S]*?<!-- SEO_CRAWLABLE_LINKS_END -->/,
+      wrappedMarkup,
+    )
+  }
+
+  if (html.includes('id="seo-crawlable-links"')) {
+    return html.replace(/<div id="seo-crawlable-links">[\s\S]*?<\/body>/, `${wrappedMarkup}\n</body>`)
+  }
+
+  return html.replace('</body>', `${wrappedMarkup}\n</body>`)
 }
 
 function replaceTag(html, matcher, replacement) {
@@ -445,13 +651,12 @@ function replaceLinkHrefById(html, id, href) {
 
 function replaceScriptById(html, id, value) {
   const matcher = new RegExp(`(<script[^>]*id="${id}"[^>]*>)([\\s\\S]*?)(</script>)`)
-  return replaceTag(html, matcher, `$1\n${toJsonLd(value)}\n    $3`)
+  const scriptContent = value === null ? '' : `\n${toJsonLd(value)}\n    `
+  return replaceTag(html, matcher, `$1${scriptContent}$3`)
 }
 
-function normalizeHead(html, language, translations) {
-  const metadata = buildHomeMetadata(language, translations)
-  const alternateLinks = buildHtmlAlternateLinks()
-
+function normalizeHead(html, language, metadata) {
+  const alternateLinks = buildHtmlAlternateLinks(metadata.alternatePath)
   let nextHtml = html
   nextHtml = replaceTag(
     nextHtml,
@@ -465,7 +670,7 @@ function normalizeHead(html, language, translations) {
   )
   nextHtml = replaceMetaContentById(nextHtml, 'meta-title', metadata.title)
   nextHtml = replaceMetaContentById(nextHtml, 'meta-description', metadata.description)
-  nextHtml = replaceMetaContentById(nextHtml, 'meta-robots', 'index, follow')
+  nextHtml = replaceMetaContentById(nextHtml, 'meta-robots', metadata.robots)
   nextHtml = replaceLinkHrefById(nextHtml, 'link-canonical', metadata.canonicalUrl)
   nextHtml = replaceTag(
     nextHtml,
@@ -475,7 +680,7 @@ ${alternateLinks}
 
     <!-- Open Graph / Facebook -->`,
   )
-  nextHtml = replaceMetaContentById(nextHtml, 'meta-og-type', 'website')
+  nextHtml = replaceMetaContentById(nextHtml, 'meta-og-type', metadata.ogType)
   nextHtml = replaceMetaContentById(nextHtml, 'meta-og-url', metadata.canonicalUrl)
   nextHtml = replaceMetaContentById(nextHtml, 'meta-og-title', metadata.title)
   nextHtml = replaceMetaContentById(nextHtml, 'meta-og-description', metadata.description)
@@ -491,21 +696,21 @@ ${alternateLinks}
   nextHtml = replaceScriptById(nextHtml, 'structured-data-faq', metadata.structuredData.faq)
   nextHtml = replaceScriptById(nextHtml, 'structured-data-howto', metadata.structuredData.howTo)
   nextHtml = replaceScriptById(nextHtml, 'structured-data-organization', metadata.structuredData.organization)
-  nextHtml = injectCrawlableLinksHead(nextHtml)
-
-  if (!nextHtml.includes('id="seo-crawlable-links"')) {
-    nextHtml = nextHtml.replace(
-      '</body>',
-      `${buildCrawlableLinksMarkup(language, translations)}
-</body>`,
-    )
-  }
-
-  return nextHtml
+  return injectCrawlableLinksHead(nextHtml)
 }
 
 async function writeSourceAssets() {
   await fs.writeFile(publicSitemapPath, buildSitemapXml(), 'utf8')
+}
+
+function getDistOutputPath(language, slug = '') {
+  if (language.basePath === '') {
+    return slug ? path.join(distDirectory, slug, 'index.html') : distIndexPath
+  }
+
+  return slug
+    ? path.join(distDirectory, language.basePath.slice(1), slug, 'index.html')
+    : path.join(distDirectory, language.basePath.slice(1), 'index.html')
 }
 
 async function writeDistAssets() {
@@ -513,14 +718,25 @@ async function writeDistAssets() {
 
   for (const language of languages) {
     const translations = await loadTranslations(language)
-    const localizedHtml = normalizeHead(htmlTemplate, language, translations)
-    const outputPath =
-      language.basePath === ''
-        ? distIndexPath
-        : path.join(distDirectory, language.basePath.slice(1), 'index.html')
+    const localizedHtml = upsertCrawlableLinksMarkup(
+      normalizeHead(htmlTemplate, language, buildHomeMetadata(language, translations)),
+      buildHomeCrawlableLinksMarkup(language, translations),
+    )
+    const outputPath = getDistOutputPath(language)
 
     await fs.mkdir(path.dirname(outputPath), { recursive: true })
     await fs.writeFile(outputPath, localizedHtml, 'utf8')
+
+    for (const slug of articleSlugs) {
+      const articleHtml = upsertCrawlableLinksMarkup(
+        normalizeHead(htmlTemplate, language, buildArticleMetadata(language, slug)),
+        buildArticleCrawlableLinksMarkup(language, slug, translations),
+      )
+      const articleOutputPath = getDistOutputPath(language, slug)
+
+      await fs.mkdir(path.dirname(articleOutputPath), { recursive: true })
+      await fs.writeFile(articleOutputPath, articleHtml, 'utf8')
+    }
   }
 }
 
