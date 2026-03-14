@@ -2,7 +2,7 @@
 
 The `ssh` command is the primary tool for initiating SSH connections from the command line. Whether you are logging into a remote Linux server, forwarding a port for database access, or jumping through a bastion host to reach an internal network, the `ssh` command is your entry point. This guide covers everything from the basic syntax to advanced flags, tunneling, and ProxyJump configurations — with real examples for Linux, macOS, and Windows.
 
-Before running SSH commands, you will need SSH keys. See our guide on <a href="/what-is-an-ssh-key">what is an SSH key</a> or use the <a href="/">free online generator</a> to create a key pair.
+Before running SSH commands, you will need SSH keys. See our guide on <a href="/what-is-an-ssh-key/">what is an SSH key</a> or use the <a href="/">free online generator</a> to create a key pair.
 
 ## SSH Command Syntax
 
@@ -239,7 +239,7 @@ Agent forwarding is useful but has security implications: anyone with root acces
 
 ## SSH Tunneling Commands
 
-SSH tunneling routes TCP connections through an encrypted SSH channel. For background on what tunneling is, see our <a href="/what-is-ssh">SSH guide's tunneling section</a>.
+SSH tunneling routes TCP connections through an encrypted SSH channel. For background on what tunneling is, see our <a href="/what-is-ssh/">SSH guide's tunneling section</a>.
 
 ### Local Port Forwarding
 
@@ -354,7 +354,7 @@ ProxyJump is preferred over agent forwarding (`-A`) because:
 - The bastion host cannot use your credentials to authenticate elsewhere
 - The connection is end-to-end authenticated — the destination server verifies you directly
 
-For more setup details, see our complete guide on <a href="/how-to-set-up-ssh">how to set up SSH</a>.
+For more setup details, see our complete guide on <a href="/how-to-set-up-ssh/">how to set up SSH</a>.
 
 ## Frequently Asked Questions
 
@@ -425,6 +425,6 @@ To use SSH key authentication — which eliminates the need for passwords — yo
 ---
 
 **Further reading:**
-- <a href="/what-is-ssh">What Is SSH? The Complete Guide to Secure Shell</a>
-- <a href="/what-is-an-ssh-key">What Is an SSH Key? Public Keys, Private Keys, and Key Pairs Explained</a>
-- <a href="/how-to-set-up-ssh">How to Set Up SSH: A Complete Step-by-Step Guide</a>
+- <a href="/what-is-ssh/">What Is SSH? The Complete Guide to Secure Shell</a>
+- <a href="/what-is-an-ssh-key/">What Is an SSH Key? Public Keys, Private Keys, and Key Pairs Explained</a>
+- <a href="/how-to-set-up-ssh/">How to Set Up SSH: A Complete Step-by-Step Guide</a>

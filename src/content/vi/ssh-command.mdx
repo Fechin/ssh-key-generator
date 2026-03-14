@@ -2,7 +2,7 @@
 
 Lệnh `ssh` là công cụ chính để khởi tạo kết nối SSH từ dòng lệnh. Dù bạn đang đăng nhập vào server Linux từ xa, chuyển tiếp cổng để truy cập cơ sở dữ liệu hay nhảy qua bastion host để vào mạng nội bộ, lệnh `ssh` là điểm vào của bạn. Hướng dẫn này bao gồm mọi thứ từ cú pháp cơ bản đến các flag nâng cao, tunneling và cấu hình ProxyJump — với ví dụ thực tế cho Linux, macOS và Windows.
 
-Trước khi chạy lệnh SSH, bạn cần SSH key. Xem hướng dẫn của chúng tôi về <a href="/vi/what-is-an-ssh-key">SSH key là gì</a> hoặc dùng <a href="/">trình tạo trực tuyến miễn phí</a> để tạo cặp khóa.
+Trước khi chạy lệnh SSH, bạn cần SSH key. Xem hướng dẫn của chúng tôi về <a href="/vi/what-is-an-ssh-key/">SSH key là gì</a> hoặc dùng <a href="/">trình tạo trực tuyến miễn phí</a> để tạo cặp khóa.
 
 ## Cú Pháp Lệnh SSH
 
@@ -239,7 +239,7 @@ Agent forwarding hữu ích nhưng có hàm ý bảo mật: bất kỳ ai có qu
 
 ## Các Lệnh SSH Tunneling
 
-SSH tunneling định tuyến kết nối TCP qua kênh SSH được mã hóa. Để tìm hiểu nền tảng về tunneling là gì, xem <a href="/vi/what-is-ssh">phần tunneling trong hướng dẫn SSH</a> của chúng tôi.
+SSH tunneling định tuyến kết nối TCP qua kênh SSH được mã hóa. Để tìm hiểu nền tảng về tunneling là gì, xem <a href="/vi/what-is-ssh/">phần tunneling trong hướng dẫn SSH</a> của chúng tôi.
 
 ### Chuyển Tiếp Cổng Cục Bộ
 
@@ -354,7 +354,7 @@ ProxyJump được ưu tiên hơn agent forwarding (`-A`) vì:
 - Bastion host không thể dùng thông tin xác thực của bạn để xác thực ở nơi khác
 - Kết nối được xác thực đầu cuối — server đích xác minh bạn trực tiếp
 
-Để biết thêm chi tiết thiết lập, xem hướng dẫn đầy đủ của chúng tôi về <a href="/vi/how-to-set-up-ssh">cách thiết lập SSH</a>.
+Để biết thêm chi tiết thiết lập, xem hướng dẫn đầy đủ của chúng tôi về <a href="/vi/how-to-set-up-ssh/">cách thiết lập SSH</a>.
 
 ## Câu Hỏi Thường Gặp
 
@@ -425,6 +425,6 @@ Sau đó `ssh tên-alias` tự động dùng tất cả cài đặt đã định
 ---
 
 **Đọc thêm:**
-- <a href="/vi/what-is-ssh">SSH Là Gì? Hướng Dẫn Đầy Đủ về Secure Shell</a>
-- <a href="/vi/what-is-an-ssh-key">SSH Key Là Gì? Khóa Công Khai, Khóa Riêng Tư và Cặp Khóa Được Giải Thích</a>
-- <a href="/vi/how-to-set-up-ssh">Cách Thiết Lập SSH: Hướng Dẫn Từng Bước Đầy Đủ</a>
+- <a href="/vi/what-is-ssh/">SSH Là Gì? Hướng Dẫn Đầy Đủ về Secure Shell</a>
+- <a href="/vi/what-is-an-ssh-key/">SSH Key Là Gì? Khóa Công Khai, Khóa Riêng Tư và Cặp Khóa Được Giải Thích</a>
+- <a href="/vi/how-to-set-up-ssh/">Cách Thiết Lập SSH: Hướng Dẫn Từng Bước Đầy Đủ</a>

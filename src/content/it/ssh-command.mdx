@@ -2,7 +2,7 @@
 
 Il comando `ssh` è lo strumento principale per avviare connessioni SSH dalla riga di comando. Che si tratti di accedere a un server Linux remoto, fare forwarding di una porta per l'accesso al database, o saltare attraverso un bastion host per raggiungere una rete interna, il comando `ssh` è il punto di ingresso. Questa guida copre tutto, dalla sintassi di base ai flag avanzati, al tunneling e alle configurazioni ProxyJump — con esempi reali per Linux, macOS e Windows.
 
-Prima di eseguire comandi SSH, avrai bisogno di chiavi SSH. Consulta la nostra guida su <a href="/it/what-is-an-ssh-key">cos'è una chiave SSH</a> o usa il <a href="/">generatore online gratuito</a> per creare una coppia di chiavi.
+Prima di eseguire comandi SSH, avrai bisogno di chiavi SSH. Consulta la nostra guida su <a href="/it/what-is-an-ssh-key/">cos'è una chiave SSH</a> o usa il <a href="/">generatore online gratuito</a> per creare una coppia di chiavi.
 
 ## Sintassi del Comando SSH
 
@@ -239,7 +239,7 @@ Il forwarding dell'agente è utile ma ha implicazioni di sicurezza: chiunque abb
 
 ## Comandi di Tunneling SSH
 
-Il tunneling SSH instrada connessioni TCP attraverso un canale SSH cifrato. Per informazioni su cos'è il tunneling, consulta la <a href="/it/what-is-ssh">sezione sul tunneling della guida SSH</a>.
+Il tunneling SSH instrada connessioni TCP attraverso un canale SSH cifrato. Per informazioni su cos'è il tunneling, consulta la <a href="/it/what-is-ssh/">sezione sul tunneling della guida SSH</a>.
 
 ### Port Forwarding Locale
 
@@ -354,7 +354,7 @@ ProxyJump è preferito al forwarding dell'agente (`-A`) perché:
 - Il bastion host non può usare le tue credenziali per autenticarsi altrove
 - La connessione è autenticata end-to-end — il server di destinazione ti verifica direttamente
 
-Per ulteriori dettagli sulla configurazione, consulta la nostra guida completa su <a href="/it/how-to-set-up-ssh">come configurare SSH</a>.
+Per ulteriori dettagli sulla configurazione, consulta la nostra guida completa su <a href="/it/how-to-set-up-ssh/">come configurare SSH</a>.
 
 ## Domande Frequenti
 
@@ -425,6 +425,6 @@ Per usare l'autenticazione con chiave SSH — che elimina la necessità di passw
 ---
 
 **Ulteriori letture:**
-- <a href="/it/what-is-ssh">Cos'è SSH? La Guida Completa al Secure Shell</a>
-- <a href="/it/what-is-an-ssh-key">Cos'è una Chiave SSH? Chiavi Pubbliche, Private e Coppie di Chiavi Spiegate</a>
-- <a href="/it/how-to-set-up-ssh">Come Configurare SSH: Una Guida Completa Passo dopo Passo</a>
+- <a href="/it/what-is-ssh/">Cos'è SSH? La Guida Completa al Secure Shell</a>
+- <a href="/it/what-is-an-ssh-key/">Cos'è una Chiave SSH? Chiavi Pubbliche, Private e Coppie di Chiavi Spiegate</a>
+- <a href="/it/how-to-set-up-ssh/">Come Configurare SSH: Una Guida Completa Passo dopo Passo</a>

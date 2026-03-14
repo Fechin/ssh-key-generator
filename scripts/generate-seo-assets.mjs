@@ -94,7 +94,7 @@ function getAbsoluteUrl(language) {
 }
 
 function getArticlePathname(language, slug) {
-  return `${getPathname(language)}${slug}`
+  return `${getPathname(language)}${slug}/`
 }
 
 function getArticleAbsoluteUrl(language, slug) {

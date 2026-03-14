@@ -109,7 +109,7 @@ function upsertStructuredDataScript(id: string, value: JsonLdValue | null) {
 function getAlternateUrl(language: Language, alternatePath: string) {
   const normalizedPath = alternatePath.replace(/^\/+/, '')
   const localizedPath = normalizedPath
-    ? `${getLanguagePathname(language)}${normalizedPath}`
+    ? `${getLanguagePathname(language)}${normalizedPath}/`
     : getLanguagePathname(language)
 
   return normalizeAbsoluteUrl(localizedPath)

@@ -2,7 +2,7 @@
 
 `ssh` command command line से SSH connections शुरू करने का प्राथमिक टूल है। चाहे आप किसी remote Linux server पर log in कर रहे हों, database access के लिए port forward कर रहे हों, या internal network तक पहुँचने के लिए bastion host से hop कर रहे हों — `ssh` command आपका entry point है। यह गाइड basic syntax से advanced flags, tunneling, और ProxyJump configurations तक सब कुछ cover करती है — Linux, macOS, और Windows के लिए वास्तविक उदाहरणों के साथ।
 
-SSH commands चलाने से पहले, आपको SSH keys की ज़रूरत होगी। हमारी गाइड देखें: <a href="/hi/what-is-an-ssh-key">SSH key क्या है</a> या key pair बनाने के लिए <a href="/">free online generator</a> उपयोग करें।
+SSH commands चलाने से पहले, आपको SSH keys की ज़रूरत होगी। हमारी गाइड देखें: <a href="/hi/what-is-an-ssh-key/">SSH key क्या है</a> या key pair बनाने के लिए <a href="/">free online generator</a> उपयोग करें।
 
 ## SSH Command Syntax
 
@@ -239,7 +239,7 @@ Agent forwarding उपयोगी है लेकिन security implications
 
 ## SSH Tunneling Commands
 
-SSH tunneling TCP connections को एन्क्रिप्टेड SSH channel के माध्यम से route करता है। Tunneling क्या है इसकी background के लिए, हमारी <a href="/hi/what-is-ssh">SSH गाइड का tunneling section</a> देखें।
+SSH tunneling TCP connections को एन्क्रिप्टेड SSH channel के माध्यम से route करता है। Tunneling क्या है इसकी background के लिए, हमारी <a href="/hi/what-is-ssh/">SSH गाइड का tunneling section</a> देखें।
 
 ### Local Port Forwarding
 
@@ -354,7 +354,7 @@ ProxyJump, agent forwarding (`-A`) से preferred है क्योंकि
 - Bastion host आपके credentials का उपयोग elsewhere authenticate करने के लिए नहीं कर सकता
 - Connection end-to-end authenticated है — destination server आपको directly verify करता है
 
-अधिक setup details के लिए, हमारी complete गाइड देखें: <a href="/hi/how-to-set-up-ssh">SSH कैसे set up करें</a>।
+अधिक setup details के लिए, हमारी complete गाइड देखें: <a href="/hi/how-to-set-up-ssh/">SSH कैसे set up करें</a>।
 
 ## अक्सर पूछे जाने वाले सवाल
 
@@ -425,6 +425,6 @@ SSH key authentication उपयोग करने के लिए — जो 
 ---
 
 **आगे पढ़ें:**
-- <a href="/hi/what-is-ssh">SSH क्या है? Secure Shell की सम्पूर्ण गाइड</a>
-- <a href="/hi/what-is-an-ssh-key">SSH Key क्या है? Public Keys, Private Keys, और Key Pairs की व्याख्या</a>
-- <a href="/hi/how-to-set-up-ssh">SSH कैसे Set Up करें: एक सम्पूर्ण Step-by-Step गाइड</a>
+- <a href="/hi/what-is-ssh/">SSH क्या है? Secure Shell की सम्पूर्ण गाइड</a>
+- <a href="/hi/what-is-an-ssh-key/">SSH Key क्या है? Public Keys, Private Keys, और Key Pairs की व्याख्या</a>
+- <a href="/hi/how-to-set-up-ssh/">SSH कैसे Set Up करें: एक सम्पूर्ण Step-by-Step गाइड</a>

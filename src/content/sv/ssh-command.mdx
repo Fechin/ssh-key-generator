@@ -2,7 +2,7 @@
 
 Kommandot `ssh` är det primära verktyget för att initiera SSH-anslutningar från kommandoraden. Oavsett om du loggar in på en fjärr-Linux-server, vidarebefordrar en port för databasåtkomst eller hoppar via en bastionvärd för att nå ett internt nätverk är kommandot `ssh` din startpunkt. Den här guiden täcker allt från den grundläggande syntaxen till avancerade flaggor, tunnling och ProxyJump-konfigurationer — med verkliga exempel för Linux, macOS och Windows.
 
-Innan du kör SSH-kommandon behöver du SSH-nycklar. Se vår guide om <a href="/sv/what-is-an-ssh-key">vad en SSH-nyckel är</a> eller använd den <a href="/">kostnadsfria onlinegeneratorn</a> för att skapa ett nyckelpar.
+Innan du kör SSH-kommandon behöver du SSH-nycklar. Se vår guide om <a href="/sv/what-is-an-ssh-key/">vad en SSH-nyckel är</a> eller använd den <a href="/">kostnadsfria onlinegeneratorn</a> för att skapa ett nyckelpar.
 
 ## SSH-kommandosyntax
 
@@ -239,7 +239,7 @@ Agentvidarebefordran är användbar men har säkerhetsimplikationer: vem som hel
 
 ## SSH-tunnlingskommandon
 
-SSH-tunnling dirigerar TCP-anslutningar via en krypterad SSH-kanal. För bakgrund om vad tunnling är, se <a href="/sv/what-is-ssh">tunnlingsavsnittet i vår SSH-guide</a>.
+SSH-tunnling dirigerar TCP-anslutningar via en krypterad SSH-kanal. För bakgrund om vad tunnling är, se <a href="/sv/what-is-ssh/">tunnlingsavsnittet i vår SSH-guide</a>.
 
 ### Lokal portvidarebefordran
 
@@ -354,7 +354,7 @@ ProxyJump föredras framför agentvidarebefordran (`-A`) eftersom:
 - Bastionvärden kan inte använda dina inloggningsuppgifter för att autentisera på annat håll
 - Anslutningen är end-to-end-autentiserad — destinationsservern verifierar dig direkt
 
-För mer installationsdetaljer, se vår kompletta guide om <a href="/sv/how-to-set-up-ssh">hur man konfigurerar SSH</a>.
+För mer installationsdetaljer, se vår kompletta guide om <a href="/sv/how-to-set-up-ssh/">hur man konfigurerar SSH</a>.
 
 ## Vanliga frågor
 
@@ -425,6 +425,6 @@ För att använda SSH-nyckelautentisering — som eliminerar behovet av lösenor
 ---
 
 **Vidare läsning:**
-- <a href="/sv/what-is-ssh">Vad är SSH? Den kompletta guiden till Secure Shell</a>
-- <a href="/sv/what-is-an-ssh-key">Vad är en SSH-nyckel? Publika nycklar, privata nycklar och nyckelpar förklarade</a>
-- <a href="/sv/how-to-set-up-ssh">Hur man konfigurerar SSH: En komplett steg-för-steg-guide</a>
+- <a href="/sv/what-is-ssh/">Vad är SSH? Den kompletta guiden till Secure Shell</a>
+- <a href="/sv/what-is-an-ssh-key/">Vad är en SSH-nyckel? Publika nycklar, privata nycklar och nyckelpar förklarade</a>
+- <a href="/sv/how-to-set-up-ssh/">Hur man konfigurerar SSH: En komplett steg-för-steg-guide</a>

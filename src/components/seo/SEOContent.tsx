@@ -248,7 +248,7 @@ export function SEOContent() {
             return (
               <Link
                 key={slug}
-                to={`${basePath}/${slug}`}
+                to={`${basePath}/${slug}/`}
                 className="flex items-start justify-between gap-3 p-4 rounded-lg bg-card/50 border border-border hover:border-primary/50 hover:bg-card transition-colors group"
               >
                 <div className="space-y-1 min-w-0">
