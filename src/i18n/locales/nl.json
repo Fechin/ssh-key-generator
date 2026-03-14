@@ -311,8 +311,8 @@
         "answer": "Een SSH-sleutelvingerafdruk is een korte, unieke identifier afgeleid van je publieke sleutel met een hashfunctie (SHA256 of MD5). Het wordt gebruikt om de authenticiteit van de sleutel te verifiëren bij het verbinden met servers. De vingerafdruk helpt je bevestigen dat je verbindt met de juiste server."
       },
       "bestAlgorithm": {
-        "question": "Wat is het beste SSH-sleutelalgoritme in 2025?",
-        "answer": "Ed25519 is het aanbevolen algoritme in 2025 voor de meeste toepassingen. Het biedt uitstekende beveiliging met een 256-bit sleutelgrootte, snelle prestaties, en wordt ondersteund door alle moderne SSH-implementaties. Gebruik alleen RSA als je compatibiliteit met legacy systemen nodig hebt."
+        "question": "Wat is het beste SSH-sleutelalgoritme in 2026?",
+        "answer": "Ed25519 is het aanbevolen algoritme in 2026 voor de meeste toepassingen. Het biedt uitstekende beveiliging met een 256-bit sleutelgrootte, snelle prestaties, en wordt ondersteund door alle moderne SSH-implementaties. Gebruik alleen RSA als je compatibiliteit met legacy systemen nodig hebt."
       },
       "authorizedKeys": {
         "question": "Wat is het authorized_keys bestand?",

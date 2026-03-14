@@ -311,8 +311,8 @@
         "answer": "Ein SSH-Schlüssel-Fingerabdruck ist eine kurze, eindeutige Kennung, die aus Ihrem öffentlichen Schlüssel mittels einer Hash-Funktion (SHA256 oder MD5) abgeleitet wird. Er wird verwendet, um die Authentizität des Schlüssels beim Verbinden mit Servern zu überprüfen. Der Fingerabdruck hilft Ihnen zu bestätigen, dass Sie sich mit dem richtigen Server verbinden."
       },
       "bestAlgorithm": {
-        "question": "Was ist der beste SSH-Schlüssel-Algorithmus in 2025?",
-        "answer": "Ed25519 ist der empfohlene Algorithmus für 2025 für die meisten Anwendungsfälle. Er bietet ausgezeichnete Sicherheit mit einer Schlüsselgröße von 256 Bit, schnelle Leistung und wird von allen modernen SSH-Implementierungen unterstützt. Verwenden Sie RSA nur, wenn Sie Kompatibilität mit Legacy-Systemen benötigen."
+        "question": "Was ist der beste SSH-Schlüssel-Algorithmus in 2026?",
+        "answer": "Ed25519 ist der empfohlene Algorithmus für 2026 für die meisten Anwendungsfälle. Er bietet ausgezeichnete Sicherheit mit einer Schlüsselgröße von 256 Bit, schnelle Leistung und wird von allen modernen SSH-Implementierungen unterstützt. Verwenden Sie RSA nur, wenn Sie Kompatibilität mit Legacy-Systemen benötigen."
       },
       "authorizedKeys": {
         "question": "Was ist die authorized_keys-Datei?",

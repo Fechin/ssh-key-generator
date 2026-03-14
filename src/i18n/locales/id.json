@@ -311,8 +311,8 @@
         "answer": "Sidik jari kunci SSH adalah pengidentifikasi singkat dan unik yang diturunkan dari kunci publik Anda menggunakan fungsi hash (SHA256 atau MD5). Ini digunakan untuk memverifikasi keaslian kunci saat terhubung ke server. Sidik jari membantu Anda memastikan bahwa Anda terhubung ke server yang benar."
       },
       "bestAlgorithm": {
-        "question": "Apa algoritma kunci SSH terbaik di tahun 2025?",
-        "answer": "Ed25519 adalah algoritma yang direkomendasikan di tahun 2025 untuk sebagian besar kasus penggunaan. Ini memberikan keamanan yang sangat baik dengan ukuran kunci 256-bit, performa cepat, dan didukung oleh semua implementasi SSH modern. Gunakan RSA hanya jika Anda memerlukan kompatibilitas dengan sistem lama."
+        "question": "Apa algoritma kunci SSH terbaik di tahun 2026?",
+        "answer": "Ed25519 adalah algoritma yang direkomendasikan di tahun 2026 untuk sebagian besar kasus penggunaan. Ini memberikan keamanan yang sangat baik dengan ukuran kunci 256-bit, performa cepat, dan didukung oleh semua implementasi SSH modern. Gunakan RSA hanya jika Anda memerlukan kompatibilitas dengan sistem lama."
       },
       "authorizedKeys": {
         "question": "Apa itu file authorized_keys?",

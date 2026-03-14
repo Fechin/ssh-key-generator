@@ -312,8 +312,8 @@
         "answer": "An SSH key fingerprint is a short, unique identifier derived from your public key using a hash function (SHA256 or MD5). It's used to verify key authenticity when connecting to servers. The fingerprint helps you confirm you're connecting to the correct server."
       },
       "bestAlgorithm": {
-        "question": "What is the best SSH key algorithm in 2025?",
-        "answer": "Ed25519 is the recommended algorithm in 2025 for most use cases. It provides excellent security with a 256-bit key size, fast performance, and is supported by all modern SSH implementations. Only use RSA if you need compatibility with legacy systems."
+        "question": "What is the best SSH key algorithm in 2026?",
+        "answer": "Ed25519 is the recommended algorithm in 2026 for most use cases. It provides excellent security with a 256-bit key size, fast performance, and is supported by all modern SSH implementations. Only use RSA if you need compatibility with legacy systems."
       },
       "authorizedKeys": {
         "question": "What is the authorized_keys file?",

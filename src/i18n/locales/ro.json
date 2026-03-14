@@ -311,8 +311,8 @@
         "answer": "Amprenta unei chei SSH este un identificator scurt și unic derivat din cheia ta publică folosind o funcție hash (SHA256 sau MD5). Este folosită pentru a verifica autenticitatea cheii la conectarea la servere. Amprenta te ajută să confirmi că te conectezi la serverul corect."
       },
       "bestAlgorithm": {
-        "question": "Care este cel mai bun algoritm pentru chei SSH în 2025?",
-        "answer": "Ed25519 este algoritmul recomandat în 2025 pentru majoritatea cazurilor de utilizare. Oferă securitate excelentă cu o dimensiune a cheii de 256-bit, performanță rapidă și este suportat de toate implementările SSH moderne. Folosește RSA doar dacă ai nevoie de compatibilitate cu sisteme legacy."
+        "question": "Care este cel mai bun algoritm pentru chei SSH în 2026?",
+        "answer": "Ed25519 este algoritmul recomandat în 2026 pentru majoritatea cazurilor de utilizare. Oferă securitate excelentă cu o dimensiune a cheii de 256-bit, performanță rapidă și este suportat de toate implementările SSH moderne. Folosește RSA doar dacă ai nevoie de compatibilitate cu sisteme legacy."
       },
       "authorizedKeys": {
         "question": "Ce este fișierul authorized_keys?",

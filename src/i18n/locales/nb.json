@@ -311,8 +311,8 @@
         "answer": "Et SSH-nøkkelfingeravtrykk er en kort, unik identifikator avledet fra den offentlige nøkkelen din ved hjelp av en hash-funksjon (SHA256 eller MD5). Det brukes til å verifisere nøkkelens autentisitet når du kobler til servere. Fingeravtrykket hjelper deg med å bekrefte at du kobler til riktig server."
       },
       "bestAlgorithm": {
-        "question": "Hva er den beste SSH-nøkkelalgoritmen i 2025?",
-        "answer": "Ed25519 er den anbefalte algoritmen i 2025 for de fleste bruksområder. Den gir utmerket sikkerhet med en 256-bits nøkkelstørrelse, rask ytelse og støttes av alle moderne SSH-implementasjoner. Bruk kun RSA hvis du trenger kompatibilitet med eldre systemer."
+        "question": "Hva er den beste SSH-nøkkelalgoritmen i 2026?",
+        "answer": "Ed25519 er den anbefalte algoritmen i 2026 for de fleste bruksområder. Den gir utmerket sikkerhet med en 256-bits nøkkelstørrelse, rask ytelse og støttes av alle moderne SSH-implementasjoner. Bruk kun RSA hvis du trenger kompatibilitet med eldre systemer."
       },
       "authorizedKeys": {
         "question": "Hva er authorized_keys-filen?",

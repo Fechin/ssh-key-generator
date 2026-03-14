@@ -311,8 +311,8 @@
         "answer": "Dấu vân tay khóa SSH là một định danh ngắn, duy nhất được tạo ra từ khóa công khai của bạn bằng hàm băm (SHA256 hoặc MD5). Nó được sử dụng để xác minh tính xác thực của khóa khi kết nối đến máy chủ. Dấu vân tay giúp bạn xác nhận bạn đang kết nối đến đúng máy chủ."
       },
       "bestAlgorithm": {
-        "question": "Thuật toán khóa SSH tốt nhất năm 2025 là gì?",
-        "answer": "Ed25519 là thuật toán được khuyến nghị năm 2025 cho hầu hết các trường hợp sử dụng. Nó cung cấp bảo mật tuyệt vời với kích thước khóa 256-bit, hiệu suất nhanh và được hỗ trợ bởi tất cả các triển khai SSH hiện đại. Chỉ sử dụng RSA nếu bạn cần tương thích với hệ thống cũ."
+        "question": "Thuật toán khóa SSH tốt nhất năm 2026 là gì?",
+        "answer": "Ed25519 là thuật toán được khuyến nghị năm 2026 cho hầu hết các trường hợp sử dụng. Nó cung cấp bảo mật tuyệt vời với kích thước khóa 256-bit, hiệu suất nhanh và được hỗ trợ bởi tất cả các triển khai SSH hiện đại. Chỉ sử dụng RSA nếu bạn cần tương thích với hệ thống cũ."
       },
       "authorizedKeys": {
         "question": "Tệp authorized_keys là gì?",

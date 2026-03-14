@@ -311,8 +311,8 @@
         "answer": "Odcisk palca klucza SSH to krótki, unikalny identyfikator pochodzący z Twojego klucza publicznego przy użyciu funkcji hash (SHA256 lub MD5). Służy do weryfikacji autentyczności klucza podczas łączenia się z serwerami. Odcisk palca pomaga potwierdzić, że łączysz się z właściwym serwerem."
       },
       "bestAlgorithm": {
-        "question": "Jaki jest najlepszy algorytm klucza SSH w 2025?",
-        "answer": "Ed25519 jest zalecanym algorytmem w 2025 dla większości zastosowań. Zapewnia doskonałe bezpieczeństwo z rozmiarem klucza 256-bit, szybką wydajność i jest obsługiwany przez wszystkie nowoczesne implementacje SSH. Używaj RSA tylko jeśli potrzebujesz kompatybilności ze starszymi systemami."
+        "question": "Jaki jest najlepszy algorytm klucza SSH w 2026?",
+        "answer": "Ed25519 jest zalecanym algorytmem w 2026 dla większości zastosowań. Zapewnia doskonałe bezpieczeństwo z rozmiarem klucza 256-bit, szybką wydajność i jest obsługiwany przez wszystkie nowoczesne implementacje SSH. Używaj RSA tylko jeśli potrzebujesz kompatybilności ze starszymi systemami."
       },
       "authorizedKeys": {
         "question": "Co to jest plik authorized_keys?",

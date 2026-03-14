@@ -311,8 +311,8 @@
         "answer": "SSH anahtar parmak izi, bir hash fonksiyonu (SHA256 veya MD5) kullanılarak genel anahtarınızdan türetilen kısa ve benzersiz bir tanımlayıcıdır. Sunuculara bağlanırken anahtar doğruluğunu doğrulamak için kullanılır. Parmak izi, doğru sunucuya bağlandığınızı onaylamanıza yardımcı olur."
       },
       "bestAlgorithm": {
-        "question": "2025'te en iyi SSH anahtar algoritması hangisidir?",
-        "answer": "Ed25519, 2025'te çoğu kullanım için önerilen algoritmadır. 256-bit anahtar boyutuyla mükemmel güvenlik, hızlı performans sunar ve tüm modern SSH uygulamaları tarafından desteklenir. Yalnızca eski sistemlerle uyumluluk gerekiyorsa RSA kullanın."
+        "question": "2026'te en iyi SSH anahtar algoritması hangisidir?",
+        "answer": "Ed25519, 2026'te çoğu kullanım için önerilen algoritmadır. 256-bit anahtar boyutuyla mükemmel güvenlik, hızlı performans sunar ve tüm modern SSH uygulamaları tarafından desteklenir. Yalnızca eski sistemlerle uyumluluk gerekiyorsa RSA kullanın."
       },
       "authorizedKeys": {
         "question": "authorized_keys dosyası nedir?",

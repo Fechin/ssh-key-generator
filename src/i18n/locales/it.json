@@ -311,8 +311,8 @@
         "answer": "Un'impronta di chiave SSH è un breve identificatore unico derivato dalla tua chiave pubblica usando una funzione hash (SHA256 o MD5). Viene usata per verificare l'autenticità della chiave quando ci si connette ai server. L'impronta ti aiuta a confermare che ti stai connettendo al server corretto."
       },
       "bestAlgorithm": {
-        "question": "Qual è il miglior algoritmo di chiave SSH nel 2025?",
-        "answer": "Ed25519 è l'algoritmo raccomandato nel 2025 per la maggior parte dei casi d'uso. Fornisce eccellente sicurezza con una dimensione di chiave di 256-bit, prestazioni veloci, ed è supportato da tutte le moderne implementazioni SSH. Usa RSA solo se hai bisogno di compatibilità con sistemi legacy."
+        "question": "Qual è il miglior algoritmo di chiave SSH nel 2026?",
+        "answer": "Ed25519 è l'algoritmo raccomandato nel 2026 per la maggior parte dei casi d'uso. Fornisce eccellente sicurezza con una dimensione di chiave di 256-bit, prestazioni veloci, ed è supportato da tutte le moderne implementazioni SSH. Usa RSA solo se hai bisogno di compatibilità con sistemi legacy."
       },
       "authorizedKeys": {
         "question": "Cos'è il file authorized_keys?",

@@ -311,8 +311,8 @@
         "answer": "Otisk SSH klíče je krátký, unikátní identifikátor odvozený z vašeho veřejného klíče pomocí hashovací funkce (SHA256 nebo MD5). Používá se k ověření autenticity klíče při připojování k serverům. Otisk vám pomáhá potvrdit, že se připojujete ke správnému serveru."
       },
       "bestAlgorithm": {
-        "question": "Jaký je nejlepší algoritmus SSH klíče v roce 2025?",
-        "answer": "Ed25519 je doporučený algoritmus v roce 2025 pro většinu případů použití. Poskytuje vynikající zabezpečení s 256bitovou velikostí klíče, rychlý výkon a je podporován všemi moderními SSH implementacemi. RSA použijte pouze pokud potřebujete kompatibilitu se staršími systémy."
+        "question": "Jaký je nejlepší algoritmus SSH klíče v roce 2026?",
+        "answer": "Ed25519 je doporučený algoritmus v roce 2026 pro většinu případů použití. Poskytuje vynikající zabezpečení s 256bitovou velikostí klíče, rychlý výkon a je podporován všemi moderními SSH implementacemi. RSA použijte pouze pokud potřebujete kompatibilitu se staršími systémy."
       },
       "authorizedKeys": {
         "question": "Co je soubor authorized_keys?",

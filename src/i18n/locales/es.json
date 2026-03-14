@@ -311,8 +311,8 @@
         "answer": "Una huella digital de clave SSH es un identificador corto y único derivado de tu clave pública usando una función hash (SHA256 o MD5). Se usa para verificar la autenticidad de la clave al conectarse a servidores. La huella digital te ayuda a confirmar que te estás conectando al servidor correcto."
       },
       "bestAlgorithm": {
-        "question": "¿Cuál es el mejor algoritmo de clave SSH en 2025?",
-        "answer": "Ed25519 es el algoritmo recomendado en 2025 para la mayoría de los casos de uso. Proporciona excelente seguridad con un tamaño de clave de 256 bits, rendimiento rápido, y es compatible con todas las implementaciones SSH modernas. Solo usa RSA si necesitas compatibilidad con sistemas legacy."
+        "question": "¿Cuál es el mejor algoritmo de clave SSH en 2026?",
+        "answer": "Ed25519 es el algoritmo recomendado en 2026 para la mayoría de los casos de uso. Proporciona excelente seguridad con un tamaño de clave de 256 bits, rendimiento rápido, y es compatible con todas las implementaciones SSH modernas. Solo usa RSA si necesitas compatibilidad con sistemas legacy."
       },
       "authorizedKeys": {
         "question": "¿Qué es el archivo authorized_keys?",

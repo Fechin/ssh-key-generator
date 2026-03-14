@@ -311,8 +311,8 @@
         "answer": "Az SSH kulcs ujjlenyomat egy rövid, egyedi azonosító, amely a publikus kulcsodból származik hash függvénnyel (SHA256 vagy MD5). A kulcs hitelességének ellenőrzésére szolgál szerverekhez való kapcsolódáskor. Az ujjlenyomat segít megbizonyosodni arról, hogy a megfelelő szerverhez kapcsolódsz."
       },
       "bestAlgorithm": {
-        "question": "Mi a legjobb SSH kulcs algoritmus 2025-ben?",
-        "answer": "Az Ed25519 az ajánlott algoritmus 2025-ben a legtöbb felhasználási esethez. Kiváló biztonságot nyújt 256-bites kulcsmérettel, gyors teljesítménnyel, és minden modern SSH implementáció támogatja. Csak akkor használj RSA-t, ha régebbi rendszerekkel való kompatibilitásra van szükséged."
+        "question": "Mi a legjobb SSH kulcs algoritmus 2026-ben?",
+        "answer": "Az Ed25519 az ajánlott algoritmus 2026-ben a legtöbb felhasználási esethez. Kiváló biztonságot nyújt 256-bites kulcsmérettel, gyors teljesítménnyel, és minden modern SSH implementáció támogatja. Csak akkor használj RSA-t, ha régebbi rendszerekkel való kompatibilitásra van szükséged."
       },
       "authorizedKeys": {
         "question": "Mi az az authorized_keys fájl?",

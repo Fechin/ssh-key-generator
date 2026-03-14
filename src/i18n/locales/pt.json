@@ -311,8 +311,8 @@
         "answer": "Uma impressão digital de chave SSH é um identificador curto e único derivado da sua chave pública usando uma função hash (SHA256 ou MD5). É usado para verificar a autenticidade da chave ao conectar a servidores. A impressão digital ajuda você a confirmar que está conectando ao servidor correto."
       },
       "bestAlgorithm": {
-        "question": "Qual é o melhor algoritmo de chave SSH em 2025?",
-        "answer": "Ed25519 é o algoritmo recomendado em 2025 para a maioria dos casos de uso. Ele fornece excelente segurança com um tamanho de chave de 256 bits, desempenho rápido, e é suportado por todas as implementações SSH modernas. Use RSA apenas se precisar de compatibilidade com sistemas legados."
+        "question": "Qual é o melhor algoritmo de chave SSH em 2026?",
+        "answer": "Ed25519 é o algoritmo recomendado em 2026 para a maioria dos casos de uso. Ele fornece excelente segurança com um tamanho de chave de 256 bits, desempenho rápido, e é suportado por todas as implementações SSH modernas. Use RSA apenas se precisar de compatibilidade com sistemas legados."
       },
       "authorizedKeys": {
         "question": "O que é o arquivo authorized_keys?",

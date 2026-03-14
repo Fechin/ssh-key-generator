@@ -311,8 +311,8 @@
         "answer": "Une empreinte de clé SSH est un identifiant court et unique dérivé de votre clé publique via une fonction de hachage (SHA256 ou MD5). Elle est utilisée pour vérifier l'authenticité de la clé lors de la connexion aux serveurs. L'empreinte vous aide à confirmer que vous vous connectez au bon serveur."
       },
       "bestAlgorithm": {
-        "question": "Quel est le meilleur algorithme de clé SSH en 2025 ?",
-        "answer": "Ed25519 est l'algorithme recommandé en 2025 pour la plupart des cas d'usage. Il offre une excellente sécurité avec une taille de clé de 256 bits, des performances rapides, et est supporté par toutes les implémentations SSH modernes. N'utilisez RSA que si vous avez besoin de compatibilité avec des systèmes legacy."
+        "question": "Quel est le meilleur algorithme de clé SSH en 2026 ?",
+        "answer": "Ed25519 est l'algorithme recommandé en 2026 pour la plupart des cas d'usage. Il offre une excellente sécurité avec une taille de clé de 256 bits, des performances rapides, et est supporté par toutes les implémentations SSH modernes. N'utilisez RSA que si vous avez besoin de compatibilité avec des systèmes legacy."
       },
       "authorizedKeys": {
         "question": "Qu'est-ce que le fichier authorized_keys ?",

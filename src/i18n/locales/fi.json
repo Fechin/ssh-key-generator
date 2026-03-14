@@ -311,8 +311,8 @@
         "answer": "SSH-avaimen sormenjälki on lyhyt, yksilöllinen tunniste, joka johdetaan julkisesta avaimestasi hajautusfunktiolla (SHA256 tai MD5). Sitä käytetään avaimen aitouden varmistamiseen palvelimiin yhdistettäessä. Sormenjälki auttaa varmistamaan, että yhdistät oikeaan palvelimeen."
       },
       "bestAlgorithm": {
-        "question": "Mikä on paras SSH-avainalgoritmi vuonna 2025?",
-        "answer": "Ed25519 on suositeltu algoritmi vuonna 2025 useimpiin käyttötarkoituksiin. Se tarjoaa erinomaisen turvallisuuden 256-bittisellä avainkoolla, nopean suorituskyvyn ja sitä tukevat kaikki modernit SSH-toteutukset. Käytä RSA:ta vain, jos tarvitset yhteensopivuutta vanhojen järjestelmien kanssa."
+        "question": "Mikä on paras SSH-avainalgoritmi vuonna 2026?",
+        "answer": "Ed25519 on suositeltu algoritmi vuonna 2026 useimpiin käyttötarkoituksiin. Se tarjoaa erinomaisen turvallisuuden 256-bittisellä avainkoolla, nopean suorituskyvyn ja sitä tukevat kaikki modernit SSH-toteutukset. Käytä RSA:ta vain, jos tarvitset yhteensopivuutta vanhojen järjestelmien kanssa."
       },
       "authorizedKeys": {
         "question": "Mikä on authorized_keys-tiedosto?",
