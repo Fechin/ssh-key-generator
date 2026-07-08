@@ -41,6 +41,11 @@ SSH Key Generator is a local-first, browser-based SSH key generation tool for Ed
 ## Key URLs
 
 - Home: https://sshkeygenerator.com/
+- Generate SSH Key: https://sshkeygenerator.com/generate-ssh-key/
+- ssh-keygen Command: https://sshkeygenerator.com/ssh-keygen/
+- What Is an SSH Key: https://sshkeygenerator.com/what-is-an-ssh-key/
+- How to Set Up SSH: https://sshkeygenerator.com/how-to-set-up-ssh/
+- SSH Command: https://sshkeygenerator.com/ssh-command/
 - Simplified Chinese: https://sshkeygenerator.com/zh-Hans/
 - Traditional Chinese: https://sshkeygenerator.com/zh-Hant/
 - Japanese: https://sshkeygenerator.com/ja/

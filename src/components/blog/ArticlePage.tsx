@@ -1,8 +1,8 @@
-import { lazy, Suspense, useEffect, type LazyExoticComponent, type ComponentType } from 'react'
+import { lazy, Suspense, useEffect, useMemo, type LazyExoticComponent, type ComponentType } from 'react'
 import { MDXProvider } from '@mdx-js/react'
 import { ArticleLayout } from './ArticleLayout'
 import { mdxComponents } from './MDXComponents'
-import { getArticleMeta, type ArticleSlug } from '@/content/articles'
+import { getArticleLanguages, getArticleMeta, type ArticleSlug } from '@/content/articles'
 import { buildArticlePageMetadata, syncPageMetadata } from '@/lib/seo'
 import { getLanguagePathname } from '@/i18n'
 import type { Language } from '@/i18n'
@@ -14,21 +14,12 @@ const contentModules = import.meta.glob<{ default: ComponentType<Record<string, 
   '../../content/**/*.mdx',
 )
 
-// Module-level cache ensures each lazy component is created only once (React requirement)
-const lazyCache = new Map<string, LazyMDX>()
-
-function getContent(lang: Language, slug: ArticleSlug): LazyMDX {
-  const key = `${lang}/${slug}`
-  if (!lazyCache.has(key)) {
-    const path = `../../content/${lang}/${slug}.mdx`
-    const loader = contentModules[path] ?? contentModules[`../../content/en/${slug}.mdx`]
-    lazyCache.set(
-      key,
-      lazy(loader as () => Promise<{ default: ComponentType<Record<string, unknown>> }>),
-    )
-  }
-  return lazyCache.get(key)!
-}
+const lazyContentModules = new Map<string, LazyMDX>(
+  Object.entries(contentModules).map(([path, loader]) => [
+    path.replace('../../content/', '').replace('.mdx', ''),
+    lazy(loader as () => Promise<{ default: ComponentType<Record<string, unknown>> }>),
+  ]),
+)
 
 interface Props {
   slug: ArticleSlug
@@ -37,17 +28,24 @@ interface Props {
 
 export function ArticlePage({ slug, lang }: Props) {
   const meta = getArticleMeta(slug, lang)
+  const alternateLanguages = useMemo(() => getArticleLanguages(slug), [slug])
   const basePath = getLanguagePathname(lang).replace(/\/$/, '')
-  const Content = getContent(lang, slug)
+  const contentKey = `${lang}/${slug}`
+  const Content = lazyContentModules.get(contentKey)
+
+  if (!Content) {
+    throw new Error(`Missing article content for ${contentKey}`)
+  }
 
   useEffect(() => {
-    syncPageMetadata(lang, buildArticlePageMetadata(slug, lang, meta))
-  }, [slug, lang, meta])
+    syncPageMetadata(lang, buildArticlePageMetadata(slug, lang, meta, alternateLanguages))
+  }, [slug, lang, meta, alternateLanguages])
 
   return (
     <ArticleLayout backHref={`${basePath}/`} backLabel="SSH Key Generator">
       <MDXProvider components={mdxComponents}>
         <Suspense fallback={<div className="min-h-[400px]" />}>
+          {/* eslint-disable-next-line react-hooks/static-components -- MDX routes are registered once in lazyContentModules. */}
           <Content />
         </Suspense>
       </MDXProvider>

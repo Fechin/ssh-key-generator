@@ -17,6 +17,7 @@ export interface PageMetadata {
   description: string
   canonicalUrl: string
   alternatePath: string | null
+  alternateLanguages?: Language[]
   robots: string
   ogType: 'website' | 'article'
   structuredData: {
@@ -24,14 +25,15 @@ export interface PageMetadata {
     page: JsonLdValue
     faq: JsonLdValue | null
     howTo: JsonLdValue | null
+    breadcrumb: JsonLdValue | null
     organization: JsonLdValue
   }
 }
 
 const SITE_NAME = 'SSH Key Generator'
-const DEFAULT_TITLE = 'SSH Key Generator Online - Free Secure Key Generation'
+const DEFAULT_TITLE = 'SSH Key Generator - Generate SSH Keys Online'
 const DEFAULT_DESCRIPTION =
-  'Generate SSH keys securely in your browser. Support Ed25519, RSA. Works with GitHub, GitLab, Bitbucket. 100% client-side, no data sent to servers.'
+  'Generate SSH keys online with Ed25519 or RSA. Client-side SSH key generator for GitHub, GitLab, servers, and ssh-keygen workflows. Private keys are not uploaded.'
 const SOCIAL_IMAGE_URL = `${SITE_URL}/og.webp`
 const ORGANIZATION_ID = `${SITE_URL}#organization`
 const WEBSITE_ID = `${SITE_URL}#website`
@@ -115,7 +117,7 @@ function getAlternateUrl(language: Language, alternatePath: string) {
   return normalizeAbsoluteUrl(localizedPath)
 }
 
-function syncAlternateLinks(alternatePath: string | null) {
+function syncAlternateLinks(alternatePath: string | null, alternateLanguages?: Language[]) {
   document
     .querySelectorAll('link[rel="alternate"][hreflang]')
     .forEach((element) => element.remove())
@@ -124,11 +126,14 @@ function syncAlternateLinks(alternatePath: string | null) {
     return
   }
 
-  for (const language of Object.values(LANGUAGE_BY_CODE)) {
+  const languages = alternateLanguages ?? (Object.keys(LANGUAGE_BY_CODE) as Language[])
+
+  for (const languageCode of languages) {
+    const language = LANGUAGE_BY_CODE[languageCode]
     const link = document.createElement('link')
     link.setAttribute('rel', 'alternate')
     link.setAttribute('hreflang', language.hreflang)
-    link.setAttribute('href', getAlternateUrl(language.code, alternatePath))
+    link.setAttribute('href', getAlternateUrl(languageCode, alternatePath))
     document.head.appendChild(link)
   }
 
@@ -311,6 +316,7 @@ export function buildHomePageMetadata(language: Language, t: TranslationFn): Pag
       page: buildSoftwareApplicationSchema(language, title, description, canonicalUrl, t),
       faq: buildFaqSchema(language, t, canonicalUrl),
       howTo: buildHowToSchema(language, t('seo.howTo.title'), description, canonicalUrl, t),
+      breadcrumb: null,
       organization: buildOrganizationSchema(),
     },
   }
@@ -319,15 +325,24 @@ export function buildHomePageMetadata(language: Language, t: TranslationFn): Pag
 export function buildArticlePageMetadata(
   slug: string,
   language: Language,
-  meta: { title: string; description: string; keywords: string[]; publishDate: string },
+  meta: {
+    title: string
+    description: string
+    keywords: string[]
+    publishDate: string
+    modifiedDate?: string
+  },
+  alternateLanguages: Language[],
 ): PageMetadata {
   const canonicalUrl = getAlternateUrl(language, slug)
+  const dateModified = meta.modifiedDate ?? meta.publishDate
 
   return {
     title: meta.title,
     description: meta.description,
     canonicalUrl,
     alternatePath: slug,
+    alternateLanguages,
     robots: 'index, follow',
     ogType: 'article',
     structuredData: {
@@ -335,11 +350,17 @@ export function buildArticlePageMetadata(
       page: {
         '@context': 'https://schema.org',
         '@type': 'TechArticle',
+        '@id': `${canonicalUrl}#article`,
         headline: meta.title,
         description: meta.description,
         datePublished: meta.publishDate,
-        dateModified: meta.publishDate,
+        dateModified,
         url: canonicalUrl,
+        image: SOCIAL_IMAGE_URL,
+        mainEntityOfPage: {
+          '@type': 'WebPage',
+          '@id': canonicalUrl,
+        },
         keywords: meta.keywords.join(', '),
         author: { '@id': ORGANIZATION_ID },
         publisher: { '@id': ORGANIZATION_ID },
@@ -347,6 +368,25 @@ export function buildArticlePageMetadata(
       },
       faq: null,
       howTo: null,
+      breadcrumb: {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        '@id': `${canonicalUrl}#breadcrumb`,
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: SITE_NAME,
+            item: getAbsoluteLanguageUrl(language),
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: meta.title,
+            item: canonicalUrl,
+          },
+        ],
+      },
       organization: buildOrganizationSchema(),
     },
   }
@@ -373,13 +413,23 @@ export function buildNotFoundPageMetadata(
       page: buildWebPageSchema(language, title, description, canonicalUrl),
       faq: null,
       howTo: null,
+      breadcrumb: null,
       organization: buildOrganizationSchema(),
     },
   }
 }
 
 export function syncPageMetadata(language: Language, metadata: PageMetadata) {
-  const { title, description, canonicalUrl, alternatePath, robots, ogType, structuredData } = metadata
+  const {
+    title,
+    description,
+    canonicalUrl,
+    alternatePath,
+    alternateLanguages,
+    robots,
+    ogType,
+    structuredData,
+  } = metadata
 
   document.title = title
 
@@ -398,10 +448,11 @@ export function syncPageMetadata(language: Language, metadata: PageMetadata) {
   upsertMetaByProperty('twitter:description', description)
   upsertMetaByProperty('twitter:image', SOCIAL_IMAGE_URL)
   upsertCanonicalLink(canonicalUrl)
-  syncAlternateLinks(alternatePath)
+  syncAlternateLinks(alternatePath, alternateLanguages)
   upsertStructuredDataScript('structured-data-website', structuredData.website)
   upsertStructuredDataScript('structured-data-page', structuredData.page)
   upsertStructuredDataScript('structured-data-faq', structuredData.faq)
   upsertStructuredDataScript('structured-data-howto', structuredData.howTo)
+  upsertStructuredDataScript('structured-data-breadcrumb', structuredData.breadcrumb)
   upsertStructuredDataScript('structured-data-organization', structuredData.organization)
 }

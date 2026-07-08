@@ -18,9 +18,9 @@ const defaultLanguage = languages.find((language) => language.code === defaultLa
 const today = new Date().toISOString().slice(0, 10)
 const mode = process.argv.includes('--dist') ? 'dist' : 'source'
 
-const defaultTitle = 'SSH Key Generator Online - Free Secure Key Generation'
+const defaultTitle = 'SSH Key Generator - Generate SSH Keys Online'
 const defaultDescription =
-  'Generate SSH keys securely in your browser. Support Ed25519, RSA. Works with GitHub, GitLab, Bitbucket. 100% client-side, no data sent to servers.'
+  'Generate SSH keys online with Ed25519 or RSA. Client-side SSH key generator for GitHub, GitLab, servers, and ssh-keygen workflows. Private keys are not uploaded.'
 const socialImageUrl = `${siteUrl}/og.webp`
 const organizationId = `${siteUrl}#organization`
 const websiteId = `${siteUrl}#website`
@@ -75,7 +75,14 @@ const faqKeys = [
 ]
 
 const howToStepKeys = ['step1', 'step2', 'step3', 'step4', 'step5']
-const articleSlugs = ['what-is-ssh', 'what-is-an-ssh-key', 'ssh-command', 'how-to-set-up-ssh']
+const articleSlugs = [
+  'what-is-ssh',
+  'what-is-an-ssh-key',
+  'ssh-command',
+  'how-to-set-up-ssh',
+  'generate-ssh-key',
+  'ssh-keygen',
+]
 
 const englishTranslations = JSON.parse(
   await fs.readFile(path.join(projectRoot, 'src', 'i18n', 'locales', defaultLanguage.localeFile), 'utf8'),
@@ -157,7 +164,8 @@ function stripStepLabel(stepText) {
 }
 
 function buildHtmlAlternateLinks(alternatePath = '') {
-  const links = languages.map(
+  const alternateLanguages = alternatePath ? getArticleLanguages(alternatePath) : languages
+  const links = alternateLanguages.map(
     (language) =>
       `    <link rel="alternate" hreflang="${language.hreflang}" href="${escapeAttribute(
         getLocalizedPageUrl(language, alternatePath),
@@ -174,7 +182,8 @@ function buildHtmlAlternateLinks(alternatePath = '') {
 }
 
 function buildSitemapAlternateLinks(alternatePath = '') {
-  const links = languages.map(
+  const alternateLanguages = alternatePath ? getArticleLanguages(alternatePath) : languages
+  const links = alternateLanguages.map(
     (language) =>
       `    <xhtml:link rel="alternate" hreflang="${language.hreflang}" href="${escapeAttribute(
         getLocalizedPageUrl(language, alternatePath),
@@ -204,7 +213,7 @@ ${homeAlternateLinks}
 
   const articleUrls = articleSlugs
     .flatMap((slug) =>
-      languages.map((language) => `  <url>
+      getArticleLanguages(slug).map((language) => `  <url>
     <loc>${escapeHtml(getArticleAbsoluteUrl(language, slug))}</loc>
     <lastmod>${today}</lastmod>
     <changefreq>monthly</changefreq>
@@ -265,6 +274,18 @@ async function loadArticleMeta() {
 
 function getArticleMeta(slug, language) {
   return articleMeta[slug][language.code] ?? articleMeta[slug][defaultLanguage.code]
+}
+
+function hasArticleTranslation(slug, language) {
+  return Boolean(articleMeta[slug]?.[language.code])
+}
+
+function getArticleLanguages(slug) {
+  return languages.filter((language) => hasArticleTranslation(slug, language))
+}
+
+function getArticleDateModified(meta) {
+  return meta.modifiedDate ?? meta.publishDate
 }
 
 function buildFaqEntities(t) {
@@ -371,6 +392,7 @@ function buildHomeMetadata(language, translations) {
         ],
         step: buildHowToSteps(t, canonicalUrl),
       },
+      breadcrumb: null,
       organization: {
         '@context': 'https://schema.org',
         '@type': 'Organization',
@@ -389,6 +411,7 @@ function buildHomeMetadata(language, translations) {
 function buildArticleMetadata(language, slug) {
   const meta = getArticleMeta(slug, language)
   const canonicalUrl = getArticleAbsoluteUrl(language, slug)
+  const dateModified = getArticleDateModified(meta)
 
   return {
     title: meta.title,
@@ -417,7 +440,7 @@ function buildArticleMetadata(language, slug) {
         headline: meta.title,
         description: meta.description,
         datePublished: meta.publishDate,
-        dateModified: meta.publishDate,
+        dateModified,
         image: socialImageUrl,
         url: canonicalUrl,
         mainEntityOfPage: {
@@ -435,6 +458,25 @@ function buildArticleMetadata(language, slug) {
       },
       faq: null,
       howTo: null,
+      breadcrumb: {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        '@id': `${canonicalUrl}#breadcrumb`,
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'SSH Key Generator',
+            item: getAbsoluteUrl(language),
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: meta.title,
+            item: canonicalUrl,
+          },
+        ],
+      },
       organization: {
         '@context': 'https://schema.org',
         '@type': 'Organization',
@@ -452,6 +494,7 @@ function buildArticleMetadata(language, slug) {
 
 function buildGuideLinksMarkup(language) {
   return articleSlugs
+    .filter((slug) => hasArticleTranslation(slug, language))
     .map((slug) => {
       const meta = getArticleMeta(slug, language)
       return `<a href="${escapeAttribute(getArticlePathname(language, slug))}">${escapeHtml(meta.title)}</a>`
@@ -485,6 +528,59 @@ function buildResourceLinksMarkup(translations) {
     .join('\n        ')
 }
 
+function buildFactListMarkup(items) {
+  return `<ul class="seo-crawlable-links__facts">
+        ${items.map((item) => `<li>${escapeHtml(item)}</li>`).join('\n        ')}
+      </ul>`
+}
+
+function buildHomeFacts(translations) {
+  return [
+    translations.generator?.securityDesc
+      ?? 'All key generation happens locally in the browser; private keys are not uploaded.',
+    'Supports Ed25519, RSA 4096-bit, and RSA 2048-bit SSH key pairs.',
+    'Outputs OpenSSH-compatible public and private keys for GitHub, GitLab, Bitbucket, servers, and CI/CD workflows.',
+    'Includes ssh-keygen command examples, SSH config helpers, fingerprints, copy buttons, and offline PWA support.',
+  ]
+}
+
+function buildArticleFacts(slug, meta) {
+  const factsBySlug = {
+    'generate-ssh-key': [
+      'Use Ed25519 for most new SSH keys and RSA 4096 only when legacy compatibility requires it.',
+      'A generated SSH key pair includes a private key that stays secret and a public key that can be shared with servers.',
+      'The public key can be added to GitHub, GitLab, Bitbucket, or ~/.ssh/authorized_keys.',
+    ],
+    'ssh-keygen': [
+      'ssh-keygen is the OpenSSH command-line utility for creating and managing SSH key pairs.',
+      'The recommended modern command is ssh-keygen -t ed25519 -C "you@example.com".',
+      'Use ssh-keygen -t rsa -b 4096 only for older systems that do not support Ed25519.',
+    ],
+    'what-is-an-ssh-key': [
+      'An SSH key is a cryptographic credential made of a public key and a private key.',
+      'The private key proves identity without being sent over the network.',
+      'SSH keys are commonly used for GitHub, GitLab, server login, automation, and CI/CD access.',
+    ],
+    'how-to-set-up-ssh': [
+      'Setting up SSH requires generating a key pair, installing the public key, and testing the connection.',
+      'Do not disable password authentication until key-based login has been verified.',
+      'Use ssh-agent or the macOS Keychain to manage passphrases for personal keys.',
+    ],
+    'ssh-command': [
+      'The ssh command connects to remote hosts and supports identity files, custom ports, tunnels, and jump hosts.',
+      'Use ssh -i to select a specific private key and ssh -v to debug authentication failures.',
+      'SSH config aliases reduce repeated command-line options for common servers.',
+    ],
+    'what-is-ssh': [
+      'SSH stands for Secure Shell and encrypts remote login, command execution, and file transfer.',
+      'Modern SSH uses an encrypted transport, server host keys, and user authentication.',
+      'SSH replaced insecure plaintext tools such as Telnet for remote administration.',
+    ],
+  }
+
+  return factsBySlug[slug] ?? [meta.description]
+}
+
 function buildHomeCrawlableLinksMarkup(language, translations) {
   const languageLinks = languages
     .map(
@@ -494,9 +590,11 @@ function buildHomeCrawlableLinksMarkup(language, translations) {
     .join('\n        ')
 
   return `  <div id="seo-crawlable-links">
+    <h1 class="seo-crawlable-links__title">${escapeHtml(translations.hero?.title ?? 'SSH Key Generator Online')}</h1>
     <p class="seo-crawlable-links__summary">${escapeHtml(
       translations.hero?.subtitle ?? 'Generate secure SSH keys in your browser.',
     )}</p>
+    ${buildFactListMarkup(buildHomeFacts(translations))}
     <nav aria-label="Language versions" class="seo-crawlable-links__group">
       <strong>${escapeHtml(translations.header?.title ?? 'SSH Key Generator')}</strong>
       <div class="seo-crawlable-links__list">
@@ -523,7 +621,7 @@ function buildHomeCrawlableLinksMarkup(language, translations) {
 
 function buildArticleCrawlableLinksMarkup(language, slug, translations) {
   const meta = getArticleMeta(slug, language)
-  const languageLinks = languages
+  const languageLinks = getArticleLanguages(slug)
     .map(
       (candidate) =>
         `<a href="${escapeAttribute(getArticlePathname(candidate, slug))}">${escapeHtml(candidate.label)}</a>`,
@@ -533,6 +631,7 @@ function buildArticleCrawlableLinksMarkup(language, slug, translations) {
   return `  <div id="seo-crawlable-links">
     <h1 class="seo-crawlable-links__title">${escapeHtml(meta.title)}</h1>
     <p class="seo-crawlable-links__summary">${escapeHtml(meta.description)}</p>
+    ${buildFactListMarkup(buildArticleFacts(slug, meta))}
     <nav aria-label="SSH guides" class="seo-crawlable-links__group">
       <strong>${escapeHtml(translations.guides?.title ?? 'SSH Guides')}</strong>
       <div class="seo-crawlable-links__list">
@@ -585,6 +684,10 @@ function injectCrawlableLinksHead(html) {
       }
       .seo-crawlable-links__summary {
         margin: 0 0 1rem;
+      }
+      .seo-crawlable-links__facts {
+        margin: 0 0 1rem 1.25rem;
+        padding: 0;
       }
       .seo-crawlable-links__title {
         font-size: 1.5rem;
@@ -650,9 +753,23 @@ function replaceLinkHrefById(html, id, href) {
 }
 
 function replaceScriptById(html, id, value) {
-  const matcher = new RegExp(`(<script[^>]*id="${id}"[^>]*>)([\\s\\S]*?)(</script>)`)
-  const scriptContent = value === null ? '' : `\n${toJsonLd(value)}\n    `
-  return replaceTag(html, matcher, `$1${scriptContent}$3`)
+  const matcher = new RegExp(`\\s*<script[^>]*id="${id}"[^>]*>[\\s\\S]*?</script>`)
+
+  if (value === null) {
+    return html.replace(matcher, '')
+  }
+
+  const scriptContent = `\n${toJsonLd(value)}\n    `
+  const scriptTag = `\n    <script id="${id}" type="application/ld+json">${scriptContent}</script>`
+
+  if (matcher.test(html)) {
+    return html.replace(matcher, scriptTag)
+  }
+
+  return html.replace(
+    '</head>',
+    `${scriptTag}\n</head>`,
+  )
 }
 
 function normalizeHead(html, language, metadata) {
@@ -695,6 +812,7 @@ ${alternateLinks}
   nextHtml = replaceScriptById(nextHtml, 'structured-data-page', metadata.structuredData.page)
   nextHtml = replaceScriptById(nextHtml, 'structured-data-faq', metadata.structuredData.faq)
   nextHtml = replaceScriptById(nextHtml, 'structured-data-howto', metadata.structuredData.howTo)
+  nextHtml = replaceScriptById(nextHtml, 'structured-data-breadcrumb', metadata.structuredData.breadcrumb)
   nextHtml = replaceScriptById(nextHtml, 'structured-data-organization', metadata.structuredData.organization)
   return injectCrawlableLinksHead(nextHtml)
 }
@@ -727,7 +845,7 @@ async function writeDistAssets() {
     await fs.mkdir(path.dirname(outputPath), { recursive: true })
     await fs.writeFile(outputPath, localizedHtml, 'utf8')
 
-    for (const slug of articleSlugs) {
+    for (const slug of articleSlugs.filter((candidate) => hasArticleTranslation(candidate, language))) {
       const articleHtml = upsertCrawlableLinksMarkup(
         normalizeHead(htmlTemplate, language, buildArticleMetadata(language, slug)),
         buildArticleCrawlableLinksMarkup(language, slug, translations),

@@ -17,7 +17,7 @@ import {
   type Language,
 } from '@/i18n'
 import { buildHomePageMetadata, syncPageMetadata } from '@/lib/seo'
-import { ARTICLE_SLUGS, type ArticleSlug } from '@/content/articles'
+import { ARTICLE_SLUGS, hasArticleTranslation, type ArticleSlug } from '@/content/articles'
 import { useThemeStore } from '@/store/themeStore'
 import type { KeyPair } from '@/types/keys'
 
@@ -215,7 +215,9 @@ function App() {
       {/* All non-default language article routes (must be before wildcard routes) */}
       {NON_DEFAULT_LANGUAGE_CONFIG.flatMap((language) => {
         const langPath = getLanguagePathname(language.code).replace(/\/$/, '')
-        return ARTICLE_SLUGS.map((slug: ArticleSlug) => (
+        return ARTICLE_SLUGS.filter((slug: ArticleSlug) =>
+          hasArticleTranslation(slug, language.code),
+        ).map((slug: ArticleSlug) => (
           <Route
             key={`${language.code}-${slug}`}
             path={`${langPath}/${slug}`}
@@ -228,21 +230,16 @@ function App() {
         ))
       })}
 
-      {/* Non-default language main pages (wildcard — must be after article routes) */}
-      {NON_DEFAULT_LANGUAGE_CONFIG.flatMap((language) => {
+      {/* Non-default language main pages (must be after article routes) */}
+      {NON_DEFAULT_LANGUAGE_CONFIG.map((language) => {
         const path = getLanguagePathname(language.code).replace(/\/$/, '')
-        return [
-          <Route
-            key={`${language.code}-nested`}
-            path={`${path}/*`}
-            element={<LanguageRoute lang={language.code} />}
-          />,
+        return (
           <Route
             key={`${language.code}-root`}
             path={path}
             element={<LanguageRoute lang={language.code} />}
-          />,
-        ]
+          />
+        )
       })}
 
       {/* English route (default) */}

@@ -2,7 +2,7 @@ import { Shield, Zap, ThumbsUp, Heart, Github, Server, RefreshCw, Lock, BookOpen
 import { Link } from 'react-router-dom'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useTranslation, getLanguagePathname } from '@/i18n'
-import { ARTICLE_SLUGS, getArticleMeta } from '@/content/articles'
+import { ARTICLE_SLUGS, getArticleMeta, hasArticleTranslation } from '@/content/articles'
 import { FAQSection } from './FAQSection'
 
 const SECTION_TITLE: Partial<Record<string, string>> = {
@@ -243,7 +243,7 @@ export function SEOContent() {
           <h2 className="text-xl font-bold">{sectionTitle}</h2>
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
-          {ARTICLE_SLUGS.map((slug) => {
+          {ARTICLE_SLUGS.filter((slug) => hasArticleTranslation(slug, language)).map((slug) => {
             const meta = getArticleMeta(slug, language)
             return (
               <Link
