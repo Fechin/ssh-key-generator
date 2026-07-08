@@ -1,0 +1,82 @@
+# 生成 SSH 密钥：在线工具与 ssh-keygen 命令
+
+生成 SSH 密钥就是创建一对公钥和私钥。新项目通常选择 Ed25519；如果需要兼容旧服务器或旧工具，再使用 RSA 4096 位。
+
+在线 SSH 密钥生成器会在浏览器中创建密钥对。公钥添加到 GitHub、GitLab、Bitbucket 或服务器，私钥保存在您自己的设备上。
+
+## 快速答案
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+```
+
+<a href="/zh-Hans/">SSH 密钥生成器：在线生成 SSH 密钥</a> 在浏览器中生成 Ed25519 或 RSA SSH 密钥。适用于 GitHub、GitLab、服务器和 ssh-keygen 流程，私钥不会上传。
+
+## 在线生成 SSH 密钥
+
+1. 打开 SSH 密钥生成器。
+2. 现代环境选择 Ed25519；需要兼容旧系统时选择 RSA 4096 位。
+3. 添加便于识别的注释，例如邮箱或项目名。
+4. 个人使用的密钥建议设置密码短语。
+5. 生成密钥对，并保存公钥和私钥。
+6. 只把公钥添加到 GitHub、GitLab、Bitbucket 或服务器。
+
+公钥可以分享；私钥必须保密，不要粘贴到工单、聊天记录或文档里。
+
+## 使用 ssh-keygen 生成 SSH 密钥
+
+`ssh-keygen` / OpenSSH / Linux / macOS / Windows
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+```
+
+## 添加到 GitHub、GitLab 或服务器
+
+常规流程是：生成密钥，复制公钥，把公钥添加到 GitHub/GitLab 或服务器，将私钥加载到 ssh-agent，然后测试连接。
+
+```bash
+ssh -T git@github.com
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server.example.com
+```
+
+## 如何选择 Ed25519 和 RSA
+
+| 使用场景 | 推荐密钥 |
+|---|---|
+| GitHub、GitLab、Bitbucket | Ed25519 |
+| 较新的 Linux 服务器 | Ed25519 |
+| CI/CD 部署密钥 | Ed25519 |
+| 旧 SSH 服务器 | RSA 4096 位 |
+
+新密钥通常优先选择 Ed25519。只有旧 SSH 服务器或旧工具不支持 Ed25519 时，才建议使用 RSA 4096 位。
+
+## 密码短语与 ssh-agent
+
+公钥可以分享；私钥必须保密，不要粘贴到工单、聊天记录或文档里。
+
+```bash
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+## 常见问题排查
+
+大多数连接使用 ssh user@host 即可。指定密钥用 -i，非默认端口用 -p，通过跳板机连接用 -J。
+
+```bash
+ssh -v user@server.example.com
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/id_ed25519
+ssh -i ~/.ssh/id_ed25519_work user@server.example.com
+```
+
+## 相关指南
+
+- <a href="/zh-Hans/ssh-keygen/">ssh-keygen 命令示例</a>
+- <a href="/zh-Hans/what-is-an-ssh-key/">理解 SSH 密钥</a>
+- <a href="/zh-Hans/how-to-set-up-ssh/">SSH 设置步骤</a>
+- <a href="/zh-Hans/ssh-command/">SSH 命令示例</a>

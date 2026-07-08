@@ -1,0 +1,72 @@
+# ssh-keygen-opdracht: SSH-sleutels maken met voorbeelden
+
+Praktische ssh-keygen-voorbeelden voor Ed25519- en RSA-SSH-sleutels, bestandsnamen, passphrases, fingerprints, GitHub en serverlogins.
+
+Een SSH-sleutel genereren betekent dat je een publieke en een private sleutel maakt. Voor nieuwe sleutels is Ed25519 meestal de beste keuze; RSA 4096 is vooral voor oudere systemen.
+
+## Kort antwoord
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+```
+
+## Basissyntaxis van ssh-keygen
+
+```bash
+ssh-keygen -t TYPE -b BITS -C COMMENT -f OUTPUT_FILE
+```
+
+- `-t`: sleuteltype
+- `-b`: RSA-bitgrootte
+- `-C`: opmerking
+- `-f`: uitvoerbestand
+- `-p`: passphrase wijzigen
+- `-l`: fingerprint
+- `-y`: publieke sleutel uit private sleutel halen
+
+## Ed25519
+
+Kies voor nieuwe sleutels meestal Ed25519. Gebruik RSA 4096 als een oudere SSH-server of tool Ed25519 niet ondersteunt.
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+```
+
+## RSA 4096
+
+Kies voor nieuwe sleutels meestal Ed25519. Gebruik RSA 4096 als een oudere SSH-server of tool Ed25519 niet ondersteunt.
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+```
+
+## Bestandsnaam, fingerprint en ssh-agent
+
+Voor de meeste verbindingen is ssh user@host genoeg. Gebruik -i voor een specifieke sleutel, -p voor een andere poort en -J voor een bastion host.
+
+```bash
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -p -f ~/.ssh/id_ed25519
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+## De sleutel toevoegen aan GitHub, GitLab of een server
+
+De normale flow: sleutel genereren, publieke sleutel kopiëren, toevoegen aan GitHub/GitLab of de server, private sleutel laden in ssh-agent en de verbinding testen.
+
+```bash
+ssh -T git@github.com
+ssh -v user@server.example.com
+```
+
+## Gerelateerde gidsen
+
+- <a href="/nl/generate-ssh-key/">SSH-sleutel online genereren</a>
+- <a href="/nl/what-is-an-ssh-key/">SSH-sleutels begrijpen</a>
+- <a href="/nl/how-to-set-up-ssh/">SSH stap voor stap instellen</a>
+- <a href="/nl/ssh-command/">SSH-opdrachtvoorbeelden</a>

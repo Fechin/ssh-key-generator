@@ -1,0 +1,82 @@
+# Generare cheie SSH: instrument online și comenzi ssh-keygen
+
+Generarea unei chei SSH înseamnă crearea unei perechi cheie publică/cheie privată. Pentru chei noi, Ed25519 este de obicei alegerea potrivită; RSA 4096 rămâne pentru sisteme vechi.
+
+Generatorul online creează perechea de chei în browser. Cheia publică se adaugă în GitHub, GitLab, Bitbucket sau pe server; cheia privată rămâne pe calculatorul tău.
+
+## Răspuns rapid
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+```
+
+<a href="/ro/">Generator de chei SSH: creează chei SSH online</a> Generează chei SSH Ed25519 sau RSA în browser pentru GitHub, GitLab, servere și ssh-keygen. Cheia privată nu este încărcată.
+
+## Generează o cheie SSH online
+
+1. Deschide generatorul de chei SSH.
+2. Alege Ed25519 pentru sisteme moderne sau RSA 4096 pentru compatibilitate veche.
+3. Adaugă un comentariu clar, cum ar fi e-mailul sau numele proiectului.
+4. Folosește o passphrase pentru cheile personale.
+5. Generează perechea și copiază sau descarcă fișierele.
+6. Adaugă doar cheia publică în GitHub, GitLab, Bitbucket sau pe server.
+
+Cheia publică poate fi partajată. Cheia privată trebuie să rămână secretă și nu trebuie lipită în tickete, chat sau documentație.
+
+## Generează o cheie SSH cu ssh-keygen
+
+`ssh-keygen` / OpenSSH / Linux / macOS / Windows
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+```
+
+## Adaugă cheia în GitHub, GitLab sau pe server
+
+Fluxul normal: generezi cheia, copiezi cheia publică, o adaugi în GitHub/GitLab sau pe server, încarci cheia privată în ssh-agent și testezi conexiunea.
+
+```bash
+ssh -T git@github.com
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server.example.com
+```
+
+## Alege Ed25519 sau RSA
+
+| Utilizare | Cheie recomandată |
+|---|---|
+| GitHub, GitLab, Bitbucket | Ed25519 |
+| Server Linux modern | Ed25519 |
+| Cheie de deploy CI/CD | Ed25519 |
+| Server SSH vechi | RSA 4096 |
+
+Pentru chei noi, alege de obicei Ed25519. Folosește RSA 4096 dacă un server SSH vechi sau un tool nu acceptă Ed25519.
+
+## Passphrase și ssh-agent
+
+Cheia publică poate fi partajată. Cheia privată trebuie să rămână secretă și nu trebuie lipită în tickete, chat sau documentație.
+
+```bash
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+## Probleme frecvente
+
+Pentru majoritatea conexiunilor ajunge ssh user@host. Folosește -i pentru o cheie anume, -p pentru alt port și -J pentru un bastion host.
+
+```bash
+ssh -v user@server.example.com
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/id_ed25519
+ssh -i ~/.ssh/id_ed25519_work user@server.example.com
+```
+
+## Ghiduri conexe
+
+- <a href="/ro/ssh-keygen/">Exemple pentru comanda ssh-keygen</a>
+- <a href="/ro/what-is-an-ssh-key/">Înțelege cheile SSH</a>
+- <a href="/ro/how-to-set-up-ssh/">Configurează SSH pas cu pas</a>
+- <a href="/ro/ssh-command/">Exemple de comandă SSH</a>

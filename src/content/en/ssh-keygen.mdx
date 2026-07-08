@@ -1,0 +1,72 @@
+# ssh-keygen Command: Create SSH Keys with Examples
+
+Practical ssh-keygen examples for creating Ed25519 and RSA SSH keys, choosing a file name, adding a passphrase, checking fingerprints, and testing GitHub or server access.
+
+Generating an SSH key means creating a public/private key pair. For new work, Ed25519 is usually the simplest modern choice; use RSA 4096 only when an older server or tool requires it.
+
+## Quick answer
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+```
+
+## Basic ssh-keygen syntax
+
+```bash
+ssh-keygen -t TYPE -b BITS -C COMMENT -f OUTPUT_FILE
+```
+
+- `-t`: key type
+- `-b`: RSA bit size
+- `-C`: comment
+- `-f`: output file
+- `-p`: change passphrase
+- `-l`: fingerprint
+- `-y`: derive public key from a private key
+
+## Ed25519
+
+Choose Ed25519 for most new keys. Use RSA 4096 when you must support an older SSH server or a tool that does not accept Ed25519.
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+```
+
+## RSA 4096
+
+Choose Ed25519 for most new keys. Use RSA 4096 when you must support an older SSH server or a tool that does not accept Ed25519.
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+```
+
+## File name, fingerprint, and ssh-agent
+
+Most connections use ssh user@host. Use -i for a specific key, -p for a non-default port, and -J when you connect through a bastion host.
+
+```bash
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -p -f ~/.ssh/id_ed25519
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+## Add the key to GitHub, GitLab, or a server
+
+The usual flow is: generate the key, copy the public key, add it to GitHub/GitLab or the server, load the private key into ssh-agent, then test the connection.
+
+```bash
+ssh -T git@github.com
+ssh -v user@server.example.com
+```
+
+## Related guides
+
+- <a href="/generate-ssh-key/">Generate SSH key online</a>
+- <a href="/what-is-an-ssh-key/">Understand SSH keys</a>
+- <a href="/how-to-set-up-ssh/">Set up SSH step by step</a>
+- <a href="/ssh-command/">SSH command examples</a>

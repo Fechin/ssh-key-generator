@@ -10,7 +10,8 @@
         "güvenli kabuk",
         "ssh protokolü"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
     },
     "what-is-an-ssh-key": {
       "title": "SSH Anahtarı Nedir? Genel Anahtarlar, Özel Anahtarlar ve Anahtar Çiftlerinin Açıklaması",
@@ -22,7 +23,8 @@
         "genel anahtar özel anahtar",
         "github ssh anahtarı"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
     },
     "ssh-command": {
       "title": "SSH Komutu: Linux, Mac ve Windows Örnekleriyle Tam Referans",
@@ -34,7 +36,8 @@
         "ssh komut pencereleri",
         "powershell ssh komutu"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
     },
     "how-to-set-up-ssh": {
       "title": "SSH Nasıl Kurulur: Linux, Mac ve Windows için Tam Adım Adım Kılavuz",
@@ -46,7 +49,36 @@
         "ssh aracısı",
         "izin reddedildi genel anahtar"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
+    },
+    "generate-ssh-key": {
+      "title": "SSH anahtarı oluşturma: çevrimiçi araç ve ssh-keygen komutları",
+      "description": "SSH anahtarını çevrimiçi veya ssh-keygen ile oluşturun. Ed25519, RSA 4096, GitHub, GitLab, Linux sunucuları ve deploy anahtarları.",
+      "keywords": [
+        "ssh anahtarı oluşturma",
+        "ssh key oluşturma",
+        "ssh-keygen",
+        "ssh anahtar üretici",
+        "github ssh anahtarı",
+        "ed25519 ssh",
+        "rsa ssh"
+      ],
+      "publishDate": "2026-07-08",
+      "modifiedDate": "2026-07-08"
+    },
+    "ssh-keygen": {
+      "title": "ssh-keygen komutu: SSH anahtarı oluşturma örnekleri",
+      "description": "ssh-keygen için pratik örnekler: Ed25519/RSA SSH anahtarı, dosya adı, passphrase, fingerprint, GitHub ve sunucu bağlantı testi.",
+      "keywords": [
+        "ssh-keygen",
+        "ssh-keygen komutu",
+        "ssh-keygen ed25519",
+        "ssh-keygen rsa",
+        "ssh fingerprint"
+      ],
+      "publishDate": "2026-07-08",
+      "modifiedDate": "2026-07-08"
     }
   },
   "id": {
@@ -60,7 +92,8 @@
         "cangkang yang aman",
         "protokol ssh"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
     },
     "what-is-an-ssh-key": {
       "title": "Apa Itu Kunci SSH? Penjelasan Kunci Publik, Kunci Pribadi, dan Pasangan Kunci",
@@ -72,7 +105,8 @@
         "kunci publik kunci pribadi",
         "kunci ssh github"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
     },
     "ssh-command": {
       "title": "Perintah SSH: Referensi Lengkap dengan Contoh untuk Linux, Mac, dan Windows",
@@ -84,7 +118,8 @@
         "ssh jendela perintah",
         "perintah PowerShell ssh"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
     },
     "how-to-set-up-ssh": {
       "title": "Cara Mengatur SSH: Panduan Langkah-demi-Langkah Lengkap untuk Linux, Mac, dan Windows",
@@ -96,7 +131,36 @@
         "ssh-agent",
         "izin ditolak kunci publik"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
+    },
+    "generate-ssh-key": {
+      "title": "Buat kunci SSH: generator online dan perintah ssh-keygen",
+      "description": "Buat kunci SSH online atau lewat ssh-keygen. Mencakup Ed25519, RSA 4096, GitHub, GitLab, server Linux, dan deploy key.",
+      "keywords": [
+        "buat kunci ssh",
+        "generate ssh key",
+        "ssh-keygen",
+        "generator kunci ssh",
+        "kunci ssh github",
+        "ed25519 ssh",
+        "rsa ssh"
+      ],
+      "publishDate": "2026-07-08",
+      "modifiedDate": "2026-07-08"
+    },
+    "ssh-keygen": {
+      "title": "Perintah ssh-keygen: contoh membuat kunci SSH",
+      "description": "Contoh ssh-keygen yang praktis: kunci SSH Ed25519/RSA, nama file, passphrase, fingerprint, GitHub, dan tes login server.",
+      "keywords": [
+        "ssh-keygen",
+        "perintah ssh-keygen",
+        "ssh-keygen ed25519",
+        "ssh-keygen rsa",
+        "fingerprint kunci ssh"
+      ],
+      "publishDate": "2026-07-08",
+      "modifiedDate": "2026-07-08"
     }
   },
   "vi": {
@@ -110,7 +174,8 @@
         "vỏ an toàn",
         "giao thức ssh"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
     },
     "what-is-an-ssh-key": {
       "title": "Khóa SSH là gì? Giải thích về khóa công khai, khóa riêng và cặp khóa",
@@ -122,7 +187,8 @@
         "khóa công khai khóa riêng",
         "khóa ssh của github"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
     },
     "ssh-command": {
       "title": "Lệnh SSH: Tham khảo đầy đủ với các ví dụ cho Linux, Mac và Windows",
@@ -134,7 +200,8 @@
         "cửa sổ lệnh ssh",
         "lệnh ssh powershell"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
     },
     "how-to-set-up-ssh": {
       "title": "Cách thiết lập SSH: Hướng dẫn từng bước đầy đủ cho Linux, Mac và Windows",
@@ -146,7 +213,35 @@
         "đại lý ssh",
         "quyền bị từ chối khóa công khai"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
+    },
+    "generate-ssh-key": {
+      "title": "Tạo SSH key: công cụ online và lệnh ssh-keygen",
+      "description": "Tạo SSH key online hoặc bằng ssh-keygen. Bao gồm Ed25519, RSA 4096, GitHub, GitLab, server Linux và deploy key.",
+      "keywords": [
+        "tạo ssh key",
+        "generate ssh key",
+        "ssh-keygen",
+        "ssh key github",
+        "ed25519 ssh key",
+        "rsa ssh key"
+      ],
+      "publishDate": "2026-07-08",
+      "modifiedDate": "2026-07-08"
+    },
+    "ssh-keygen": {
+      "title": "Lệnh ssh-keygen: ví dụ tạo SSH key",
+      "description": "Ví dụ ssh-keygen thực tế: tạo SSH key Ed25519/RSA, đặt tên file, passphrase, fingerprint, GitHub và kiểm tra đăng nhập server.",
+      "keywords": [
+        "ssh-keygen",
+        "lệnh ssh-keygen",
+        "ssh-keygen ed25519",
+        "ssh-keygen rsa",
+        "fingerprint ssh key"
+      ],
+      "publishDate": "2026-07-08",
+      "modifiedDate": "2026-07-08"
     }
   },
   "th": {
@@ -160,7 +255,8 @@
         "เปลือกที่ปลอดภัย",
         "โปรโตคอล ssh"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
     },
     "what-is-an-ssh-key": {
       "title": "คีย์ SSH คืออะไร? อธิบายกุญแจสาธารณะ กุญแจส่วนตัว และคู่กุญแจ",
@@ -172,7 +268,8 @@
         "กุญแจสาธารณะ กุญแจส่วนตัว",
         "คีย์ GitHub SSH"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
     },
     "ssh-command": {
       "title": "คำสั่ง SSH: การอ้างอิงที่สมบูรณ์พร้อมตัวอย่างสำหรับ Linux, Mac และ Windows",
@@ -184,7 +281,8 @@
         "หน้าต่างคำสั่ง ssh",
         "คำสั่ง PowerShell SSH"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
     },
     "how-to-set-up-ssh": {
       "title": "วิธีการตั้งค่า SSH: คำแนะนำทีละขั้นตอนฉบับสมบูรณ์สำหรับ Linux, Mac และ Windows",
@@ -196,7 +294,36 @@
         "ssh-ตัวแทน",
         "การอนุญาตถูกปฏิเสธกุญแจสาธารณะ"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
+    },
+    "generate-ssh-key": {
+      "title": "สร้าง SSH key: เครื่องมือออนไลน์และคำสั่ง ssh-keygen",
+      "description": "สร้าง SSH key ออนไลน์หรือด้วย ssh-keygen ครอบคลุม Ed25519, RSA 4096, GitHub, GitLab, Linux server และ deploy key",
+      "keywords": [
+        "สร้าง ssh key",
+        "generate ssh key",
+        "ssh-keygen",
+        "ssh key generator",
+        "github ssh key",
+        "ed25519 ssh key",
+        "rsa ssh key"
+      ],
+      "publishDate": "2026-07-08",
+      "modifiedDate": "2026-07-08"
+    },
+    "ssh-keygen": {
+      "title": "คำสั่ง ssh-keygen: ตัวอย่างสร้าง SSH key",
+      "description": "ตัวอย่าง ssh-keygen ที่ใช้จริง: สร้าง SSH key แบบ Ed25519/RSA, ตั้งชื่อไฟล์, passphrase, fingerprint, GitHub และทดสอบ login server",
+      "keywords": [
+        "ssh-keygen",
+        "คำสั่ง ssh-keygen",
+        "ssh-keygen ed25519",
+        "ssh-keygen rsa",
+        "fingerprint ssh key"
+      ],
+      "publishDate": "2026-07-08",
+      "modifiedDate": "2026-07-08"
     }
   }
 }

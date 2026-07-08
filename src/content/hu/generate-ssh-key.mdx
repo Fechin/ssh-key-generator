@@ -1,0 +1,82 @@
+# SSH-kulcs létrehozása: online eszköz és ssh-keygen parancsok
+
+SSH-kulcs létrehozásakor egy publikus és egy privát kulcspár jön létre. Új kulcshoz általában az Ed25519 a jó választás; RSA 4096 főleg régi rendszerekhez kell.
+
+Az online generátor a böngészőben hozza létre a kulcspárt. A publikus kulcs kerül GitHubra, GitLabra, Bitbucketre vagy szerverre; a privát kulcs a gépeden marad.
+
+## Gyors válasz
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+```
+
+<a href="/hu/">SSH-kulcs generátor: SSH-kulcs létrehozása online</a> Generálj Ed25519 vagy RSA SSH-kulcsokat a böngészőben GitHubhoz, GitLabhoz, szerverekhez és ssh-keygen folyamatokhoz. A privát kulcs nem töltődik fel.
+
+## SSH-kulcs létrehozása online
+
+1. Nyisd meg az SSH-kulcs generátort.
+2. Modern rendszerekhez válassz Ed25519-et, régi kompatibilitáshoz RSA 4096-ot.
+3. Adj meg egy felismerhető kommentet, például e-mailt vagy projektnevet.
+4. Személyes kulcshoz használj passphrase-t.
+5. Hozd létre a kulcspárt, majd másold vagy töltsd le a fájlokat.
+6. GitHubra, GitLabra, Bitbucketre vagy szerverre csak a publikus kulcsot tedd fel.
+
+A publikus kulcs megosztható. A privát kulcs maradjon titkos, és ne kerüljön ticketbe, chatbe vagy dokumentációba.
+
+## SSH-kulcs létrehozása ssh-keygennel
+
+`ssh-keygen` / OpenSSH / Linux / macOS / Windows
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+```
+
+## Kulcs hozzáadása GitHubhoz, GitLabhoz vagy szerverhez
+
+A szokásos folyamat: kulcs létrehozása, publikus kulcs másolása, hozzáadás GitHubhoz/GitLabhoz vagy szerverhez, privát kulcs betöltése ssh-agentbe, majd kapcsolat tesztelése.
+
+```bash
+ssh -T git@github.com
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server.example.com
+```
+
+## Ed25519 vagy RSA választása
+
+| Használat | Ajánlott kulcs |
+|---|---|
+| GitHub, GitLab, Bitbucket | Ed25519 |
+| Modern Linux szerver | Ed25519 |
+| CI/CD deploy kulcs | Ed25519 |
+| Régi SSH-szerver | RSA 4096 |
+
+Új kulcsokhoz általában Ed25519-et válassz. RSA 4096 akkor kell, ha egy régi SSH-szerver vagy eszköz nem támogatja az Ed25519-et.
+
+## Passphrase és ssh-agent
+
+A publikus kulcs megosztható. A privát kulcs maradjon titkos, és ne kerüljön ticketbe, chatbe vagy dokumentációba.
+
+```bash
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+## Gyakori hibák
+
+A legtöbb kapcsolathoz elég az ssh user@host. Használd a -i opciót konkrét kulcshoz, a -p-t más porthoz, a -J-t bastion hosthoz.
+
+```bash
+ssh -v user@server.example.com
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/id_ed25519
+ssh -i ~/.ssh/id_ed25519_work user@server.example.com
+```
+
+## Kapcsolódó útmutatók
+
+- <a href="/hu/ssh-keygen/">ssh-keygen parancs példák</a>
+- <a href="/hu/what-is-an-ssh-key/">Mi az SSH-kulcs</a>
+- <a href="/hu/how-to-set-up-ssh/">SSH beállítása lépésről lépésre</a>
+- <a href="/hu/ssh-command/">SSH parancs példák</a>

@@ -1,0 +1,72 @@
+# ssh-keygenコマンド：SSH鍵を作成する実例集
+
+ssh-keygenでEd25519/RSAのSSH鍵を作成し、ファイル名、コメント、パスフレーズ、フィンガープリント、GitHub接続を確認する実例集です。
+
+SSH鍵を作成するとは、公開鍵と秘密鍵のペアを作ることです。新規作成ではEd25519が扱いやすく、古い環境との互換性が必要なときだけRSA 4096ビットを選びます。
+
+## すぐ分かる答え
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+```
+
+## ssh-keygenの基本構文
+
+```bash
+ssh-keygen -t TYPE -b BITS -C COMMENT -f OUTPUT_FILE
+```
+
+- `-t`: 鍵の種類
+- `-b`: RSAのビット数
+- `-C`: コメント
+- `-f`: 保存先ファイル
+- `-p`: パスフレーズ変更
+- `-l`: フィンガープリント
+- `-y`: 秘密鍵から公開鍵を出力
+
+## Ed25519
+
+新しい鍵は多くの場合Ed25519を選びます。古いSSHサーバーやツールがEd25519に対応していない場合だけ、RSA 4096ビットを使います。
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+```
+
+## RSA 4096
+
+新しい鍵は多くの場合Ed25519を選びます。古いSSHサーバーやツールがEd25519に対応していない場合だけ、RSA 4096ビットを使います。
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+```
+
+## ファイル名、フィンガープリント、ssh-agent
+
+通常の接続は ssh user@host で十分です。鍵を指定する場合は -i、22番以外のポートは -p、踏み台経由は -J を使います。
+
+```bash
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -p -f ~/.ssh/id_ed25519
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+## GitHub・GitLab・サーバーに登録する
+
+基本の流れは、鍵を作成し、公開鍵をコピーし、GitHub/GitLabまたはサーバーに登録し、ssh-agentに読み込み、接続をテストすることです。
+
+```bash
+ssh -T git@github.com
+ssh -v user@server.example.com
+```
+
+## 関連ガイド
+
+- <a href="/ja/generate-ssh-key/">オンラインでSSH鍵を作成</a>
+- <a href="/ja/what-is-an-ssh-key/">SSH鍵の仕組み</a>
+- <a href="/ja/how-to-set-up-ssh/">SSHのセットアップ手順</a>
+- <a href="/ja/ssh-command/">SSHコマンド例</a>

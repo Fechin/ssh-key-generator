@@ -1,0 +1,72 @@
+# ssh-keygen komutu: SSH anahtarı oluşturma örnekleri
+
+ssh-keygen için pratik örnekler: Ed25519/RSA SSH anahtarı, dosya adı, passphrase, fingerprint, GitHub ve sunucu bağlantı testi.
+
+SSH anahtarı oluşturmak, bir açık anahtar ve bir özel anahtar çifti üretmek demektir. Yeni anahtarlar için çoğu durumda Ed25519 seçilir; eski sistemler için RSA 4096 gerekir.
+
+## Kısa cevap
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+```
+
+## Temel ssh-keygen sözdizimi
+
+```bash
+ssh-keygen -t TYPE -b BITS -C COMMENT -f OUTPUT_FILE
+```
+
+- `-t`: anahtar türü
+- `-b`: RSA bit boyutu
+- `-C`: yorum
+- `-f`: çıktı dosyası
+- `-p`: passphrase değiştirme
+- `-l`: fingerprint
+- `-y`: özel anahtardan açık anahtar üretme
+
+## Ed25519
+
+Yeni anahtarlar için genellikle Ed25519 seçin. Eski bir SSH sunucusu veya araç Ed25519 desteklemiyorsa RSA 4096 kullanın.
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+```
+
+## RSA 4096
+
+Yeni anahtarlar için genellikle Ed25519 seçin. Eski bir SSH sunucusu veya araç Ed25519 desteklemiyorsa RSA 4096 kullanın.
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+```
+
+## Dosya adı, fingerprint ve ssh-agent
+
+Çoğu bağlantı için ssh user@host yeterlidir. Belirli anahtar için -i, farklı port için -p, bastion üzerinden geçmek için -J kullanın.
+
+```bash
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -p -f ~/.ssh/id_ed25519
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+## Anahtarı GitHub, GitLab veya sunucuya ekleme
+
+Normal akış: anahtarı oluşturun, açık anahtarı kopyalayın, GitHub/GitLab veya sunucuya ekleyin, özel anahtarı ssh-agent'a yükleyin ve bağlantıyı test edin.
+
+```bash
+ssh -T git@github.com
+ssh -v user@server.example.com
+```
+
+## İlgili rehberler
+
+- <a href="/tr/generate-ssh-key/">Çevrimiçi SSH anahtarı oluştur</a>
+- <a href="/tr/what-is-an-ssh-key/">SSH anahtarı nedir</a>
+- <a href="/tr/how-to-set-up-ssh/">SSH kurulumu adım adım</a>
+- <a href="/tr/ssh-command/">SSH komutu örnekleri</a>

@@ -1,0 +1,82 @@
+# สร้าง SSH key: เครื่องมือออนไลน์และคำสั่ง ssh-keygen
+
+การสร้าง SSH key คือการสร้างคู่ public key และ private key สำหรับ key ใหม่โดยทั่วไปเลือก Ed25519; ใช้ RSA 4096 เมื่อระบบเก่าจำเป็นต้องใช้
+
+เครื่องมือออนไลน์จะสร้าง key pair ในเบราว์เซอร์ Public key ใช้กับ GitHub, GitLab, Bitbucket หรือ server ส่วน private key อยู่ในเครื่องของคุณ
+
+## คำตอบแบบเร็ว
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+```
+
+<a href="/th/">SSH Key Generator: สร้าง SSH key ออนไลน์</a> สร้าง SSH key แบบ Ed25519 หรือ RSA ในเบราว์เซอร์สำหรับ GitHub, GitLab, server และ ssh-keygen โดย private key ไม่ถูกอัปโหลด
+
+## สร้าง SSH key ออนไลน์
+
+1. เปิด SSH key generator
+2. เลือก Ed25519 สำหรับระบบใหม่ หรือ RSA 4096 เมื่อต้องรองรับระบบเก่า
+3. ใส่ comment ที่จำง่าย เช่น email หรือชื่อโปรเจกต์
+4. ตั้ง passphrase สำหรับ key ส่วนตัว
+5. สร้าง key pair แล้วคัดลอกหรือดาวน์โหลดไฟล์
+6. เพิ่มเฉพาะ public key ใน GitHub, GitLab, Bitbucket หรือ server
+
+Public key แชร์ได้ แต่ private key ต้องเก็บเป็นความลับและไม่ควรวางใน ticket, chat หรือเอกสาร
+
+## สร้าง SSH key ด้วย ssh-keygen
+
+`ssh-keygen` / OpenSSH / Linux / macOS / Windows
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+```
+
+## เพิ่ม key ใน GitHub, GitLab หรือ server
+
+ขั้นตอนทั่วไปคือ สร้าง key, คัดลอก public key, เพิ่มใน GitHub/GitLab หรือ server, โหลด private key เข้า ssh-agent แล้วทดสอบการเชื่อมต่อ
+
+```bash
+ssh -T git@github.com
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server.example.com
+```
+
+## เลือก Ed25519 หรือ RSA
+
+| การใช้งาน | Key ที่แนะนำ |
+|---|---|
+| GitHub, GitLab, Bitbucket | Ed25519 |
+| Linux server รุ่นใหม่ | Ed25519 |
+| Deploy key สำหรับ CI/CD | Ed25519 |
+| SSH server รุ่นเก่า | RSA 4096 |
+
+สำหรับ key ใหม่ให้เลือก Ed25519 เป็นหลัก ใช้ RSA 4096 เมื่อ SSH server หรือเครื่องมือเก่าไม่รองรับ Ed25519
+
+## Passphrase และ ssh-agent
+
+Public key แชร์ได้ แต่ private key ต้องเก็บเป็นความลับและไม่ควรวางใน ticket, chat หรือเอกสาร
+
+```bash
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+## ปัญหาที่พบบ่อย
+
+การเชื่อมต่อส่วนใหญ่ใช้ ssh user@host ก็พอ ใช้ -i เพื่อเลือก key, -p สำหรับ port อื่น และ -J เมื่อต้องผ่าน bastion host
+
+```bash
+ssh -v user@server.example.com
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/id_ed25519
+ssh -i ~/.ssh/id_ed25519_work user@server.example.com
+```
+
+## คู่มือที่เกี่ยวข้อง
+
+- <a href="/th/ssh-keygen/">ตัวอย่างคำสั่ง ssh-keygen</a>
+- <a href="/th/what-is-an-ssh-key/">SSH key คืออะไร</a>
+- <a href="/th/how-to-set-up-ssh/">ตั้งค่า SSH ทีละขั้นตอน</a>
+- <a href="/th/ssh-command/">ตัวอย่างคำสั่ง SSH</a>

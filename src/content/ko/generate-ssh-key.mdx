@@ -1,0 +1,82 @@
+# SSH 키 생성: 온라인 생성기와 ssh-keygen 사용법
+
+SSH 키를 생성한다는 것은 공개키와 개인키 한 쌍을 만드는 것입니다. 새 키라면 Ed25519가 가장 무난하고, 오래된 시스템과의 호환성이 필요할 때 RSA 4096비트를 선택합니다.
+
+온라인 SSH 키 생성기는 브라우저에서 키 쌍을 만듭니다. 공개키는 GitHub, GitLab, Bitbucket 또는 서버에 등록하고 개인키는 내 컴퓨터에 보관합니다.
+
+## 빠른 답변
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+```
+
+<a href="/ko/">SSH 키 생성기: 온라인으로 SSH 키 만들기</a> 브라우저에서 Ed25519 또는 RSA SSH 키를 생성합니다. GitHub, GitLab, 서버, ssh-keygen 워크플로에 사용할 수 있으며 개인키는 업로드되지 않습니다.
+
+## 온라인으로 SSH 키 생성하기
+
+1. SSH 키 생성기를 엽니다.
+2. 새 환경은 Ed25519, 오래된 시스템 호환이 필요하면 RSA 4096비트를 선택합니다.
+3. 이메일이나 프로젝트명처럼 구분하기 쉬운 주석을 넣습니다.
+4. 개인용 키에는 패스프레이즈를 설정합니다.
+5. 키 쌍을 생성하고 공개키와 개인키를 저장합니다.
+6. GitHub, GitLab, Bitbucket 또는 서버에는 공개키만 등록합니다.
+
+공개키는 공유해도 됩니다. 개인키는 절대 공유하지 말고 티켓, 채팅, 문서에 붙여 넣지 마세요.
+
+## ssh-keygen으로 SSH 키 생성하기
+
+`ssh-keygen` / OpenSSH / Linux / macOS / Windows
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+```
+
+## GitHub, GitLab, 서버에 등록하기
+
+기본 흐름은 키 생성, 공개키 복사, GitHub/GitLab 또는 서버 등록, ssh-agent 로드, 연결 테스트입니다.
+
+```bash
+ssh -T git@github.com
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server.example.com
+```
+
+## Ed25519와 RSA 선택 기준
+
+| 용도 | 권장 키 |
+|---|---|
+| GitHub, GitLab, Bitbucket | Ed25519 |
+| 최신 Linux 서버 | Ed25519 |
+| CI/CD 배포 키 | Ed25519 |
+| 오래된 SSH 서버 | RSA 4096비트 |
+
+새 키는 대부분 Ed25519가 적합합니다. 오래된 SSH 서버나 도구가 Ed25519를 지원하지 않을 때만 RSA 4096비트를 사용하세요.
+
+## 패스프레이즈와 ssh-agent
+
+공개키는 공유해도 됩니다. 개인키는 절대 공유하지 말고 티켓, 채팅, 문서에 붙여 넣지 마세요.
+
+```bash
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+## 자주 겪는 문제 해결
+
+대부분의 접속은 ssh user@host로 충분합니다. 특정 키는 -i, 다른 포트는 -p, 배스천 호스트는 -J를 사용합니다.
+
+```bash
+ssh -v user@server.example.com
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/id_ed25519
+ssh -i ~/.ssh/id_ed25519_work user@server.example.com
+```
+
+## 관련 가이드
+
+- <a href="/ko/ssh-keygen/">ssh-keygen 명령어 예제</a>
+- <a href="/ko/what-is-an-ssh-key/">SSH 키 이해하기</a>
+- <a href="/ko/how-to-set-up-ssh/">SSH 설정 절차</a>
+- <a href="/ko/ssh-command/">SSH 명령어 예제</a>

@@ -1,0 +1,82 @@
+# Tạo SSH key: công cụ online và lệnh ssh-keygen
+
+Tạo SSH key nghĩa là tạo một cặp public key và private key. Với key mới, Ed25519 thường là lựa chọn gọn và hiện đại; dùng RSA 4096 khi cần tương thích với hệ thống cũ.
+
+Trình tạo SSH key online tạo cặp key ngay trong trình duyệt. Public key dùng cho GitHub, GitLab, Bitbucket hoặc server; private key nằm trên máy của bạn.
+
+## Trả lời nhanh
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+```
+
+<a href="/vi/">SSH Key Generator: tạo SSH key online</a> Tạo SSH key Ed25519 hoặc RSA trong trình duyệt cho GitHub, GitLab, server và ssh-keygen. Private key không được tải lên.
+
+## Tạo SSH key online
+
+1. Mở trình tạo SSH key.
+2. Chọn Ed25519 cho hệ thống mới hoặc RSA 4096 nếu cần tương thích cũ.
+3. Thêm comment dễ nhận biết, ví dụ email hoặc tên dự án.
+4. Dùng passphrase cho key cá nhân.
+5. Tạo cặp key rồi lưu public key và private key.
+6. Chỉ thêm public key vào GitHub, GitLab, Bitbucket hoặc server.
+
+Public key có thể chia sẻ. Private key phải giữ bí mật, không dán vào ticket, chat hay tài liệu.
+
+## Tạo SSH key bằng ssh-keygen
+
+`ssh-keygen` / OpenSSH / Linux / macOS / Windows
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+```
+
+## Thêm key vào GitHub, GitLab hoặc server
+
+Luồng thông thường: tạo key, copy public key, thêm vào GitHub/GitLab hoặc server, nạp private key vào ssh-agent rồi kiểm tra kết nối.
+
+```bash
+ssh -T git@github.com
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server.example.com
+```
+
+## Chọn Ed25519 hay RSA
+
+| Trường hợp dùng | Key nên dùng |
+|---|---|
+| GitHub, GitLab, Bitbucket | Ed25519 |
+| Server Linux hiện đại | Ed25519 |
+| Deploy key CI/CD | Ed25519 |
+| Server SSH cũ | RSA 4096 |
+
+Với key mới, thường chọn Ed25519. Chỉ dùng RSA 4096 khi server SSH cũ hoặc công cụ cũ không hỗ trợ Ed25519.
+
+## Passphrase và ssh-agent
+
+Public key có thể chia sẻ. Private key phải giữ bí mật, không dán vào ticket, chat hay tài liệu.
+
+```bash
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+## Lỗi thường gặp
+
+Phần lớn kết nối dùng ssh user@host là đủ. Dùng -i để chọn key, -p cho port khác 22 và -J khi đi qua bastion host.
+
+```bash
+ssh -v user@server.example.com
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/id_ed25519
+ssh -i ~/.ssh/id_ed25519_work user@server.example.com
+```
+
+## Hướng dẫn liên quan
+
+- <a href="/vi/ssh-keygen/">Ví dụ lệnh ssh-keygen</a>
+- <a href="/vi/what-is-an-ssh-key/">SSH key là gì</a>
+- <a href="/vi/how-to-set-up-ssh/">Thiết lập SSH từng bước</a>
+- <a href="/vi/ssh-command/">Ví dụ lệnh SSH</a>

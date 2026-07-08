@@ -1,0 +1,72 @@
+# Lệnh ssh-keygen: ví dụ tạo SSH key
+
+Ví dụ ssh-keygen thực tế: tạo SSH key Ed25519/RSA, đặt tên file, passphrase, fingerprint, GitHub và kiểm tra đăng nhập server.
+
+Tạo SSH key nghĩa là tạo một cặp public key và private key. Với key mới, Ed25519 thường là lựa chọn gọn và hiện đại; dùng RSA 4096 khi cần tương thích với hệ thống cũ.
+
+## Trả lời nhanh
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+```
+
+## Cú pháp ssh-keygen cơ bản
+
+```bash
+ssh-keygen -t TYPE -b BITS -C COMMENT -f OUTPUT_FILE
+```
+
+- `-t`: loại key
+- `-b`: độ dài RSA
+- `-C`: comment
+- `-f`: file output
+- `-p`: đổi passphrase
+- `-l`: fingerprint
+- `-y`: xuất public key từ private key
+
+## Ed25519
+
+Với key mới, thường chọn Ed25519. Chỉ dùng RSA 4096 khi server SSH cũ hoặc công cụ cũ không hỗ trợ Ed25519.
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+```
+
+## RSA 4096
+
+Với key mới, thường chọn Ed25519. Chỉ dùng RSA 4096 khi server SSH cũ hoặc công cụ cũ không hỗ trợ Ed25519.
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+```
+
+## Tên file, fingerprint và ssh-agent
+
+Phần lớn kết nối dùng ssh user@host là đủ. Dùng -i để chọn key, -p cho port khác 22 và -J khi đi qua bastion host.
+
+```bash
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -p -f ~/.ssh/id_ed25519
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+## Thêm key vào GitHub, GitLab hoặc server
+
+Luồng thông thường: tạo key, copy public key, thêm vào GitHub/GitLab hoặc server, nạp private key vào ssh-agent rồi kiểm tra kết nối.
+
+```bash
+ssh -T git@github.com
+ssh -v user@server.example.com
+```
+
+## Hướng dẫn liên quan
+
+- <a href="/vi/generate-ssh-key/">Tạo SSH key online</a>
+- <a href="/vi/what-is-an-ssh-key/">SSH key là gì</a>
+- <a href="/vi/how-to-set-up-ssh/">Thiết lập SSH từng bước</a>
+- <a href="/vi/ssh-command/">Ví dụ lệnh SSH</a>

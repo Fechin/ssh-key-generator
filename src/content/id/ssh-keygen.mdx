@@ -1,0 +1,72 @@
+# Perintah ssh-keygen: contoh membuat kunci SSH
+
+Contoh ssh-keygen yang praktis: kunci SSH Ed25519/RSA, nama file, passphrase, fingerprint, GitHub, dan tes login server.
+
+Membuat kunci SSH berarti membuat pasangan kunci publik dan kunci privat. Untuk kunci baru, Ed25519 biasanya pilihan paling praktis; RSA 4096 dipakai jika sistem lama membutuhkannya.
+
+## Jawaban cepat
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+```
+
+## Sintaks dasar ssh-keygen
+
+```bash
+ssh-keygen -t TYPE -b BITS -C COMMENT -f OUTPUT_FILE
+```
+
+- `-t`: jenis kunci
+- `-b`: ukuran RSA
+- `-C`: komentar
+- `-f`: file output
+- `-p`: ubah passphrase
+- `-l`: fingerprint
+- `-y`: mengambil kunci publik dari kunci privat
+
+## Ed25519
+
+Untuk kunci baru, biasanya pilih Ed25519. Gunakan RSA 4096 jika server SSH lama atau tool lama tidak mendukung Ed25519.
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+```
+
+## RSA 4096
+
+Untuk kunci baru, biasanya pilih Ed25519. Gunakan RSA 4096 jika server SSH lama atau tool lama tidak mendukung Ed25519.
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+```
+
+## Nama file, fingerprint, dan ssh-agent
+
+Untuk sebagian besar koneksi, ssh user@host cukup. Gunakan -i untuk memilih kunci, -p untuk port lain, dan -J untuk lewat bastion host.
+
+```bash
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -p -f ~/.ssh/id_ed25519
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+## Menambahkan kunci ke GitHub, GitLab, atau server
+
+Alur umum: buat kunci, salin kunci publik, tambahkan ke GitHub/GitLab atau server, muat kunci privat ke ssh-agent, lalu uji koneksi.
+
+```bash
+ssh -T git@github.com
+ssh -v user@server.example.com
+```
+
+## Panduan terkait
+
+- <a href="/id/generate-ssh-key/">Buat kunci SSH online</a>
+- <a href="/id/what-is-an-ssh-key/">Memahami kunci SSH</a>
+- <a href="/id/how-to-set-up-ssh/">Menyiapkan SSH langkah demi langkah</a>
+- <a href="/id/ssh-command/">Contoh perintah SSH</a>

@@ -1,0 +1,82 @@
+# Generare una chiave SSH: strumento online e comandi ssh-keygen
+
+Generare una chiave SSH significa creare una coppia composta da chiave pubblica e chiave privata. Per nuovi utilizzi Ed25519 è quasi sempre la scelta più semplice; RSA 4096 bit serve per compatibilità con sistemi datati.
+
+Il generatore online crea la coppia di chiavi nel browser. La chiave pubblica va su GitHub, GitLab, Bitbucket o sul server; la chiave privata resta sul tuo computer.
+
+## Risposta rapida
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+```
+
+<a href="/it/">Generatore di chiavi SSH: crea chiavi SSH online</a> Genera chiavi SSH Ed25519 o RSA nel browser per GitHub, GitLab, server e flussi ssh-keygen. La chiave privata non viene caricata.
+
+## Generare una chiave SSH online
+
+1. Apri il generatore di chiavi SSH.
+2. Scegli Ed25519 per ambienti moderni o RSA 4096 bit per compatibilità legacy.
+3. Aggiungi un commento riconoscibile, come email o nome del progetto.
+4. Usa una passphrase per le chiavi personali.
+5. Genera la coppia e copia o scarica i file.
+6. Installa solo la chiave pubblica su GitHub, GitLab, Bitbucket o sul server.
+
+La chiave pubblica può essere condivisa. La chiave privata deve restare segreta e non va incollata in ticket, chat o documentazione.
+
+## Generare una chiave SSH con ssh-keygen
+
+`ssh-keygen` / OpenSSH / Linux / macOS / Windows
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+```
+
+## Aggiungere la chiave a GitHub, GitLab o a un server
+
+Il flusso tipico è: genera la chiave, copia la chiave pubblica, registrala su GitHub/GitLab o sul server, carica la privata in ssh-agent e testa la connessione.
+
+```bash
+ssh -T git@github.com
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server.example.com
+```
+
+## Scegliere tra Ed25519 e RSA
+
+| Uso | Chiave consigliata |
+|---|---|
+| GitHub, GitLab, Bitbucket | Ed25519 |
+| Server Linux recente | Ed25519 |
+| Chiave di deploy CI/CD | Ed25519 |
+| Server SSH datato | RSA 4096 bit |
+
+Per nuove chiavi scegli Ed25519 nella maggior parte dei casi. Usa RSA 4096 bit solo quando un vecchio server SSH o uno strumento non supporta Ed25519.
+
+## Passphrase e ssh-agent
+
+La chiave pubblica può essere condivisa. La chiave privata deve restare segreta e non va incollata in ticket, chat o documentazione.
+
+```bash
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+## Risoluzione dei problemi comuni
+
+Per la maggior parte delle connessioni basta ssh user@host. Usa -i per una chiave specifica, -p per una porta diversa e -J per passare da un bastion host.
+
+```bash
+ssh -v user@server.example.com
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/id_ed25519
+ssh -i ~/.ssh/id_ed25519_work user@server.example.com
+```
+
+## Guide correlate
+
+- <a href="/it/ssh-keygen/">Esempi del comando ssh-keygen</a>
+- <a href="/it/what-is-an-ssh-key/">Capire le chiavi SSH</a>
+- <a href="/it/how-to-set-up-ssh/">Configurare SSH passo passo</a>
+- <a href="/it/ssh-command/">Esempi del comando SSH</a>

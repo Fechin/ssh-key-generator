@@ -1,0 +1,82 @@
+# Buat kunci SSH: generator online dan perintah ssh-keygen
+
+Membuat kunci SSH berarti membuat pasangan kunci publik dan kunci privat. Untuk kunci baru, Ed25519 biasanya pilihan paling praktis; RSA 4096 dipakai jika sistem lama membutuhkannya.
+
+Generator online membuat pasangan kunci di browser. Kunci publik ditambahkan ke GitHub, GitLab, Bitbucket, atau server; kunci privat tetap di komputer Anda.
+
+## Jawaban cepat
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+```
+
+<a href="/id/">Generator kunci SSH: buat kunci SSH online</a> Buat kunci SSH Ed25519 atau RSA di browser untuk GitHub, GitLab, server, dan alur ssh-keygen. Kunci privat tidak diunggah.
+
+## Membuat kunci SSH online
+
+1. Buka generator kunci SSH.
+2. Pilih Ed25519 untuk sistem modern atau RSA 4096 untuk kompatibilitas lama.
+3. Tambahkan komentar yang mudah dikenali, seperti email atau nama proyek.
+4. Gunakan passphrase untuk kunci pribadi.
+5. Buat pasangan kunci, lalu salin atau unduh file.
+6. Pasang hanya kunci publik di GitHub, GitLab, Bitbucket, atau server.
+
+Kunci publik boleh dibagikan. Kunci privat harus tetap rahasia dan jangan ditempel ke tiket, chat, atau dokumentasi.
+
+## Membuat kunci SSH dengan ssh-keygen
+
+`ssh-keygen` / OpenSSH / Linux / macOS / Windows
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+```
+
+## Menambahkan kunci ke GitHub, GitLab, atau server
+
+Alur umum: buat kunci, salin kunci publik, tambahkan ke GitHub/GitLab atau server, muat kunci privat ke ssh-agent, lalu uji koneksi.
+
+```bash
+ssh -T git@github.com
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server.example.com
+```
+
+## Memilih Ed25519 atau RSA
+
+| Kebutuhan | Kunci yang disarankan |
+|---|---|
+| GitHub, GitLab, Bitbucket | Ed25519 |
+| Server Linux modern | Ed25519 |
+| Deploy key CI/CD | Ed25519 |
+| Server SSH lama | RSA 4096 |
+
+Untuk kunci baru, biasanya pilih Ed25519. Gunakan RSA 4096 jika server SSH lama atau tool lama tidak mendukung Ed25519.
+
+## Passphrase dan ssh-agent
+
+Kunci publik boleh dibagikan. Kunci privat harus tetap rahasia dan jangan ditempel ke tiket, chat, atau dokumentasi.
+
+```bash
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+## Masalah umum
+
+Untuk sebagian besar koneksi, ssh user@host cukup. Gunakan -i untuk memilih kunci, -p untuk port lain, dan -J untuk lewat bastion host.
+
+```bash
+ssh -v user@server.example.com
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/id_ed25519
+ssh -i ~/.ssh/id_ed25519_work user@server.example.com
+```
+
+## Panduan terkait
+
+- <a href="/id/ssh-keygen/">Contoh perintah ssh-keygen</a>
+- <a href="/id/what-is-an-ssh-key/">Memahami kunci SSH</a>
+- <a href="/id/how-to-set-up-ssh/">Menyiapkan SSH langkah demi langkah</a>
+- <a href="/id/ssh-command/">Contoh perintah SSH</a>

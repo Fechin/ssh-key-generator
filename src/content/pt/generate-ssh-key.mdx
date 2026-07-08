@@ -1,0 +1,82 @@
+# Gerar chave SSH: ferramenta online e comandos ssh-keygen
+
+Gerar uma chave SSH significa criar um par de chave pública e chave privada. Para usos novos, Ed25519 é a escolha mais direta; RSA de 4096 bits fica como alternativa para sistemas antigos.
+
+Um gerador online de chaves SSH cria o par no navegador. A chave pública vai para GitHub, GitLab, Bitbucket ou servidores; a privada permanece no seu computador.
+
+## Resposta rápida
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+```
+
+<a href="/pt/">Gerador de chaves SSH: crie chaves SSH online</a> Gere chaves SSH Ed25519 ou RSA no navegador. O gerador roda no lado do cliente para GitHub, GitLab, servidores e fluxos com ssh-keygen; a chave privada não é enviada.
+
+## Gerar uma chave SSH online
+
+1. Abra o gerador SSH.
+2. Escolha Ed25519 para sistemas atuais ou RSA 4096 bits para compatibilidade legada.
+3. Adicione um comentário útil, como seu e-mail ou o nome do projeto.
+4. Use uma frase-senha para chaves pessoais.
+5. Gere o par de chaves e copie ou baixe os arquivos.
+6. Instale apenas a chave pública no GitHub, GitLab, Bitbucket ou servidor.
+
+A chave pública pode ser compartilhada. A chave privada deve permanecer secreta e não deve ser colada em tickets, chats ou documentação.
+
+## Gerar uma chave SSH com ssh-keygen
+
+`ssh-keygen` / OpenSSH / Linux / macOS / Windows
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+```
+
+## Adicionar a chave ao GitHub, GitLab ou servidor
+
+O fluxo normal é: gerar a chave, copiar a chave pública, cadastrá-la no GitHub/GitLab ou no servidor, carregar a chave no ssh-agent e testar a conexão.
+
+```bash
+ssh -T git@github.com
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server.example.com
+```
+
+## Escolher entre Ed25519 e RSA
+
+| Uso | Chave recomendada |
+|---|---|
+| GitHub, GitLab, Bitbucket | Ed25519 |
+| Servidor Linux atual | Ed25519 |
+| Chave de deploy CI/CD | Ed25519 |
+| Servidor SSH antigo | RSA 4096 bits |
+
+Para chaves novas, Ed25519 costuma ser a melhor escolha. Use RSA de 4096 bits quando precisar de compatibilidade com um servidor SSH antigo ou uma ferramenta sem suporte a Ed25519.
+
+## Frase-senha e ssh-agent
+
+A chave pública pode ser compartilhada. A chave privada deve permanecer secreta e não deve ser colada em tickets, chats ou documentação.
+
+```bash
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+## Solução de problemas comuns
+
+Para a maioria das conexões, ssh user@host basta. Use -i para uma chave específica, -p para uma porta diferente e -J para passar por um host bastião.
+
+```bash
+ssh -v user@server.example.com
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/id_ed25519
+ssh -i ~/.ssh/id_ed25519_work user@server.example.com
+```
+
+## Guias relacionados
+
+- <a href="/pt/ssh-keygen/">Exemplos do comando ssh-keygen</a>
+- <a href="/pt/what-is-an-ssh-key/">Entender chaves SSH</a>
+- <a href="/pt/how-to-set-up-ssh/">Configurar SSH passo a passo</a>
+- <a href="/pt/ssh-command/">Exemplos do comando SSH</a>

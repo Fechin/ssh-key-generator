@@ -1,0 +1,72 @@
+# ssh-keygen-komento: SSH-avainten luonti esimerkeillä
+
+Käytännön ssh-keygen-esimerkit Ed25519- ja RSA-SSH-avaimille, tiedostonimelle, salalauseelle, fingerprintille, GitHubille ja palvelinkirjautumiselle.
+
+SSH-avaimen luonti tarkoittaa julkisen ja yksityisen avaimen parin tekemistä. Uusille avaimille Ed25519 on yleensä paras valinta; RSA 4096 on lähinnä vanhoja järjestelmiä varten.
+
+## Nopea vastaus
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+```
+
+## ssh-keygenin perussyntaksi
+
+```bash
+ssh-keygen -t TYPE -b BITS -C COMMENT -f OUTPUT_FILE
+```
+
+- `-t`: avaintyyppi
+- `-b`: RSA-bittikoko
+- `-C`: kommentti
+- `-f`: tulostiedosto
+- `-p`: vaihda salalause
+- `-l`: fingerprint
+- `-y`: julkinen avain yksityisestä avaimesta
+
+## Ed25519
+
+Valitse uusille avaimille yleensä Ed25519. Käytä RSA 4096:ta, jos vanha SSH-palvelin tai työkalu ei tue Ed25519:ää.
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+```
+
+## RSA 4096
+
+Valitse uusille avaimille yleensä Ed25519. Käytä RSA 4096:ta, jos vanha SSH-palvelin tai työkalu ei tue Ed25519:ää.
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+```
+
+## Tiedostonimi, fingerprint ja ssh-agent
+
+Useimpiin yhteyksiin riittää ssh user@host. Käytä -i:tä tietylle avaimelle, -p:tä eri portille ja -J:tä bastionin kautta yhdistämiseen.
+
+```bash
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -p -f ~/.ssh/id_ed25519
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+## Lisää avain GitHubiin, GitLabiin tai palvelimelle
+
+Tavallinen työnkulku: luo avain, kopioi julkinen avain, lisää se GitHubiin/GitLabiin tai palvelimelle, lataa yksityinen avain ssh-agenttiin ja testaa yhteys.
+
+```bash
+ssh -T git@github.com
+ssh -v user@server.example.com
+```
+
+## Aiheeseen liittyvät oppaat
+
+- <a href="/fi/generate-ssh-key/">Luo SSH-avain verkossa</a>
+- <a href="/fi/what-is-an-ssh-key/">Ymmärrä SSH-avaimet</a>
+- <a href="/fi/how-to-set-up-ssh/">Määritä SSH vaiheittain</a>
+- <a href="/fi/ssh-command/">SSH-komentoesimerkit</a>

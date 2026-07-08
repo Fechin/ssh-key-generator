@@ -1,0 +1,72 @@
+# ssh-keygen 命令：生成 SSH 密钥的实用示例
+
+ssh-keygen 生成 Ed25519/RSA SSH 密钥的实用示例，包含文件名、注释、密码短语、指纹、GitHub 和服务器连接测试。
+
+生成 SSH 密钥就是创建一对公钥和私钥。新项目通常选择 Ed25519；如果需要兼容旧服务器或旧工具，再使用 RSA 4096 位。
+
+## 快速答案
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+```
+
+## ssh-keygen 基本语法
+
+```bash
+ssh-keygen -t TYPE -b BITS -C COMMENT -f OUTPUT_FILE
+```
+
+- `-t`: 密钥类型
+- `-b`: RSA 位数
+- `-C`: 注释
+- `-f`: 保存路径
+- `-p`: 修改密码短语
+- `-l`: 指纹
+- `-y`: 从私钥导出公钥
+
+## Ed25519
+
+新密钥通常优先选择 Ed25519。只有旧 SSH 服务器或旧工具不支持 Ed25519 时，才建议使用 RSA 4096 位。
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+```
+
+## RSA 4096
+
+新密钥通常优先选择 Ed25519。只有旧 SSH 服务器或旧工具不支持 Ed25519 时，才建议使用 RSA 4096 位。
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+```
+
+## 文件名、指纹与 ssh-agent
+
+大多数连接使用 ssh user@host 即可。指定密钥用 -i，非默认端口用 -p，通过跳板机连接用 -J。
+
+```bash
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -p -f ~/.ssh/id_ed25519
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+## 添加到 GitHub、GitLab 或服务器
+
+常规流程是：生成密钥，复制公钥，把公钥添加到 GitHub/GitLab 或服务器，将私钥加载到 ssh-agent，然后测试连接。
+
+```bash
+ssh -T git@github.com
+ssh -v user@server.example.com
+```
+
+## 相关指南
+
+- <a href="/zh-Hans/generate-ssh-key/">在线生成 SSH 密钥</a>
+- <a href="/zh-Hans/what-is-an-ssh-key/">理解 SSH 密钥</a>
+- <a href="/zh-Hans/how-to-set-up-ssh/">SSH 设置步骤</a>
+- <a href="/zh-Hans/ssh-command/">SSH 命令示例</a>

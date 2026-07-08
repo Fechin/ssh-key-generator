@@ -1,0 +1,72 @@
+# Команда ssh-keygen: приклади створення SSH-ключів
+
+Практичні приклади ssh-keygen: Ed25519 і RSA-ключі, ім’я файлу, passphrase, fingerprint, GitHub і перевірка входу на сервер.
+
+Створити SSH-ключ означає отримати пару з відкритого та приватного ключа. Для нових ключів зазвичай обирають Ed25519; RSA 4096 потрібен для старих серверів або явних вимог.
+
+## Коротка відповідь
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+```
+
+## Базовий синтаксис ssh-keygen
+
+```bash
+ssh-keygen -t TYPE -b BITS -C COMMENT -f OUTPUT_FILE
+```
+
+- `-t`: тип ключа
+- `-b`: розмір RSA
+- `-C`: коментар
+- `-f`: файл виводу
+- `-p`: змінити passphrase
+- `-l`: fingerprint
+- `-y`: отримати відкритий ключ із приватного
+
+## Ed25519
+
+Для нових ключів зазвичай підходить Ed25519. Використовуйте RSA 4096, якщо старий SSH-сервер або інструмент не підтримує Ed25519.
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+```
+
+## RSA 4096
+
+Для нових ключів зазвичай підходить Ed25519. Використовуйте RSA 4096, якщо старий SSH-сервер або інструмент не підтримує Ed25519.
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+```
+
+## Ім’я файлу, fingerprint і ssh-agent
+
+Для більшості підключень достатньо ssh user@host. Використовуйте -i для вибору ключа, -p для нестандартного порту і -J для підключення через бастіон.
+
+```bash
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -p -f ~/.ssh/id_ed25519
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+## Додати ключ до GitHub, GitLab або на сервер
+
+Звичайний порядок: створити ключ, скопіювати відкритий ключ, додати його в GitHub/GitLab або на сервер, завантажити приватний ключ у ssh-agent і перевірити підключення.
+
+```bash
+ssh -T git@github.com
+ssh -v user@server.example.com
+```
+
+## Пов’язані посібники
+
+- <a href="/uk/generate-ssh-key/">Створити SSH-ключ онлайн</a>
+- <a href="/uk/what-is-an-ssh-key/">Що таке SSH-ключ</a>
+- <a href="/uk/how-to-set-up-ssh/">Налаштувати SSH покроково</a>
+- <a href="/uk/ssh-command/">Приклади команди SSH</a>

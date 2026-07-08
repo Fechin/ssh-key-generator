@@ -1,0 +1,72 @@
+# ssh-keygen-Befehl: SSH-Schlüssel mit Beispielen erstellen
+
+Praktische ssh-keygen-Beispiele für Ed25519- und RSA-SSH-Schlüssel, eigene Dateinamen, Passphrases, Fingerprints, GitHub und Server-Logins.
+
+Einen SSH-Schlüssel zu erstellen bedeutet, ein öffentliches und ein privates Schlüsselpaar zu erzeugen. Für neue Schlüssel ist Ed25519 meist die moderne Standardwahl; RSA 4096 Bit bleibt die Kompatibilitätsoption für ältere Systeme.
+
+## Kurzantwort
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+```
+
+## Grundsyntax von ssh-keygen
+
+```bash
+ssh-keygen -t TYPE -b BITS -C COMMENT -f OUTPUT_FILE
+```
+
+- `-t`: Schlüsseltyp
+- `-b`: RSA-Bitgröße
+- `-C`: Kommentar
+- `-f`: Ausgabedatei
+- `-p`: Passphrase ändern
+- `-l`: Fingerprint
+- `-y`: öffentlichen Schlüssel aus privatem Schlüssel ableiten
+
+## Ed25519
+
+Für neue Schlüssel ist Ed25519 meistens die beste Wahl. RSA 4096 Bit verwenden Sie, wenn ein älterer SSH-Server oder ein Legacy-Tool Ed25519 nicht unterstützt.
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+```
+
+## RSA 4096
+
+Für neue Schlüssel ist Ed25519 meistens die beste Wahl. RSA 4096 Bit verwenden Sie, wenn ein älterer SSH-Server oder ein Legacy-Tool Ed25519 nicht unterstützt.
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+```
+
+## Dateiname, Fingerprint und SSH-Agent
+
+Für die meisten Verbindungen reicht ssh user@host. Mit -i wählen Sie eine bestimmte Schlüsseldatei, mit -p einen anderen Port und mit -J einen Bastion-Host.
+
+```bash
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -p -f ~/.ssh/id_ed25519
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+## Schlüssel bei GitHub, GitLab oder auf einem Server einrichten
+
+Der übliche Ablauf: Schlüssel erzeugen, öffentlichen Schlüssel kopieren, bei GitHub/GitLab oder auf dem Server hinterlegen, den privaten Schlüssel in ssh-agent laden und die Verbindung testen.
+
+```bash
+ssh -T git@github.com
+ssh -v user@server.example.com
+```
+
+## Verwandte Anleitungen
+
+- <a href="/de/generate-ssh-key/">SSH-Schlüssel online erstellen</a>
+- <a href="/de/what-is-an-ssh-key/">SSH-Schlüssel verstehen</a>
+- <a href="/de/how-to-set-up-ssh/">SSH Schritt für Schritt einrichten</a>
+- <a href="/de/ssh-command/">SSH-Befehl mit Beispielen</a>

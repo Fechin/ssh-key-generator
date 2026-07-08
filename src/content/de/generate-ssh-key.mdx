@@ -1,0 +1,82 @@
+# SSH-Schlüssel erstellen: Online-Tool und ssh-keygen-Befehle
+
+Einen SSH-Schlüssel zu erstellen bedeutet, ein öffentliches und ein privates Schlüsselpaar zu erzeugen. Für neue Schlüssel ist Ed25519 meist die moderne Standardwahl; RSA 4096 Bit bleibt die Kompatibilitätsoption für ältere Systeme.
+
+Ein Online-Generator für SSH-Schlüssel erzeugt das Schlüsselpaar im Browser. Der öffentliche Schlüssel kommt zu GitHub, GitLab, Bitbucket oder auf den Server; der private Schlüssel bleibt auf Ihrem Rechner.
+
+## Kurzantwort
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+```
+
+<a href="/de/">SSH-Schlüsselgenerator: SSH-Schlüssel online erstellen</a> Erstellen Sie Ed25519- oder RSA-SSH-Schlüssel direkt im Browser. Der Generator läuft clientseitig für GitHub, GitLab, Server und ssh-keygen-Workflows; private Schlüssel werden nicht hochgeladen.
+
+## SSH-Schlüssel online erstellen
+
+1. Öffnen Sie den SSH-Schlüsselgenerator.
+2. Wählen Sie Ed25519 für aktuelle Systeme oder RSA 4096 Bit für ältere Kompatibilität.
+3. Fügen Sie einen sinnvollen Kommentar hinzu, meist E-Mail-Adresse oder Projektname.
+4. Verwenden Sie für persönliche Schlüssel eine Passphrase.
+5. Erzeugen Sie das Schlüsselpaar und kopieren oder laden Sie die Dateien herunter.
+6. Hinterlegen Sie nur den öffentlichen Schlüssel bei GitHub, GitLab, Bitbucket oder auf dem Server.
+
+Der öffentliche Schlüssel darf geteilt werden. Der private Schlüssel muss geheim bleiben und gehört nicht in Tickets, Chats oder Dokumentation.
+
+## SSH-Schlüssel mit ssh-keygen erstellen
+
+`ssh-keygen` / OpenSSH / Linux / macOS / Windows
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+```
+
+## Schlüssel bei GitHub, GitLab oder auf einem Server einrichten
+
+Der übliche Ablauf: Schlüssel erzeugen, öffentlichen Schlüssel kopieren, bei GitHub/GitLab oder auf dem Server hinterlegen, den privaten Schlüssel in ssh-agent laden und die Verbindung testen.
+
+```bash
+ssh -T git@github.com
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server.example.com
+```
+
+## Ed25519 oder RSA wählen
+
+| Einsatz | Empfohlener Schlüssel |
+|---|---|
+| GitHub, GitLab, Bitbucket | Ed25519 |
+| Aktueller Linux-Server | Ed25519 |
+| CI/CD-Deployment-Schlüssel | Ed25519 |
+| Älterer SSH-Server | RSA 4096 Bit |
+
+Für neue Schlüssel ist Ed25519 meistens die beste Wahl. RSA 4096 Bit verwenden Sie, wenn ein älterer SSH-Server oder ein Legacy-Tool Ed25519 nicht unterstützt.
+
+## Passphrase und ssh-agent
+
+Der öffentliche Schlüssel darf geteilt werden. Der private Schlüssel muss geheim bleiben und gehört nicht in Tickets, Chats oder Dokumentation.
+
+```bash
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+## Häufige Fehler beheben
+
+Für die meisten Verbindungen reicht ssh user@host. Mit -i wählen Sie eine bestimmte Schlüsseldatei, mit -p einen anderen Port und mit -J einen Bastion-Host.
+
+```bash
+ssh -v user@server.example.com
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/id_ed25519
+ssh -i ~/.ssh/id_ed25519_work user@server.example.com
+```
+
+## Verwandte Anleitungen
+
+- <a href="/de/ssh-keygen/">ssh-keygen-Beispiele</a>
+- <a href="/de/what-is-an-ssh-key/">SSH-Schlüssel verstehen</a>
+- <a href="/de/how-to-set-up-ssh/">SSH Schritt für Schritt einrichten</a>
+- <a href="/de/ssh-command/">SSH-Befehl mit Beispielen</a>

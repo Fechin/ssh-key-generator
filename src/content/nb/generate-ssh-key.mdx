@@ -1,0 +1,82 @@
+# Opprett SSH-nøkkel: nettverktøy og ssh-keygen-kommandoer
+
+Å opprette en SSH-nøkkel betyr å lage et par med offentlig og privat nøkkel. For nye nøkler er Ed25519 som regel riktig valg; RSA 4096 brukes mest for eldre systemer.
+
+Nettgeneratoren lager nøkkelparet i nettleseren. Den offentlige nøkkelen legges i GitHub, GitLab, Bitbucket eller på serveren; den private nøkkelen blir på maskinen din.
+
+## Kort svar
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+```
+
+<a href="/nb/">SSH-nøkkelgenerator: opprett SSH-nøkler på nett</a> Generer Ed25519- eller RSA-SSH-nøkler i nettleseren for GitHub, GitLab, servere og ssh-keygen. Den private nøkkelen lastes ikke opp.
+
+## Opprett en SSH-nøkkel på nett
+
+1. Åpne SSH-nøkkelgeneratoren.
+2. Velg Ed25519 for moderne systemer eller RSA 4096 for eldre kompatibilitet.
+3. Legg til en tydelig kommentar, for eksempel e-post eller prosjektnavn.
+4. Bruk passphrase for personlige nøkler.
+5. Lag nøkkelparet og kopier eller last ned filene.
+6. Installer bare den offentlige nøkkelen i GitHub, GitLab, Bitbucket eller på serveren.
+
+Den offentlige nøkkelen kan deles. Den private nøkkelen må holdes hemmelig og skal ikke limes inn i saker, chat eller dokumentasjon.
+
+## Opprett en SSH-nøkkel med ssh-keygen
+
+`ssh-keygen` / OpenSSH / Linux / macOS / Windows
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+```
+
+## Legg nøkkelen til i GitHub, GitLab eller på en server
+
+Vanlig flyt: lag nøkkelen, kopier offentlig nøkkel, legg den i GitHub/GitLab eller på serveren, last privat nøkkel i ssh-agent og test tilkoblingen.
+
+```bash
+ssh -T git@github.com
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server.example.com
+```
+
+## Velg Ed25519 eller RSA
+
+| Bruk | Anbefalt nøkkel |
+|---|---|
+| GitHub, GitLab, Bitbucket | Ed25519 |
+| Moderne Linux-server | Ed25519 |
+| CI/CD deploy-nøkkel | Ed25519 |
+| Eldre SSH-server | RSA 4096 |
+
+Velg Ed25519 for de fleste nye nøkler. Bruk RSA 4096 hvis en eldre SSH-server eller et verktøy ikke støtter Ed25519.
+
+## Passphrase og ssh-agent
+
+Den offentlige nøkkelen kan deles. Den private nøkkelen må holdes hemmelig og skal ikke limes inn i saker, chat eller dokumentasjon.
+
+```bash
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+## Vanlig feilsøking
+
+De fleste tilkoblinger bruker ssh user@host. Bruk -i for en bestemt nøkkel, -p for annen port og -J for tilkobling via bastion.
+
+```bash
+ssh -v user@server.example.com
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/id_ed25519
+ssh -i ~/.ssh/id_ed25519_work user@server.example.com
+```
+
+## Relaterte guider
+
+- <a href="/nb/ssh-keygen/">ssh-keygen-eksempler</a>
+- <a href="/nb/what-is-an-ssh-key/">Forstå SSH-nøkler</a>
+- <a href="/nb/how-to-set-up-ssh/">Sett opp SSH steg for steg</a>
+- <a href="/nb/ssh-command/">SSH-kommandoeksempler</a>

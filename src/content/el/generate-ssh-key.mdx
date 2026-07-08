@@ -1,0 +1,82 @@
+# Δημιουργία SSH key: online εργαλείο και εντολές ssh-keygen
+
+Η δημιουργία SSH key σημαίνει δημιουργία ζεύγους public/private key. Για νέα keys, το Ed25519 είναι συνήθως η πιο πρακτική επιλογή· το RSA 4096 χρειάζεται κυρίως για παλιά συστήματα.
+
+Το online generator δημιουργεί το ζεύγος keys στον browser. Το public key μπαίνει σε GitHub, GitLab, Bitbucket ή server· το private key μένει στον υπολογιστή σας.
+
+## Γρήγορη απάντηση
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+```
+
+<a href="/el/">SSH Key Generator: δημιουργία SSH keys online</a> Δημιουργήστε Ed25519 ή RSA SSH keys στον browser για GitHub, GitLab, servers και ssh-keygen. Το private key δεν ανεβαίνει.
+
+## Δημιουργία SSH key online
+
+1. Ανοίξτε το SSH key generator.
+2. Επιλέξτε Ed25519 για σύγχρονα συστήματα ή RSA 4096 για παλιά συμβατότητα.
+3. Προσθέστε καθαρό comment, όπως email ή όνομα project.
+4. Χρησιμοποιήστε passphrase για προσωπικά keys.
+5. Δημιουργήστε το ζεύγος και αντιγράψτε ή κατεβάστε τα αρχεία.
+6. Προσθέστε μόνο το public key σε GitHub, GitLab, Bitbucket ή server.
+
+Το public key μπορεί να κοινοποιηθεί. Το private key πρέπει να παραμένει μυστικό και να μην μπαίνει σε tickets, chat ή documentation.
+
+## Δημιουργία SSH key με ssh-keygen
+
+`ssh-keygen` / OpenSSH / Linux / macOS / Windows
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+```
+
+## Προσθήκη του key σε GitHub, GitLab ή server
+
+Η συνηθισμένη ροή: δημιουργείτε key, αντιγράφετε το public key, το προσθέτετε σε GitHub/GitLab ή server, φορτώνετε το private key στο ssh-agent και δοκιμάζετε τη σύνδεση.
+
+```bash
+ssh -T git@github.com
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server.example.com
+```
+
+## Επιλογή Ed25519 ή RSA
+
+| Χρήση | Προτεινόμενο key |
+|---|---|
+| GitHub, GitLab, Bitbucket | Ed25519 |
+| Σύγχρονος Linux server | Ed25519 |
+| CI/CD deploy key | Ed25519 |
+| Παλιός SSH server | RSA 4096 |
+
+Για νέα keys επιλέξτε συνήθως Ed25519. Χρησιμοποιήστε RSA 4096 όταν παλιός SSH server ή εργαλείο δεν υποστηρίζει Ed25519.
+
+## Passphrase και ssh-agent
+
+Το public key μπορεί να κοινοποιηθεί. Το private key πρέπει να παραμένει μυστικό και να μην μπαίνει σε tickets, chat ή documentation.
+
+```bash
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+## Συνηθισμένα προβλήματα
+
+Για τις περισσότερες συνδέσεις αρκεί ssh user@host. Χρησιμοποιήστε -i για συγκεκριμένο key, -p για διαφορετικό port και -J για σύνδεση μέσω bastion host.
+
+```bash
+ssh -v user@server.example.com
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/id_ed25519
+ssh -i ~/.ssh/id_ed25519_work user@server.example.com
+```
+
+## Σχετικοί οδηγοί
+
+- <a href="/el/ssh-keygen/">Παραδείγματα εντολής ssh-keygen</a>
+- <a href="/el/what-is-an-ssh-key/">Τι είναι το SSH key</a>
+- <a href="/el/how-to-set-up-ssh/">Ρύθμιση SSH βήμα-βήμα</a>
+- <a href="/el/ssh-command/">Παραδείγματα εντολής SSH</a>

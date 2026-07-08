@@ -1,0 +1,82 @@
+# SSH-sleutel genereren: online tool en ssh-keygen-opdrachten
+
+Een SSH-sleutel genereren betekent dat je een publieke en een private sleutel maakt. Voor nieuwe sleutels is Ed25519 meestal de beste keuze; RSA 4096 is vooral voor oudere systemen.
+
+De online SSH-sleutelgenerator maakt het sleutelpaar in je browser. De publieke sleutel gaat naar GitHub, GitLab, Bitbucket of je server; de private sleutel blijft op je eigen machine.
+
+## Kort antwoord
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+```
+
+<a href="/nl/">SSH-sleutelgenerator: maak SSH-sleutels online</a> Genereer Ed25519- of RSA-SSH-sleutels in je browser voor GitHub, GitLab, servers en ssh-keygen-flows. Je private sleutel wordt niet geüpload.
+
+## Een SSH-sleutel online genereren
+
+1. Open de SSH-sleutelgenerator.
+2. Kies Ed25519 voor moderne systemen of RSA 4096 voor oudere compatibiliteit.
+3. Voeg een herkenbare opmerking toe, zoals je e-mailadres of projectnaam.
+4. Gebruik een passphrase voor persoonlijke sleutels.
+5. Genereer het sleutelpaar en kopieer of download de bestanden.
+6. Plaats alleen de publieke sleutel op GitHub, GitLab, Bitbucket of de server.
+
+De publieke sleutel mag je delen. De private sleutel moet geheim blijven en hoort niet in tickets, chat of documentatie.
+
+## Een SSH-sleutel maken met ssh-keygen
+
+`ssh-keygen` / OpenSSH / Linux / macOS / Windows
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+```
+
+## De sleutel toevoegen aan GitHub, GitLab of een server
+
+De normale flow: sleutel genereren, publieke sleutel kopiëren, toevoegen aan GitHub/GitLab of de server, private sleutel laden in ssh-agent en de verbinding testen.
+
+```bash
+ssh -T git@github.com
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server.example.com
+```
+
+## Ed25519 of RSA kiezen
+
+| Gebruik | Aanbevolen sleutel |
+|---|---|
+| GitHub, GitLab, Bitbucket | Ed25519 |
+| Moderne Linux-server | Ed25519 |
+| CI/CD-deploy key | Ed25519 |
+| Oude SSH-server | RSA 4096 |
+
+Kies voor nieuwe sleutels meestal Ed25519. Gebruik RSA 4096 als een oudere SSH-server of tool Ed25519 niet ondersteunt.
+
+## Passphrase en ssh-agent
+
+De publieke sleutel mag je delen. De private sleutel moet geheim blijven en hoort niet in tickets, chat of documentatie.
+
+```bash
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+## Veelvoorkomende problemen
+
+Voor de meeste verbindingen is ssh user@host genoeg. Gebruik -i voor een specifieke sleutel, -p voor een andere poort en -J voor een bastion host.
+
+```bash
+ssh -v user@server.example.com
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/id_ed25519
+ssh -i ~/.ssh/id_ed25519_work user@server.example.com
+```
+
+## Gerelateerde gidsen
+
+- <a href="/nl/ssh-keygen/">ssh-keygen-voorbeelden</a>
+- <a href="/nl/what-is-an-ssh-key/">SSH-sleutels begrijpen</a>
+- <a href="/nl/how-to-set-up-ssh/">SSH stap voor stap instellen</a>
+- <a href="/nl/ssh-command/">SSH-opdrachtvoorbeelden</a>

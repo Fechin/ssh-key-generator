@@ -10,7 +10,8 @@
         "säkert skal",
         "ssh-protokoll"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
     },
     "what-is-an-ssh-key": {
       "title": "Vad är en SSH-nyckel? Offentliga nycklar, privata nycklar och nyckelpar förklaras",
@@ -22,7 +23,8 @@
         "offentlig nyckel privat nyckel",
         "github ssh-nyckel"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
     },
     "ssh-command": {
       "title": "SSH-kommandot: Komplett referens med exempel för Linux, Mac och Windows",
@@ -34,7 +36,8 @@
         "ssh kommandofönster",
         "powershell ssh kommando"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
     },
     "how-to-set-up-ssh": {
       "title": "Hur man ställer in SSH: En komplett steg-för-steg-guide för Linux, Mac och Windows",
@@ -46,7 +49,37 @@
         "ssh-agent",
         "tillstånd nekad publickey"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
+    },
+    "generate-ssh-key": {
+      "title": "Skapa SSH-nyckel: onlineverktyg och ssh-keygen-kommandon",
+      "description": "Skapa en SSH-nyckel online eller med ssh-keygen. Ed25519, RSA 4096, GitHub, GitLab, Linux-servrar och deploy-nycklar.",
+      "keywords": [
+        "skapa ssh nyckel",
+        "generera ssh nyckel",
+        "ssh-keygen",
+        "ssh nyckel generator",
+        "github ssh nyckel",
+        "ed25519 ssh nyckel",
+        "rsa ssh nyckel"
+      ],
+      "publishDate": "2026-07-08",
+      "modifiedDate": "2026-07-08"
+    },
+    "ssh-keygen": {
+      "title": "ssh-keygen-kommando: skapa SSH-nycklar med exempel",
+      "description": "Praktiska ssh-keygen-exempel för Ed25519- och RSA-nycklar, filnamn, lösenfras, fingeravtryck, GitHub och serverinloggning.",
+      "keywords": [
+        "ssh-keygen",
+        "ssh keygen",
+        "ssh-keygen kommando",
+        "ssh-keygen ed25519",
+        "ssh-keygen rsa",
+        "ssh fingerprint"
+      ],
+      "publishDate": "2026-07-08",
+      "modifiedDate": "2026-07-08"
     }
   },
   "da": {
@@ -60,7 +93,8 @@
         "sikker skal",
         "ssh protokol"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
     },
     "what-is-an-ssh-key": {
       "title": "Hvad er en SSH-nøgle? Offentlige nøgler, private nøgler og nøglepar forklaret",
@@ -72,7 +106,8 @@
         "offentlig nøgle privat nøgle",
         "github ssh nøgle"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
     },
     "ssh-command": {
       "title": "SSH-kommandoen: Fuldfør reference med eksempler til Linux, Mac og Windows",
@@ -84,7 +119,8 @@
         "ssh kommando vinduer",
         "powershell ssh kommando"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
     },
     "how-to-set-up-ssh": {
       "title": "Sådan opsætter du SSH: En komplet trin-for-trin guide til Linux, Mac og Windows",
@@ -96,7 +132,37 @@
         "ssh-agent",
         "tilladelse nægtet offentlig nøgle"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
+    },
+    "generate-ssh-key": {
+      "title": "Opret SSH-nøgle: onlineværktøj og ssh-keygen-kommandoer",
+      "description": "Opret en SSH-nøgle online eller med ssh-keygen. Ed25519, RSA 4096, GitHub, GitLab, Linux-servere og deploy-nøgler.",
+      "keywords": [
+        "opret ssh nøgle",
+        "generer ssh nøgle",
+        "ssh-keygen",
+        "ssh nøgle generator",
+        "github ssh nøgle",
+        "ed25519 ssh nøgle",
+        "rsa ssh nøgle"
+      ],
+      "publishDate": "2026-07-08",
+      "modifiedDate": "2026-07-08"
+    },
+    "ssh-keygen": {
+      "title": "ssh-keygen-kommando: opret SSH-nøgler med eksempler",
+      "description": "Praktiske ssh-keygen-eksempler til Ed25519- og RSA-SSH-nøgler, filnavn, passphrase, fingerprint, GitHub og serverlogin.",
+      "keywords": [
+        "ssh-keygen",
+        "ssh keygen",
+        "ssh-keygen kommando",
+        "ssh-keygen ed25519",
+        "ssh-keygen rsa",
+        "ssh fingerprint"
+      ],
+      "publishDate": "2026-07-08",
+      "modifiedDate": "2026-07-08"
     }
   },
   "nb": {
@@ -110,7 +176,8 @@
         "sikkert skall",
         "ssh-protokoll"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
     },
     "what-is-an-ssh-key": {
       "title": "Hva er en SSH-nøkkel? Offentlige nøkler, private nøkler og nøkkelpar forklart",
@@ -122,7 +189,8 @@
         "offentlig nøkkel privat nøkkel",
         "github ssh-nøkkel"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
     },
     "ssh-command": {
       "title": "SSH-kommandoen: Komplett referanse med eksempler for Linux, Mac og Windows",
@@ -134,7 +202,8 @@
         "ssh kommandovinduer",
         "powershell ssh kommando"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
     },
     "how-to-set-up-ssh": {
       "title": "Hvordan sette opp SSH: En komplett trinn-for-trinn-veiledning for Linux, Mac og Windows",
@@ -146,7 +215,37 @@
         "ssh-agent",
         "tillatelse nektet offentlig nøkkel"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
+    },
+    "generate-ssh-key": {
+      "title": "Opprett SSH-nøkkel: nettverktøy og ssh-keygen-kommandoer",
+      "description": "Opprett en SSH-nøkkel på nett eller med ssh-keygen. Ed25519, RSA 4096, GitHub, GitLab, Linux-servere og deploy-nøkler.",
+      "keywords": [
+        "opprette ssh nøkkel",
+        "generere ssh nøkkel",
+        "ssh-keygen",
+        "ssh nøkkel generator",
+        "github ssh nøkkel",
+        "ed25519 ssh nøkkel",
+        "rsa ssh nøkkel"
+      ],
+      "publishDate": "2026-07-08",
+      "modifiedDate": "2026-07-08"
+    },
+    "ssh-keygen": {
+      "title": "ssh-keygen-kommando: lag SSH-nøkler med eksempler",
+      "description": "Praktiske ssh-keygen-eksempler for Ed25519- og RSA-SSH-nøkler, filnavn, passphrase, fingerprint, GitHub og serverinnlogging.",
+      "keywords": [
+        "ssh-keygen",
+        "ssh keygen",
+        "ssh-keygen kommando",
+        "ssh-keygen ed25519",
+        "ssh-keygen rsa",
+        "ssh fingerprint"
+      ],
+      "publishDate": "2026-07-08",
+      "modifiedDate": "2026-07-08"
     }
   },
   "fi": {
@@ -160,7 +259,8 @@
         "turvallinen kuori",
         "ssh-protokolla"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
     },
     "what-is-an-ssh-key": {
       "title": "Mikä on SSH-avain? Julkiset avaimet, yksityiset avaimet ja avainparit selitetty",
@@ -172,7 +272,8 @@
         "julkisen avaimen yksityinen avain",
         "github ssh -avain"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
     },
     "ssh-command": {
       "title": "SSH-komento: Täydellinen viite ja esimerkkejä Linuxille, Macille ja Windowsille",
@@ -184,7 +285,8 @@
         "ssh-komentoikkunat",
         "powershell ssh -komento"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
     },
     "how-to-set-up-ssh": {
       "title": "SSH:n määrittäminen: Täydellinen vaiheittainen opas Linuxille, Macille ja Windowsille",
@@ -196,7 +298,37 @@
         "ssh-agentti",
         "lupa estetty julkinen avain"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
+    },
+    "generate-ssh-key": {
+      "title": "Luo SSH-avain: verkkotyökalu ja ssh-keygen-komennot",
+      "description": "Luo SSH-avain verkossa tai ssh-keygenillä. Ed25519, RSA 4096, GitHub, GitLab, Linux-palvelimet ja deploy-avaimet.",
+      "keywords": [
+        "ssh avaimen luonti",
+        "luo ssh-avain",
+        "ssh-keygen",
+        "ssh avain generaattori",
+        "github ssh avain",
+        "ed25519 ssh avain",
+        "rsa ssh avain"
+      ],
+      "publishDate": "2026-07-08",
+      "modifiedDate": "2026-07-08"
+    },
+    "ssh-keygen": {
+      "title": "ssh-keygen-komento: SSH-avainten luonti esimerkeillä",
+      "description": "Käytännön ssh-keygen-esimerkit Ed25519- ja RSA-SSH-avaimille, tiedostonimelle, salalauseelle, fingerprintille, GitHubille ja palvelinkirjautumiselle.",
+      "keywords": [
+        "ssh-keygen",
+        "ssh keygen",
+        "ssh-keygen komento",
+        "ssh-keygen ed25519",
+        "ssh-keygen rsa",
+        "ssh fingerprint"
+      ],
+      "publishDate": "2026-07-08",
+      "modifiedDate": "2026-07-08"
     }
   }
 }

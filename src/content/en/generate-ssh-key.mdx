@@ -1,0 +1,82 @@
+# Generate SSH Key: Online Tool and ssh-keygen Commands
+
+Generating an SSH key means creating a public/private key pair. For new work, Ed25519 is usually the simplest modern choice; use RSA 4096 only when an older server or tool requires it.
+
+The online SSH key generator creates the key pair in your browser. Add the public key to GitHub, GitLab, Bitbucket, or a server; keep the private key on your own machine.
+
+## Quick answer
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+```
+
+<a href="/">SSH Key Generator: create SSH keys online</a> Generate Ed25519 or RSA SSH keys in your browser for GitHub, GitLab, servers, and ssh-keygen workflows. Your private key is not uploaded.
+
+## Generate an SSH key online
+
+1. Open the SSH key generator.
+2. Choose Ed25519 for current systems, or RSA 4096 for older compatibility requirements.
+3. Add a useful comment, usually your email address or project name.
+4. Use a passphrase for personal keys.
+5. Generate the pair, then copy or download both files.
+6. Install only the public key on GitHub, GitLab, Bitbucket, or the server.
+
+The public key can be shared. The private key must stay secret and should never be pasted into tickets, chat, or documentation.
+
+## Generate an SSH key with ssh-keygen
+
+`ssh-keygen` / OpenSSH / Linux / macOS / Windows
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+```
+
+## Add the key to GitHub, GitLab, or a server
+
+The usual flow is: generate the key, copy the public key, add it to GitHub/GitLab or the server, load the private key into ssh-agent, then test the connection.
+
+```bash
+ssh -T git@github.com
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server.example.com
+```
+
+## Choose Ed25519 or RSA
+
+| Use case | Recommended key |
+|---|---|
+| GitHub, GitLab, Bitbucket | Ed25519 |
+| Modern Linux server | Ed25519 |
+| CI/CD deployment key | Ed25519 |
+| Older SSH server | RSA 4096 |
+
+Choose Ed25519 for most new keys. Use RSA 4096 when you must support an older SSH server or a tool that does not accept Ed25519.
+
+## Passphrase and ssh-agent
+
+The public key can be shared. The private key must stay secret and should never be pasted into tickets, chat, or documentation.
+
+```bash
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+## Common troubleshooting
+
+Most connections use ssh user@host. Use -i for a specific key, -p for a non-default port, and -J when you connect through a bastion host.
+
+```bash
+ssh -v user@server.example.com
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/id_ed25519
+ssh -i ~/.ssh/id_ed25519_work user@server.example.com
+```
+
+## Related guides
+
+- <a href="/ssh-keygen/">ssh-keygen command examples</a>
+- <a href="/what-is-an-ssh-key/">Understand SSH keys</a>
+- <a href="/how-to-set-up-ssh/">Set up SSH step by step</a>
+- <a href="/ssh-command/">SSH command examples</a>

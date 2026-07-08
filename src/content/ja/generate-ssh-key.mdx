@@ -1,0 +1,82 @@
+# SSH鍵を作成する：オンライン生成とssh-keygenの使い方
+
+SSH鍵を作成するとは、公開鍵と秘密鍵のペアを作ることです。新規作成ではEd25519が扱いやすく、古い環境との互換性が必要なときだけRSA 4096ビットを選びます。
+
+オンラインSSH鍵ジェネレーターはブラウザ内で鍵ペアを作成します。公開鍵はGitHub、GitLab、Bitbucket、サーバーに登録し、秘密鍵は自分の端末に保存します。
+
+## すぐ分かる答え
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+```
+
+<a href="/ja/">SSH鍵ジェネレーター：オンラインでSSH鍵を作成</a> Ed25519またはRSAのSSH鍵をブラウザ内で作成できます。GitHub、GitLab、サーバー、ssh-keygenの運用に使え、秘密鍵はアップロードされません。
+
+## オンラインでSSH鍵を作成する
+
+1. SSH鍵ジェネレーターを開きます。
+2. 新しい環境ではEd25519、古い環境との互換性が必要ならRSA 4096ビットを選びます。
+3. メールアドレスや用途が分かるコメントを入れます。
+4. 個人用の鍵にはパスフレーズを設定します。
+5. 鍵ペアを作成し、公開鍵と秘密鍵を保存します。
+6. GitHub、GitLab、Bitbucket、サーバーには公開鍵だけを登録します。
+
+公開鍵は共有して構いません。秘密鍵は共有せず、チケット、チャット、ドキュメントにも貼り付けないでください。
+
+## ssh-keygenでSSH鍵を作成する
+
+`ssh-keygen` / OpenSSH / Linux / macOS / Windows
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+```
+
+## GitHub・GitLab・サーバーに登録する
+
+基本の流れは、鍵を作成し、公開鍵をコピーし、GitHub/GitLabまたはサーバーに登録し、ssh-agentに読み込み、接続をテストすることです。
+
+```bash
+ssh -T git@github.com
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server.example.com
+```
+
+## Ed25519とRSAの選び方
+
+| 用途 | 推奨する鍵 |
+|---|---|
+| GitHub、GitLab、Bitbucket | Ed25519 |
+| 新しいLinuxサーバー | Ed25519 |
+| CI/CDのデプロイ鍵 | Ed25519 |
+| 古いSSHサーバー | RSA 4096ビット |
+
+新しい鍵は多くの場合Ed25519を選びます。古いSSHサーバーやツールがEd25519に対応していない場合だけ、RSA 4096ビットを使います。
+
+## パスフレーズとssh-agent
+
+公開鍵は共有して構いません。秘密鍵は共有せず、チケット、チャット、ドキュメントにも貼り付けないでください。
+
+```bash
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+## よくある問題の切り分け
+
+通常の接続は ssh user@host で十分です。鍵を指定する場合は -i、22番以外のポートは -p、踏み台経由は -J を使います。
+
+```bash
+ssh -v user@server.example.com
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/id_ed25519
+ssh -i ~/.ssh/id_ed25519_work user@server.example.com
+```
+
+## 関連ガイド
+
+- <a href="/ja/ssh-keygen/">ssh-keygenコマンドの実例</a>
+- <a href="/ja/what-is-an-ssh-key/">SSH鍵の仕組み</a>
+- <a href="/ja/how-to-set-up-ssh/">SSHのセットアップ手順</a>
+- <a href="/ja/ssh-command/">SSHコマンド例</a>

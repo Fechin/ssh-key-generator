@@ -1,0 +1,72 @@
+# Polecenie ssh-keygen: tworzenie kluczy SSH na przykładach
+
+Praktyczne przykłady ssh-keygen: klucze Ed25519 i RSA, nazwa pliku, passphrase, fingerprint, GitHub i logowanie na serwer.
+
+Wygenerowanie klucza SSH oznacza utworzenie pary: klucza publicznego i prywatnego. Dla nowych kluczy zwykle wybierz Ed25519; RSA 4096 zostaw dla starszych serwerów lub narzędzi.
+
+## Szybka odpowiedź
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+```
+
+## Podstawowa składnia ssh-keygen
+
+```bash
+ssh-keygen -t TYPE -b BITS -C COMMENT -f OUTPUT_FILE
+```
+
+- `-t`: typ klucza
+- `-b`: rozmiar RSA
+- `-C`: komentarz
+- `-f`: plik wyjściowy
+- `-p`: zmiana passphrase
+- `-l`: fingerprint
+- `-y`: wyprowadzenie klucza publicznego z prywatnego
+
+## Ed25519
+
+Dla nowych kluczy najczęściej wybierz Ed25519. Użyj RSA 4096, jeśli starszy serwer SSH lub narzędzie nie obsługuje Ed25519.
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+```
+
+## RSA 4096
+
+Dla nowych kluczy najczęściej wybierz Ed25519. Użyj RSA 4096, jeśli starszy serwer SSH lub narzędzie nie obsługuje Ed25519.
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+```
+
+## Nazwa pliku, fingerprint i ssh-agent
+
+W większości przypadków wystarczy ssh user@host. Użyj -i dla konkretnego klucza, -p dla niestandardowego portu i -J dla połączenia przez bastion.
+
+```bash
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -p -f ~/.ssh/id_ed25519
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+## Dodaj klucz do GitHub, GitLab albo serwera
+
+Typowy przepływ: wygeneruj klucz, skopiuj klucz publiczny, dodaj go do GitHub/GitLab albo serwera, załaduj prywatny klucz do ssh-agent i przetestuj połączenie.
+
+```bash
+ssh -T git@github.com
+ssh -v user@server.example.com
+```
+
+## Powiązane poradniki
+
+- <a href="/pl/generate-ssh-key/">Wygeneruj klucz SSH online</a>
+- <a href="/pl/what-is-an-ssh-key/">Czym są klucze SSH</a>
+- <a href="/pl/how-to-set-up-ssh/">Konfiguracja SSH krok po kroku</a>
+- <a href="/pl/ssh-command/">Przykłady polecenia SSH</a>

@@ -3,12 +3,19 @@
     "what-is-ssh": {
       "title": "What Is SSH? The Complete Guide to Secure Shell",
       "description": "SSH (Secure Shell) is a cryptographic protocol for secure remote access and file transfer. Learn what SSH is, how it works, and why every developer needs it.",
-      "keywords": ["what is ssh", "ssh meaning", "meaning of ssh", "secure shell", "ssh protocol"],
-      "publishDate": "2026-03-14"
+      "keywords": [
+        "what is ssh",
+        "ssh meaning",
+        "meaning of ssh",
+        "secure shell",
+        "ssh protocol"
+      ],
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
     },
     "what-is-an-ssh-key": {
-      "title": "What Is an SSH Key? Public Keys, Private Keys, and Key Pairs Explained",
-      "description": "An SSH key is a cryptographic credential used for secure authentication. Learn what an SSH key is, how public and private keys work, and how to use them with GitHub.",
+      "title": "What Is an SSH Key? Public and Private Keys Explained",
+      "description": "An SSH key is a public/private key pair for secure login. Learn what SSH keys are, how authentication works, where keys are stored, and how to use them with GitHub.",
       "keywords": [
         "what is an ssh key",
         "ssh key meaning",
@@ -16,11 +23,12 @@
         "public key private key",
         "github ssh key"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
     },
     "ssh-command": {
-      "title": "The SSH Command: Complete Reference with Examples for Linux, Mac, and Windows",
-      "description": "A complete guide to the SSH command with examples for Linux, macOS, and Windows. Covers ssh -i flag, tunneling, ProxyJump, essential options, and PowerShell SSH.",
+      "title": "SSH Command Examples: Syntax, Flags, Tunnels, and Keys",
+      "description": "Learn the ssh command syntax with practical examples for Linux, macOS, and Windows. Covers ssh -i, ports, tunnels, ProxyJump, config aliases, and debugging.",
       "keywords": [
         "ssh command",
         "ssh command example",
@@ -28,11 +36,12 @@
         "ssh command windows",
         "powershell ssh command"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
     },
     "how-to-set-up-ssh": {
-      "title": "How to Set Up SSH: A Complete Step-by-Step Guide for Linux, Mac, and Windows",
-      "description": "Learn how to set up SSH on Linux, macOS, and Windows. Step-by-step guide covers key generation, ssh-copy-id, ssh-agent, GitHub SSH setup, and troubleshooting.",
+      "title": "How to Set Up SSH Keys for GitHub, Linux, Mac, and Windows",
+      "description": "Set up SSH keys step by step: generate a key pair, install the public key, configure ssh-agent, add keys to GitHub or GitLab, and fix common errors.",
       "keywords": [
         "how to set up ssh",
         "how to set up ssh key github",
@@ -40,33 +49,118 @@
         "ssh-agent",
         "permission denied publickey"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
+    },
+    "generate-ssh-key": {
+      "title": "Generate SSH Key: Online Tool and ssh-keygen Commands",
+      "description": "Generate an SSH key online or with ssh-keygen. Covers Ed25519, RSA 4096, GitHub, GitLab, Linux servers, and deployment keys.",
+      "keywords": [
+        "generate ssh key",
+        "create ssh key",
+        "ssh key generator",
+        "ssh keygen online",
+        "ed25519 ssh key",
+        "rsa ssh key",
+        "github ssh key"
+      ],
+      "publishDate": "2026-07-08",
+      "modifiedDate": "2026-07-08"
+    },
+    "ssh-keygen": {
+      "title": "ssh-keygen Command: Create SSH Keys with Examples",
+      "description": "Practical ssh-keygen examples for creating Ed25519 and RSA SSH keys, choosing a file name, adding a passphrase, checking fingerprints, and testing GitHub or server access.",
+      "keywords": [
+        "ssh-keygen",
+        "ssh keygen",
+        "ssh-keygen command",
+        "ssh-keygen ed25519",
+        "ssh-keygen rsa",
+        "ssh key fingerprint"
+      ],
+      "publishDate": "2026-07-08",
+      "modifiedDate": "2026-07-08"
     }
   },
   "zh": {
     "what-is-ssh": {
       "title": "SSH 是什么？Secure Shell 安全外壳协议完整指南",
       "description": "SSH（安全外壳协议）是用于安全远程访问和文件传输的加密协议。了解 SSH 是什么、它如何工作，以及为什么每位开发者都需要它。",
-      "keywords": ["ssh是什么", "ssh含义", "安全外壳协议", "ssh协议"],
-      "publishDate": "2026-03-14"
+      "keywords": [
+        "ssh是什么",
+        "ssh含义",
+        "安全外壳协议",
+        "ssh协议"
+      ],
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
     },
     "what-is-an-ssh-key": {
       "title": "SSH 密钥是什么？公钥、私钥与密钥对完整说明",
       "description": "SSH 密钥是用于安全身份验证的加密凭证。了解 SSH 密钥是什么、公钥和私钥如何工作，以及如何在 GitHub 中使用它们。",
-      "keywords": ["ssh密钥是什么", "ssh公钥私钥", "ssh密钥对", "github ssh密钥"],
-      "publishDate": "2026-03-14"
+      "keywords": [
+        "ssh密钥是什么",
+        "ssh公钥私钥",
+        "ssh密钥对",
+        "github ssh密钥"
+      ],
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
     },
     "ssh-command": {
       "title": "SSH 命令完整参考：Linux、Mac 和 Windows 示例",
       "description": "Linux、macOS 和 Windows 下 SSH 命令的完整指南，包含示例。涵盖 ssh -i 标志、隧道、ProxyJump、关键选项和 PowerShell SSH。",
-      "keywords": ["ssh命令", "ssh命令示例", "ssh命令linux", "ssh命令windows", "powershell ssh"],
-      "publishDate": "2026-03-14"
+      "keywords": [
+        "ssh命令",
+        "ssh命令示例",
+        "ssh命令linux",
+        "ssh命令windows",
+        "powershell ssh"
+      ],
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
     },
     "how-to-set-up-ssh": {
       "title": "如何设置 SSH：Linux、Mac 和 Windows 完整分步指南",
       "description": "了解如何在 Linux、macOS 和 Windows 上设置 SSH。分步指南涵盖密钥生成、ssh-copy-id、ssh-agent、GitHub SSH 设置和故障排查。",
-      "keywords": ["如何设置ssh", "ssh密钥github设置", "ssh-copy-id", "ssh-agent", "ssh密钥配置"],
-      "publishDate": "2026-03-14"
+      "keywords": [
+        "如何设置ssh",
+        "ssh密钥github设置",
+        "ssh-copy-id",
+        "ssh-agent",
+        "ssh密钥配置"
+      ],
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
+    },
+    "generate-ssh-key": {
+      "title": "生成 SSH 密钥：在线工具与 ssh-keygen 命令",
+      "description": "在线生成 SSH 密钥，或用 ssh-keygen 创建 Ed25519/RSA 密钥对。适用于 GitHub、GitLab、Linux 服务器登录和部署密钥。",
+      "keywords": [
+        "生成 SSH 密钥",
+        "创建 SSH 密钥",
+        "SSH 密钥生成器",
+        "ssh-keygen",
+        "GitHub SSH 密钥",
+        "Ed25519 SSH 密钥",
+        "RSA SSH 密钥"
+      ],
+      "publishDate": "2026-07-08",
+      "modifiedDate": "2026-07-08"
+    },
+    "ssh-keygen": {
+      "title": "ssh-keygen 命令：生成 SSH 密钥的实用示例",
+      "description": "ssh-keygen 生成 Ed25519/RSA SSH 密钥的实用示例，包含文件名、注释、密码短语、指纹、GitHub 和服务器连接测试。",
+      "keywords": [
+        "ssh-keygen",
+        "ssh keygen",
+        "ssh-keygen 命令",
+        "生成 SSH key",
+        "Ed25519 密钥",
+        "SSH 指纹"
+      ],
+      "publishDate": "2026-07-08",
+      "modifiedDate": "2026-07-08"
     }
   }
 }

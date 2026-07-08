@@ -1,0 +1,72 @@
+# ssh-keygen command: SSH key তৈরির উদাহরণ
+
+ssh-keygen-এর practical examples: Ed25519/RSA SSH key, file name, comment, passphrase, fingerprint, GitHub ও server login test।
+
+SSH key তৈরি করা মানে একটি public key ও private key pair বানানো। নতুন key-এর জন্য সাধারণত Ed25519 ভাল; পুরোনো server বা tool লাগলে RSA 4096 ব্যবহার করুন।
+
+## দ্রুত উত্তর
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+```
+
+## ssh-keygen basic syntax
+
+```bash
+ssh-keygen -t TYPE -b BITS -C COMMENT -f OUTPUT_FILE
+```
+
+- `-t`: key type
+- `-b`: RSA bit size
+- `-C`: comment
+- `-f`: output file
+- `-p`: passphrase change
+- `-l`: fingerprint
+- `-y`: private key থেকে public key বের করা
+
+## Ed25519
+
+নতুন key-এর জন্য সাধারণত Ed25519 বেছে নিন। পুরোনো SSH server বা tool Ed25519 support না করলে RSA 4096 ব্যবহার করুন।
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+```
+
+## RSA 4096
+
+নতুন key-এর জন্য সাধারণত Ed25519 বেছে নিন। পুরোনো SSH server বা tool Ed25519 support না করলে RSA 4096 ব্যবহার করুন।
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+```
+
+## File name, fingerprint ও ssh-agent
+
+বেশিরভাগ connection-এ ssh user@host যথেষ্ট। Specific key-এর জন্য -i, non-default port-এর জন্য -p, bastion host-এর জন্য -J ব্যবহার করুন।
+
+```bash
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -p -f ~/.ssh/id_ed25519
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+## GitHub, GitLab বা server-এ key add করুন
+
+Normal flow: key তৈরি করুন, public key copy করুন, GitHub/GitLab বা server-এ add করুন, private key ssh-agent-এ load করুন, তারপর connection test করুন।
+
+```bash
+ssh -T git@github.com
+ssh -v user@server.example.com
+```
+
+## সম্পর্কিত গাইড
+
+- <a href="/bn/generate-ssh-key/">Online SSH key তৈরি করুন</a>
+- <a href="/bn/what-is-an-ssh-key/">SSH key কী</a>
+- <a href="/bn/how-to-set-up-ssh/">SSH setup guide</a>
+- <a href="/bn/ssh-command/">SSH command-এর উদাহরণ</a>

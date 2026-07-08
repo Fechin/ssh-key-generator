@@ -10,7 +10,8 @@
         "cochilie sigură",
         "protocol ssh"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
     },
     "what-is-an-ssh-key": {
       "title": "Ce este o cheie SSH? Cheile publice, cheile private și perechile de chei explicate",
@@ -22,7 +23,8 @@
         "cheie publică cheie privată",
         "cheie github ssh"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
     },
     "ssh-command": {
       "title": "Comanda SSH: Referință completă cu exemple pentru Linux, Mac și Windows",
@@ -34,7 +36,8 @@
         "ferestre de comandă ssh",
         "comanda powershell ssh"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
     },
     "how-to-set-up-ssh": {
       "title": "Cum să configurați SSH: un ghid complet pas cu pas pentru Linux, Mac și Windows",
@@ -46,7 +49,36 @@
         "ssh-agent",
         "permisiunea refuzată cheie publică"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
+    },
+    "generate-ssh-key": {
+      "title": "Generare cheie SSH: instrument online și comenzi ssh-keygen",
+      "description": "Generează o cheie SSH online sau cu ssh-keygen. Include Ed25519, RSA 4096, GitHub, GitLab, servere Linux și chei de deploy.",
+      "keywords": [
+        "generare cheie ssh",
+        "creare cheie ssh",
+        "ssh-keygen",
+        "generator chei ssh",
+        "cheie ssh github",
+        "ed25519 ssh",
+        "rsa ssh"
+      ],
+      "publishDate": "2026-07-08",
+      "modifiedDate": "2026-07-08"
+    },
+    "ssh-keygen": {
+      "title": "Comanda ssh-keygen: exemple pentru chei SSH",
+      "description": "Exemple practice de ssh-keygen: chei SSH Ed25519/RSA, nume de fișier, passphrase, fingerprint, GitHub și test de login pe server.",
+      "keywords": [
+        "ssh-keygen",
+        "comanda ssh-keygen",
+        "ssh-keygen ed25519",
+        "ssh-keygen rsa",
+        "fingerprint cheie ssh"
+      ],
+      "publishDate": "2026-07-08",
+      "modifiedDate": "2026-07-08"
     }
   },
   "cs": {
@@ -60,7 +92,8 @@
         "bezpečná skořápka",
         "ssh protokol"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
     },
     "what-is-an-ssh-key": {
       "title": "Co je klíč SSH? Vysvětlení veřejných klíčů, soukromých klíčů a párů klíčů",
@@ -72,7 +105,8 @@
         "veřejný klíč soukromý klíč",
         "github ssh klíč"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
     },
     "ssh-command": {
       "title": "Příkaz SSH: Kompletní reference s příklady pro Linux, Mac a Windows",
@@ -84,7 +118,8 @@
         "příkazová okna ssh",
         "příkaz powershell ssh"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
     },
     "how-to-set-up-ssh": {
       "title": "Jak nastavit SSH: Kompletní průvodce krok za krokem pro Linux, Mac a Windows",
@@ -96,7 +131,36 @@
         "ssh-agent",
         "povolení odepřeno veřejný klíč"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
+    },
+    "generate-ssh-key": {
+      "title": "Vygenerovat SSH klíč: online nástroj a příkazy ssh-keygen",
+      "description": "Vygenerujte SSH klíč online nebo pomocí ssh-keygen. Ed25519, RSA 4096, GitHub, GitLab, Linux servery a deploy klíče.",
+      "keywords": [
+        "vygenerovat ssh klíč",
+        "vytvořit ssh klíč",
+        "ssh-keygen",
+        "generátor ssh klíčů",
+        "github ssh klíč",
+        "ed25519 ssh",
+        "rsa ssh"
+      ],
+      "publishDate": "2026-07-08",
+      "modifiedDate": "2026-07-08"
+    },
+    "ssh-keygen": {
+      "title": "Příkaz ssh-keygen: tvorba SSH klíčů na příkladech",
+      "description": "Praktické příklady ssh-keygen: klíče Ed25519/RSA, název souboru, passphrase, fingerprint, GitHub a test přihlášení na server.",
+      "keywords": [
+        "ssh-keygen",
+        "příkaz ssh-keygen",
+        "ssh-keygen ed25519",
+        "ssh-keygen rsa",
+        "fingerprint ssh klíče"
+      ],
+      "publishDate": "2026-07-08",
+      "modifiedDate": "2026-07-08"
     }
   },
   "el": {
@@ -110,7 +174,8 @@
         "ασφαλές κέλυφος",
         "πρωτόκολλο ssh"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
     },
     "what-is-an-ssh-key": {
       "title": "Τι είναι ένα κλειδί SSH; Επεξήγηση των δημόσιων κλειδιών, των ιδιωτικών κλειδιών και των ζευγών κλειδιών",
@@ -122,7 +187,8 @@
         "δημόσιο κλειδί ιδιωτικό κλειδί",
         "κλειδί github ssh"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
     },
     "ssh-command": {
       "title": "Η εντολή SSH: Πλήρης αναφορά με παραδείγματα για Linux, Mac και Windows",
@@ -134,7 +200,8 @@
         "ssh παράθυρα εντολής",
         "εντολή powershell ssh"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
     },
     "how-to-set-up-ssh": {
       "title": "Πώς να ρυθμίσετε το SSH: Ένας πλήρης οδηγός βήμα προς βήμα για Linux, Mac και Windows",
@@ -146,7 +213,35 @@
         "ssh-agent",
         "δεν επιτρέπεται η άδεια δημόσιου κλειδιού"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
+    },
+    "generate-ssh-key": {
+      "title": "Δημιουργία SSH key: online εργαλείο και εντολές ssh-keygen",
+      "description": "Δημιουργήστε SSH key online ή με ssh-keygen. Καλύπτει Ed25519, RSA 4096, GitHub, GitLab, Linux servers και deploy keys.",
+      "keywords": [
+        "δημιουργία ssh key",
+        "ssh key generator",
+        "ssh-keygen",
+        "github ssh key",
+        "ed25519 ssh",
+        "rsa ssh"
+      ],
+      "publishDate": "2026-07-08",
+      "modifiedDate": "2026-07-08"
+    },
+    "ssh-keygen": {
+      "title": "Εντολή ssh-keygen: παραδείγματα δημιουργίας SSH keys",
+      "description": "Πρακτικά παραδείγματα ssh-keygen: SSH keys Ed25519/RSA, όνομα αρχείου, passphrase, fingerprint, GitHub και δοκιμή σύνδεσης σε server.",
+      "keywords": [
+        "ssh-keygen",
+        "εντολή ssh-keygen",
+        "ssh-keygen ed25519",
+        "ssh-keygen rsa",
+        "fingerprint ssh key"
+      ],
+      "publishDate": "2026-07-08",
+      "modifiedDate": "2026-07-08"
     }
   },
   "hu": {
@@ -160,7 +255,8 @@
         "biztonságos héj",
         "ssh protokoll"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
     },
     "what-is-an-ssh-key": {
       "title": "Mi az SSH kulcs? Nyilvános kulcsok, privát kulcsok és kulcspárok magyarázata",
@@ -172,7 +268,8 @@
         "nyilvános kulcsú privát kulcs",
         "github ssh kulcs"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
     },
     "ssh-command": {
       "title": "Az SSH-parancs: Teljes referencia példákkal Linuxra, Macre és Windowsra",
@@ -184,7 +281,8 @@
         "ssh parancs windows",
         "powershell ssh parancs"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
     },
     "how-to-set-up-ssh": {
       "title": "Az SSH beállítása: Teljes, lépésről lépésre útmutató Linux, Mac és Windows rendszerekhez",
@@ -196,7 +294,37 @@
         "ssh-agent",
         "engedély megtagadva nyilvános kulcs"
       ],
-      "publishDate": "2026-03-14"
+      "publishDate": "2026-03-14",
+      "modifiedDate": "2026-07-08"
+    },
+    "generate-ssh-key": {
+      "title": "SSH-kulcs létrehozása: online eszköz és ssh-keygen parancsok",
+      "description": "Hozz létre SSH-kulcsot online vagy ssh-keygennel. Ed25519, RSA 4096, GitHub, GitLab, Linux szerverek és deploy kulcsok.",
+      "keywords": [
+        "ssh kulcs létrehozása",
+        "ssh kulcs generálás",
+        "ssh-keygen",
+        "ssh kulcs generátor",
+        "github ssh kulcs",
+        "ed25519 ssh kulcs",
+        "rsa ssh kulcs"
+      ],
+      "publishDate": "2026-07-08",
+      "modifiedDate": "2026-07-08"
+    },
+    "ssh-keygen": {
+      "title": "ssh-keygen parancs: SSH-kulcs készítése példákkal",
+      "description": "Gyakorlati ssh-keygen példák: Ed25519/RSA SSH-kulcsok, fájlnév, passphrase, fingerprint, GitHub és szerverbelépés tesztelése.",
+      "keywords": [
+        "ssh-keygen",
+        "ssh keygen",
+        "ssh-keygen parancs",
+        "ssh-keygen ed25519",
+        "ssh-keygen rsa",
+        "ssh fingerprint"
+      ],
+      "publishDate": "2026-07-08",
+      "modifiedDate": "2026-07-08"
     }
   }
 }

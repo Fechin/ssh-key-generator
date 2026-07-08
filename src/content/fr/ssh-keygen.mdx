@@ -1,0 +1,72 @@
+# Commande ssh-keygen : créer des clés SSH avec des exemples
+
+Exemples ssh-keygen pour créer des clés SSH Ed25519 ou RSA, choisir un fichier, ajouter une phrase secrète, afficher une empreinte et tester GitHub ou un serveur.
+
+Générer une clé SSH consiste à créer une paire composée d’une clé publique et d’une clé privée. Pour un nouvel usage, Ed25519 est le choix le plus simple et le plus moderne ; RSA 4096 bits reste utile pour les environnements anciens.
+
+## Réponse rapide
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+```
+
+## Syntaxe de base de ssh-keygen
+
+```bash
+ssh-keygen -t TYPE -b BITS -C COMMENT -f OUTPUT_FILE
+```
+
+- `-t`: type de clé
+- `-b`: taille RSA
+- `-C`: commentaire
+- `-f`: fichier de sortie
+- `-p`: modifier la phrase secrète
+- `-l`: empreinte
+- `-y`: extraire la clé publique depuis la clé privée
+
+## Ed25519
+
+Pour une nouvelle clé, choisissez Ed25519 dans la plupart des cas. Utilisez RSA 4096 bits lorsque vous devez rester compatible avec un ancien serveur SSH ou un outil qui ne prend pas en charge Ed25519.
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+```
+
+## RSA 4096
+
+Pour une nouvelle clé, choisissez Ed25519 dans la plupart des cas. Utilisez RSA 4096 bits lorsque vous devez rester compatible avec un ancien serveur SSH ou un outil qui ne prend pas en charge Ed25519.
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+```
+
+## Nom de fichier, empreinte et ssh-agent
+
+La plupart des connexions se font avec ssh user@host. Utilisez -i pour choisir une clé précise, -p pour un port non standard et -J pour passer par un bastion.
+
+```bash
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -p -f ~/.ssh/id_ed25519
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+## Ajouter la clé à GitHub, GitLab ou un serveur
+
+Le parcours habituel est simple : générer la clé, copier la clé publique, la déclarer côté GitHub/GitLab ou serveur, charger la clé dans ssh-agent, puis tester la connexion.
+
+```bash
+ssh -T git@github.com
+ssh -v user@server.example.com
+```
+
+## Guides associés
+
+- <a href="/fr/generate-ssh-key/">Générer une clé SSH en ligne</a>
+- <a href="/fr/what-is-an-ssh-key/">Comprendre les clés SSH</a>
+- <a href="/fr/how-to-set-up-ssh/">Configurer SSH pas à pas</a>
+- <a href="/fr/ssh-command/">Exemples de commande SSH</a>

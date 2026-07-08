@@ -1,0 +1,72 @@
+# פקודת ssh-keygen: דוגמאות ליצירת מפתחות SSH
+
+דוגמאות מעשיות ל-ssh-keygen: יצירת מפתחות Ed25519 ו-RSA, שם קובץ, passphrase, fingerprint, GitHub ובדיקת גישה לשרת.
+
+יצירת מפתח SSH היא יצירת זוג של מפתח ציבורי ומפתח פרטי. למפתחות חדשים Ed25519 הוא בדרך כלל הבחירה הנוחה; RSA 4096 נדרש בעיקר לתאימות עם מערכות ישנות.
+
+## תשובה קצרה
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+```
+
+## תחביר בסיסי של ssh-keygen
+
+```bash
+ssh-keygen -t TYPE -b BITS -C COMMENT -f OUTPUT_FILE
+```
+
+- `-t`: סוג מפתח
+- `-b`: גודל RSA
+- `-C`: הערה
+- `-f`: קובץ פלט
+- `-p`: שינוי passphrase
+- `-l`: fingerprint
+- `-y`: הפקת מפתח ציבורי ממפתח פרטי
+
+## Ed25519
+
+למפתחות חדשים בחרו בדרך כלל Ed25519. השתמשו ב-RSA 4096 רק כששרת SSH ישן או כלי מסוים לא תומכים ב-Ed25519.
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+```
+
+## RSA 4096
+
+למפתחות חדשים בחרו בדרך כלל Ed25519. השתמשו ב-RSA 4096 רק כששרת SSH ישן או כלי מסוים לא תומכים ב-Ed25519.
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+```
+
+## שם קובץ, fingerprint ו-ssh-agent
+
+ברוב החיבורים מספיק ssh user@host. השתמשו ב--i למפתח מסוים, ב--p לפורט אחר וב--J למעבר דרך bastion.
+
+```bash
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -p -f ~/.ssh/id_ed25519
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+## הוספת המפתח ל-GitHub, GitLab או שרת
+
+הזרימה הרגילה: יוצרים מפתח, מעתיקים את המפתח הציבורי, מוסיפים אותו ל-GitHub/GitLab או לשרת, טוענים את הפרטי ל-ssh-agent ובודקים התחברות.
+
+```bash
+ssh -T git@github.com
+ssh -v user@server.example.com
+```
+
+## מדריכים קשורים
+
+- <a href="/he/generate-ssh-key/">יצירת מפתח SSH אונליין</a>
+- <a href="/he/what-is-an-ssh-key/">מהו מפתח SSH</a>
+- <a href="/he/how-to-set-up-ssh/">הגדרת SSH שלב אחר שלב</a>
+- <a href="/he/ssh-command/">דוגמאות לפקודת SSH</a>

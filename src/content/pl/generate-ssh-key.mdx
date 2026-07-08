@@ -1,0 +1,82 @@
+# Generowanie klucza SSH: narzędzie online i polecenia ssh-keygen
+
+Wygenerowanie klucza SSH oznacza utworzenie pary: klucza publicznego i prywatnego. Dla nowych kluczy zwykle wybierz Ed25519; RSA 4096 zostaw dla starszych serwerów lub narzędzi.
+
+Generator online tworzy parę kluczy w przeglądarce. Klucz publiczny dodajesz do GitHub, GitLab, Bitbucket albo serwera; klucz prywatny zostaje na Twoim komputerze.
+
+## Szybka odpowiedź
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+```
+
+<a href="/pl/">Generator kluczy SSH: utwórz klucze SSH online</a> Generuj klucze SSH Ed25519 lub RSA w przeglądarce dla GitHub, GitLab, serwerów i ssh-keygen. Klucz prywatny nie jest wysyłany.
+
+## Wygeneruj klucz SSH online
+
+1. Otwórz generator kluczy SSH.
+2. Wybierz Ed25519 dla nowych systemów albo RSA 4096 dla zgodności ze starszym środowiskiem.
+3. Dodaj czytelny komentarz, np. e-mail lub nazwę projektu.
+4. Dla kluczy osobistych ustaw passphrase.
+5. Wygeneruj parę i zapisz klucz publiczny oraz prywatny.
+6. Na GitHub, GitLab, Bitbucket albo serwer dodaj tylko klucz publiczny.
+
+Klucz publiczny można udostępniać. Klucz prywatny musi pozostać tajny i nie powinien trafiać do ticketów, czatów ani dokumentacji.
+
+## Wygeneruj klucz SSH przez ssh-keygen
+
+`ssh-keygen` / OpenSSH / Linux / macOS / Windows
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+```
+
+## Dodaj klucz do GitHub, GitLab albo serwera
+
+Typowy przepływ: wygeneruj klucz, skopiuj klucz publiczny, dodaj go do GitHub/GitLab albo serwera, załaduj prywatny klucz do ssh-agent i przetestuj połączenie.
+
+```bash
+ssh -T git@github.com
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server.example.com
+```
+
+## Wybór Ed25519 albo RSA
+
+| Zastosowanie | Zalecany klucz |
+|---|---|
+| GitHub, GitLab, Bitbucket | Ed25519 |
+| Nowoczesny serwer Linux | Ed25519 |
+| Klucz deploy CI/CD | Ed25519 |
+| Starszy serwer SSH | RSA 4096 |
+
+Dla nowych kluczy najczęściej wybierz Ed25519. Użyj RSA 4096, jeśli starszy serwer SSH lub narzędzie nie obsługuje Ed25519.
+
+## Passphrase i ssh-agent
+
+Klucz publiczny można udostępniać. Klucz prywatny musi pozostać tajny i nie powinien trafiać do ticketów, czatów ani dokumentacji.
+
+```bash
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+## Typowe problemy
+
+W większości przypadków wystarczy ssh user@host. Użyj -i dla konkretnego klucza, -p dla niestandardowego portu i -J dla połączenia przez bastion.
+
+```bash
+ssh -v user@server.example.com
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/id_ed25519
+ssh -i ~/.ssh/id_ed25519_work user@server.example.com
+```
+
+## Powiązane poradniki
+
+- <a href="/pl/ssh-keygen/">Przykłady polecenia ssh-keygen</a>
+- <a href="/pl/what-is-an-ssh-key/">Czym są klucze SSH</a>
+- <a href="/pl/how-to-set-up-ssh/">Konfiguracja SSH krok po kroku</a>
+- <a href="/pl/ssh-command/">Przykłady polecenia SSH</a>

@@ -1,0 +1,82 @@
+# Skapa SSH-nyckel: onlineverktyg och ssh-keygen-kommandon
+
+Att skapa en SSH-nyckel betyder att skapa ett par med publik och privat nyckel. För nya nycklar är Ed25519 oftast rätt val; RSA 4096 behövs främst för äldre system.
+
+Onlinegeneratorn skapar nyckelparet i webbläsaren. Den publika nyckeln läggs i GitHub, GitLab, Bitbucket eller på servern; den privata nyckeln stannar på din dator.
+
+## Snabbt svar
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+```
+
+<a href="/sv/">SSH-nyckelgenerator: skapa SSH-nycklar online</a> Generera Ed25519- eller RSA-SSH-nycklar i webbläsaren för GitHub, GitLab, servrar och ssh-keygen. Den privata nyckeln laddas inte upp.
+
+## Skapa en SSH-nyckel online
+
+1. Öppna SSH-nyckelgeneratorn.
+2. Välj Ed25519 för moderna system eller RSA 4096 för äldre kompatibilitet.
+3. Lägg till en tydlig kommentar, till exempel e-post eller projektnamn.
+4. Använd en lösenfras för personliga nycklar.
+5. Skapa nyckelparet och kopiera eller ladda ned filerna.
+6. Installera bara den publika nyckeln i GitHub, GitLab, Bitbucket eller på servern.
+
+Den publika nyckeln kan delas. Den privata nyckeln måste hållas hemlig och ska inte klistras in i ärenden, chattar eller dokumentation.
+
+## Skapa en SSH-nyckel med ssh-keygen
+
+`ssh-keygen` / OpenSSH / Linux / macOS / Windows
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+```
+
+## Lägg till nyckeln i GitHub, GitLab eller på en server
+
+Vanligt flöde: skapa nyckeln, kopiera den publika nyckeln, lägg till den i GitHub/GitLab eller på servern, ladda den privata nyckeln i ssh-agent och testa anslutningen.
+
+```bash
+ssh -T git@github.com
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server.example.com
+```
+
+## Välj Ed25519 eller RSA
+
+| Användning | Rekommenderad nyckel |
+|---|---|
+| GitHub, GitLab, Bitbucket | Ed25519 |
+| Modern Linux-server | Ed25519 |
+| CI/CD-deploynyckel | Ed25519 |
+| Äldre SSH-server | RSA 4096 |
+
+För nya nycklar väljer du oftast Ed25519. Använd RSA 4096 när en äldre SSH-server eller ett verktyg saknar stöd för Ed25519.
+
+## Lösenfras och ssh-agent
+
+Den publika nyckeln kan delas. Den privata nyckeln måste hållas hemlig och ska inte klistras in i ärenden, chattar eller dokumentation.
+
+```bash
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+## Vanliga felsökningar
+
+De flesta anslutningar använder ssh user@host. Använd -i för en viss nyckel, -p för annan port och -J för anslutning via bastion.
+
+```bash
+ssh -v user@server.example.com
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/id_ed25519
+ssh -i ~/.ssh/id_ed25519_work user@server.example.com
+```
+
+## Relaterade guider
+
+- <a href="/sv/ssh-keygen/">ssh-keygen-exempel</a>
+- <a href="/sv/what-is-an-ssh-key/">Förstå SSH-nycklar</a>
+- <a href="/sv/how-to-set-up-ssh/">Konfigurera SSH steg för steg</a>
+- <a href="/sv/ssh-command/">SSH-kommandoexempel</a>

@@ -1,0 +1,72 @@
+# أمر ssh-keygen: أمثلة عملية لإنشاء مفاتيح SSH
+
+أمثلة عملية على ssh-keygen لإنشاء مفاتيح Ed25519 وRSA، واختيار اسم الملف، وعبارة المرور، والبصمة، واختبار GitHub أو الخادم.
+
+إنشاء مفتاح SSH يعني إنشاء زوج من مفتاح عام ومفتاح خاص. للمفاتيح الجديدة يكون Ed25519 هو الخيار العملي غالبًا؛ استخدم RSA 4096 عند الحاجة للتوافق مع أنظمة قديمة.
+
+## إجابة سريعة
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+```
+
+## الصيغة الأساسية لـ ssh-keygen
+
+```bash
+ssh-keygen -t TYPE -b BITS -C COMMENT -f OUTPUT_FILE
+```
+
+- `-t`: نوع المفتاح
+- `-b`: حجم RSA
+- `-C`: تعليق
+- `-f`: ملف الإخراج
+- `-p`: تغيير عبارة المرور
+- `-l`: البصمة
+- `-y`: استخراج المفتاح العام من الخاص
+
+## Ed25519
+
+للمفاتيح الجديدة اختر Ed25519 غالبًا. استخدم RSA 4096 إذا كان خادم SSH قديمًا أو أداة قديمة لا تدعم Ed25519.
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+```
+
+## RSA 4096
+
+للمفاتيح الجديدة اختر Ed25519 غالبًا. استخدم RSA 4096 إذا كان خادم SSH قديمًا أو أداة قديمة لا تدعم Ed25519.
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+```
+
+## اسم الملف والبصمة وssh-agent
+
+في معظم الاتصالات يكفي ssh user@host. استخدم -i لاختيار مفتاح محدد، و-p لمنفذ مختلف، و-J للمرور عبر خادم وسيط.
+
+```bash
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -p -f ~/.ssh/id_ed25519
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+## إضافة المفتاح إلى GitHub أو GitLab أو خادم
+
+المسار المعتاد: أنشئ المفتاح، انسخ المفتاح العام، أضفه إلى GitHub/GitLab أو الخادم، حمّل المفتاح الخاص في ssh-agent ثم اختبر الاتصال.
+
+```bash
+ssh -T git@github.com
+ssh -v user@server.example.com
+```
+
+## أدلة ذات صلة
+
+- <a href="/ar/generate-ssh-key/">إنشاء مفتاح SSH عبر الإنترنت</a>
+- <a href="/ar/what-is-an-ssh-key/">ما هو مفتاح SSH</a>
+- <a href="/ar/how-to-set-up-ssh/">إعداد SSH خطوة بخطوة</a>
+- <a href="/ar/ssh-command/">أمثلة أمر SSH</a>

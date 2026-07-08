@@ -1,0 +1,82 @@
+# SSH anahtarı oluşturma: çevrimiçi araç ve ssh-keygen komutları
+
+SSH anahtarı oluşturmak, bir açık anahtar ve bir özel anahtar çifti üretmek demektir. Yeni anahtarlar için çoğu durumda Ed25519 seçilir; eski sistemler için RSA 4096 gerekir.
+
+Çevrimiçi SSH anahtar oluşturucu anahtar çiftini tarayıcıda üretir. Açık anahtar GitHub, GitLab, Bitbucket veya sunucuya eklenir; özel anahtar bilgisayarınızda kalır.
+
+## Kısa cevap
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+```
+
+<a href="/tr/">SSH anahtar oluşturucu: çevrimiçi SSH anahtarı oluşturun</a> GitHub, GitLab, sunucular ve ssh-keygen akışları için tarayıcıda Ed25519 veya RSA SSH anahtarları oluşturun. Özel anahtar yüklenmez.
+
+## SSH anahtarını çevrimiçi oluşturma
+
+1. SSH anahtar oluşturucuyu açın.
+2. Güncel sistemler için Ed25519, eski uyumluluk için RSA 4096 seçin.
+3. E-posta veya proje adı gibi anlaşılır bir yorum ekleyin.
+4. Kişisel anahtarlar için passphrase kullanın.
+5. Anahtar çiftini oluşturup dosyaları kopyalayın veya indirin.
+6. GitHub, GitLab, Bitbucket veya sunucuya yalnızca açık anahtarı ekleyin.
+
+Açık anahtar paylaşılabilir. Özel anahtar gizli kalmalı; ticket, sohbet veya dokümana yapıştırılmamalıdır.
+
+## ssh-keygen ile SSH anahtarı oluşturma
+
+`ssh-keygen` / OpenSSH / Linux / macOS / Windows
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+```
+
+## Anahtarı GitHub, GitLab veya sunucuya ekleme
+
+Normal akış: anahtarı oluşturun, açık anahtarı kopyalayın, GitHub/GitLab veya sunucuya ekleyin, özel anahtarı ssh-agent'a yükleyin ve bağlantıyı test edin.
+
+```bash
+ssh -T git@github.com
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server.example.com
+```
+
+## Ed25519 veya RSA seçimi
+
+| Kullanım | Önerilen anahtar |
+|---|---|
+| GitHub, GitLab, Bitbucket | Ed25519 |
+| Güncel Linux sunucusu | Ed25519 |
+| CI/CD deploy anahtarı | Ed25519 |
+| Eski SSH sunucusu | RSA 4096 |
+
+Yeni anahtarlar için genellikle Ed25519 seçin. Eski bir SSH sunucusu veya araç Ed25519 desteklemiyorsa RSA 4096 kullanın.
+
+## Passphrase ve ssh-agent
+
+Açık anahtar paylaşılabilir. Özel anahtar gizli kalmalı; ticket, sohbet veya dokümana yapıştırılmamalıdır.
+
+```bash
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+## Sık görülen sorunlar
+
+Çoğu bağlantı için ssh user@host yeterlidir. Belirli anahtar için -i, farklı port için -p, bastion üzerinden geçmek için -J kullanın.
+
+```bash
+ssh -v user@server.example.com
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/id_ed25519
+ssh -i ~/.ssh/id_ed25519_work user@server.example.com
+```
+
+## İlgili rehberler
+
+- <a href="/tr/ssh-keygen/">ssh-keygen komutu örnekleri</a>
+- <a href="/tr/what-is-an-ssh-key/">SSH anahtarı nedir</a>
+- <a href="/tr/how-to-set-up-ssh/">SSH kurulumu adım adım</a>
+- <a href="/tr/ssh-command/">SSH komutu örnekleri</a>

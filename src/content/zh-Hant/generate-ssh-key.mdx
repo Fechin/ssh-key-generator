@@ -1,0 +1,82 @@
+# 產生 SSH 金鑰：線上工具與 ssh-keygen 指令
+
+產生 SSH 金鑰就是建立一組公開金鑰與私密金鑰。新專案通常選 Ed25519；如果需要相容舊伺服器或舊工具，再使用 RSA 4096 位元。
+
+線上 SSH 金鑰產生器會在瀏覽器中建立金鑰對。公開金鑰加入 GitHub、GitLab、Bitbucket 或伺服器，私密金鑰保存在您自己的裝置上。
+
+## 快速答案
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+```
+
+<a href="/zh-Hant/">SSH 金鑰產生器：線上產生 SSH 金鑰</a> 在瀏覽器中產生 Ed25519 或 RSA SSH 金鑰。適用於 GitHub、GitLab、伺服器與 ssh-keygen 流程，私密金鑰不會上傳。
+
+## 線上產生 SSH 金鑰
+
+1. 開啟 SSH 金鑰產生器。
+2. 現代環境選 Ed25519；需要相容舊系統時選 RSA 4096 位元。
+3. 加入容易辨識的註解，例如電子郵件或專案名稱。
+4. 個人使用的金鑰建議設定密碼短語。
+5. 產生金鑰對，並保存公開金鑰與私密金鑰。
+6. 只把公開金鑰加入 GitHub、GitLab、Bitbucket 或伺服器。
+
+公開金鑰可以分享；私密金鑰必須保密，不要貼到工單、聊天紀錄或文件中。
+
+## 使用 ssh-keygen 產生 SSH 金鑰
+
+`ssh-keygen` / OpenSSH / Linux / macOS / Windows
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+```
+
+## 加入 GitHub、GitLab 或伺服器
+
+常見流程是：產生金鑰、複製公開金鑰、把公開金鑰加入 GitHub/GitLab 或伺服器、將私密金鑰載入 ssh-agent，然後測試連線。
+
+```bash
+ssh -T git@github.com
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server.example.com
+```
+
+## 如何選擇 Ed25519 和 RSA
+
+| 使用場景 | 建議金鑰 |
+|---|---|
+| GitHub、GitLab、Bitbucket | Ed25519 |
+| 較新的 Linux 伺服器 | Ed25519 |
+| CI/CD 部署金鑰 | Ed25519 |
+| 舊 SSH 伺服器 | RSA 4096 位元 |
+
+新金鑰通常優先選 Ed25519。只有舊 SSH 伺服器或舊工具不支援 Ed25519 時，才建議使用 RSA 4096 位元。
+
+## 密碼短語與 ssh-agent
+
+公開金鑰可以分享；私密金鑰必須保密，不要貼到工單、聊天紀錄或文件中。
+
+```bash
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+## 常見問題排查
+
+多數連線使用 ssh user@host 即可。指定金鑰用 -i，非預設連接埠用 -p，透過跳板機連線用 -J。
+
+```bash
+ssh -v user@server.example.com
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/id_ed25519
+ssh -i ~/.ssh/id_ed25519_work user@server.example.com
+```
+
+## 相關指南
+
+- <a href="/zh-Hant/ssh-keygen/">ssh-keygen 指令範例</a>
+- <a href="/zh-Hant/what-is-an-ssh-key/">理解 SSH 金鑰</a>
+- <a href="/zh-Hant/how-to-set-up-ssh/">SSH 設定步驟</a>
+- <a href="/zh-Hant/ssh-command/">SSH 指令範例</a>

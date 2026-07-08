@@ -1,0 +1,82 @@
+# SSH key তৈরি করুন: online tool ও ssh-keygen command
+
+SSH key তৈরি করা মানে একটি public key ও private key pair বানানো। নতুন key-এর জন্য সাধারণত Ed25519 ভাল; পুরোনো server বা tool লাগলে RSA 4096 ব্যবহার করুন।
+
+Online SSH key generator browser-এর মধ্যে key pair তৈরি করে। Public key GitHub, GitLab, Bitbucket বা server-এ যোগ হয়; private key আপনার machine-এ থাকে।
+
+## দ্রুত উত্তর
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+```
+
+<a href="/bn/">SSH Key Generator: online SSH key তৈরি করুন</a> Browser-এ Ed25519 বা RSA SSH keys তৈরি করুন। GitHub, GitLab, servers ও ssh-keygen workflow-এর জন্য; private key upload হয় না।
+
+## Online SSH key তৈরি করুন
+
+1. SSH key generator খুলুন।
+2. Modern system-এর জন্য Ed25519, old compatibility-এর জন্য RSA 4096 বেছে নিন।
+3. Email বা project name-এর মতো পরিষ্কার comment যোগ করুন।
+4. Personal key হলে passphrase দিন।
+5. Key pair তৈরি করে public/private key save করুন।
+6. GitHub, GitLab, Bitbucket বা server-এ শুধু public key add করুন।
+
+Public key share করা যায়। Private key secret রাখতে হবে; ticket, chat বা documentation-এ paste করবেন না।
+
+## ssh-keygen দিয়ে SSH key তৈরি করুন
+
+`ssh-keygen` / OpenSSH / Linux / macOS / Windows
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+```
+
+## GitHub, GitLab বা server-এ key add করুন
+
+Normal flow: key তৈরি করুন, public key copy করুন, GitHub/GitLab বা server-এ add করুন, private key ssh-agent-এ load করুন, তারপর connection test করুন।
+
+```bash
+ssh -T git@github.com
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server.example.com
+```
+
+## Ed25519 নাকি RSA
+
+| ব্যবহার | সুপারিশকৃত key |
+|---|---|
+| GitHub, GitLab, Bitbucket | Ed25519 |
+| নতুন Linux server | Ed25519 |
+| CI/CD deployment key | Ed25519 |
+| পুরোনো SSH server | RSA 4096 |
+
+নতুন key-এর জন্য সাধারণত Ed25519 বেছে নিন। পুরোনো SSH server বা tool Ed25519 support না করলে RSA 4096 ব্যবহার করুন।
+
+## Passphrase ও ssh-agent
+
+Public key share করা যায়। Private key secret রাখতে হবে; ticket, chat বা documentation-এ paste করবেন না।
+
+```bash
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+## সাধারণ সমস্যা
+
+বেশিরভাগ connection-এ ssh user@host যথেষ্ট। Specific key-এর জন্য -i, non-default port-এর জন্য -p, bastion host-এর জন্য -J ব্যবহার করুন।
+
+```bash
+ssh -v user@server.example.com
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/id_ed25519
+ssh -i ~/.ssh/id_ed25519_work user@server.example.com
+```
+
+## সম্পর্কিত গাইড
+
+- <a href="/bn/ssh-keygen/">ssh-keygen command-এর উদাহরণ</a>
+- <a href="/bn/what-is-an-ssh-key/">SSH key কী</a>
+- <a href="/bn/how-to-set-up-ssh/">SSH setup guide</a>
+- <a href="/bn/ssh-command/">SSH command-এর উদাহরণ</a>

@@ -1,0 +1,72 @@
+# ssh-keygen-kommando: lag SSH-nøkler med eksempler
+
+Praktiske ssh-keygen-eksempler for Ed25519- og RSA-SSH-nøkler, filnavn, passphrase, fingerprint, GitHub og serverinnlogging.
+
+Å opprette en SSH-nøkkel betyr å lage et par med offentlig og privat nøkkel. For nye nøkler er Ed25519 som regel riktig valg; RSA 4096 brukes mest for eldre systemer.
+
+## Kort svar
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+```
+
+## Grunnsyntaks for ssh-keygen
+
+```bash
+ssh-keygen -t TYPE -b BITS -C COMMENT -f OUTPUT_FILE
+```
+
+- `-t`: nøkkeltype
+- `-b`: RSA-bitstørrelse
+- `-C`: kommentar
+- `-f`: utdatafil
+- `-p`: endre passphrase
+- `-l`: fingerprint
+- `-y`: hent offentlig nøkkel fra privat nøkkel
+
+## Ed25519
+
+Velg Ed25519 for de fleste nye nøkler. Bruk RSA 4096 hvis en eldre SSH-server eller et verktøy ikke støtter Ed25519.
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+```
+
+## RSA 4096
+
+Velg Ed25519 for de fleste nye nøkler. Bruk RSA 4096 hvis en eldre SSH-server eller et verktøy ikke støtter Ed25519.
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+```
+
+## Filnavn, fingerprint og ssh-agent
+
+De fleste tilkoblinger bruker ssh user@host. Bruk -i for en bestemt nøkkel, -p for annen port og -J for tilkobling via bastion.
+
+```bash
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -p -f ~/.ssh/id_ed25519
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+## Legg nøkkelen til i GitHub, GitLab eller på en server
+
+Vanlig flyt: lag nøkkelen, kopier offentlig nøkkel, legg den i GitHub/GitLab eller på serveren, last privat nøkkel i ssh-agent og test tilkoblingen.
+
+```bash
+ssh -T git@github.com
+ssh -v user@server.example.com
+```
+
+## Relaterte guider
+
+- <a href="/nb/generate-ssh-key/">Opprett SSH-nøkkel på nett</a>
+- <a href="/nb/what-is-an-ssh-key/">Forstå SSH-nøkler</a>
+- <a href="/nb/how-to-set-up-ssh/">Sett opp SSH steg for steg</a>
+- <a href="/nb/ssh-command/">SSH-kommandoeksempler</a>

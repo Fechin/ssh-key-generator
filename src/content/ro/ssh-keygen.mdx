@@ -1,0 +1,72 @@
+# Comanda ssh-keygen: exemple pentru chei SSH
+
+Exemple practice de ssh-keygen: chei SSH Ed25519/RSA, nume de fișier, passphrase, fingerprint, GitHub și test de login pe server.
+
+Generarea unei chei SSH înseamnă crearea unei perechi cheie publică/cheie privată. Pentru chei noi, Ed25519 este de obicei alegerea potrivită; RSA 4096 rămâne pentru sisteme vechi.
+
+## Răspuns rapid
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+```
+
+## Sintaxa de bază ssh-keygen
+
+```bash
+ssh-keygen -t TYPE -b BITS -C COMMENT -f OUTPUT_FILE
+```
+
+- `-t`: tip cheie
+- `-b`: dimensiune RSA
+- `-C`: comentariu
+- `-f`: fișier output
+- `-p`: schimbă passphrase
+- `-l`: fingerprint
+- `-y`: cheie publică din cheia privată
+
+## Ed25519
+
+Pentru chei noi, alege de obicei Ed25519. Folosește RSA 4096 dacă un server SSH vechi sau un tool nu acceptă Ed25519.
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+```
+
+## RSA 4096
+
+Pentru chei noi, alege de obicei Ed25519. Folosește RSA 4096 dacă un server SSH vechi sau un tool nu acceptă Ed25519.
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+```
+
+## Nume fișier, fingerprint și ssh-agent
+
+Pentru majoritatea conexiunilor ajunge ssh user@host. Folosește -i pentru o cheie anume, -p pentru alt port și -J pentru un bastion host.
+
+```bash
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -p -f ~/.ssh/id_ed25519
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+## Adaugă cheia în GitHub, GitLab sau pe server
+
+Fluxul normal: generezi cheia, copiezi cheia publică, o adaugi în GitHub/GitLab sau pe server, încarci cheia privată în ssh-agent și testezi conexiunea.
+
+```bash
+ssh -T git@github.com
+ssh -v user@server.example.com
+```
+
+## Ghiduri conexe
+
+- <a href="/ro/generate-ssh-key/">Generează cheie SSH online</a>
+- <a href="/ro/what-is-an-ssh-key/">Înțelege cheile SSH</a>
+- <a href="/ro/how-to-set-up-ssh/">Configurează SSH pas cu pas</a>
+- <a href="/ro/ssh-command/">Exemple de comandă SSH</a>

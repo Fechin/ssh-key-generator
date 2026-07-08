@@ -1,0 +1,72 @@
+# คำสั่ง ssh-keygen: ตัวอย่างสร้าง SSH key
+
+ตัวอย่าง ssh-keygen ที่ใช้จริง: สร้าง SSH key แบบ Ed25519/RSA, ตั้งชื่อไฟล์, passphrase, fingerprint, GitHub และทดสอบ login server
+
+การสร้าง SSH key คือการสร้างคู่ public key และ private key สำหรับ key ใหม่โดยทั่วไปเลือก Ed25519; ใช้ RSA 4096 เมื่อระบบเก่าจำเป็นต้องใช้
+
+## คำตอบแบบเร็ว
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+```
+
+## รูปแบบพื้นฐานของ ssh-keygen
+
+```bash
+ssh-keygen -t TYPE -b BITS -C COMMENT -f OUTPUT_FILE
+```
+
+- `-t`: ชนิด key
+- `-b`: ขนาด RSA
+- `-C`: comment
+- `-f`: ไฟล์ output
+- `-p`: เปลี่ยน passphrase
+- `-l`: fingerprint
+- `-y`: สร้าง public key จาก private key
+
+## Ed25519
+
+สำหรับ key ใหม่ให้เลือก Ed25519 เป็นหลัก ใช้ RSA 4096 เมื่อ SSH server หรือเครื่องมือเก่าไม่รองรับ Ed25519
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+```
+
+## RSA 4096
+
+สำหรับ key ใหม่ให้เลือก Ed25519 เป็นหลัก ใช้ RSA 4096 เมื่อ SSH server หรือเครื่องมือเก่าไม่รองรับ Ed25519
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+```
+
+## ชื่อไฟล์, fingerprint และ ssh-agent
+
+การเชื่อมต่อส่วนใหญ่ใช้ ssh user@host ก็พอ ใช้ -i เพื่อเลือก key, -p สำหรับ port อื่น และ -J เมื่อต้องผ่าน bastion host
+
+```bash
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -p -f ~/.ssh/id_ed25519
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+## เพิ่ม key ใน GitHub, GitLab หรือ server
+
+ขั้นตอนทั่วไปคือ สร้าง key, คัดลอก public key, เพิ่มใน GitHub/GitLab หรือ server, โหลด private key เข้า ssh-agent แล้วทดสอบการเชื่อมต่อ
+
+```bash
+ssh -T git@github.com
+ssh -v user@server.example.com
+```
+
+## คู่มือที่เกี่ยวข้อง
+
+- <a href="/th/generate-ssh-key/">สร้าง SSH key ออนไลน์</a>
+- <a href="/th/what-is-an-ssh-key/">SSH key คืออะไร</a>
+- <a href="/th/how-to-set-up-ssh/">ตั้งค่า SSH ทีละขั้นตอน</a>
+- <a href="/th/ssh-command/">ตัวอย่างคำสั่ง SSH</a>

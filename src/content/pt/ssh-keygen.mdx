@@ -1,0 +1,72 @@
+# Comando ssh-keygen: criar chaves SSH com exemplos
+
+Exemplos de ssh-keygen para criar chaves SSH Ed25519 ou RSA, escolher arquivo, adicionar frase-senha, ver fingerprint e testar GitHub ou servidor.
+
+Gerar uma chave SSH significa criar um par de chave pública e chave privada. Para usos novos, Ed25519 é a escolha mais direta; RSA de 4096 bits fica como alternativa para sistemas antigos.
+
+## Resposta rápida
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+```
+
+## Sintaxe básica do ssh-keygen
+
+```bash
+ssh-keygen -t TYPE -b BITS -C COMMENT -f OUTPUT_FILE
+```
+
+- `-t`: tipo de chave
+- `-b`: tamanho RSA
+- `-C`: comentário
+- `-f`: arquivo de saída
+- `-p`: alterar frase-senha
+- `-l`: fingerprint
+- `-y`: gerar chave pública a partir da privada
+
+## Ed25519
+
+Para chaves novas, Ed25519 costuma ser a melhor escolha. Use RSA de 4096 bits quando precisar de compatibilidade com um servidor SSH antigo ou uma ferramenta sem suporte a Ed25519.
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+```
+
+## RSA 4096
+
+Para chaves novas, Ed25519 costuma ser a melhor escolha. Use RSA de 4096 bits quando precisar de compatibilidade com um servidor SSH antigo ou uma ferramenta sem suporte a Ed25519.
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+```
+
+## Arquivo, fingerprint e ssh-agent
+
+Para a maioria das conexões, ssh user@host basta. Use -i para uma chave específica, -p para uma porta diferente e -J para passar por um host bastião.
+
+```bash
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -p -f ~/.ssh/id_ed25519
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+## Adicionar a chave ao GitHub, GitLab ou servidor
+
+O fluxo normal é: gerar a chave, copiar a chave pública, cadastrá-la no GitHub/GitLab ou no servidor, carregar a chave no ssh-agent e testar a conexão.
+
+```bash
+ssh -T git@github.com
+ssh -v user@server.example.com
+```
+
+## Guias relacionados
+
+- <a href="/pt/generate-ssh-key/">Gerar chave SSH online</a>
+- <a href="/pt/what-is-an-ssh-key/">Entender chaves SSH</a>
+- <a href="/pt/how-to-set-up-ssh/">Configurar SSH passo a passo</a>
+- <a href="/pt/ssh-command/">Exemplos do comando SSH</a>

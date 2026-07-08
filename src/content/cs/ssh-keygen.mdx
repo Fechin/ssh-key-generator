@@ -1,0 +1,72 @@
+# Příkaz ssh-keygen: tvorba SSH klíčů na příkladech
+
+Praktické příklady ssh-keygen: klíče Ed25519/RSA, název souboru, passphrase, fingerprint, GitHub a test přihlášení na server.
+
+Vygenerovat SSH klíč znamená vytvořit pár veřejného a soukromého klíče. Pro nové klíče je obvykle nejlepší Ed25519; RSA 4096 používejte kvůli starším systémům.
+
+## Rychlá odpověď
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+```
+
+## Základní syntaxe ssh-keygen
+
+```bash
+ssh-keygen -t TYPE -b BITS -C COMMENT -f OUTPUT_FILE
+```
+
+- `-t`: typ klíče
+- `-b`: velikost RSA
+- `-C`: komentář
+- `-f`: výstupní soubor
+- `-p`: změna passphrase
+- `-l`: fingerprint
+- `-y`: veřejný klíč ze soukromého
+
+## Ed25519
+
+Pro nové klíče většinou zvolte Ed25519. RSA 4096 použijte, pokud starší SSH server nebo nástroj nepodporuje Ed25519.
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+```
+
+## RSA 4096
+
+Pro nové klíče většinou zvolte Ed25519. RSA 4096 použijte, pokud starší SSH server nebo nástroj nepodporuje Ed25519.
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+```
+
+## Název souboru, fingerprint a ssh-agent
+
+Většině připojení stačí ssh user@host. Použijte -i pro konkrétní klíč, -p pro jiný port a -J pro připojení přes bastion.
+
+```bash
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -p -f ~/.ssh/id_ed25519
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+## Přidat klíč do GitHubu, GitLabu nebo na server
+
+Běžný postup: vygenerovat klíč, zkopírovat veřejný klíč, přidat ho do GitHubu/GitLabu nebo na server, načíst soukromý klíč do ssh-agent a otestovat spojení.
+
+```bash
+ssh -T git@github.com
+ssh -v user@server.example.com
+```
+
+## Související návody
+
+- <a href="/cs/generate-ssh-key/">Vygenerovat SSH klíč online</a>
+- <a href="/cs/what-is-an-ssh-key/">Co je SSH klíč</a>
+- <a href="/cs/how-to-set-up-ssh/">Nastavení SSH krok za krokem</a>
+- <a href="/cs/ssh-command/">Příklady příkazu SSH</a>

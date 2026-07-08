@@ -1,0 +1,72 @@
+# ssh-keygen parancs: SSH-kulcs készítése példákkal
+
+Gyakorlati ssh-keygen példák: Ed25519/RSA SSH-kulcsok, fájlnév, passphrase, fingerprint, GitHub és szerverbelépés tesztelése.
+
+SSH-kulcs létrehozásakor egy publikus és egy privát kulcspár jön létre. Új kulcshoz általában az Ed25519 a jó választás; RSA 4096 főleg régi rendszerekhez kell.
+
+## Gyors válasz
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+```
+
+## Az ssh-keygen alap szintaxisa
+
+```bash
+ssh-keygen -t TYPE -b BITS -C COMMENT -f OUTPUT_FILE
+```
+
+- `-t`: kulcstípus
+- `-b`: RSA bitméret
+- `-C`: komment
+- `-f`: kimeneti fájl
+- `-p`: passphrase módosítása
+- `-l`: fingerprint
+- `-y`: publikus kulcs privát kulcsból
+
+## Ed25519
+
+Új kulcsokhoz általában Ed25519-et válassz. RSA 4096 akkor kell, ha egy régi SSH-szerver vagy eszköz nem támogatja az Ed25519-et.
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+```
+
+## RSA 4096
+
+Új kulcsokhoz általában Ed25519-et válassz. RSA 4096 akkor kell, ha egy régi SSH-szerver vagy eszköz nem támogatja az Ed25519-et.
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "you@example.com"
+```
+
+## Fájlnév, fingerprint és ssh-agent
+
+A legtöbb kapcsolathoz elég az ssh user@host. Használd a -i opciót konkrét kulcshoz, a -p-t más porthoz, a -J-t bastion hosthoz.
+
+```bash
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+ssh-keygen -p -f ~/.ssh/id_ed25519
+ssh-keygen -lf ~/.ssh/id_ed25519.pub
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+## Kulcs hozzáadása GitHubhoz, GitLabhoz vagy szerverhez
+
+A szokásos folyamat: kulcs létrehozása, publikus kulcs másolása, hozzáadás GitHubhoz/GitLabhoz vagy szerverhez, privát kulcs betöltése ssh-agentbe, majd kapcsolat tesztelése.
+
+```bash
+ssh -T git@github.com
+ssh -v user@server.example.com
+```
+
+## Kapcsolódó útmutatók
+
+- <a href="/hu/generate-ssh-key/">SSH-kulcs létrehozása online</a>
+- <a href="/hu/what-is-an-ssh-key/">Mi az SSH-kulcs</a>
+- <a href="/hu/how-to-set-up-ssh/">SSH beállítása lépésről lépésre</a>
+- <a href="/hu/ssh-command/">SSH parancs példák</a>
