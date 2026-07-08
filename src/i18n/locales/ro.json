@@ -6,8 +6,8 @@
     "viewOnGitHub": "Vezi pe GitHub"
   },
   "hero": {
-    "title": "SSH Key Generator Online",
-    "subtitle": "Generează chei SSH securizate instant în browser cu acest generator gratuit. Compatibil cu GitHub, GitLab, Bitbucket și orice server SSH."
+    "title": "Generator de chei SSH: creează chei SSH online",
+    "subtitle": "Generează chei SSH Ed25519 sau RSA în browser pentru GitHub, GitLab, servere și ssh-keygen. Cheia privată nu este încărcată."
   },
   "tabs": {
     "generate": "Generare Chei",
@@ -20,8 +20,8 @@
     "guidesShort": "Ghiduri"
   },
   "generator": {
-    "title": "SSH Key Generator Online",
-    "description": "Generează o pereche de chei SSH securizată direct în browser. Datele tale nu sunt trimise către niciun server.",
+    "title": "Generator SSH în browser",
+    "description": "Creează o pereche de chei SSH direct în browser. Cheia privată este generată local și nu este trimisă serverului.",
     "algorithm": "Algoritm",
     "algorithmTooltip": "Ed25519 este recomandat pentru majoritatea cazurilor. Folosește RSA dacă ai nevoie de compatibilitate cu sisteme mai vechi.",
     "comment": "Comentariu (opțional)",
@@ -36,8 +36,8 @@
     "confirmPassphrasePlaceholder": "Reintroduceți passphrase",
     "passphrasesMismatch": "Passphrase-urile nu coincid",
     "noPassphraseWarning": "Niciun passphrase setat. Cheia privată va fi necriptată. Consideră adăugarea unui passphrase pentru securitate suplimentară.",
-    "securityTitle": "SSH Key Generator 100% în Browser",
-    "securityDesc": "Toată generarea cheilor are loc local în browserul tău. Acest generator SSH nu transmite niciodată cheile tale private.",
+    "securityTitle": "Generat local în browser",
+    "securityDesc": "Operațiile criptografice rulează pe partea clientului. Acest generator online nu încarcă și nu transmite chei private.",
     "noKeysYet": "Nicio cheie generată încă",
     "noKeysHint": "Apasă \"Generează Pereche de Chei\" pentru a crea cheile SSH"
   },
@@ -178,10 +178,10 @@
   },
   "footer": {
     "about": "Despre Acest SSH Key Generator Online",
-    "aboutDesc": "Acesta este un generator de chei SSH gratuit, open-source, care rulează complet în browserul tău. Fără procesare pe server, fără colectare de date - doar generare securizată de chei.",
+    "aboutDesc": "Generează chei SSH Ed25519 sau RSA în browser pentru GitHub, GitLab, servere și ssh-keygen. Cheia privată nu este încărcată.",
     "securityFirst": "Securitate pe Primul Loc",
     "security1": "Toată generarea cheilor are loc în browserul tău",
-    "security2": "Nicio dată nu este trimisă vreodată către vreun server",
+    "security2": "Operațiile criptografice rulează pe partea clientului. Acest generator online nu încarcă și nu transmite chei private.",
     "security3": "Cod open source și verificabil",
     "security4": "Folosește biblioteci criptografice standard din industrie",
     "resources": "Resurse",
@@ -195,13 +195,13 @@
   "seo": {
     "whatIs": {
       "title": "Ce este un SSH Key Generator Online?",
-      "desc": "Un generator de chei SSH online precum acest instrument creează perechi de chei criptografice securizate în browserul tău. Cheile SSH constau dintr-o cheie publică (partajată cu serverele) și o cheie privată (păstrată secretă). Spre deosebire de parole, cheile SSH generate online sunt practic imposibil de spart prin forță brută."
+      "desc": "Generatorul online creează perechea de chei în browser. Cheia publică se adaugă în GitHub, GitLab, Bitbucket sau pe server; cheia privată rămâne pe calculatorul tău."
     },
     "whyUse": {
       "title": "De Ce Să Folosești Acest SSH Key Generator Online?",
       "secure": {
         "title": "Generare Securizată Online",
-        "desc": "Toate operațiunile criptografice au loc în browserul tău. Acest SSH key generator online asigură că cheile tale private nu părăsesc niciodată dispozitivul."
+        "desc": "Operațiile criptografice rulează pe partea clientului. Acest generator online nu încarcă și nu transmite chei private."
       },
       "modern": {
         "title": "Algoritmi Moderni",
@@ -280,7 +280,7 @@
       "subtitle": "Găsește răspunsuri la întrebările comune despre cheile SSH și acest instrument.",
       "safe": {
         "question": "Este sigur să generezi chei SSH online?",
-        "answer": "Da, acest instrument este 100% sigur deoarece toată generarea cheilor are loc complet în browserul tău folosind Web Crypto API. Cheile tale private nu părăsesc niciodată dispozitivul și nu sunt transmise către niciun server. Codul sursă este open source și verificabil pe GitHub."
+        "answer": "Da, dacă ai încredere în pagina încărcată și în browser. Cheia este generată local, iar cheia privată nu este încărcată. Pentru medii stricte, generează offline sau folosește ssh-keygen în terminal."
       },
       "ed25519VsRsa": {
         "question": "Care este diferența dintre Ed25519 și RSA?",
@@ -292,7 +292,7 @@
       },
       "rsaKeySize": {
         "question": "Ce dimensiune a cheii ar trebui să folosesc pentru RSA?",
-        "answer": "Pentru chei RSA, 4096-bit este recomandat pentru securitate maximă. 2048-bit este dimensiunea minimă acceptabilă și oferă securitate adecvată pentru majoritatea scopurilor. Cheile mai mici de 2048-bit sunt considerate nesigure și nu ar trebui folosite."
+        "answer": "Pentru chei noi, alege de obicei Ed25519. Folosește RSA 4096 dacă un server SSH vechi sau un tool nu acceptă Ed25519."
       },
       "offline": {
         "question": "Pot folosi acest SSH key generator offline?",
@@ -320,7 +320,7 @@
       },
       "bestOnlineGenerator": {
         "question": "Care este cel mai bun SSH key generator online?",
-        "answer": "Acest SSH key generator este una dintre cele mai bune opțiuni gratuite online deoarece rulează 100% în browserul tău, suportă algoritmi moderni Ed25519 și RSA, funcționează offline ca PWA și nu trimite niciodată cheile tale private către vreun server."
+        "answer": "Generator de chei SSH: creează chei SSH online. Operațiile criptografice rulează pe partea clientului. Acest generator online nu încarcă și nu transmite chei private."
       },
       "permissions": {
         "question": "Ce permisiuni ar trebui să aibă cheia mea SSH privată?",

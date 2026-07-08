@@ -82,7 +82,7 @@ Detta tillvägagångssätt har flera fördelar:
 - **Automatiserbar** — skript och CI/CD-pipelines kan autentisera utan mänsklig interaktion.
 - **Återkallbar** — att ta bort en publik nyckel från `authorized_keys` återkallar omedelbart åtkomsten.
 
-Den modernaste och rekommenderade nyckeltypen är **Ed25519**, som använder elliptisk kurvkryptografi över Edwards-kurvan. RSA-nycklar stöds också brett, men du bör använda minst 4096 bitar.
+För nya nycklar är Ed25519 oftast rätt val. Använd RSA 4096 bitar när äldre system kräver det.
 
 För en djupdykning i nyckelpar, se vår guide om <a href="/sv/what-is-an-ssh-key/">vad en SSH-nyckel är</a>.
 
@@ -263,7 +263,7 @@ SSH använder **TCP-port 22** som standard. Detta är en välkänd port tilldela
 
 ### Kan SSH hackas?
 
-En korrekt konfigurerad SSH-server med nyckelbaserad autentisering är extremt svår att kompromissa. Kryptografin — Ed25519-nycklar, AES-256-kryptering, SHA-2-MAC:er — anses vara kvantresistent för nyckelautentisering och beräkningsmässigt omöjlig att brute-forca. Verkliga SSH-komprometteringar involverar vanligtvis: stulna privata nyckelfiler, svaga lösensfraser, felkonfigurerade servrar som tillåter lösenordsautentisering med svaga lösenord, sårbara programvaruversioner med opatchar CVE:er, eller social ingenjörskonst snarare än kryptografiska attacker. Håll din server uppdaterad, inaktivera lösenordsautentisering och skydda din privata nyckelfil.
+Modern SSH with key authentication is strong against classical brute force, but Ed25519 and RSA should not be described as quantum-safe. Real incidents usually involve stolen private keys, weak passphrases, misconfiguration, unpatched CVEs or social engineering.
 
 ### Vad är skillnaden mellan SSH och HTTPS?
 

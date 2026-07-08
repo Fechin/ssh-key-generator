@@ -1,8 +1,15 @@
 # SSH 명령어: Linux, Mac, Windows 예제가 포함된 완전 참조 가이드
 
-`ssh` 명령어는 커맨드라인에서 SSH 연결을 시작하는 주요 도구입니다. 원격 Linux 서버에 로그인하거나, 데이터베이스 접근을 위해 포트를 포워딩하거나, 배스천 호스트를 통해 내부 네트워크에 접근하는 경우—`ssh` 명령어가 모든 것의 시작점입니다. 이 가이드는 기본 문법부터 고급 플래그, 터널링, ProxyJump 설정까지—Linux, macOS, Windows에서의 실제 예제와 함께 모든 것을 다룹니다.
+## 빠른 답변
 
-SSH 명령어를 실행하기 전에 SSH 키가 필요합니다. <a href="/ko/what-is-an-ssh-key/">SSH 키란 무엇인가</a> 가이드를 참조하거나 <a href="/">무료 온라인 생성기</a>로 키 쌍을 만드세요.
+대부분의 접속은 ssh user@host로 충분합니다. 특정 키는 -i, 다른 포트는 -p, 배스천 호스트는 -J를 사용합니다.
+
+```bash
+ssh user@server.example.com
+ssh -i ~/.ssh/id_ed25519 user@server.example.com
+ssh -p 2222 user@server.example.com
+ssh -J bastion.example.com user@private.example.com
+```
 
 ## SSH 명령어 문법
 

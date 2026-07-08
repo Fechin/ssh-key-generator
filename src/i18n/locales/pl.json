@@ -6,8 +6,8 @@
     "viewOnGitHub": "Zobacz na GitHub"
   },
   "hero": {
-    "title": "Generator Kluczy SSH Online",
-    "subtitle": "Generuj bezpieczne klucze SSH natychmiast w przeglądarce za pomocą tego darmowego generatora kluczy SSH online. Działa z GitHub, GitLab, Bitbucket i dowolnym serwerem SSH."
+    "title": "Generator kluczy SSH: utwórz klucze SSH online",
+    "subtitle": "Generuj klucze SSH Ed25519 lub RSA w przeglądarce dla GitHub, GitLab, serwerów i ssh-keygen. Klucz prywatny nie jest wysyłany."
   },
   "tabs": {
     "generate": "Generuj Klucze",
@@ -20,8 +20,8 @@
     "guidesShort": "Przewodniki"
   },
   "generator": {
-    "title": "Generator Kluczy SSH Online",
-    "description": "Generuj nową parę kluczy SSH bezpiecznie w przeglądarce używając tego darmowego generatora online. Żadne dane nie są wysyłane na żaden serwer.",
+    "title": "Generator kluczy SSH po stronie przeglądarki",
+    "description": "Utwórz parę kluczy SSH w przeglądarce. Klucz prywatny powstaje lokalnie i nie jest wysyłany na serwer.",
     "algorithm": "Algorytm",
     "algorithmTooltip": "Ed25519 jest zalecany w większości przypadków. Użyj RSA, jeśli potrzebujesz kompatybilności ze starszymi systemami.",
     "comment": "Komentarz (opcjonalny)",
@@ -36,8 +36,8 @@
     "confirmPassphrasePlaceholder": "Wprowadź hasło ponownie",
     "passphrasesMismatch": "Hasła nie są zgodne",
     "noPassphraseWarning": "Nie ustawiono hasła. Twój klucz prywatny będzie niezaszyfrowany. Rozważ dodanie hasła dla większego bezpieczeństwa.",
-    "securityTitle": "Generator Kluczy SSH 100% Po Stronie Klienta",
-    "securityDesc": "Całe generowanie kluczy odbywa się lokalnie w Twojej przeglądarce. Ten generator kluczy SSH online nigdy nie przesyła Twoich kluczy prywatnych.",
+    "securityTitle": "Generowanie lokalne w przeglądarce",
+    "securityDesc": "Operacje kryptograficzne działają po stronie klienta. Ten generator online nie przesyła kluczy prywatnych.",
     "noKeysYet": "Brak wygenerowanych kluczy",
     "noKeysHint": "Kliknij \"Generuj Parę Kluczy\" aby utworzyć klucze SSH"
   },
@@ -178,10 +178,10 @@
   },
   "footer": {
     "about": "O Tym Generatorze Kluczy SSH Online",
-    "aboutDesc": "To jest darmowy, otwartoźródłowy generator kluczy SSH online, który działa całkowicie w Twojej przeglądarce. Brak przetwarzania po stronie serwera, brak zbierania danych - tylko bezpieczne generowanie kluczy.",
+    "aboutDesc": "Generuj klucze SSH Ed25519 lub RSA w przeglądarce dla GitHub, GitLab, serwerów i ssh-keygen. Klucz prywatny nie jest wysyłany.",
     "securityFirst": "Bezpieczeństwo Przede Wszystkim",
     "security1": "Całe generowanie kluczy odbywa się w Twojej przeglądarce",
-    "security2": "Żadne dane nie są nigdy wysyłane na żaden serwer",
+    "security2": "Operacje kryptograficzne działają po stronie klienta. Ten generator online nie przesyła kluczy prywatnych.",
     "security3": "Kod open source możliwy do audytu",
     "security4": "Używa standardowych bibliotek kryptograficznych",
     "resources": "Zasoby",
@@ -195,13 +195,13 @@
   "seo": {
     "whatIs": {
       "title": "Czym jest Generator Kluczy SSH Online?",
-      "desc": "Generator kluczy SSH online, taki jak to narzędzie, tworzy kryptograficzne pary kluczy bezpiecznie w Twojej przeglądarce. Klucze SSH składają się z klucza publicznego (udostępnianego serwerom) i klucza prywatnego (trzymanego w tajemnicy). W przeciwieństwie do haseł, klucze SSH wygenerowane online są praktycznie niemożliwe do złamania metodą brute force."
+      "desc": "Generator online tworzy parę kluczy w przeglądarce. Klucz publiczny dodajesz do GitHub, GitLab, Bitbucket albo serwera; klucz prywatny zostaje na Twoim komputerze."
     },
     "whyUse": {
       "title": "Dlaczego Używać Tego Generatora Kluczy SSH Online?",
       "secure": {
         "title": "Bezpieczne Generowanie Online",
-        "desc": "Wszystkie operacje kryptograficzne odbywają się w Twojej przeglądarce. Ten generator kluczy SSH online zapewnia, że Twoje klucze prywatne nigdy nie opuszczają Twojego urządzenia."
+        "desc": "Operacje kryptograficzne działają po stronie klienta. Ten generator online nie przesyła kluczy prywatnych."
       },
       "modern": {
         "title": "Nowoczesne Algorytmy",
@@ -280,7 +280,7 @@
       "subtitle": "Znajdź odpowiedzi na typowe pytania dotyczące kluczy SSH i tego narzędzia.",
       "safe": {
         "question": "Czy generowanie kluczy SSH online jest bezpieczne?",
-        "answer": "Tak, to narzędzie jest w 100% bezpieczne, ponieważ całe generowanie kluczy odbywa się całkowicie w Twojej przeglądarce przy użyciu Web Crypto API. Twoje klucze prywatne nigdy nie opuszczają Twojego urządzenia i nigdy nie są przesyłane na żaden serwer. Kod źródłowy jest open source i możliwy do audytu na GitHub."
+        "answer": "Tak, jeśli ufasz załadowanej stronie i swojej przeglądarce. Klucz jest generowany lokalnie, a klucz prywatny nie jest wysyłany. W środowiskach o ostrych wymaganiach użyj trybu offline albo ssh-keygen w terminalu."
       },
       "ed25519VsRsa": {
         "question": "Jaka jest różnica między Ed25519 a RSA?",
@@ -292,7 +292,7 @@
       },
       "rsaKeySize": {
         "question": "Jakiego rozmiaru klucza powinienem użyć dla RSA?",
-        "answer": "Dla kluczy RSA, 4096-bit jest zalecany dla maksymalnego bezpieczeństwa. 2048-bit to minimalny akceptowalny rozmiar i oferuje odpowiednie bezpieczeństwo dla większości celów. Klucze mniejsze niż 2048-bit są uważane za niebezpieczne i nie powinny być używane."
+        "answer": "Dla nowych kluczy najczęściej wybierz Ed25519. Użyj RSA 4096, jeśli starszy serwer SSH lub narzędzie nie obsługuje Ed25519."
       },
       "offline": {
         "question": "Czy mogę używać tego generatora kluczy SSH offline?",
@@ -320,7 +320,7 @@
       },
       "bestOnlineGenerator": {
         "question": "Jaki jest najlepszy generator kluczy SSH online?",
-        "answer": "Ten generator kluczy SSH jest jedną z najlepszych darmowych opcji online, ponieważ działa w 100% w Twojej przeglądarce, obsługuje nowoczesne algorytmy Ed25519 i RSA, działa offline jako PWA i nigdy nie wysyła Twoich kluczy prywatnych na żaden serwer."
+        "answer": "Generator kluczy SSH: utwórz klucze SSH online. Operacje kryptograficzne działają po stronie klienta. Ten generator online nie przesyła kluczy prywatnych."
       },
       "permissions": {
         "question": "Jakie uprawnienia powinien mieć mój prywatny klucz SSH?",

@@ -1,6 +1,10 @@
 # Qu'est-ce qu'une clé SSH ? Clés publiques, clés privées et paires de clés expliquées
 
-Une **clé SSH** est un identifiant cryptographique utilisé pour s'authentifier auprès de serveurs SSH sans mot de passe. Les clés SSH se présentent par paires — une **clé publique** et une **clé privée** — et ensemble, elles rendent l'accès distant plus sécurisé et plus pratique que l'authentification traditionnelle par mot de passe. Ce guide explique ce qu'est une clé SSH, comment fonctionne le système de paires de clés, quels types de clés choisir et comment utiliser les clés SSH avec des services comme GitHub et GitLab.
+## Réponse rapide
+
+Générer une clé SSH consiste à créer une paire composée d’une clé publique et d’une clé privée. Pour un nouvel usage, Ed25519 est le choix le plus simple et le plus moderne ; RSA 4096 bits reste utile pour les environnements anciens.
+
+Pour une nouvelle clé, choisissez Ed25519 dans la plupart des cas. Utilisez RSA 4096 bits lorsque vous devez rester compatible avec un ancien serveur SSH ou un outil qui ne prend pas en charge Ed25519.
 
 ## Comment fonctionnent les clés SSH
 
@@ -92,14 +96,14 @@ RSA est l'algorithme plus ancien (inventé en 1977) et, bien qu'il soit toujours
 ssh-keygen -t rsa -b 4096 -C "votre@email.com"
 ```
 
-**N'utilisez jamais RSA avec moins de 4096 bits.** RSA-1024 et RSA-2048 sont de plus en plus considérés comme insuffisants à mesure que la puissance de calcul augmente. Ed25519 à 256 bits fournit une sécurité équivalente ou supérieure avec une fraction de la taille de clé.
+Pour les nouvelles clés, privilégiez Ed25519. Utilisez RSA 4096 bits quand la compatibilité avec un ancien système l’exige.
 
 ### Comparaison récapitulative
 
 | Fonctionnalité | Ed25519 | RSA 4096 |
 |---|---|---|
 | Taille de clé (publique) | ~68 caractères | ~725 caractères |
-| Niveau de sécurité | 128 bits (structure résistante post-quantique) | ~140 bits classique |
+| Security level | ~128-bit classical security; not quantum-safe | Depends on key size; 4096-bit gives more classical margin |
 | Vitesse | Très rapide | Plus lent |
 | Compatibilité | SSH moderne (OpenSSH 6.5+) | Universelle |
 | Recommandé pour | Toutes les nouvelles clés | Systèmes hérités uniquement |
@@ -321,7 +325,7 @@ Si vous perdez votre clé privée et n'en avez pas de sauvegarde, vous perdez la
 
 ### Ed25519 ou RSA, lequel est le meilleur ?
 
-**Ed25519 est préférable pour toute nouvelle génération de clé.** Il est plus rapide, produit des clés plus petites, n'est pas vulnérable à certaines faiblesses d'implémentation qui affectent RSA, et fournit une sécurité équivalente ou supérieure avec une clé de 256 bits par rapport à RSA-4096. La seule raison d'utiliser RSA aujourd'hui est la compatibilité avec de très anciens logiciels de serveur SSH (OpenSSH avant la version 6.5, publiée en 2014) ou des modules de sécurité matériels hérités. Si vous accédez à un serveur ou service moderne comme GitHub, utilisez Ed25519.
+Pour les nouvelles clés, privilégiez Ed25519. Utilisez RSA 4096 bits quand la compatibilité avec un ancien système l’exige.
 
 ## Générez votre paire de clés SSH
 

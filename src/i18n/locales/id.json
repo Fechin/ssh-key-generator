@@ -6,8 +6,8 @@
     "viewOnGitHub": "Lihat di GitHub"
   },
   "hero": {
-    "title": "Generator Kunci SSH Online",
-    "subtitle": "Buat kunci SSH yang aman secara instan di browser Anda dengan generator kunci SSH gratis ini. Kompatibel dengan GitHub, GitLab, Bitbucket, dan semua server SSH."
+    "title": "Generator kunci SSH: buat kunci SSH online",
+    "subtitle": "Buat kunci SSH Ed25519 atau RSA di browser untuk GitHub, GitLab, server, dan alur ssh-keygen. Kunci privat tidak diunggah."
   },
   "tabs": {
     "generate": "Buat Kunci",
@@ -20,8 +20,8 @@
     "guidesShort": "Panduan"
   },
   "generator": {
-    "title": "Generator Kunci SSH Online",
-    "description": "Buat pasangan kunci SSH baru dengan aman di browser Anda menggunakan generator gratis ini. Tidak ada data yang dikirim ke server manapun.",
+    "title": "Generator kunci SSH di browser",
+    "description": "Buat pasangan kunci SSH langsung di browser. Kunci privat dibuat secara lokal dan tidak dikirim ke server.",
     "algorithm": "Algoritma",
     "algorithmTooltip": "Ed25519 direkomendasikan untuk sebagian besar kasus. Gunakan RSA jika Anda memerlukan kompatibilitas dengan sistem lama.",
     "comment": "Komentar (opsional)",
@@ -36,8 +36,8 @@
     "confirmPassphrasePlaceholder": "Masukkan ulang frasa sandi",
     "passphrasesMismatch": "Frasa sandi tidak cocok",
     "noPassphraseWarning": "Frasa sandi tidak diatur. Kunci privat Anda akan tidak terenkripsi. Pertimbangkan untuk menambahkan frasa sandi demi keamanan ekstra.",
-    "securityTitle": "Generator Kunci SSH 100% Sisi Klien",
-    "securityDesc": "Semua pembuatan kunci terjadi secara lokal di browser Anda. Generator kunci SSH online ini tidak pernah mengirimkan kunci privat Anda.",
+    "securityTitle": "Dibuat lokal di browser",
+    "securityDesc": "Operasi kriptografi berjalan di sisi klien. Generator online ini tidak mengunggah atau mengirim kunci privat.",
     "noKeysYet": "Belum ada kunci yang dibuat",
     "noKeysHint": "Klik \"Buat Pasangan Kunci\" untuk membuat kunci SSH Anda"
   },
@@ -178,10 +178,10 @@
   },
   "footer": {
     "about": "Tentang Generator Kunci SSH Online Ini",
-    "aboutDesc": "Ini adalah generator kunci SSH online gratis dan open source yang berjalan sepenuhnya di browser Anda. Tidak ada pemrosesan sisi server, tidak ada pengumpulan data - hanya pembuatan kunci yang aman.",
+    "aboutDesc": "Buat kunci SSH Ed25519 atau RSA di browser untuk GitHub, GitLab, server, dan alur ssh-keygen. Kunci privat tidak diunggah.",
     "securityFirst": "Keamanan Utama",
     "security1": "Semua pembuatan kunci terjadi di browser Anda",
-    "security2": "Tidak ada data yang pernah dikirim ke server manapun",
+    "security2": "Operasi kriptografi berjalan di sisi klien. Generator online ini tidak mengunggah atau mengirim kunci privat.",
     "security3": "Kode sumber terbuka dan dapat diaudit",
     "security4": "Menggunakan pustaka kriptografi standar industri",
     "resources": "Sumber Daya",
@@ -195,13 +195,13 @@
   "seo": {
     "whatIs": {
       "title": "Apa itu Generator Kunci SSH Online?",
-      "desc": "Generator kunci SSH online seperti alat ini membuat pasangan kunci kriptografi dengan aman di browser Anda. Kunci SSH terdiri dari kunci publik (dibagikan ke server) dan kunci privat (dijaga kerahasiaannya). Tidak seperti kata sandi, kunci SSH yang dibuat secara online hampir tidak mungkin diretas melalui serangan brute force."
+      "desc": "Generator online membuat pasangan kunci di browser. Kunci publik ditambahkan ke GitHub, GitLab, Bitbucket, atau server; kunci privat tetap di komputer Anda."
     },
     "whyUse": {
       "title": "Mengapa Menggunakan Generator Kunci SSH Online Ini?",
       "secure": {
         "title": "Pembuatan Online yang Aman",
-        "desc": "Semua operasi kriptografi terjadi di browser Anda. Generator kunci SSH online ini memastikan kunci privat Anda tidak pernah meninggalkan perangkat Anda."
+        "desc": "Operasi kriptografi berjalan di sisi klien. Generator online ini tidak mengunggah atau mengirim kunci privat."
       },
       "modern": {
         "title": "Algoritma Modern",
@@ -280,7 +280,7 @@
       "subtitle": "Temukan jawaban atas pertanyaan umum tentang kunci SSH dan alat ini.",
       "safe": {
         "question": "Apakah aman membuat kunci SSH secara online?",
-        "answer": "Ya, alat ini 100% aman karena semua pembuatan kunci terjadi sepenuhnya di browser Anda menggunakan Web Crypto API. Kunci privat Anda tidak pernah meninggalkan perangkat Anda dan tidak pernah dikirim ke server manapun. Kode sumbernya open source dan dapat diaudit di GitHub."
+        "answer": "Ya, jika Anda percaya pada halaman yang dimuat dan lingkungan browser. Kunci dibuat secara lokal dan kunci privat tidak diunggah. Untuk lingkungan ketat, buat kunci secara offline atau gunakan ssh-keygen di terminal."
       },
       "ed25519VsRsa": {
         "question": "Apa perbedaan antara Ed25519 dan RSA?",
@@ -292,7 +292,7 @@
       },
       "rsaKeySize": {
         "question": "Berapa ukuran kunci yang harus saya gunakan untuk RSA?",
-        "answer": "Untuk kunci RSA, 4096-bit direkomendasikan untuk keamanan maksimum. 2048-bit adalah ukuran minimum yang dapat diterima dan menawarkan keamanan yang memadai untuk sebagian besar keperluan. Kunci yang lebih kecil dari 2048-bit dianggap tidak aman dan tidak boleh digunakan."
+        "answer": "Untuk kunci baru, biasanya pilih Ed25519. Gunakan RSA 4096 jika server SSH lama atau tool lama tidak mendukung Ed25519."
       },
       "offline": {
         "question": "Bisakah saya menggunakan generator kunci SSH ini secara offline?",
@@ -320,7 +320,7 @@
       },
       "bestOnlineGenerator": {
         "question": "Apa generator kunci SSH online terbaik?",
-        "answer": "Generator kunci SSH ini adalah salah satu opsi online gratis terbaik karena berjalan 100% di browser Anda, mendukung algoritma Ed25519 dan RSA modern, berfungsi offline sebagai PWA, dan tidak pernah mengirim kunci privat Anda ke server manapun."
+        "answer": "Generator kunci SSH: buat kunci SSH online. Operasi kriptografi berjalan di sisi klien. Generator online ini tidak mengunggah atau mengirim kunci privat."
       },
       "permissions": {
         "question": "Izin apa yang harus dimiliki kunci privat SSH saya?",

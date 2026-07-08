@@ -82,7 +82,7 @@ Tento přístup má několik výhod:
 - **Automatizovatelné** — skripty a CI/CD pipeline se mohou autentizovat bez lidské interakce.
 - **Odvolatelné** — odebrání veřejného klíče z `authorized_keys` okamžitě odvolá přístup.
 
-Nejmodernějším a doporučeným typem klíče je **Ed25519**, který používá kryptografii na eliptických křivkách nad Edwardsovou křivkou. RSA klíče jsou také široce podporovány, ačkoli byste měli používat alespoň 4096 bitů.
+Pro nové klíče obvykle zvolte Ed25519. RSA 4096 bitů použijte, když to vyžadují starší systémy.
 
 Podrobný průvodce páry klíčů najdete v našem průvodci <a href="/cs/what-is-an-ssh-key/">co je SSH klíč</a>.
 
@@ -263,7 +263,7 @@ SSH ve výchozím nastavení používá **TCP port 22**. Jedná se o dobře zná
 
 ### Může být SSH hackováno?
 
-Správně nakonfigurovaný SSH server s autentizací pomocí klíčů je extrémně obtížné kompromitovat. Kryptografie — Ed25519 klíče, šifrování AES-256, SHA-2 MAC — je považována za odolnou vůči kvantovým počítačům pro autentizaci klíčů a výpočetně neproveditelnou pro útoky hrubou silou. Skutečné kompromitace SSH obvykle zahrnují: odcizené soubory soukromých klíčů, slabá hesla passphrase, špatně nakonfigurované servery umožňující autentizaci heslem se slabými hesly, zranitelné verze softwaru s neopravenými CVE, nebo sociální inženýrství spíše než kryptografické útoky. Udržujte server aktualizovaný, zakažte autentizaci heslem a chraňte svůj soubor soukromého klíče.
+Modern SSH with key authentication is strong against classical brute force, but Ed25519 and RSA should not be described as quantum-safe. Real incidents usually involve stolen private keys, weak passphrases, misconfiguration, unpatched CVEs or social engineering.
 
 ### Jaký je rozdíl mezi SSH a HTTPS?
 

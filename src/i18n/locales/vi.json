@@ -6,8 +6,8 @@
     "viewOnGitHub": "Xem trên GitHub"
   },
   "hero": {
-    "title": "Tạo khóa SSH trực tuyến",
-    "subtitle": "Tạo khóa SSH an toàn ngay trên trình duyệt với công cụ tạo khóa SSH miễn phí này. Tương thích với GitHub, GitLab, Bitbucket và mọi máy chủ SSH."
+    "title": "SSH Key Generator: tạo SSH key online",
+    "subtitle": "Tạo SSH key Ed25519 hoặc RSA trong trình duyệt cho GitHub, GitLab, server và ssh-keygen. Private key không được tải lên."
   },
   "tabs": {
     "generate": "Tạo khóa",
@@ -20,8 +20,8 @@
     "guidesShort": "Hướng dẫn"
   },
   "generator": {
-    "title": "Công cụ tạo khóa SSH trực tuyến",
-    "description": "Tạo cặp khóa SSH mới một cách an toàn ngay trên trình duyệt với công cụ miễn phí này. Không có dữ liệu nào được gửi đến máy chủ.",
+    "title": "Trình tạo SSH key chạy trong trình duyệt",
+    "description": "Tạo cặp SSH key trực tiếp trong trình duyệt. Private key được tạo cục bộ và không gửi lên server.",
     "algorithm": "Thuật toán",
     "algorithmTooltip": "Ed25519 được khuyến nghị cho hầu hết các trường hợp. Dùng RSA nếu bạn cần tương thích với các hệ thống cũ.",
     "comment": "Ghi chú (không bắt buộc)",
@@ -36,8 +36,8 @@
     "confirmPassphrasePlaceholder": "Nhập lại mật khẩu",
     "passphrasesMismatch": "Mật khẩu không khớp",
     "noPassphraseWarning": "Chưa đặt mật khẩu bảo vệ. Khóa bí mật của bạn sẽ không được mã hóa. Hãy cân nhắc thêm mật khẩu để tăng cường bảo mật.",
-    "securityTitle": "Tạo khóa SSH 100% trên trình duyệt",
-    "securityDesc": "Toàn bộ quá trình tạo khóa diễn ra trên trình duyệt của bạn. Công cụ tạo khóa SSH trực tuyến này không bao giờ truyền khóa bí mật của bạn đi đâu.",
+    "securityTitle": "Tạo cục bộ trong trình duyệt",
+    "securityDesc": "Các thao tác mật mã chạy phía client. Trình tạo SSH key online này không upload hoặc truyền private key.",
     "noKeysYet": "Chưa có khóa nào được tạo",
     "noKeysHint": "Nhấn \"Tạo cặp khóa\" để tạo khóa SSH của bạn"
   },
@@ -178,10 +178,10 @@
   },
   "footer": {
     "about": "Giới thiệu về công cụ tạo khóa SSH trực tuyến này",
-    "aboutDesc": "Đây là công cụ tạo khóa SSH trực tuyến miễn phí, mã nguồn mở, chạy hoàn toàn trên trình duyệt của bạn. Không xử lý phía máy chủ, không thu thập dữ liệu - chỉ tạo khóa an toàn.",
+    "aboutDesc": "Tạo SSH key Ed25519 hoặc RSA trong trình duyệt cho GitHub, GitLab, server và ssh-keygen. Private key không được tải lên.",
     "securityFirst": "Bảo mật là ưu tiên hàng đầu",
     "security1": "Toàn bộ quá trình tạo khóa diễn ra trên trình duyệt của bạn",
-    "security2": "Không có dữ liệu nào được gửi đến bất kỳ máy chủ nào",
+    "security2": "Các thao tác mật mã chạy phía client. Trình tạo SSH key online này không upload hoặc truyền private key.",
     "security3": "Mã nguồn mở và có thể kiểm tra được",
     "security4": "Sử dụng các thư viện mật mã tiêu chuẩn ngành",
     "resources": "Tài nguyên",
@@ -195,13 +195,13 @@
   "seo": {
     "whatIs": {
       "title": "Công cụ tạo khóa SSH trực tuyến là gì?",
-      "desc": "Công cụ tạo khóa SSH trực tuyến như công cụ này giúp tạo cặp khóa mật mã an toàn ngay trên trình duyệt của bạn. Khóa SSH bao gồm khóa công khai (chia sẻ với máy chủ) và khóa bí mật (giữ bí mật). Không giống như mật khẩu, khóa SSH được tạo trực tuyến gần như không thể bị phá bằng phương pháp brute force."
+      "desc": "Trình tạo SSH key online tạo cặp key ngay trong trình duyệt. Public key dùng cho GitHub, GitLab, Bitbucket hoặc server; private key nằm trên máy của bạn."
     },
     "whyUse": {
       "title": "Tại sao nên sử dụng công cụ tạo khóa SSH trực tuyến này?",
       "secure": {
         "title": "Tạo khóa trực tuyến an toàn",
-        "desc": "Mọi thao tác mật mã đều diễn ra trên trình duyệt của bạn. Công cụ tạo khóa SSH trực tuyến này đảm bảo khóa bí mật không bao giờ rời khỏi thiết bị của bạn."
+        "desc": "Các thao tác mật mã chạy phía client. Trình tạo SSH key online này không upload hoặc truyền private key."
       },
       "modern": {
         "title": "Thuật toán hiện đại",
@@ -280,7 +280,7 @@
       "subtitle": "Tìm câu trả lời cho các câu hỏi phổ biến về khóa SSH và công cụ này.",
       "safe": {
         "question": "Tạo khóa SSH trực tuyến có an toàn không?",
-        "answer": "Có, công cụ này hoàn toàn an toàn vì toàn bộ quá trình tạo khóa diễn ra trên trình duyệt của bạn sử dụng Web Crypto API. Khóa bí mật không bao giờ rời khỏi thiết bị và không bao giờ được truyền đến bất kỳ máy chủ nào. Mã nguồn mở và có thể kiểm tra trên GitHub."
+        "answer": "Có, nếu bạn tin tưởng trang đã tải và môi trường trình duyệt. Key được tạo cục bộ và private key không được upload. Với môi trường nghiêm ngặt, hãy tạo offline hoặc dùng ssh-keygen trong terminal."
       },
       "ed25519VsRsa": {
         "question": "Sự khác biệt giữa Ed25519 và RSA là gì?",
@@ -292,7 +292,7 @@
       },
       "rsaKeySize": {
         "question": "Nên sử dụng kích thước khóa RSA nào?",
-        "answer": "Đối với khóa RSA, 4096-bit được khuyến nghị để bảo mật tối đa. 2048-bit là kích thước tối thiểu chấp nhận được và cung cấp bảo mật đủ cho hầu hết các mục đích. Khóa nhỏ hơn 2048-bit được coi là không an toàn và không nên sử dụng."
+        "answer": "Với key mới, thường chọn Ed25519. Chỉ dùng RSA 4096 khi server SSH cũ hoặc công cụ cũ không hỗ trợ Ed25519."
       },
       "offline": {
         "question": "Tôi có thể sử dụng công cụ tạo khóa SSH này ngoại tuyến không?",
@@ -320,7 +320,7 @@
       },
       "bestOnlineGenerator": {
         "question": "Công cụ tạo khóa SSH trực tuyến tốt nhất là gì?",
-        "answer": "Công cụ tạo khóa SSH này là một trong những lựa chọn trực tuyến miễn phí tốt nhất vì nó chạy 100% trên trình duyệt, hỗ trợ thuật toán Ed25519 và RSA hiện đại, hoạt động ngoại tuyến như PWA, và không bao giờ gửi khóa bí mật đến bất kỳ máy chủ nào."
+        "answer": "SSH Key Generator: tạo SSH key online. Các thao tác mật mã chạy phía client. Trình tạo SSH key online này không upload hoặc truyền private key."
       },
       "permissions": {
         "question": "Khóa bí mật SSH nên có quyền truy cập như thế nào?",

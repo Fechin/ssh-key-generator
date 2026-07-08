@@ -6,8 +6,8 @@
     "viewOnGitHub": "Zobrazit na GitHubu"
   },
   "hero": {
-    "title": "Online SSH Key Generator",
-    "subtitle": "Vygenerujte si bezpečné SSH klíče okamžitě ve svém prohlížeči s tímto bezplatným online generátorem. Funguje s GitHub, GitLab, Bitbucket a jakýmkoli SSH serverem."
+    "title": "Generátor SSH klíčů: vytvořte SSH klíče online",
+    "subtitle": "Generujte Ed25519 nebo RSA SSH klíče v prohlížeči pro GitHub, GitLab, servery a ssh-keygen. Soukromý klíč se neodesílá."
   },
   "tabs": {
     "generate": "Generovat klíče",
@@ -20,8 +20,8 @@
     "guidesShort": "Návody"
   },
   "generator": {
-    "title": "Online SSH Key Generator",
-    "description": "Vygenerujte si nový pár SSH klíčů bezpečně ve svém prohlížeči pomocí tohoto bezplatného online generátoru. Žádná data se neodesílají na server.",
+    "title": "Generátor SSH klíčů v prohlížeči",
+    "description": "Vytvořte pár SSH klíčů přímo v prohlížeči. Soukromý klíč se generuje lokálně a neposílá se na server.",
     "algorithm": "Algoritmus",
     "algorithmTooltip": "Ed25519 je doporučen pro většinu případů. RSA použijte, pokud potřebujete kompatibilitu se staršími systémy.",
     "comment": "Komentář (volitelné)",
@@ -36,8 +36,8 @@
     "confirmPassphrasePlaceholder": "Zadejte heslo znovu",
     "passphrasesMismatch": "Hesla se neshodují",
     "noPassphraseWarning": "Heslo není nastaveno. Váš privátní klíč nebude šifrován. Zvažte přidání hesla pro vyšší zabezpečení.",
-    "securityTitle": "100% SSH Key Generator na straně klienta",
-    "securityDesc": "Veškeré generování klíčů probíhá lokálně ve vašem prohlížeči. Tento online SSH Key Generator nikdy nepřenáší vaše privátní klíče.",
+    "securityTitle": "Lokální generování v prohlížeči",
+    "securityDesc": "Kryptografické operace běží na straně klienta. Tento online generátor nenahrává ani nepřenáší soukromé klíče.",
     "noKeysYet": "Zatím nebyly vygenerovány žádné klíče",
     "noKeysHint": "Klikněte na „Vygenerovat pár klíčů“ pro vytvoření vašich SSH klíčů"
   },
@@ -178,10 +178,10 @@
   },
   "footer": {
     "about": "O tomto online SSH Key Generatoru",
-    "aboutDesc": "Toto je bezplatný open-source online SSH Key Generator, který běží výhradně ve vašem prohlížeči. Žádné zpracování na serveru, žádné shromažďování dat – pouze bezpečné generování klíčů.",
+    "aboutDesc": "Generujte Ed25519 nebo RSA SSH klíče v prohlížeči pro GitHub, GitLab, servery a ssh-keygen. Soukromý klíč se neodesílá.",
     "securityFirst": "Bezpečnost na prvním místě",
     "security1": "Veškeré generování klíčů probíhá ve vašem prohlížeči",
-    "security2": "Žádná data se nikdy neodesílají na server",
+    "security2": "Kryptografické operace běží na straně klienta. Tento online generátor nenahrává ani nepřenáší soukromé klíče.",
     "security3": "Open source a auditovatelný kód",
     "security4": "Využívá standardní kryptografické knihovny",
     "resources": "Zdroje",
@@ -195,13 +195,13 @@
   "seo": {
     "whatIs": {
       "title": "Co je online SSH Key Generator?",
-      "desc": "Online SSH Key Generator jako tento nástroj vytváří kryptografické páry klíčů bezpečně ve vašem prohlížeči. SSH klíče se skládají z veřejného klíče (sdíleného se servery) a privátního klíče (uchovávaného v tajnosti). Na rozdíl od hesel je SSH klíče vygenerované online prakticky nemožné prolomit hrubou silou."
+      "desc": "Online generátor vytvoří pár klíčů v prohlížeči. Veřejný klíč přidáte do GitHubu, GitLabu, Bitbucketu nebo na server; soukromý klíč zůstane na vašem počítači."
     },
     "whyUse": {
       "title": "Proč používat tento online SSH Key Generator?",
       "secure": {
         "title": "Bezpečné online generování",
-        "desc": "Veškeré kryptografické operace probíhají ve vašem prohlížeči. Tento online SSH Key Generator zajišťuje, že vaše privátní klíče nikdy neopustí vaše zařízení."
+        "desc": "Kryptografické operace běží na straně klienta. Tento online generátor nenahrává ani nepřenáší soukromé klíče."
       },
       "modern": {
         "title": "Moderní algoritmy",
@@ -280,7 +280,7 @@
       "subtitle": "Najděte odpovědi na časté otázky o SSH klíčích a tomto nástroji.",
       "safe": {
         "question": "Je bezpečné generovat SSH klíče online?",
-        "answer": "Ano, tento nástroj je 100% bezpečný, protože veškeré generování klíčů probíhá výhradně ve vašem prohlížeči pomocí Web Crypto API. Vaše privátní klíče nikdy neopustí vaše zařízení a nikdy se nepřenášejí na žádný server. Zdrojový kód je open source a auditovatelný na GitHubu."
+        "answer": "Ano, pokud důvěřujete načtené stránce a prohlížeči. Klíč se generuje lokálně a soukromý klíč se neodesílá. V přísných prostředích generujte offline nebo použijte ssh-keygen v terminálu."
       },
       "ed25519VsRsa": {
         "question": "Jaký je rozdíl mezi Ed25519 a RSA?",
@@ -292,7 +292,7 @@
       },
       "rsaKeySize": {
         "question": "Jakou velikost klíče bych měl použít pro RSA?",
-        "answer": "Pro RSA klíče je doporučeno 4096 bitů pro maximální zabezpečení. 2048 bitů je minimální přijatelná velikost a nabízí adekvátní zabezpečení pro většinu účelů. Klíče menší než 2048 bitů jsou považovány za nezabezpečené a neměly by se používat."
+        "answer": "Pro nové klíče většinou zvolte Ed25519. RSA 4096 použijte, pokud starší SSH server nebo nástroj nepodporuje Ed25519."
       },
       "offline": {
         "question": "Mohu používat tento SSH Key Generator offline?",
@@ -320,7 +320,7 @@
       },
       "bestOnlineGenerator": {
         "question": "Jaký je nejlepší online SSH Key Generator?",
-        "answer": "Tento SSH Key Generator je jednou z nejlepších bezplatných online možností, protože běží 100% ve vašem prohlížeči, podporuje moderní algoritmy Ed25519 a RSA, funguje offline jako PWA a nikdy neodesílá vaše privátní klíče na žádný server."
+        "answer": "Generátor SSH klíčů: vytvořte SSH klíče online. Kryptografické operace běží na straně klienta. Tento online generátor nenahrává ani nepřenáší soukromé klíče."
       },
       "permissions": {
         "question": "Jaká oprávnění by měl mít můj privátní SSH klíč?",

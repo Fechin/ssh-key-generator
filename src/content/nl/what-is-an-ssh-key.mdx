@@ -1,6 +1,11 @@
 # Wat Is een SSH-sleutel? Openbare Sleutels, Privésleutels en Sleutelparen Uitgelegd
 
-Een **SSH-sleutel** is een cryptografische referentie die wordt gebruikt om te authenticeren bij SSH-servers zonder wachtwoord. SSH-sleutels komen in paren — een **openbare sleutel** en een **privésleutel** — en samen maken ze externe toegang veiliger en handiger dan traditionele wachtwoordauthenticatie. Deze gids legt uit wat een SSH-sleutel is, hoe het sleutelpaar-systeem werkt, welk sleuteltype je moet kiezen en hoe je SSH-sleutels gebruikt met diensten als GitHub en GitLab.
+
+## Kort antwoord
+
+Een SSH-sleutel genereren betekent dat je een publieke en een private sleutel maakt. Voor nieuwe sleutels is Ed25519 meestal de beste keuze; RSA 4096 is vooral voor oudere systemen.
+
+Kies voor nieuwe sleutels meestal Ed25519. Gebruik RSA 4096 als een oudere SSH-server of tool Ed25519 niet ondersteunt.
 
 ## Hoe Werken SSH-sleutels
 
@@ -92,14 +97,14 @@ RSA is het oudere algoritme (uitgevonden in 1977) en hoewel het nog steeds veili
 ssh-keygen -t rsa -b 4096 -C "your@email.com"
 ```
 
-**Gebruik nooit RSA met minder dan 4096 bits.** RSA-1024 en RSA-2048 worden steeds meer als onvoldoende beschouwd naarmate de rekenkracht groeit. Ed25519 met 256 bits biedt equivalente of betere beveiliging met een fractie van de sleutelgrootte.
+Kies voor nieuwe sleutels meestal Ed25519. Gebruik RSA 4096-bit wanneer oudere systemen dat vereisen.
 
 ### Vergelijkingsoverzicht
 
 | Kenmerk | Ed25519 | RSA 4096 |
 |---|---|---|
 | Sleutelgrootte (openbaar) | ~68 tekens | ~725 tekens |
-| Beveiligingsniveau | 128-bits (post-kwantum-resistente structuur) | ~140-bits klassiek |
+| Security level | ~128-bit classical security; not quantum-safe | Depends on key size; 4096-bit gives more classical margin |
 | Snelheid | Zeer snel | Langzamer |
 | Compatibiliteit | Moderne SSH (OpenSSH 6.5+) | Universeel |
 | Aanbevolen voor | Alle nieuwe sleutels | Alleen legacy-systemen |
@@ -321,7 +326,7 @@ Als je je privésleutel verliest en geen back-up hebt, verlies je de mogelijkhei
 
 ### Is Ed25519 of RSA beter?
 
-**Ed25519 is beter voor alle nieuwe sleutels.** Het is sneller, produceert kleinere sleutels, is niet kwetsbaar voor bepaalde implementatiezwakheden die RSA treffen, en biedt equivalente of superieure beveiliging met een 256-bits sleutel vergeleken met RSA-4096. De enige reden om tegenwoordig RSA te gebruiken is compatibiliteit met zeer oude SSH-serversoftware (OpenSSH voor versie 6.5, uitgebracht in 2014) of legacy hardware-beveiligingsmodules. Als je toegang hebt tot een moderne server of dienst zoals GitHub, gebruik dan Ed25519.
+Kies voor nieuwe sleutels meestal Ed25519. Gebruik RSA 4096-bit wanneer oudere systemen dat vereisen.
 
 ## Genereer Je SSH-sleutelpaar
 

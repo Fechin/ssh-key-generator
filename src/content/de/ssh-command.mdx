@@ -1,8 +1,15 @@
 # Der SSH-Befehl: Vollständige Referenz mit Beispielen für Linux, Mac und Windows
 
-Der Befehl `ssh` ist das primäre Werkzeug zum Initiieren von SSH-Verbindungen über die Kommandozeile. Ob Sie sich bei einem entfernten Linux-Server anmelden, einen Port für den Datenbankzugriff weiterleiten oder über einen Bastion-Host in ein internes Netzwerk springen möchten — der Befehl `ssh` ist Ihr Einstiegspunkt. Dieser Leitfaden deckt alles ab, von der grundlegenden Syntax bis hin zu erweiterten Flags, Tunneling und ProxyJump-Konfigurationen — mit realen Beispielen für Linux, macOS und Windows.
+## Kurzantwort
 
-Bevor Sie SSH-Befehle ausführen, benötigen Sie SSH-Schlüssel. Lesen Sie unseren Leitfaden zu <a href="/de/what-is-an-ssh-key/">SSH-Schlüsseln</a> oder verwenden Sie den <a href="/">kostenlosen Online-Generator</a>, um ein Schlüsselpaar zu erstellen.
+Für die meisten Verbindungen reicht ssh user@host. Mit -i wählen Sie eine bestimmte Schlüsseldatei, mit -p einen anderen Port und mit -J einen Bastion-Host.
+
+```bash
+ssh user@server.example.com
+ssh -i ~/.ssh/id_ed25519 user@server.example.com
+ssh -p 2222 user@server.example.com
+ssh -J bastion.example.com user@private.example.com
+```
 
 ## SSH-Befehlssyntax
 

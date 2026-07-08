@@ -1,6 +1,11 @@
 # SSH Key কী? Public Key, Private Key, ও Key Pair ব্যাখ্যা
 
-একটি **SSH key** হলো একটি ক্রিপ্টোগ্রাফিক credential যা পাসওয়ার্ড ছাড়াই SSH সার্ভারে authenticate করতে ব্যবহৃত হয়। SSH key জোড়ায় আসে — একটি **public key** এবং একটি **private key** — এবং একসাথে তারা রিমোট অ্যাক্সেসকে ঐতিহ্যগত পাসওয়ার্ড authentication-এর চেয়ে আরও নিরাপদ ও সুবিধাজনক করে। এই গাইডটি ব্যাখ্যা করে যে SSH key কী, key pair সিস্টেম কীভাবে কাজ করে, কোন key type বেছে নেবেন, এবং GitHub ও GitLab-এর মতো সার্ভিসে SSH key কীভাবে ব্যবহার করবেন।
+
+## দ্রুত উত্তর
+
+SSH key তৈরি করা মানে একটি public key ও private key pair বানানো। নতুন key-এর জন্য সাধারণত Ed25519 ভাল; পুরোনো server বা tool লাগলে RSA 4096 ব্যবহার করুন।
+
+নতুন key-এর জন্য সাধারণত Ed25519 বেছে নিন। পুরোনো SSH server বা tool Ed25519 support না করলে RSA 4096 ব্যবহার করুন।
 
 ## SSH Key কীভাবে কাজ করে
 
@@ -92,14 +97,14 @@ RSA পুরোনো algorithm (1977-এ উদ্ভাবিত), এবং 
 ssh-keygen -t rsa -b 4096 -C "your@email.com"
 ```
 
-**RSA কখনো 4096 bits-এর কম দিয়ে ব্যবহার করবেন না।** RSA-1024 ও RSA-2048 computational power বাড়ার সাথে ক্রমশ অপর্যাপ্ত মনে করা হচ্ছে। 256 bits-এ Ed25519 key size-এর একটি ভগ্নাংশে সমতুল্য বা উন্নততর নিরাপত্তা প্রদান করে।
+নতুন key-এর জন্য সাধারণত Ed25519 বেছে নিন। পুরোনো system চাইলে RSA 4096-bit ব্যবহার করুন।
 
 ### সারসংক্ষেপ তুলনা
 
 | বৈশিষ্ট্য | Ed25519 | RSA 4096 |
 |---|---|---|
 | Key size (public) | ~68 অক্ষর | ~725 অক্ষর |
-| Security level | 128-bit (post-quantum resistant structure) | ~140-bit classical |
+| Security level | ~128-bit classical security; not quantum-safe | Depends on key size; 4096-bit gives more classical margin |
 | Speed | খুব দ্রুত | ধীর |
 | Compatibility | Modern SSH (OpenSSH 6.5+) | Universal |
 | প্রস্তাবিত | সমস্ত নতুন key-এর জন্য | শুধু legacy সিস্টেমের জন্য |
@@ -321,7 +326,7 @@ SSH key পাসওয়ার্ড ছাড়াই remote সার্ভ
 
 ### Ed25519 নাকি RSA ভালো?
 
-**Ed25519 সমস্ত নতুন key generation-এর জন্য ভালো।** এটি দ্রুত, ছোট key তৈরি করে, RSA-কে প্রভাবিত করা কিছু implementation দুর্বলতার প্রতি দুর্বল নয়, এবং 256-bit key দিয়ে RSA-4096-এর তুলনায় সমতুল্য বা উন্নততর নিরাপত্তা প্রদান করে। আজকে RSA ব্যবহার করার একমাত্র কারণ খুব পুরোনো SSH সার্ভার সফটওয়্যার (OpenSSH 6.5-এর আগে, 2014-এ প্রকাশিত) বা legacy hardware security module-এর সাথে compatibility। আপনি যদি কোনো modern সার্ভার বা GitHub-এর মতো সার্ভিস অ্যাক্সেস করছেন, Ed25519 ব্যবহার করুন।
+নতুন key-এর জন্য সাধারণত Ed25519 বেছে নিন। পুরোনো system চাইলে RSA 4096-bit ব্যবহার করুন।
 
 ## আপনার SSH Key Pair তৈরি করুন
 

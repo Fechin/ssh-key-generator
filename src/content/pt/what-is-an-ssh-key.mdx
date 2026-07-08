@@ -1,8 +1,12 @@
-# O Que é uma Chave SSH? Chaves Públicas, Privadas e Pares de Chaves Explicados
+# O que é uma chave SSH? Chaves públicas, privadas e pares de chaves explicados
 
-Uma **chave SSH** é uma credencial criptográfica usada para autenticar em servidores SSH sem necessidade de senha. As chaves SSH vêm em pares — uma **chave pública** e uma **chave privada** — e juntas tornam o acesso remoto mais seguro e mais conveniente do que a autenticação tradicional por senha. Este guia explica o que é uma chave SSH, como o sistema de pares de chaves funciona, quais tipos de chave escolher e como usar chaves SSH com serviços como GitHub e GitLab.
+## Resposta rápida
 
-## Como as Chaves SSH Funcionam
+Gerar uma chave SSH significa criar um par de chave pública e chave privada. Para usos novos, Ed25519 é a escolha mais direta; RSA de 4096 bits fica como alternativa para sistemas antigos.
+
+Para chaves novas, Ed25519 costuma ser a melhor escolha. Use RSA de 4096 bits quando precisar de compatibilidade com um servidor SSH antigo ou uma ferramenta sem suporte a Ed25519.
+
+## Como as chaves SSH funcionam
 
 As chaves SSH são baseadas em **criptografia assimétrica**, também chamada de criptografia de chave pública. Ao contrário da criptografia simétrica (onde uma única chave secreta tanto criptografa quanto descriptografa os dados), sistemas assimétricos usam pares de chaves matematicamente vinculadas, onde dados criptografados com uma chave só podem ser descriptografados com a outra.
 
@@ -20,11 +24,11 @@ Este é o ponto fundamental: **sua chave privada nunca trafega pela rede**. O se
 
 Para contexto sobre o protocolo SSH em geral, consulte nosso guia sobre <a href="/pt/what-is-ssh/">o que é SSH</a>.
 
-## Chave Pública vs. Chave Privada: Qual é a Diferença?
+## Chave pública vs. chave privada: qual é a diferença?
 
 Entender a distinção entre as duas chaves é essencial para usar o SSH corretamente.
 
-### A Chave Pública — Seu Cadeado
+### A chave pública — seu cadeado
 
 A **chave pública** é projetada para ser compartilhada livremente. Pense nela como um cadeado: você distribui cópias para todos os sistemas aos quais quer ter acesso. Quando um servidor tem sua chave pública no arquivo `authorized_keys`, ele pode verificar sua identidade sem conhecer sua chave privada.
 
@@ -35,7 +39,7 @@ Chaves públicas:
 - Normalmente têm extensão `.pub` (ex.: `id_ed25519.pub`)
 - Têm a aparência: `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAA... user@hostname`
 
-### A Chave Privada — Sua Chave
+### A chave privada — sua chave
 
 A **chave privada** é a metade secreta do par. Ela nunca deve sair da sua máquina e nunca deve ser compartilhada com ninguém — nem mesmo com administradores, provedores de nuvem ou equipe de suporte. Se sua chave privada for comprometida, qualquer pessoa que a obtiver pode se passar por você em todos os servidores onde sua chave pública está instalada.
 
@@ -45,7 +49,7 @@ Chaves privadas:
 - São opcionalmente criptografadas com uma frase secreta
 - Não têm extensão ou têm uma extensão específica (ex.: `id_ed25519`)
 
-### O Arquivo `authorized_keys`
+### O arquivo `authorized_keys`
 
 No lado do servidor, as chaves públicas de cada usuário são armazenadas em `~/.ssh/authorized_keys`. É um arquivo de texto simples onde cada linha contém uma chave pública. Quando um cliente SSH tenta se autenticar, o servidor verifica se o cliente consegue provar a posse da chave privada correspondente a alguma entrada neste arquivo.
 
@@ -58,11 +62,11 @@ ssh-rsa AAAAB3NzaC1yc2EAAAA... backup-deploy-key
 
 Você pode ter quantas chaves públicas precisar nesse arquivo, permitindo que múltiplos dispositivos ou sistemas de automação se autentiquem no mesmo servidor.
 
-## Algoritmos de Chave SSH: Ed25519 vs. RSA
+## Algoritmos de chave SSH: Ed25519 vs. RSA
 
 Quando você gera um par de chaves SSH, escolhe um algoritmo. As duas opções mais comuns hoje são **Ed25519** e **RSA**. Também existem ECDSA e DSA, mas o DSA está obsoleto e o ECDSA tem armadilhas de implementação, então focaremos nas duas opções recomendadas.
 
-### Ed25519 — A Escolha Moderna
+### Ed25519 — a escolha moderna
 
 O Ed25519 foi introduzido no OpenSSH na versão 6.5 (2014) e agora é o padrão recomendado. Ele usa criptografia de curva elíptica na curva de Edwards torcida (Curve25519), projetada por Daniel J. Bernstein.
 
@@ -78,7 +82,7 @@ O Ed25519 foi introduzido no OpenSSH na versão 6.5 (2014) e agora é o padrão 
 ssh-keygen -t ed25519 -C "seu@email.com"
 ```
 
-### RSA — A Opção Universal
+### RSA — a opção universal
 
 O RSA é o algoritmo mais antigo (inventado em 1977) e, embora ainda seja seguro com 4096 bits, é mais lento e produz chaves maiores do que o Ed25519. No entanto, o RSA tem compatibilidade muito mais ampla — funciona com servidores SSH muito antigos, sistemas legados e algumas chaves de segurança de hardware.
 
@@ -92,25 +96,25 @@ O RSA é o algoritmo mais antigo (inventado em 1977) e, embora ainda seja seguro
 ssh-keygen -t rsa -b 4096 -C "seu@email.com"
 ```
 
-**Nunca use RSA com menos de 4096 bits.** RSA-1024 e RSA-2048 são cada vez mais considerados insuficientes à medida que o poder computacional cresce. O Ed25519 com 256 bits oferece segurança equivalente ou superior com uma fração do tamanho da chave.
+**Se for criar uma nova chave RSA, prefira 4096 bits.** RSA 2048 ainda é aceito por muitos sistemas, mas oferece menos margem; se Ed25519 for suportado, ele normalmente é a melhor opção para novas chaves.
 
-### Comparação Resumida
+### Comparação resumida
 
 | Recurso | Ed25519 | RSA 4096 |
 |---|---|---|
 | Tamanho da chave (pública) | ~68 chars | ~725 chars |
-| Nível de segurança | 128 bits (estrutura resistente a pós-quântico) | ~140 bits clássico |
+| Nível de segurança | ~128 bits de segurança clássica; não é pós-quântica | Depende do tamanho; 4096 bits dá mais margem clássica |
 | Velocidade | Muito rápido | Mais lento |
 | Compatibilidade | SSH moderno (OpenSSH 6.5+) | Universal |
 | Recomendado para | Todas as novas chaves | Sistemas legados apenas |
 
 **Conclusão: gere chaves Ed25519 para qualquer caso de uso moderno.** Use RSA apenas quando forçado por requisitos de compatibilidade.
 
-## Como Adicionar uma Chave SSH ao GitHub
+## Como adicionar uma chave SSH ao GitHub
 
 Adicionar sua chave pública SSH ao GitHub permite que você faça push e pull via SSH sem inserir seu nome de usuário e senha em cada operação. Veja o processo passo a passo.
 
-### Passo 1: Gere Seu Par de Chaves
+### Passo 1: gere seu par de chaves
 
 Se você ainda não tem um par de chaves SSH, gere um. Você pode usar nosso <a href="/">gerador de chaves SSH online gratuito</a> ou executar:
 
@@ -120,7 +124,7 @@ ssh-keygen -t ed25519 -C "seu-email-do-github@example.com"
 
 Aceite o local padrão do arquivo (`~/.ssh/id_ed25519`) e opcionalmente defina uma frase secreta.
 
-### Passo 2: Copie Sua Chave Pública
+### Passo 2: copie sua chave pública
 
 Exiba sua chave pública e copie para a área de transferência:
 
@@ -141,7 +145,7 @@ Ou simplesmente exiba e copie manualmente:
 cat ~/.ssh/id_ed25519.pub
 ```
 
-### Passo 3: Adicione a Chave ao GitHub
+### Passo 3: adicione a chave ao GitHub
 
 1. Faça login em **GitHub.com**
 2. Clique na foto do seu perfil → **Settings** (Configurações)
@@ -151,7 +155,7 @@ cat ~/.ssh/id_ed25519.pub
 6. Cole sua chave pública no campo **Key** (Chave)
 7. Clique em **Add SSH key** (Adicionar chave SSH)
 
-### Passo 4: Teste a Conexão
+### Passo 4: teste a conexão
 
 ```bash
 ssh -T git@github.com
@@ -159,7 +163,7 @@ ssh -T git@github.com
 
 Você deve ver: `Hi username! You've successfully authenticated, but GitHub does not provide shell access.`
 
-### Trocando um Repositório Existente para SSH
+### Trocando um repositório existente para SSH
 
 Se você clonou um repositório usando HTTPS e quer trocar para SSH:
 
@@ -173,7 +177,7 @@ git remote set-url origin git@github.com:username/repository.git
 
 Para o GitLab, o processo é idêntico — navegue para **Preferences → SSH Keys** e siga os mesmos passos.
 
-## Onde as Chaves SSH São Armazenadas?
+## Onde as chaves SSH são armazenadas?
 
 As chaves SSH são armazenadas em um diretório chamado `.ssh` dentro da pasta home do seu usuário. O local varia conforme o sistema operacional.
 
@@ -214,7 +218,7 @@ C:\Users\SeuNomeDeUsuario\.ssh\
 
 No Windows, você pode acessar o diretório `.ssh` pelo Explorador de Arquivos (talvez precise habilitar "Mostrar arquivos ocultos") ou pelo PowerShell usando `~\.ssh\`.
 
-### Múltiplos Arquivos de Chave
+### Múltiplos arquivos de chave
 
 Se você tem chaves para diferentes propósitos (GitHub pessoal, GitLab do trabalho, servidores de produção), use o arquivo `~/.ssh/config` para mapear cada host para sua chave:
 
@@ -231,17 +235,17 @@ Host prod-server
     IdentityFile ~/.ssh/id_ed25519_production
 ```
 
-## Frases Secretas de Chaves SSH
+## Frases-senha de chaves SSH
 
 Quando você gera um par de chaves SSH, o `ssh-keygen` pergunta se você quer definir uma **frase secreta** (passphrase). Esta é uma senha opcional que criptografa o arquivo de chave privada no disco.
 
-### Por Que Usar uma Frase Secreta?
+### Por que usar uma frase-senha?
 
 Se o arquivo de chave privada estiver protegido por uma frase secreta forte, roubar o arquivo não é suficiente para se passar por você — o atacante também precisaria quebrar a frase secreta. Isso fornece uma segunda camada de segurança crítica, especialmente em notebooks que podem ser roubados fisicamente.
 
 Sem uma frase secreta, sua chave privada é armazenada em texto simples no disco. Qualquer pessoa que consiga ler o arquivo (via malware, acesso físico ou um backup não adequadamente protegido) pode usá-la imediatamente.
 
-### Como as Frases Secretas Interagem com o ssh-agent
+### Como as frases-senha interagem com o ssh-agent
 
 A desvantagem de uma frase secreta é digitá-la toda vez que você usa a chave. O **ssh-agent** resolve isso mantendo chaves descriptografadas na memória durante a duração da sua sessão.
 
@@ -258,7 +262,7 @@ No macOS, o Keychain do sistema se integra ao ssh-agent. Adicione `-K` para pers
 ssh-add --apple-use-keychain ~/.ssh/id_ed25519
 ```
 
-### Alterando uma Frase Secreta
+### Alterando uma frase-senha
 
 Você pode alterar a frase secreta de uma chave existente sem regenerar o par de chaves:
 
@@ -268,7 +272,7 @@ ssh-keygen -p -f ~/.ssh/id_ed25519
 
 Isso solicita a frase secreta antiga e permite definir uma nova. A chave pública não muda, então você não precisa atualizá-la em nenhum servidor.
 
-## Impressões Digitais de Chaves SSH
+## Impressões digitais de chaves SSH
 
 Cada par de chaves SSH tem uma **impressão digital** — um hash curto da chave pública que a identifica de forma única. As impressões digitais servem a vários propósitos:
 
@@ -276,7 +280,7 @@ Cada par de chaves SSH tem uma **impressão digital** — um hash curto da chave
 - **Identificar chaves** — ao gerenciar muitas chaves, as impressões digitais ajudam a identificar qual chave física corresponde a qual entrada em `authorized_keys` ou em um serviço como o GitHub.
 - **Auditoria e revogação** — logs de auditoria frequentemente registram impressões digitais em vez de chaves completas. Conhecer a impressão digital de uma chave ajuda a encontrá-la e removê-la se necessário.
 
-### Visualizando a Impressão Digital de uma Chave
+### Visualizando a impressão digital de uma chave
 
 ```bash
 # Ver impressão digital da sua chave pública
@@ -289,7 +293,7 @@ ssh-keyscan server.example.com | ssh-keygen -lf -
 
 O GitHub exibe as impressões digitais de todas as chaves SSH adicionadas em **Settings → SSH and GPG keys**, permitindo que você verifique se a chave que vê lá corresponde à da sua máquina.
 
-### O Arquivo `known_hosts`
+### O arquivo `known_hosts`
 
 Na primeira vez que você se conecta a um novo servidor SSH, você vê uma mensagem como:
 
@@ -301,29 +305,29 @@ Are you sure you want to continue connecting (yes/no/[fingerprint])?
 
 Digite `yes` e a impressão digital do servidor é adicionada a `~/.ssh/known_hosts`. Em conexões subsequentes, o SSH verifica silenciosamente se a chave do servidor corresponde à impressão digital armazenada. Se não corresponder — o que pode indicar uma má configuração ou um ataque de intermediário — o SSH avisa de forma enfática e se recusa a conectar.
 
-## Perguntas Frequentes
+## Perguntas frequentes
 
-### Para Que Serve uma Chave SSH?
+### Para que serve uma chave SSH?
 
 Chaves SSH autenticam você em servidores remotos sem senha. Os usos mais comuns são: fazer login em servidores Linux/Unix para administração, autenticar com serviços de hospedagem Git (GitHub, GitLab, Bitbucket) para acesso push/pull, scripts de implantação automatizados que precisam de acesso sem senha ao servidor, e pipelines de CI/CD que implantam código em produção. Chaves SSH são preferidas a senhas porque são imunes a força bruta, não são reutilizáveis entre violações e podem ser usadas sem interação humana.
 
-### Quantas Chaves SSH Devo Ter?
+### Quantas chaves SSH devo ter?
 
 Não há uma resposta única correta, mas uma prática recomendada comum é **uma chave por dispositivo** (não por serviço). Seu notebook tem um par de chaves; seu computador desktop tem outro; seu servidor de CI tem outro. Assim, se um dispositivo for roubado ou comprometido, você revoga apenas a chave desse dispositivo. Algumas pessoas dividem ainda mais por contexto (pessoal vs. trabalho), resultando em duas chaves por dispositivo. Evite compartilhar uma única chave entre múltiplas máquinas — se essa chave for comprometida, todo o seu acesso estará em risco simultaneamente.
 
-### Posso Compartilhar Minha Chave Pública SSH?
+### Posso compartilhar minha chave pública SSH?
 
 Sim. A chave pública é projetada para ser compartilhada. É seguro enviá-la por e-mail, publicá-la na documentação do GitHub ou incluí-la em um ticket pedindo acesso ao servidor. A chave pública sozinha não pode ser usada para se autenticar como você — isso requer a chave privada correspondente, que só você tem. Esta é a propriedade fundamental da criptografia assimétrica. Nunca compartilhe sua chave **privada** com ninguém.
 
-### O Que Acontece Se Eu Perder Minha Chave Privada SSH?
+### O que acontece se eu perder minha chave privada SSH?
 
 Se você perder sua chave privada e não tiver um backup, você perde a capacidade de se autenticar com ela. Sua chave pública, ainda instalada em servidores e serviços, se torna um órfão. Você precisará de uma forma alternativa de acessar o servidor (autenticação por senha se habilitada, acesso por console, o mecanismo de acesso de emergência do seu provedor de hospedagem) para remover a chave pública antiga de `authorized_keys` e adicionar uma nova. É por isso que fazer backup de sua chave privada (em um gerenciador de senhas ou backup criptografado) é importante. A chave privada não pode ser reconstruída a partir da chave pública.
 
-### Ed25519 ou RSA é Melhor?
+### Ed25519 ou RSA é melhor?
 
-**Ed25519 é melhor para toda geração de novas chaves.** É mais rápido, produz chaves menores, não é vulnerável a certas fraquezas de implementação que afetam o RSA, e oferece segurança equivalente ou superior com uma chave de 256 bits em comparação ao RSA-4096. A única razão para usar RSA hoje é compatibilidade com software de servidor SSH muito antigo (OpenSSH anterior à versão 6.5, lançada em 2014) ou módulos de segurança de hardware legados. Se você está acessando qualquer servidor ou serviço moderno como o GitHub, use Ed25519.
+**Ed25519 é recomendado para a maioria das chaves novas.** É rápido, compacto e bem suportado por OpenSSH e plataformas Git modernas. Use RSA 4096 apenas quando servidor antigo, dispositivo legado ou política exigir.
 
-## Gere Seu Par de Chaves SSH
+## Gere seu par de chaves SSH
 
 Pronto para criar suas chaves SSH? Nosso gerador online gratuito cria pares de chaves Ed25519 ou RSA diretamente no seu navegador. A chave privada é gerada localmente e nunca é enviada para nossos servidores.
 
@@ -332,6 +336,6 @@ Pronto para criar suas chaves SSH? Nosso gerador online gratuito cria pares de c
 ---
 
 **Leitura adicional:**
-- <a href="/pt/what-is-ssh/">O Que é SSH? O Guia Completo sobre Secure Shell</a>
-- <a href="/pt/ssh-command/">O Comando SSH: Referência Completa com Exemplos</a>
-- <a href="/pt/how-to-set-up-ssh/">Como Configurar SSH: Um Guia Completo Passo a Passo</a>
+- <a href="/pt/what-is-ssh/">O que é SSH? Guia completo sobre Secure Shell</a>
+- <a href="/pt/ssh-command/">Comando SSH: referência completa com exemplos</a>
+- <a href="/pt/how-to-set-up-ssh/">Como configurar SSH: guia completo passo a passo</a>

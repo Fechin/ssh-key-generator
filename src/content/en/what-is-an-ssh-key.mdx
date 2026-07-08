@@ -1,6 +1,12 @@
-# What Is an SSH Key? Public Keys, Private Keys, and Key Pairs Explained
+# What Is an SSH Key? Public and Private Keys Explained
 
-An **SSH key** is a cryptographic credential used to authenticate to SSH servers without a password. SSH keys come in pairs — a **public key** and a **private key** — and together they make remote access more secure and more convenient than traditional password authentication. This guide explains what an SSH key is, how the key pair system works, which key types to choose, and how to use SSH keys with services like GitHub and GitLab.
+An **SSH key** is a public/private key pair used to authenticate to SSH servers, GitHub, GitLab, Bitbucket, and automation systems without sending a password. The **public key** can be shared with a server or Git provider; the **private key** stays on your device and proves that you are the key owner. This guide explains what SSH keys are, how authentication works, where keys are stored, and how to create or use them safely.
+
+## Quick answer
+
+Generating an SSH key means creating a public/private key pair. For new work, Ed25519 is usually the simplest modern choice; use RSA 4096 only when an older server or tool requires it.
+
+Choose Ed25519 for most new keys. Use RSA 4096 when you must support an older SSH server or a tool that does not accept Ed25519.
 
 ## How SSH Keys Work
 
@@ -92,14 +98,14 @@ RSA is the older algorithm (invented 1977), and while it is still secure at 4096
 ssh-keygen -t rsa -b 4096 -C "your@email.com"
 ```
 
-**Never use RSA with fewer than 4096 bits.** RSA-1024 and RSA-2048 are increasingly considered insufficient as computational power grows. Ed25519 at 256 bits provides equivalent or better security with a fraction of the key size.
+For new RSA keys, prefer **4096 bits** when compatibility is the reason you are choosing RSA. RSA-2048 is still accepted by many systems, but it offers less margin than 4096-bit RSA and is not the best default for new long-lived keys. Avoid RSA-1024 and DSA.
 
 ### Summary Comparison
 
 | Feature | Ed25519 | RSA 4096 |
 |---|---|---|
 | Key size (public) | ~68 chars | ~725 chars |
-| Security level | 128-bit (post-quantum resistant structure) | ~140-bit classical |
+| Security level | Strong modern security; not quantum-safe | Strong at 4096 bits; not quantum-safe |
 | Speed | Very fast | Slower |
 | Compatibility | Modern SSH (OpenSSH 6.5+) | Universal |
 | Recommended for | All new keys | Legacy systems only |

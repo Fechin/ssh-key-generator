@@ -6,8 +6,8 @@
     "viewOnGitHub": "Se på GitHub"
   },
   "hero": {
-    "title": "SSH Nøkkelgenerator på nett",
-    "subtitle": "Lag sikre SSH-nøkler umiddelbart i nettleseren din med denne gratis SSH nøkkelgeneratoren. Fungerer med GitHub, GitLab, Bitbucket og alle SSH-servere."
+    "title": "SSH-nøkkelgenerator: opprett SSH-nøkler på nett",
+    "subtitle": "Generer Ed25519- eller RSA-SSH-nøkler i nettleseren for GitHub, GitLab, servere og ssh-keygen. Den private nøkkelen lastes ikke opp."
   },
   "tabs": {
     "generate": "Generer nøkler",
@@ -20,8 +20,8 @@
     "guidesShort": "Guider"
   },
   "generator": {
-    "title": "SSH nøkkelgenerator på nett",
-    "description": "Generer et nytt SSH-nøkkelpar sikkert i nettleseren din med denne gratis generatoren. Ingen data sendes til noen server.",
+    "title": "SSH-nøkkelgenerator i nettleseren",
+    "description": "Lag et SSH-nøkkelpar direkte i nettleseren. Den private nøkkelen genereres lokalt og sendes ikke til serveren.",
     "algorithm": "Algoritme",
     "algorithmTooltip": "Ed25519 anbefales for de fleste tilfeller. Bruk RSA hvis du trenger kompatibilitet med eldre systemer.",
     "comment": "Kommentar (valgfritt)",
@@ -36,8 +36,8 @@
     "confirmPassphrasePlaceholder": "Skriv inn passfrasen på nytt",
     "passphrasesMismatch": "Passfrasene stemmer ikke overens",
     "noPassphraseWarning": "Ingen passfrase angitt. Din private nøkkel vil være ukryptert. Vurder å legge til en passfrase for ekstra sikkerhet.",
-    "securityTitle": "100% klientsidebasert SSH nøkkelgenerator",
-    "securityDesc": "All nøkkelgenerering skjer lokalt i nettleseren din. Denne SSH nøkkelgeneratoren overfører aldri dine private nøkler.",
+    "securityTitle": "Generert lokalt i nettleseren",
+    "securityDesc": "Kryptografiske operasjoner kjører på klientsiden. Denne nettgeneratoren laster ikke opp eller sender private nøkler.",
     "noKeysYet": "Ingen nøkler generert ennå",
     "noKeysHint": "Klikk på «Generer nøkkelpar» for å lage dine SSH-nøkler"
   },
@@ -178,10 +178,10 @@
   },
   "footer": {
     "about": "Om denne SSH nøkkelgeneratoren",
-    "aboutDesc": "Dette er en gratis, åpen kildekode SSH nøkkelgenerator som kjører helt i nettleseren din. Ingen serverbehandling, ingen datainnsamling – bare sikker nøkkelgenerering.",
+    "aboutDesc": "Generer Ed25519- eller RSA-SSH-nøkler i nettleseren for GitHub, GitLab, servere og ssh-keygen. Den private nøkkelen lastes ikke opp.",
     "securityFirst": "Sikkerhet først",
     "security1": "All nøkkelgenerering skjer i nettleseren din",
-    "security2": "Ingen data sendes noensinne til noen server",
+    "security2": "Kryptografiske operasjoner kjører på klientsiden. Denne nettgeneratoren laster ikke opp eller sender private nøkler.",
     "security3": "Åpen kildekode som kan gjennomgås",
     "security4": "Bruker bransjestandard kryptografibiblioteker",
     "resources": "Ressurser",
@@ -195,13 +195,13 @@
   "seo": {
     "whatIs": {
       "title": "Hva er en SSH nøkkelgenerator på nett?",
-      "desc": "En SSH nøkkelgenerator på nett, som dette verktøyet, oppretter kryptografiske nøkkelpar sikkert i nettleseren din. SSH-nøkler består av en offentlig nøkkel (deles med servere) og en privat nøkkel (holdes hemmelig). I motsetning til passord er SSH-nøkler generert på nett praktisk talt umulige å knekke med brute force."
+      "desc": "Nettgeneratoren lager nøkkelparet i nettleseren. Den offentlige nøkkelen legges i GitHub, GitLab, Bitbucket eller på serveren; den private nøkkelen blir på maskinen din."
     },
     "whyUse": {
       "title": "Hvorfor bruke denne SSH nøkkelgeneratoren?",
       "secure": {
         "title": "Sikker generering på nett",
-        "desc": "Alle kryptografiske operasjoner skjer i nettleseren din. Denne SSH nøkkelgeneratoren sikrer at dine private nøkler aldri forlater enheten din."
+        "desc": "Kryptografiske operasjoner kjører på klientsiden. Denne nettgeneratoren laster ikke opp eller sender private nøkler."
       },
       "modern": {
         "title": "Moderne algoritmer",
@@ -280,7 +280,7 @@
       "subtitle": "Finn svar på vanlige spørsmål om SSH-nøkler og dette verktøyet.",
       "safe": {
         "question": "Er det trygt å generere SSH-nøkler på nett?",
-        "answer": "Ja, dette verktøyet er 100 % trygt fordi all nøkkelgenerering skjer helt i nettleseren din ved hjelp av Web Crypto API. Dine private nøkler forlater aldri enheten din og overføres aldri til noen server. Kildekoden er åpen og kan gjennomgås på GitHub."
+        "answer": "Ja, hvis du stoler på siden som er lastet inn og nettleseren din. Nøkkelen genereres lokalt, og den private nøkkelen lastes ikke opp. I strenge miljøer bør du generere offline eller bruke ssh-keygen i terminalen."
       },
       "ed25519VsRsa": {
         "question": "Hva er forskjellen mellom Ed25519 og RSA?",
@@ -292,7 +292,7 @@
       },
       "rsaKeySize": {
         "question": "Hvilken nøkkelstørrelse bør jeg bruke for RSA?",
-        "answer": "For RSA-nøkler anbefales 4096-bit for maksimal sikkerhet. 2048-bit er minimum akseptabel størrelse og gir tilstrekkelig sikkerhet for de fleste formål. Nøkler mindre enn 2048-bit anses som usikre og bør ikke brukes."
+        "answer": "Velg Ed25519 for de fleste nye nøkler. Bruk RSA 4096 hvis en eldre SSH-server eller et verktøy ikke støtter Ed25519."
       },
       "offline": {
         "question": "Kan jeg bruke denne SSH nøkkelgeneratoren uten nett?",
@@ -320,7 +320,7 @@
       },
       "bestOnlineGenerator": {
         "question": "Hva er den beste SSH nøkkelgeneratoren på nett?",
-        "answer": "Denne SSH nøkkelgeneratoren er et av de beste gratis alternativene på nett fordi den kjører 100 % i nettleseren din, støtter moderne Ed25519- og RSA-algoritmer, fungerer uten nett som en PWA, og sender aldri de private nøklene dine til noen server."
+        "answer": "SSH-nøkkelgenerator: opprett SSH-nøkler på nett. Kryptografiske operasjoner kjører på klientsiden. Denne nettgeneratoren laster ikke opp eller sender private nøkler."
       },
       "permissions": {
         "question": "Hvilke tillatelser bør min private SSH-nøkkel ha?",

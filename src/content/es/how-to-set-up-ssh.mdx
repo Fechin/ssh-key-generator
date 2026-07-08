@@ -1,8 +1,15 @@
 # Cómo configurar SSH: guía completa paso a paso para Linux, Mac y Windows
 
-Configurar SSH correctamente lleva unos diez minutos y reporta beneficios durante años. Una vez configurado, podrás iniciar sesión en servidores sin escribir contraseñas, enviar código a GitHub sin introducir credenciales en cada operación y automatizar despliegues con confianza. Esta guía recorre el proceso completo — desde la generación de un par de claves hasta la resolución de errores comunes — para Linux, macOS y Windows.
+## Respuesta rápida
 
-Si quieres entender primero la tecnología subyacente, lee nuestras guías sobre <a href="/es/what-is-ssh/">qué es SSH</a> y <a href="/es/what-is-an-ssh-key/">qué son las claves SSH</a>.
+El flujo normal es: generar la clave, copiar la clave pública, registrarla en GitHub/GitLab o en el servidor, cargar la clave en ssh-agent y probar la conexión.
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+ssh -T git@github.com
+```
 
 ## Requisitos previos
 

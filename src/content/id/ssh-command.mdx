@@ -1,8 +1,16 @@
 # Perintah SSH: Referensi Lengkap dengan Contoh untuk Linux, Mac, dan Windows
 
-Perintah `ssh` adalah alat utama untuk memulai koneksi SSH dari baris perintah. Baik saat login ke server Linux jarak jauh, meneruskan port untuk akses database, atau melompat melalui bastion host untuk mencapai jaringan internal, perintah `ssh` adalah titik masuk Anda. Panduan ini mencakup segalanya mulai dari sintaks dasar hingga flag lanjutan, tunneling, dan konfigurasi ProxyJump — dengan contoh nyata untuk Linux, macOS, dan Windows.
 
-Sebelum menjalankan perintah SSH, Anda memerlukan kunci SSH. Lihat panduan kami tentang <a href="/id/what-is-an-ssh-key/">apa itu kunci SSH</a> atau gunakan <a href="/">generator online gratis</a> untuk membuat pasangan kunci.
+## Jawaban cepat
+
+Untuk sebagian besar koneksi, ssh user@host cukup. Gunakan -i untuk memilih kunci, -p untuk port lain, dan -J untuk lewat bastion host.
+
+```bash
+ssh user@server.example.com
+ssh -i ~/.ssh/id_ed25519 user@server.example.com
+ssh -p 2222 user@server.example.com
+ssh -J bastion.example.com user@private.example.com
+```
 
 ## Sintaks Perintah SSH
 

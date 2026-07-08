@@ -1,6 +1,11 @@
 # SSH Key Là Gì? Khóa Công Khai, Khóa Riêng Tư và Cặp Khóa Được Giải Thích
 
-**SSH key** là thông tin xác thực mật mã dùng để xác thực với SSH server mà không cần mật khẩu. SSH key đi theo cặp — **khóa công khai** và **khóa riêng tư** — và cùng nhau làm cho truy cập từ xa an toàn hơn và tiện lợi hơn so với xác thực mật khẩu truyền thống. Hướng dẫn này giải thích SSH key là gì, hệ thống cặp khóa hoạt động như thế nào, chọn loại khóa nào và cách sử dụng SSH key với các dịch vụ như GitHub và GitLab.
+
+## Trả lời nhanh
+
+Tạo SSH key nghĩa là tạo một cặp public key và private key. Với key mới, Ed25519 thường là lựa chọn gọn và hiện đại; dùng RSA 4096 khi cần tương thích với hệ thống cũ.
+
+Với key mới, thường chọn Ed25519. Chỉ dùng RSA 4096 khi server SSH cũ hoặc công cụ cũ không hỗ trợ Ed25519.
 
 ## SSH Key Hoạt Động Như Thế Nào
 
@@ -92,7 +97,7 @@ RSA là thuật toán cũ hơn (phát minh năm 1977), và mặc dù vẫn an to
 ssh-keygen -t rsa -b 4096 -C "your@email.com"
 ```
 
-**Không bao giờ dùng RSA với ít hơn 4096 bit.** RSA-1024 và RSA-2048 ngày càng được coi là không đủ khi sức mạnh tính toán tăng lên. Ed25519 ở 256 bit cung cấp bảo mật tương đương hoặc tốt hơn với phần nhỏ của kích thước khóa.
+Với key mới, thường chọn Ed25519. Dùng RSA 4096-bit khi hệ thống cũ yêu cầu.
 
 ### Bảng So Sánh Tóm Tắt
 
@@ -321,7 +326,7 @@ Nếu bạn mất khóa riêng tư và không có bản sao lưu, bạn mất kh
 
 ### Ed25519 hay RSA tốt hơn?
 
-**Ed25519 tốt hơn cho mọi việc tạo khóa mới.** Nó nhanh hơn, tạo ra khóa nhỏ hơn, không dễ bị một số điểm yếu triển khai ảnh hưởng đến RSA, và cung cấp bảo mật tương đương hoặc vượt trội với khóa 256-bit so với RSA-4096. Lý do duy nhất để dùng RSA ngày nay là tương thích với phần mềm SSH server rất cũ (OpenSSH trước phiên bản 6.5, phát hành năm 2014) hoặc các module bảo mật phần cứng kế thừa. Nếu bạn đang truy cập bất kỳ server hiện đại hay dịch vụ nào như GitHub, hãy dùng Ed25519.
+Với key mới, thường chọn Ed25519. Dùng RSA 4096-bit khi hệ thống cũ yêu cầu.
 
 ## Tạo Cặp SSH Key Của Bạn
 

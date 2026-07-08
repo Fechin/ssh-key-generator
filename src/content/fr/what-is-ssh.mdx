@@ -82,7 +82,7 @@ Cette approche présente plusieurs avantages :
 - **Automatisable** — les scripts et les pipelines CI/CD peuvent s'authentifier sans interaction humaine.
 - **Révocable** — retirer une clé publique d'`authorized_keys` révoque immédiatement l'accès.
 
-Le type de clé le plus moderne et recommandé est **Ed25519**, qui utilise la cryptographie à courbe elliptique sur la courbe Edwards. Les clés RSA sont également largement prises en charge, bien que vous deviez utiliser au moins 4096 bits.
+Pour les nouvelles clés, privilégiez Ed25519. Utilisez RSA 4096 bits quand la compatibilité avec un ancien système l’exige.
 
 Pour une analyse approfondie des paires de clés, consultez notre guide sur <a href="/fr/what-is-an-ssh-key/">ce qu'est une clé SSH</a>.
 
@@ -263,7 +263,7 @@ SSH utilise le **port TCP 22** par défaut. Il s'agit d'un port bien connu assig
 
 ### SSH peut-il être piraté ?
 
-Un serveur SSH correctement configuré avec une authentification par clé est extrêmement difficile à compromettre. La cryptographie — clés Ed25519, chiffrement AES-256, MAC SHA-2 — est considérée comme résistante aux ordinateurs quantiques pour l'authentification par clé et computationnellement infaisable à forcer. Les compromissions SSH réelles impliquent généralement : des fichiers de clé privée volés, des phrases secrètes faibles, des serveurs mal configurés autorisant l'authentification par mot de passe avec des mots de passe faibles, des versions logicielles vulnérables avec des CVE non corrigés, ou de l'ingénierie sociale plutôt que des attaques cryptographiques. Gardez votre serveur à jour, désactivez l'authentification par mot de passe et protégez votre fichier de clé privée.
+Modern SSH with key authentication is strong against classical brute force, but Ed25519 and RSA should not be described as quantum-safe. Real incidents usually involve stolen private keys, weak passphrases, misconfiguration, unpatched CVEs or social engineering.
 
 ### Quelle est la différence entre SSH et HTTPS ?
 

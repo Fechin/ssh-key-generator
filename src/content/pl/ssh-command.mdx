@@ -1,8 +1,16 @@
 # Polecenie SSH: Kompletny Przewodnik z Przykładami dla Linux, Mac i Windows
 
-Polecenie `ssh` jest podstawowym narzędziem do inicjowania połączeń SSH z wiersza poleceń. Niezależnie od tego, czy logujesz się na zdalny serwer Linux, przekierowujesz port dla dostępu do bazy danych, czy przeskakujesz przez serwer bastion, aby dotrzeć do sieci wewnętrznej — polecenie `ssh` jest Twoim punktem wejścia. Niniejszy przewodnik obejmuje wszystko, od podstawowej składni po zaawansowane flagi, tunelowanie i konfiguracje ProxyJump — z prawdziwymi przykładami dla Linux, macOS i Windows.
 
-Zanim uruchomisz polecenia SSH, będziesz potrzebować kluczy SSH. Zapoznaj się z naszym przewodnikiem o <a href="/pl/what-is-an-ssh-key/">tym, czym jest klucz SSH</a> lub użyj <a href="/">bezpłatnego generatora online</a>, aby stworzyć parę kluczy.
+## Szybka odpowiedź
+
+W większości przypadków wystarczy ssh user@host. Użyj -i dla konkretnego klucza, -p dla niestandardowego portu i -J dla połączenia przez bastion.
+
+```bash
+ssh user@server.example.com
+ssh -i ~/.ssh/id_ed25519 user@server.example.com
+ssh -p 2222 user@server.example.com
+ssh -J bastion.example.com user@private.example.com
+```
 
 ## Składnia Polecenia SSH
 

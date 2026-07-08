@@ -1,6 +1,11 @@
 # SSH Anahtarı Nedir? Açık Anahtarlar, Özel Anahtarlar ve Anahtar Çiftleri Açıklandı
 
-**SSH anahtarı**, parola kullanmadan SSH sunucularında kimlik doğrulaması yapmak için kullanılan kriptografik bir kimlik bilgisidir. SSH anahtarları çift olarak gelir — **açık anahtar** ve **özel anahtar** — ve birlikte uzak erişimi geleneksel parola kimlik doğrulamasından daha güvenli ve daha kullanışlı hale getirir. Bu kılavuz, SSH anahtarının ne olduğunu, anahtar çifti sisteminin nasıl çalıştığını, hangi anahtar türlerinin seçileceğini ve SSH anahtarlarının GitHub ve GitLab gibi hizmetlerle nasıl kullanılacağını açıklar.
+
+## Kısa cevap
+
+SSH anahtarı oluşturmak, bir açık anahtar ve bir özel anahtar çifti üretmek demektir. Yeni anahtarlar için çoğu durumda Ed25519 seçilir; eski sistemler için RSA 4096 gerekir.
+
+Yeni anahtarlar için genellikle Ed25519 seçin. Eski bir SSH sunucusu veya araç Ed25519 desteklemiyorsa RSA 4096 kullanın.
 
 ## SSH Anahtarları Nasıl Çalışır?
 
@@ -92,14 +97,14 @@ RSA daha eski bir algoritmadır (1977'de icat edildi) ve 4096 bit'te hâlâ güv
 ssh-keygen -t rsa -b 4096 -C "your@email.com"
 ```
 
-**RSA'yı hiçbir zaman 4096 bitten az kullanmayın.** RSA-1024 ve RSA-2048, artan hesaplama gücüyle birlikte giderek yetersiz kabul edilmektedir. 256-bit Ed25519, anahtar boyutunun çok küçük bir kısmıyla eşdeğer veya daha iyi güvenlik sağlar.
+Yeni anahtarlar için genellikle Ed25519 seçin. Eski sistemler gerektiriyorsa RSA 4096-bit kullanın.
 
 ### Özet Karşılaştırma
 
 | Özellik | Ed25519 | RSA 4096 |
 |---|---|---|
 | Anahtar boyutu (açık) | ~68 karakter | ~725 karakter |
-| Güvenlik düzeyi | 128-bit (kuantum sonrası dayanıklı yapı) | ~140-bit klasik |
+| Security level | ~128-bit classical security; not quantum-safe | Depends on key size; 4096-bit gives more classical margin |
 | Hız | Çok hızlı | Daha yavaş |
 | Uyumluluk | Modern SSH (OpenSSH 6.5+) | Evrensel |
 | Önerilen kullanım | Tüm yeni anahtarlar | Yalnızca eski sistemler |
@@ -321,7 +326,7 @@ Evet. Açık anahtar paylaşılmak üzere tasarlanmıştır. E-postayla gönderm
 
 ### Ed25519 mi RSA mı daha iyi?
 
-**Ed25519, tüm yeni anahtar oluşturma işlemleri için daha iyidir.** Daha hızlıdır, daha küçük anahtarlar üretir, RSA'yı etkileyen belirli uygulama zayıflıklarına karşı savunmasız değildir ve RSA-4096 ile karşılaştırıldığında 256-bit anahtarla eşdeğer veya üstün güvenlik sağlar. Bugün RSA kullanmanın tek nedeni, çok eski SSH sunucu yazılımıyla (2014'te yayımlanan OpenSSH 6.5'ten öncesi) veya eski donanım güvenlik modülleriyle uyumluluktur. Herhangi bir modern sunucuya veya GitHub gibi bir hizmete erişiyorsanız Ed25519 kullanın.
+Yeni anahtarlar için genellikle Ed25519 seçin. Eski sistemler gerektiriyorsa RSA 4096-bit kullanın.
 
 ## SSH Anahtar Çiftinizi Oluşturun
 

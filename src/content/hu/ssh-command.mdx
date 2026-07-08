@@ -1,8 +1,16 @@
 # Az SSH-parancs: Teljes referencia példákkal Linuxra, Macre és Windowsra
 
-A `ssh` parancs az SSH-kapcsolatok parancssorból történő indításának elsődleges eszköze. Akár egy távoli Linux-kiszolgálóra jelentkezik be, egy portot továbbít az adatbázis-hozzáféréshez, vagy egy bástya gazdagépen ugrik át egy belső hálózat eléréséhez, a `ssh` parancs a belépési pont. Ez az útmutató mindent lefed az alapvető szintaxistól a speciális zászlókig, alagútkezelésig és a ProxyJump konfigurációkig – valós példákkal Linuxra, macOS-re és Windowsra.
 
-Az SSH-parancsok futtatása előtt szüksége lesz SSH-kulcsokra. Tekintse meg útmutatónkat arról, hogy <a href="/hu/what-is-an-ssh-key/">mi az SSH-kulcs</a>, vagy használja az <a href="/">ingyenes online generátort</a> kulcspár létrehozásához.
+## Gyors válasz
+
+A legtöbb kapcsolathoz elég az ssh user@host. Használd a -i opciót konkrét kulcshoz, a -p-t más porthoz, a -J-t bastion hosthoz.
+
+```bash
+ssh user@server.example.com
+ssh -i ~/.ssh/id_ed25519 user@server.example.com
+ssh -p 2222 user@server.example.com
+ssh -J bastion.example.com user@private.example.com
+```
 
 ## SSH parancs szintaxis
 

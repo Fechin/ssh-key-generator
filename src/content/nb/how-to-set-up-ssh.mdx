@@ -1,8 +1,16 @@
 # Slik setter du opp SSH: En komplett trinn-for-trinn-guide for Linux, Mac og Windows
 
-Å sette opp SSH korrekt tar omtrent ti minutter og gir avkastning i årevis. Når det er konfigurert, kan du logge inn på servere uten å skrive passord, pushe kode til GitHub uten å angi legitimasjon ved hver operasjon og automatisere deployments med trygghet. Denne guiden går gjennom hele prosessen — fra å generere et nøkkelpar til feilsøking av vanlige feil — for Linux, macOS og Windows.
 
-Hvis du ønsker å forstå den underliggende teknologien først, les guidene våre om <a href="/nb/what-is-ssh/">hva SSH er</a> og <a href="/nb/what-is-an-ssh-key/">hva SSH-nøkler er</a>.
+## Kort svar
+
+Vanlig flyt: lag nøkkelen, kopier offentlig nøkkel, legg den i GitHub/GitLab eller på serveren, last privat nøkkel i ssh-agent og test tilkoblingen.
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+ssh -T git@github.com
+```
 
 ## Forutsetninger
 

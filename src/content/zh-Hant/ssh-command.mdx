@@ -1,12 +1,19 @@
-# SSH 命令：Linux、Mac 和 Windows 含範例的完整參考指南
+# SSH 指令：Linux、Mac 和 Windows 含範例的完整參考指南
 
-`ssh` 命令是從命令列發起 SSH 連線的主要工具。無論是登入遠端 Linux 伺服器、為資料庫存取轉送連接埠，還是透過跳板主機進入內部網路，`ssh` 命令都是您的入口。本指南涵蓋從基本語法到進階旗標、通道和 ProxyJump 設定的所有內容——並附有適用於 Linux、macOS 和 Windows 的實際範例。
+## 快速答案
 
-在執行 SSH 命令之前，您需要 SSH 金鑰。請參閱我們關於<a href="/zh-Hant/what-is-an-ssh-key/">什麼是 SSH 金鑰</a>的指南，或使用<a href="/">免費線上產生器</a>建立金鑰對。
+多數連線使用 ssh user@host 即可。指定金鑰用 -i，非預設連接埠用 -p，透過跳板機連線用 -J。
 
-## SSH 命令語法
+```bash
+ssh user@server.example.com
+ssh -i ~/.ssh/id_ed25519 user@server.example.com
+ssh -p 2222 user@server.example.com
+ssh -J bastion.example.com user@private.example.com
+```
 
-`ssh` 命令的基本語法為：
+## SSH 指令語法
+
+`ssh` 指令的基本語法為：
 
 ```
 ssh [options] [user@]hostname [command]
@@ -85,7 +92,7 @@ Host dev
 
 ## Windows 上的 SSH（PowerShell 和 OpenSSH）
 
-Windows 10（1809 版）和 Windows 11 內建了 **OpenSSH 用戶端**作為可選功能，使 `ssh` 命令可在 PowerShell、命令提示字元和 Windows 終端機中使用。
+Windows 10（1809 版）和 Windows 11 內建了 **OpenSSH 用戶端**作為可選功能，使 `ssh` 指令可在 PowerShell、命令提示字元和 Windows 終端機中使用。
 
 ### 檢查 OpenSSH 是否已安裝
 
@@ -176,9 +183,9 @@ ssh -i ~/Downloads/my-aws-key.pem ec2-user@54.123.456.789
 chmod 400 ~/Downloads/my-aws-key.pem
 ```
 
-## 必備 SSH 命令選項和旗標
+## 必備 SSH 指令選項和旗標
 
-`ssh` 命令有數十個選項。以下是您實際會用到的選項。
+`ssh` 指令有數十個選項。以下是您實際會用到的選項。
 
 | 旗標 | 完整說明 | 範例 |
 |---|---|---|
@@ -237,7 +244,7 @@ ssh internal-server.private
 
 代理轉送很有用，但有安全隱患：對中間伺服器有 root 存取權限的任何人都可以使用您轉送的代理。僅對受信任的伺服器使用，並在可能的情況下優先使用 **ProxyJump**（它不會將您的代理暴露給中間主機）。
 
-## SSH 通道命令
+## SSH 通道指令
 
 SSH 通道透過加密的 SSH 通道路由 TCP 連線。如需了解通道的背景知識，請參閱我們的 <a href="/zh-Hant/what-is-ssh/">SSH 指南的通道章節</a>。
 
@@ -358,7 +365,7 @@ ProxyJump 優於代理轉送（`-A`），因為：
 
 ## 常見問題
 
-### 如何在不輸入密碼的情況下執行 SSH 命令？
+### 如何在不輸入密碼的情況下執行 SSH 指令？
 
 設定 SSH 金鑰驗證。產生金鑰對（`ssh-keygen -t ed25519`），使用 `ssh-copy-id user@host` 將公開金鑰複製到伺服器的 `~/.ssh/authorized_keys` 檔案，之後的連線將使用您的金鑰而不提示輸入密碼。如果您的金鑰有密碼短語，請使用 `ssh-agent` 和 `ssh-add` 將其快取，這樣每個會話只需輸入一次。
 

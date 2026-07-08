@@ -1,8 +1,15 @@
 # SSH 命令完整参考：Linux、Mac 和 Windows 示例
 
-`ssh` 命令是使用 Secure Shell 协议连接远程计算机的标准工具。无论是登录云服务器、向 GitHub 推送代码，还是建立安全隧道，都需要掌握 SSH 命令的用法。
+## 快速答案
 
-本文涵盖了从基础语法到高级技巧的完整 SSH 命令参考，适用于 Linux、macOS 和 Windows 系统，附有大量实际示例。
+大多数连接使用 ssh user@host 即可。指定密钥用 -i，非默认端口用 -p，通过跳板机连接用 -J。
+
+```bash
+ssh user@server.example.com
+ssh -i ~/.ssh/id_ed25519 user@server.example.com
+ssh -p 2222 user@server.example.com
+ssh -J bastion.example.com user@private.example.com
+```
 
 ## SSH 命令语法
 

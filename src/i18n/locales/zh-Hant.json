@@ -6,22 +6,22 @@
     "viewOnGitHub": "在 GitHub 上檢視"
   },
   "hero": {
-    "title": "線上 SSH 金鑰產生器",
-    "subtitle": "使用這個免費的線上 SSH 金鑰產生器，在瀏覽器中安全地產生 SSH 金鑰。支援 GitHub、GitLab、Bitbucket 及任何 SSH 伺服器。"
+    "title": "SSH 金鑰產生器：線上產生 SSH 金鑰",
+    "subtitle": "在瀏覽器中產生 Ed25519 或 RSA SSH 金鑰。適用於 GitHub、GitLab、伺服器與 ssh-keygen 流程，私密金鑰不會上傳。"
   },
   "tabs": {
     "generate": "產生金鑰",
     "generateShort": "產生",
-    "commands": "命令模式",
-    "commandsShort": "命令",
+    "commands": "指令模式",
+    "commandsShort": "指令",
     "config": "SSH 設定",
     "configShort": "設定",
     "guides": "平台指南",
     "guidesShort": "指南"
   },
   "generator": {
-    "title": "線上 SSH 金鑰產生器",
-    "description": "使用此免費線上產生器，在瀏覽器中安全產生 SSH 金鑰對。不會向任何伺服器傳送資料。",
+    "title": "瀏覽器端 SSH 金鑰產生器",
+    "description": "在瀏覽器中建立 SSH 金鑰對。私密金鑰在本機產生，不會送到伺服器。",
     "algorithm": "演算法",
     "algorithmTooltip": "大多數情況推薦使用 Ed25519。如需相容舊系統，請使用 RSA。",
     "comment": "註解（選填）",
@@ -36,8 +36,8 @@
     "confirmPassphrasePlaceholder": "再次輸入密碼短語",
     "passphrasesMismatch": "密碼短語不符",
     "noPassphraseWarning": "未設定密碼短語。您的私鑰將不會被加密。建議添加密碼短語以增強安全性。",
-    "securityTitle": "100% 本機執行的 SSH 金鑰產生器",
-    "securityDesc": "所有金鑰產生都在您的瀏覽器中本機完成。此線上 SSH 金鑰產生器永不傳輸您的私鑰。",
+    "securityTitle": "在瀏覽器本機產生",
+    "securityDesc": "金鑰產生在瀏覽器端完成。這個線上 SSH 金鑰產生器不會上傳或傳輸您的私密金鑰。",
     "noKeysYet": "尚未產生金鑰",
     "noKeysHint": "點擊「產生金鑰對」建立您的 SSH 金鑰"
   },
@@ -63,12 +63,12 @@
     "clickToReveal": "點擊顯示檢視私鑰"
   },
   "commands": {
-    "title": "SSH 金鑰產生命令",
-    "description": "為您的平台產生 ssh-keygen 命令。複製並在終端機中執行。",
+    "title": "SSH 金鑰產生指令",
+    "description": "為您的平台產生 ssh-keygen 指令。複製並在終端機中執行。",
     "algorithm": "演算法",
     "comment": "註解",
     "filename": "檔案名稱（選填）",
-    "quickCommand": "快速命令",
+    "quickCommand": "快速指令",
     "completeSetup": "完整設定",
     "copyAll": "全部複製"
   },
@@ -103,7 +103,7 @@
     "sshSetup": "{platform} SSH 設定",
     "github": {
       "step1Title": "產生 SSH 金鑰",
-      "step1Desc": "使用上方的產生器或執行此命令：",
+      "step1Desc": "使用上方的產生器或執行此指令：",
       "step2Title": "啟動 SSH Agent",
       "step2Desc": "在背景啟動 ssh-agent：",
       "step3Title": "新增金鑰到 Agent",
@@ -178,10 +178,10 @@
   },
   "footer": {
     "about": "關於此線上 SSH 金鑰產生器",
-    "aboutDesc": "本工具是一個免費、開源的線上 SSH 金鑰產生器，完全在瀏覽器中執行。無伺服器處理，無資料收集 - 只有安全的金鑰產生。",
+    "aboutDesc": "在瀏覽器中產生 Ed25519 或 RSA SSH 金鑰。適用於 GitHub、GitLab、伺服器與 ssh-keygen 流程，私密金鑰不會上傳。",
     "securityFirst": "安全優先",
     "security1": "所有金鑰產生都在瀏覽器中完成",
-    "security2": "資料永不傳送到任何伺服器",
+    "security2": "金鑰產生在瀏覽器端完成。這個線上 SSH 金鑰產生器不會上傳或傳輸您的私密金鑰。",
     "security3": "開源程式碼，可供稽核",
     "security4": "使用業界標準加密函式庫",
     "resources": "資源",
@@ -195,13 +195,13 @@
   "seo": {
     "whatIs": {
       "title": "什麼是線上 SSH 金鑰產生器？",
-      "desc": "本線上 SSH 金鑰產生器可以在您的瀏覽器中安全地建立加密金鑰對。SSH 金鑰由公鑰（與伺服器共享）和私鑰（保密）組成。與密碼不同，線上產生的 SSH 金鑰幾乎不可能被暴力破解。"
+      "desc": "線上 SSH 金鑰產生器會在瀏覽器中建立金鑰對。公開金鑰加入 GitHub、GitLab、Bitbucket 或伺服器，私密金鑰保存在您自己的裝置上。"
     },
     "whyUse": {
       "title": "為什麼使用此線上 SSH 金鑰產生器？",
       "secure": {
         "title": "安全的線上產生",
-        "desc": "所有加密操作都在瀏覽器中進行。此線上 SSH 金鑰產生器確保您的私鑰永遠不會離開您的裝置。"
+        "desc": "金鑰產生在瀏覽器端完成。這個線上 SSH 金鑰產生器不會上傳或傳輸您的私密金鑰。"
       },
       "modern": {
         "title": "現代演算法",
@@ -280,7 +280,7 @@
       "subtitle": "查詢關於 SSH 金鑰和本工具的常見問題解答。",
       "safe": {
         "question": "線上產生 SSH 金鑰安全嗎？",
-        "answer": "是的，本工具是 100% 安全的，因為所有金鑰產生完全在您的瀏覽器中使用 Web Crypto API 進行。您的私鑰永遠不會離開您的裝置，也不會傳輸到任何伺服器。原始碼在 GitHub 上開源，可供稽核。"
+        "answer": "如果您信任目前頁面與瀏覽器環境，就可以使用。本工具在本機產生金鑰，私密金鑰不會上傳。安全要求更嚴格時，建議離線產生或直接在終端機使用 ssh-keygen。"
       },
       "ed25519VsRsa": {
         "question": "Ed25519 和 RSA 有什麼區別？",
@@ -288,11 +288,11 @@
       },
       "github": {
         "question": "如何將 SSH 金鑰新增到 GitHub？",
-        "answer": "1) 使用本工具產生 SSH 金鑰，2) 複製公鑰，3) 前往 GitHub 設定 > SSH 和 GPG 金鑰，4) 點擊「新增 SSH 金鑰」，5) 貼上公鑰並命名，6) 點擊「新增 SSH 金鑰」。使用以下命令測試：ssh -T git@github.com"
+        "answer": "1) 使用本工具產生 SSH 金鑰，2) 複製公鑰，3) 前往 GitHub 設定 > SSH 和 GPG 金鑰，4) 點擊「新增 SSH 金鑰」，5) 貼上公鑰並命名，6) 點擊「新增 SSH 金鑰」。使用以下指令測試：ssh -T git@github.com"
       },
       "rsaKeySize": {
         "question": "RSA 應該使用多大的金鑰長度？",
-        "answer": "對於 RSA 金鑰，推薦使用 4096 位元以獲得最高安全性。2048 位元是最低可接受的長度，對於大多數用途提供足夠的安全性。小於 2048 位元的金鑰被認為是不安全的，不應使用。"
+        "answer": "新金鑰通常優先選 Ed25519。只有舊 SSH 伺服器或舊工具不支援 Ed25519 時，才建議使用 RSA 4096 位元。"
       },
       "offline": {
         "question": "這個 SSH 金鑰產生器可以離線使用嗎？",
@@ -320,7 +320,7 @@
       },
       "bestOnlineGenerator": {
         "question": "最好的線上 SSH 金鑰產生器是什麼？",
-        "answer": "本工具是最好的免費線上 SSH 金鑰產生器之一，因為它 100% 在瀏覽器中執行，支援現代 Ed25519 和 RSA 演算法，可作為 PWA 離線運作，並且永不向任何伺服器傳送您的私鑰。"
+        "answer": "SSH 金鑰產生器：線上產生 SSH 金鑰. 金鑰產生在瀏覽器端完成。這個線上 SSH 金鑰產生器不會上傳或傳輸您的私密金鑰。"
       },
       "permissions": {
         "question": "SSH 私鑰應該有什麼權限？",

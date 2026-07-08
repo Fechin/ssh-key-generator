@@ -6,8 +6,8 @@
     "viewOnGitHub": "Ver en GitHub"
   },
   "hero": {
-    "title": "Generador de Claves SSH en Línea",
-    "subtitle": "Genera claves SSH de forma segura en tu navegador con este generador de claves SSH en línea gratuito. Funciona con GitHub, GitLab, Bitbucket y cualquier servidor SSH."
+    "title": "Generador de claves SSH: crea claves SSH online",
+    "subtitle": "Genera claves SSH Ed25519 o RSA en el navegador. El generador funciona del lado del cliente para GitHub, GitLab, servidores y flujos con ssh-keygen; la clave privada no se sube."
   },
   "tabs": {
     "generate": "Generar Claves",
@@ -20,8 +20,8 @@
     "guidesShort": "Guías"
   },
   "generator": {
-    "title": "Generador de Claves SSH en Línea",
-    "description": "Genera un nuevo par de claves SSH de forma segura en tu navegador usando este generador gratuito. No se envían datos a ningún servidor.",
+    "title": "Generador SSH del lado del cliente",
+    "description": "Crea un par de claves SSH directamente en el navegador. La clave privada se genera localmente y no se envía al servidor.",
     "algorithm": "Algoritmo",
     "algorithmTooltip": "Se recomienda Ed25519 para la mayoría de los casos. Usa RSA si necesitas compatibilidad con sistemas antiguos.",
     "comment": "Comentario (opcional)",
@@ -36,8 +36,8 @@
     "confirmPassphrasePlaceholder": "Vuelve a introducir la frase de contraseña",
     "passphrasesMismatch": "Las frases de contraseña no coinciden",
     "noPassphraseWarning": "No se ha establecido frase de contraseña. Tu clave privada no estará cifrada. Considera añadir una frase de contraseña para mayor seguridad.",
-    "securityTitle": "Generador de Claves SSH 100% del Lado del Cliente",
-    "securityDesc": "Toda la generación de claves ocurre localmente en tu navegador. Este generador SSH en línea nunca transmite tus claves privadas.",
+    "securityTitle": "Generado localmente en el navegador",
+    "securityDesc": "Las operaciones criptográficas se ejecutan del lado del cliente. Este generador online no sube ni transmite tus claves privadas.",
     "noKeysYet": "Aún no se han generado claves",
     "noKeysHint": "Haz clic en \"Generar Par de Claves\" para crear tus claves SSH"
   },
@@ -178,10 +178,10 @@
   },
   "footer": {
     "about": "Acerca de Este Generador de Claves SSH en Línea",
-    "aboutDesc": "Esta es una herramienta gratuita y de código abierto que genera claves SSH completamente en tu navegador. Sin procesamiento del servidor, sin recolección de datos - solo generación segura de claves.",
+    "aboutDesc": "Genera claves SSH Ed25519 o RSA en el navegador. El generador funciona del lado del cliente para GitHub, GitLab, servidores y flujos con ssh-keygen; la clave privada no se sube.",
     "securityFirst": "Seguridad Primero",
     "security1": "Toda la generación de claves ocurre en tu navegador",
-    "security2": "Ningún dato se envía a ningún servidor",
+    "security2": "Las operaciones criptográficas se ejecutan del lado del cliente. Este generador online no sube ni transmite tus claves privadas.",
     "security3": "Código abierto y auditable",
     "security4": "Usa bibliotecas criptográficas estándar de la industria",
     "resources": "Recursos",
@@ -195,13 +195,13 @@
   "seo": {
     "whatIs": {
       "title": "¿Qué es un Generador de Claves SSH en Línea?",
-      "desc": "Un generador de claves SSH en línea como esta herramienta crea pares de claves criptográficas de forma segura en tu navegador. Las claves SSH consisten en una clave pública (compartida con servidores) y una clave privada (mantenida en secreto). A diferencia de las contraseñas, las claves SSH generadas en línea son prácticamente imposibles de descifrar por fuerza bruta."
+      "desc": "Un generador online de claves SSH crea el par en el navegador. La clave pública se registra en GitHub, GitLab, Bitbucket o servidores; la privada permanece en tu equipo."
     },
     "whyUse": {
       "title": "¿Por Qué Usar Este Generador de Claves SSH en Línea?",
       "secure": {
         "title": "Generación Segura en Línea",
-        "desc": "Todas las operaciones criptográficas ocurren en tu navegador. Este generador de claves SSH en línea asegura que tus claves privadas nunca abandonen tu dispositivo."
+        "desc": "Las operaciones criptográficas se ejecutan del lado del cliente. Este generador online no sube ni transmite tus claves privadas."
       },
       "modern": {
         "title": "Algoritmos Modernos",
@@ -280,7 +280,7 @@
       "subtitle": "Encuentra respuestas a preguntas comunes sobre claves SSH y esta herramienta.",
       "safe": {
         "question": "¿Es seguro generar claves SSH en línea?",
-        "answer": "Sí, esta herramienta es 100% segura porque toda la generación de claves ocurre completamente en tu navegador usando la API Web Crypto. Tus claves privadas nunca abandonan tu dispositivo y nunca se transmiten a ningún servidor. El código fuente es de código abierto y auditable en GitHub."
+        "answer": "Sí, si confías en el navegador y en la página cargada. La clave se genera localmente y la clave privada no se sube. Para entornos estrictos, genera la clave sin conexión o usa ssh-keygen en la terminal."
       },
       "ed25519VsRsa": {
         "question": "¿Cuál es la diferencia entre Ed25519 y RSA?",
@@ -292,7 +292,7 @@
       },
       "rsaKeySize": {
         "question": "¿Qué tamaño de clave debería usar para RSA?",
-        "answer": "Para claves RSA, se recomiendan 4096 bits para máxima seguridad. 2048 bits es el tamaño mínimo aceptable y ofrece seguridad adecuada para la mayoría de propósitos. Las claves menores de 2048 bits se consideran inseguras y no deberían usarse."
+        "answer": "Para claves nuevas, Ed25519 suele ser la mejor opción. Usa RSA de 4096 bits cuando necesites compatibilidad con un servidor SSH antiguo o una herramienta que no soporte Ed25519."
       },
       "offline": {
         "question": "¿Puedo usar este generador de claves SSH sin conexión?",
@@ -320,7 +320,7 @@
       },
       "bestOnlineGenerator": {
         "question": "¿Cuál es el mejor generador de claves SSH en línea?",
-        "answer": "Este generador de claves SSH es una de las mejores opciones gratuitas en línea porque se ejecuta 100% en tu navegador, soporta algoritmos modernos Ed25519 y RSA, funciona sin conexión como PWA, y nunca envía tus claves privadas a ningún servidor."
+        "answer": "Generador de claves SSH: crea claves SSH online. Las operaciones criptográficas se ejecutan del lado del cliente. Este generador online no sube ni transmite tus claves privadas."
       },
       "permissions": {
         "question": "¿Qué permisos debería tener mi clave privada SSH?",

@@ -6,8 +6,8 @@
     "viewOnGitHub": "Ver no GitHub"
   },
   "hero": {
-    "title": "Gerador de Chaves SSH Online",
-    "subtitle": "Gere chaves SSH de forma segura no seu navegador com este gerador de chaves SSH online gratuito. Funciona com GitHub, GitLab, Bitbucket e qualquer servidor SSH."
+    "title": "Gerador de chaves SSH: crie chaves SSH online",
+    "subtitle": "Gere chaves SSH Ed25519 ou RSA no navegador. O gerador roda no lado do cliente para GitHub, GitLab, servidores e fluxos com ssh-keygen; a chave privada não é enviada."
   },
   "tabs": {
     "generate": "Gerar Chaves",
@@ -20,8 +20,8 @@
     "guidesShort": "Guias"
   },
   "generator": {
-    "title": "Gerador de Chaves SSH Online",
-    "description": "Gere um novo par de chaves SSH de forma segura no seu navegador usando este gerador gratuito. Nenhum dado é enviado para qualquer servidor.",
+    "title": "Gerador SSH no lado do cliente",
+    "description": "Crie um par de chaves SSH diretamente no navegador. A chave privada é gerada localmente e não é enviada ao servidor.",
     "algorithm": "Algoritmo",
     "algorithmTooltip": "Ed25519 é recomendado para a maioria dos casos. Use RSA se precisar de compatibilidade com sistemas antigos.",
     "comment": "Comentário (opcional)",
@@ -32,12 +32,12 @@
     "passphrase": "Frase-senha (opcional)",
     "passphraseTooltip": "Uma frase-senha adiciona segurança extra. Mesmo que alguém obtenha sua chave privada, não poderá usá-la sem a frase-senha.",
     "passphrasePlaceholder": "Digite a frase-senha para criptografia",
-    "confirmPassphrase": "Confirmar Frase-senha",
+    "confirmPassphrase": "Confirmar frase-senha",
     "confirmPassphrasePlaceholder": "Digite novamente a frase-senha",
     "passphrasesMismatch": "As frases-senha não correspondem",
     "noPassphraseWarning": "Nenhuma frase-senha definida. Sua chave privada não será criptografada. Considere adicionar uma frase-senha para maior segurança.",
-    "securityTitle": "Gerador de Chaves SSH 100% no Lado do Cliente",
-    "securityDesc": "Toda a geração de chaves acontece localmente no seu navegador. Este gerador SSH online nunca transmite suas chaves privadas.",
+    "securityTitle": "Gerado localmente no navegador",
+    "securityDesc": "As operações criptográficas rodam no lado do cliente. Este gerador online não envia nem transmite suas chaves privadas.",
     "noKeysYet": "Nenhuma chave gerada ainda",
     "noKeysHint": "Clique em \"Gerar Par de Chaves\" para criar suas chaves SSH"
   },
@@ -178,10 +178,10 @@
   },
   "footer": {
     "about": "Sobre Este Gerador de Chaves SSH Online",
-    "aboutDesc": "Esta é uma ferramenta gratuita e de código aberto que gera chaves SSH completamente no seu navegador. Sem processamento no servidor, sem coleta de dados - apenas geração segura de chaves.",
+    "aboutDesc": "Gere chaves SSH Ed25519 ou RSA no navegador. O gerador roda no lado do cliente para GitHub, GitLab, servidores e fluxos com ssh-keygen; a chave privada não é enviada.",
     "securityFirst": "Segurança em Primeiro Lugar",
     "security1": "Toda a geração de chaves acontece no seu navegador",
-    "security2": "Nenhum dado é enviado para qualquer servidor",
+    "security2": "As operações criptográficas rodam no lado do cliente. Este gerador online não envia nem transmite suas chaves privadas.",
     "security3": "Código aberto e auditável",
     "security4": "Usa bibliotecas criptográficas padrão da indústria",
     "resources": "Recursos",
@@ -194,14 +194,14 @@
   },
   "seo": {
     "whatIs": {
-      "title": "O Que é um Gerador de Chaves SSH Online?",
-      "desc": "Um gerador de chaves SSH online como esta ferramenta cria pares de chaves criptográficas de forma segura no seu navegador. Chaves SSH consistem em uma chave pública (compartilhada com servidores) e uma chave privada (mantida em segredo). Diferente de senhas, chaves SSH geradas online são virtualmente impossíveis de quebrar por força bruta."
+      "title": "O que é um gerador de chaves SSH online?",
+      "desc": "Um gerador online de chaves SSH cria o par no navegador. A chave pública vai para GitHub, GitLab, Bitbucket ou servidores; a privada permanece no seu computador."
     },
     "whyUse": {
       "title": "Por Que Usar Este Gerador de Chaves SSH Online?",
       "secure": {
         "title": "Geração Online Segura",
-        "desc": "Todas as operações criptográficas acontecem no seu navegador. Este gerador de chaves SSH online garante que suas chaves privadas nunca saiam do seu dispositivo."
+        "desc": "As operações criptográficas rodam no lado do cliente. Este gerador online não envia nem transmite suas chaves privadas."
       },
       "modern": {
         "title": "Algoritmos Modernos",
@@ -276,11 +276,11 @@
       }
     },
     "faq": {
-      "title": "Perguntas Frequentes",
+      "title": "Perguntas frequentes",
       "subtitle": "Encontre respostas para perguntas comuns sobre chaves SSH e esta ferramenta.",
       "safe": {
         "question": "É seguro gerar chaves SSH online?",
-        "answer": "Sim, esta ferramenta é 100% segura porque toda a geração de chaves acontece completamente no seu navegador usando a API Web Crypto. Suas chaves privadas nunca saem do seu dispositivo e nunca são transmitidas para qualquer servidor. O código-fonte é de código aberto e auditável no GitHub."
+        "answer": "Sim, se você confia no navegador e na página carregada. A chave é gerada localmente e a chave privada não é enviada. Para ambientes rígidos, gere offline ou use ssh-keygen no terminal."
       },
       "ed25519VsRsa": {
         "question": "Qual é a diferença entre Ed25519 e RSA?",
@@ -292,7 +292,7 @@
       },
       "rsaKeySize": {
         "question": "Qual tamanho de chave devo usar para RSA?",
-        "answer": "Para chaves RSA, 4096 bits é recomendado para máxima segurança. 2048 bits é o tamanho mínimo aceitável e oferece segurança adequada para a maioria dos propósitos. Chaves menores que 2048 bits são consideradas inseguras e não devem ser usadas."
+        "answer": "Para chaves novas, Ed25519 costuma ser a melhor escolha. Use RSA de 4096 bits quando precisar de compatibilidade com um servidor SSH antigo ou uma ferramenta sem suporte a Ed25519."
       },
       "offline": {
         "question": "Posso usar este gerador de chaves SSH offline?",
@@ -320,7 +320,7 @@
       },
       "bestOnlineGenerator": {
         "question": "Qual é o melhor gerador de chaves SSH online?",
-        "answer": "Este gerador de chaves SSH é uma das melhores opções gratuitas online porque roda 100% no seu navegador, suporta algoritmos modernos Ed25519 e RSA, funciona offline como PWA, e nunca envia suas chaves privadas para qualquer servidor."
+        "answer": "Gerador de chaves SSH: crie chaves SSH online. As operações criptográficas rodam no lado do cliente. Este gerador online não envia nem transmite suas chaves privadas."
       },
       "permissions": {
         "question": "Quais permissões minha chave privada SSH deve ter?",

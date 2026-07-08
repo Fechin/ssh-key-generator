@@ -1,8 +1,16 @@
 # SSH-kommandoen: Komplett referanse med eksempler for Linux, Mac og Windows
 
-Kommandoen `ssh` er det primære verktøyet for å initiere SSH-tilkoblinger fra kommandolinjen. Enten du logger inn på en ekstern Linux-server, videresender en port for databasetilgang eller hopper gjennom en bastionvert for å nå et internt nettverk, er kommandoen `ssh` inngangspunktet ditt. Denne guiden dekker alt fra den grunnleggende syntaksen til avanserte flagg, tunneling og ProxyJump-konfigurasjoner — med virkelige eksempler for Linux, macOS og Windows.
 
-Før du kjører SSH-kommandoer, trenger du SSH-nøkler. Se vår guide om <a href="/nb/what-is-an-ssh-key/">hva en SSH-nøkkel er</a> eller bruk den <a href="/">gratis nettbaserte generatoren</a> for å opprette et nøkkelpar.
+## Kort svar
+
+De fleste tilkoblinger bruker ssh user@host. Bruk -i for en bestemt nøkkel, -p for annen port og -J for tilkobling via bastion.
+
+```bash
+ssh user@server.example.com
+ssh -i ~/.ssh/id_ed25519 user@server.example.com
+ssh -p 2222 user@server.example.com
+ssh -J bastion.example.com user@private.example.com
+```
 
 ## SSH-kommandosyntaks
 

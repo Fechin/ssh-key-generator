@@ -6,8 +6,8 @@
     "viewOnGitHub": "Visualizza su GitHub"
   },
   "hero": {
-    "title": "Generatore di Chiavi SSH Online",
-    "subtitle": "Genera chiavi SSH sicure istantaneamente nel tuo browser con questo generatore di chiavi SSH online gratuito. Funziona con GitHub, GitLab, Bitbucket e qualsiasi server SSH."
+    "title": "Generatore di chiavi SSH: crea chiavi SSH online",
+    "subtitle": "Genera chiavi SSH Ed25519 o RSA nel browser per GitHub, GitLab, server e flussi ssh-keygen. La chiave privata non viene caricata."
   },
   "tabs": {
     "generate": "Genera Chiavi",
@@ -20,8 +20,8 @@
     "guidesShort": "Guide"
   },
   "generator": {
-    "title": "Generatore di Chiavi SSH Online",
-    "description": "Genera una nuova coppia di chiavi SSH in modo sicuro nel tuo browser usando questo generatore gratuito online. Nessun dato viene inviato a nessun server.",
+    "title": "Generatore SSH lato client",
+    "description": "Crea una coppia di chiavi SSH direttamente nel browser. La chiave privata viene generata in locale e non viene inviata al server.",
     "algorithm": "Algoritmo",
     "algorithmTooltip": "Ed25519 è raccomandato per la maggior parte dei casi. Usa RSA se hai bisogno di compatibilità con sistemi più vecchi.",
     "comment": "Commento (opzionale)",
@@ -36,8 +36,8 @@
     "confirmPassphrasePlaceholder": "Reinserisci la passphrase",
     "passphrasesMismatch": "Le passphrase non corrispondono",
     "noPassphraseWarning": "Nessuna passphrase impostata. La tua chiave privata sarà non crittografata. Considera di aggiungere una passphrase per maggiore sicurezza.",
-    "securityTitle": "Generatore di Chiavi SSH 100% Lato Client",
-    "securityDesc": "Tutta la generazione delle chiavi avviene localmente nel tuo browser. Questo generatore di chiavi SSH online non trasmette mai le tue chiavi private.",
+    "securityTitle": "Generazione locale nel browser",
+    "securityDesc": "Le operazioni crittografiche avvengono lato client. Questo generatore online non carica né trasmette chiavi private.",
     "noKeysYet": "Nessuna chiave generata ancora",
     "noKeysHint": "Clicca \"Genera Coppia di Chiavi\" per creare le tue chiavi SSH"
   },
@@ -178,10 +178,10 @@
   },
   "footer": {
     "about": "Informazioni su Questo Generatore di Chiavi SSH Online",
-    "aboutDesc": "Questo è un generatore di chiavi SSH online gratuito e open-source che funziona interamente nel tuo browser. Nessuna elaborazione lato server, nessuna raccolta dati - solo generazione sicura delle chiavi.",
+    "aboutDesc": "Genera chiavi SSH Ed25519 o RSA nel browser per GitHub, GitLab, server e flussi ssh-keygen. La chiave privata non viene caricata.",
     "securityFirst": "Sicurezza Prima",
     "security1": "Tutta la generazione delle chiavi avviene nel tuo browser",
-    "security2": "Nessun dato viene mai inviato a nessun server",
+    "security2": "Le operazioni crittografiche avvengono lato client. Questo generatore online non carica né trasmette chiavi private.",
     "security3": "Codice open source e verificabile",
     "security4": "Usa librerie crittografiche standard del settore",
     "resources": "Risorse",
@@ -195,13 +195,13 @@
   "seo": {
     "whatIs": {
       "title": "Cos'è un Generatore di Chiavi SSH Online?",
-      "desc": "Un generatore di chiavi SSH online come questo strumento crea coppie di chiavi crittografiche in modo sicuro nel tuo browser. Le chiavi SSH consistono in una chiave pubblica (condivisa con i server) e una chiave privata (mantenuta segreta). A differenza delle password, le chiavi SSH generate online sono virtualmente impossibili da crackare con forza bruta."
+      "desc": "Il generatore online crea la coppia di chiavi nel browser. La chiave pubblica va su GitHub, GitLab, Bitbucket o sul server; la chiave privata resta sul tuo computer."
     },
     "whyUse": {
       "title": "Perché Usare Questo Generatore di Chiavi SSH Online?",
       "secure": {
         "title": "Generazione Online Sicura",
-        "desc": "Tutte le operazioni crittografiche avvengono nel tuo browser. Questo generatore di chiavi SSH online assicura che le tue chiavi private non lascino mai il tuo dispositivo."
+        "desc": "Le operazioni crittografiche avvengono lato client. Questo generatore online non carica né trasmette chiavi private."
       },
       "modern": {
         "title": "Algoritmi Moderni",
@@ -280,7 +280,7 @@
       "subtitle": "Trova risposte alle domande comuni sulle chiavi SSH e questo strumento.",
       "safe": {
         "question": "È sicuro generare chiavi SSH online?",
-        "answer": "Sì, questo strumento è 100% sicuro perché tutta la generazione delle chiavi avviene interamente nel tuo browser usando la Web Crypto API. Le tue chiavi private non lasciano mai il tuo dispositivo e non vengono mai trasmesse a nessun server. Il codice sorgente è open source e verificabile su GitHub."
+        "answer": "Sì, se ti fidi della pagina caricata e del browser. La chiave viene generata localmente e la chiave privata non viene caricata. Per ambienti rigidi, genera la chiave offline o usa ssh-keygen nel terminale."
       },
       "ed25519VsRsa": {
         "question": "Qual è la differenza tra Ed25519 e RSA?",
@@ -292,7 +292,7 @@
       },
       "rsaKeySize": {
         "question": "Quale dimensione di chiave dovrei usare per RSA?",
-        "answer": "Per le chiavi RSA, 4096-bit è raccomandato per la massima sicurezza. 2048-bit è la dimensione minima accettabile e offre sicurezza adeguata per la maggior parte degli scopi. Chiavi più piccole di 2048-bit sono considerate insicure e non dovrebbero essere usate."
+        "answer": "Per nuove chiavi scegli Ed25519 nella maggior parte dei casi. Usa RSA 4096 bit solo quando un vecchio server SSH o uno strumento non supporta Ed25519."
       },
       "offline": {
         "question": "Posso usare questo generatore di chiavi SSH offline?",
@@ -320,7 +320,7 @@
       },
       "bestOnlineGenerator": {
         "question": "Qual è il miglior generatore di chiavi SSH online?",
-        "answer": "Questo generatore di chiavi SSH è una delle migliori opzioni online gratuite perché funziona al 100% nel tuo browser, supporta i moderni algoritmi Ed25519 e RSA, funziona offline come PWA, e non invia mai le tue chiavi private a nessun server."
+        "answer": "Generatore di chiavi SSH: crea chiavi SSH online. Le operazioni crittografiche avvengono lato client. Questo generatore online non carica né trasmette chiavi private."
       },
       "permissions": {
         "question": "Quali permessi dovrebbe avere la mia chiave SSH privata?",

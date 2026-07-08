@@ -82,7 +82,7 @@ Tällä lähestymistavalla on useita etuja:
 - **Automatisoitavissa** — skriptit ja CI/CD-pipeline-linjat voivat todentaa ilman ihmisen vuorovaikutusta.
 - **Peruutettavissa** — julkisen avaimen poistaminen `authorized_keys`-tiedostosta peruuttaa pääsyn välittömästi.
 
-Modernein ja suositelluin avaintyyppi on **Ed25519**, joka käyttää elliptisen käyrän kryptografiaa Edwards-käyrällä. RSA-avaimia tuetaan myös laajalti, vaikka sinun tulisi käyttää vähintään 4096 bittiä.
+Uusille avaimille Ed25519 on yleensä paras. Käytä RSA 4096-bittiä, kun vanhat järjestelmät vaativat sitä.
 
 Syvällisempää tietoa avainpareista löytyy oppaastamme <a href="/fi/what-is-an-ssh-key/">mikä on SSH-avain</a>.
 
@@ -263,7 +263,7 @@ SSH käyttää oletuksena **TCP-porttia 22**. Tämä on IANA:n nimeämä tunnett
 
 ### Voiko SSH:ta hakkeroida?
 
-Asianmukaisesti konfiguroitu SSH-palvelin avainpohjaisella todennuksella on erittäin vaikea murtaa. Kryptografia — Ed25519-avaimet, AES-256-salaus, SHA-2 MAC:t — katsotaan kvanttikestäväksi avaimentodennuksessa ja laskennallisesti mahdottomaksi brute force -hyökkäyksellä. Todelliset SSH-murrot sisältävät tyypillisesti: varastetut yksityiset avaintiedostot, heikot salauslausekkeet, väärin konfiguroidut palvelimet, jotka sallivat salasanatodennuksen heikoilla salasanoilla, haavoittuvat ohjelmistoversiot paikkauksettomilla CVE:illä tai sosiaalinen manipulointi pikemminkin kuin kryptografiset hyökkäykset. Pidä palvelimesi ajan tasalla, poista salasanatodennus käytöstä ja suojaa yksityinen avaintiedostosi.
+Modern SSH with key authentication is strong against classical brute force, but Ed25519 and RSA should not be described as quantum-safe. Real incidents usually involve stolen private keys, weak passphrases, misconfiguration, unpatched CVEs or social engineering.
 
 ### Mikä on ero SSH:n ja HTTPS:n välillä?
 

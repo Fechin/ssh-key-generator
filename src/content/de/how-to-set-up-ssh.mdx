@@ -1,8 +1,15 @@
 # SSH einrichten: Eine vollständige Schritt-für-Schritt-Anleitung für Linux, Mac und Windows
 
-SSH korrekt einzurichten dauert etwa zehn Minuten und zahlt sich jahrelang aus. Einmal konfiguriert, können Sie sich bei Servern ohne Passworteingabe anmelden, Code zu GitHub pushen ohne bei jeder Operation Anmeldedaten einzugeben und Deployments mit Zuversicht automatisieren. Diese Anleitung führt Sie durch den gesamten Prozess — von der Generierung eines Schlüsselpaars bis zur Fehlerbehebung häufiger Fehler — für Linux, macOS und Windows.
+## Kurzantwort
 
-Wenn Sie zunächst die zugrundeliegende Technologie verstehen möchten, lesen Sie unsere Leitfäden zu <a href="/de/what-is-ssh/">SSH</a> und <a href="/de/what-is-an-ssh-key/">SSH-Schlüsseln</a>.
+Der übliche Ablauf: Schlüssel erzeugen, öffentlichen Schlüssel kopieren, bei GitHub/GitLab oder auf dem Server hinterlegen, den privaten Schlüssel in ssh-agent laden und die Verbindung testen.
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+ssh -T git@github.com
+```
 
 ## Voraussetzungen
 

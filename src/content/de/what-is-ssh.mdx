@@ -82,7 +82,7 @@ Dieser Ansatz bietet mehrere Vorteile:
 - **Automatisierbar** — Skripte und CI/CD-Pipelines können sich ohne menschliche Interaktion authentifizieren.
 - **Widerrufbar** — Das Entfernen eines öffentlichen Schlüssels aus `authorized_keys` entzieht sofort den Zugriff.
 
-Der modernste und empfohlene Schlüsseltyp ist **Ed25519**, der elliptische Kurven-Kryptografie über die Edwards-Kurve nutzt. RSA-Schlüssel werden ebenfalls weitgehend unterstützt, sollten jedoch mindestens 4096 Bit verwenden.
+Für neue Schlüssel ist meist Ed25519 die richtige Wahl. RSA 4096 Bit nutzen Sie für alte Systeme oder ausdrückliche Vorgaben.
 
 Einen tiefen Einblick in Schlüsselpaare finden Sie in unserem Leitfaden zu <a href="/de/what-is-an-ssh-key/">SSH-Schlüsseln</a>.
 
@@ -263,7 +263,7 @@ SSH verwendet standardmäßig **TCP-Port 22**. Dies ist ein von der IANA zugewie
 
 ### Kann SSH gehackt werden?
 
-Ein korrekt konfigurierter SSH-Server mit schlüsselbasierter Authentifizierung ist äußerst schwer zu kompromittieren. Die eingesetzte Kryptografie — Ed25519-Schlüssel, AES-256-Verschlüsselung, SHA-2-MACs — gilt für die Schlüsselauthentifizierung als quantenresistent und ist für Brute-Force-Angriffe rechnerisch nicht durchführbar. Reale SSH-Kompromittierungen betreffen typischerweise: gestohlene private Schlüsseldateien, schwache Passphrasen, falsch konfigurierte Server, die Passwort-Authentifizierung mit schwachen Passwörtern erlauben, anfällige Softwareversionen mit nicht gepatchten CVEs oder Social Engineering — nicht kryptografische Angriffe. Halten Sie Ihren Server aktuell, deaktivieren Sie Passwort-Authentifizierung und schützen Sie Ihre private Schlüsseldatei.
+Modern SSH with key authentication is strong against classical brute force, but Ed25519 and RSA should not be described as quantum-safe. Real incidents usually involve stolen private keys, weak passphrases, misconfiguration, unpatched CVEs or social engineering.
 
 ### Was ist der Unterschied zwischen SSH und HTTPS?
 

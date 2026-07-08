@@ -6,8 +6,8 @@
     "viewOnGitHub": "在 GitHub 上查看"
   },
   "hero": {
-    "title": "在线 SSH 密钥生成器",
-    "subtitle": "使用这个免费的在线 SSH 密钥生成器，在浏览器中安全地生成 SSH 密钥。支持 GitHub、GitLab、Bitbucket 及任何 SSH 服务器。"
+    "title": "SSH 密钥生成器：在线生成 SSH 密钥",
+    "subtitle": "在浏览器中生成 Ed25519 或 RSA SSH 密钥。适用于 GitHub、GitLab、服务器和 ssh-keygen 流程，私钥不会上传。"
   },
   "tabs": {
     "generate": "生成密钥",
@@ -20,8 +20,8 @@
     "guidesShort": "指南"
   },
   "generator": {
-    "title": "在线 SSH 密钥生成器",
-    "description": "使用此免费在线生成器，在浏览器中安全生成 SSH 密钥对。不会向任何服务器发送数据。",
+    "title": "浏览器端 SSH 密钥生成器",
+    "description": "在浏览器中创建 SSH 密钥对。私钥在本地生成，不会发送到服务器。",
     "algorithm": "算法",
     "algorithmTooltip": "大多数情况推荐使用 Ed25519。如需兼容旧系统，请使用 RSA。",
     "comment": "注释（可选）",
@@ -36,8 +36,8 @@
     "confirmPassphrasePlaceholder": "再次输入密码短语",
     "passphrasesMismatch": "密码短语不匹配",
     "noPassphraseWarning": "未设置密码短语。您的私钥将不会被加密。考虑添加密码短语以增强安全性。",
-    "securityTitle": "100% 本地运行的 SSH 密钥生成器",
-    "securityDesc": "所有密钥生成都在您的浏览器中本地完成。此在线 SSH 密钥生成器永不传输您的私钥。",
+    "securityTitle": "在浏览器本地生成",
+    "securityDesc": "密钥生成在浏览器端完成。这个在线 SSH 密钥生成器不会上传或传输您的私钥。",
     "noKeysYet": "尚未生成密钥",
     "noKeysHint": "点击「生成密钥对」创建您的 SSH 密钥"
   },
@@ -178,10 +178,10 @@
   },
   "footer": {
     "about": "关于此在线 SSH 密钥生成器",
-    "aboutDesc": "本工具是一个免费、开源的在线 SSH 密钥生成器，完全在浏览器中运行。无服务器处理，无数据收集 - 只有安全的密钥生成。",
+    "aboutDesc": "在浏览器中生成 Ed25519 或 RSA SSH 密钥。适用于 GitHub、GitLab、服务器和 ssh-keygen 流程，私钥不会上传。",
     "securityFirst": "安全优先",
     "security1": "所有密钥生成都在浏览器中完成",
-    "security2": "数据永不发送到任何服务器",
+    "security2": "密钥生成在浏览器端完成。这个在线 SSH 密钥生成器不会上传或传输您的私钥。",
     "security3": "开源代码，可供审计",
     "security4": "使用行业标准加密库",
     "resources": "资源",
@@ -195,13 +195,13 @@
   "seo": {
     "whatIs": {
       "title": "什么是在线 SSH 密钥生成器？",
-      "desc": "本在线 SSH 密钥生成器可以在您的浏览器中安全地创建加密密钥对。SSH 密钥由公钥（与服务器共享）和私钥（保密）组成。与密码不同，在线生成的 SSH 密钥几乎不可能被暴力破解。"
+      "desc": "在线 SSH 密钥生成器会在浏览器中创建密钥对。公钥添加到 GitHub、GitLab、Bitbucket 或服务器，私钥保存在您自己的设备上。"
     },
     "whyUse": {
       "title": "为什么使用此在线 SSH 密钥生成器？",
       "secure": {
         "title": "安全的在线生成",
-        "desc": "所有加密操作都在浏览器中进行。此在线 SSH 密钥生成器确保您的私钥永远不会离开您的设备。"
+        "desc": "密钥生成在浏览器端完成。这个在线 SSH 密钥生成器不会上传或传输您的私钥。"
       },
       "modern": {
         "title": "现代算法",
@@ -280,7 +280,7 @@
       "subtitle": "查找关于 SSH 密钥和本工具的常见问题解答。",
       "safe": {
         "question": "在线生成 SSH 密钥安全吗？",
-        "answer": "是的，本工具是 100% 安全的，因为所有密钥生成完全在您的浏览器中使用 Web Crypto API 进行。您的私钥永远不会离开您的设备，也不会传输到任何服务器。源代码在 GitHub 上开源，可供审计。"
+        "answer": "如果您信任当前页面和浏览器环境，可以使用。本工具在本地生成密钥，私钥不会上传。对安全要求更严格的场景，建议断网生成或直接在终端使用 ssh-keygen。"
       },
       "ed25519VsRsa": {
         "question": "Ed25519 和 RSA 有什么区别？",
@@ -292,7 +292,7 @@
       },
       "rsaKeySize": {
         "question": "RSA 应该使用多大的密钥长度？",
-        "answer": "对于 RSA 密钥，推荐使用 4096 位以获得最高安全性。2048 位是最低可接受的长度，对于大多数用途提供足够的安全性。小于 2048 位的密钥被认为是不安全的，不应使用。"
+        "answer": "新密钥通常优先选择 Ed25519。只有旧 SSH 服务器或旧工具不支持 Ed25519 时，才建议使用 RSA 4096 位。"
       },
       "offline": {
         "question": "这个 SSH 密钥生成器可以离线使用吗？",
@@ -320,7 +320,7 @@
       },
       "bestOnlineGenerator": {
         "question": "最好的在线 SSH 密钥生成器是什么？",
-        "answer": "本工具是最好的免费在线 SSH 密钥生成器之一，因为它 100% 在浏览器中运行，支持现代 Ed25519 和 RSA 算法，可作为 PWA 离线工作，并且永不向任何服务器发送您的私钥。"
+        "answer": "SSH 密钥生成器：在线生成 SSH 密钥. 密钥生成在浏览器端完成。这个在线 SSH 密钥生成器不会上传或传输您的私钥。"
       },
       "permissions": {
         "question": "SSH 私钥应该有什么权限？",

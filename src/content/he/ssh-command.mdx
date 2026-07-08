@@ -1,8 +1,16 @@
 # פקודת SSH: עיון מלא עם דוגמאות ל-Linux, Mac ו-Windows
 
-פקודת `ssh` היא הכלי הראשי לאתחול חיבורי SSH משורת הפקודה. בין אם אתה מתחבר לשרת Linux מרוחק, מעביר פורט לגישה לבסיס נתונים, או קופץ דרך שרת bastion להגיע לרשת פנימית, פקודת `ssh` היא נקודת הכניסה שלך. המדריך הזה מכסה הכל מהתחביר הבסיסי ועד לדגלים מתקדמים, מנהרות ותצורות ProxyJump — עם דוגמאות אמיתיות ל-Linux, macOS ו-Windows.
 
-לפני הרצת פקודות SSH, תצטרך מפתחות SSH. ראה את המדריך שלנו על <a href="/he/what-is-an-ssh-key/">מה זה מפתח SSH</a> או השתמש ב<a href="/">מחולל המקוון החינמי</a> כדי ליצור זוג מפתחות.
+## תשובה קצרה
+
+ברוב החיבורים מספיק ssh user@host. השתמשו ב--i למפתח מסוים, ב--p לפורט אחר וב--J למעבר דרך bastion.
+
+```bash
+ssh user@server.example.com
+ssh -i ~/.ssh/id_ed25519 user@server.example.com
+ssh -p 2222 user@server.example.com
+ssh -J bastion.example.com user@private.example.com
+```
 
 ## תחביר פקודת SSH
 

@@ -6,8 +6,8 @@
     "viewOnGitHub": "Se på GitHub"
   },
   "hero": {
-    "title": "SSH Nøgle Generator Online",
-    "subtitle": "Opret sikre SSH nøgler direkte i din browser med denne gratis online SSH nøgle generator. Fungerer med GitHub, GitLab, Bitbucket og alle SSH servere."
+    "title": "SSH-nøglegenerator: opret SSH-nøgler online",
+    "subtitle": "Generer Ed25519- eller RSA-SSH-nøgler i browseren til GitHub, GitLab, servere og ssh-keygen. Den private nøgle uploades ikke."
   },
   "tabs": {
     "generate": "Opret nøgler",
@@ -20,8 +20,8 @@
     "guidesShort": "Guides"
   },
   "generator": {
-    "title": "Online SSH Nøgle Generator",
-    "description": "Opret et nyt SSH nøglepar sikkert i din browser med denne gratis online generator. Ingen data sendes til nogen server.",
+    "title": "SSH-nøglegenerator i browseren",
+    "description": "Opret et SSH-nøglepar direkte i browseren. Den private nøgle genereres lokalt og sendes ikke til serveren.",
     "algorithm": "Algoritme",
     "algorithmTooltip": "Ed25519 anbefales i de fleste tilfælde. Brug RSA hvis du har brug for kompatibilitet med ældre systemer.",
     "comment": "Kommentar (valgfri)",
@@ -36,8 +36,8 @@
     "confirmPassphrasePlaceholder": "Gentag adgangskode",
     "passphrasesMismatch": "Adgangskoderne stemmer ikke overens",
     "noPassphraseWarning": "Ingen adgangskode angivet. Din private nøgle vil være ukrypteret. Overvej at tilføje en adgangskode for ekstra sikkerhed.",
-    "securityTitle": "100% Klientsidebaseret SSH Nøgle Generator",
-    "securityDesc": "Al nøglegenerering foregår lokalt i din browser. Denne online SSH nøgle generator sender aldrig dine private nøgler.",
+    "securityTitle": "Genereret lokalt i browseren",
+    "securityDesc": "Kryptografiske operationer kører på klientsiden. Denne onlinegenerator uploader eller overfører ikke private nøgler.",
     "noKeysYet": "Ingen nøgler genereret endnu",
     "noKeysHint": "Klik på \"Generer nøglepar\" for at oprette dine SSH nøgler"
   },
@@ -178,10 +178,10 @@
   },
   "footer": {
     "about": "Om denne online SSH nøgle generator",
-    "aboutDesc": "Dette er en gratis, open source online SSH nøgle generator der kører helt i din browser. Ingen serverbehandling, ingen dataindsamling - bare sikker nøglegenerering.",
+    "aboutDesc": "Generer Ed25519- eller RSA-SSH-nøgler i browseren til GitHub, GitLab, servere og ssh-keygen. Den private nøgle uploades ikke.",
     "securityFirst": "Sikkerhed først",
     "security1": "Al nøglegenerering foregår i din browser",
-    "security2": "Ingen data sendes nogensinde til nogen server",
+    "security2": "Kryptografiske operationer kører på klientsiden. Denne onlinegenerator uploader eller overfører ikke private nøgler.",
     "security3": "Open source og reviderbar kode",
     "security4": "Bruger industristandard kryptografiske biblioteker",
     "resources": "Ressourcer",
@@ -195,13 +195,13 @@
   "seo": {
     "whatIs": {
       "title": "Hvad er en online SSH nøgle generator?",
-      "desc": "En online SSH nøgle generator som dette værktøj opretter kryptografiske nøglepar sikkert i din browser. SSH nøgler består af en offentlig nøgle (deles med servere) og en privat nøgle (holdes hemmelig). I modsætning til adgangskoder er SSH nøgler genereret online praktisk talt umulige at knække gennem brute force."
+      "desc": "Onlinegeneratoren opretter nøgleparret i browseren. Den offentlige nøgle lægges på GitHub, GitLab, Bitbucket eller serveren; den private nøgle bliver på din computer."
     },
     "whyUse": {
       "title": "Hvorfor bruge denne online SSH nøgle generator?",
       "secure": {
         "title": "Sikker online generering",
-        "desc": "Alle kryptografiske operationer foregår i din browser. Denne online SSH nøgle generator sikrer at dine private nøgler aldrig forlader din enhed."
+        "desc": "Kryptografiske operationer kører på klientsiden. Denne onlinegenerator uploader eller overfører ikke private nøgler."
       },
       "modern": {
         "title": "Moderne algoritmer",
@@ -280,7 +280,7 @@
       "subtitle": "Find svar på almindelige spørgsmål om SSH nøgler og dette værktøj.",
       "safe": {
         "question": "Er det sikkert at generere SSH nøgler online?",
-        "answer": "Ja, dette værktøj er 100% sikkert fordi al nøglegenerering foregår helt i din browser ved hjælp af Web Crypto API. Dine private nøgler forlader aldrig din enhed og sendes aldrig til nogen server. Kildekoden er open source og kan revideres på GitHub."
+        "answer": "Ja, hvis du stoler på den indlæste side og din browser. Nøglen genereres lokalt, og den private nøgle uploades ikke. I stramme miljøer bør du generere offline eller bruge ssh-keygen i terminalen."
       },
       "ed25519VsRsa": {
         "question": "Hvad er forskellen mellem Ed25519 og RSA?",
@@ -292,7 +292,7 @@
       },
       "rsaKeySize": {
         "question": "Hvilken nøglestørrelse bør jeg bruge til RSA?",
-        "answer": "For RSA nøgler anbefales 4096-bit for maksimal sikkerhed. 2048-bit er den minimale acceptable størrelse og tilbyder tilstrækkelig sikkerhed til de fleste formål. Nøgler mindre end 2048-bit betragtes som usikre og bør ikke bruges."
+        "answer": "Vælg Ed25519 til de fleste nye nøgler. Brug RSA 4096, hvis en ældre SSH-server eller et værktøj ikke understøtter Ed25519."
       },
       "offline": {
         "question": "Kan jeg bruge denne SSH nøgle generator offline?",
@@ -320,7 +320,7 @@
       },
       "bestOnlineGenerator": {
         "question": "Hvad er den bedste SSH nøgle generator online?",
-        "answer": "Denne SSH nøgle generator er en af de bedste gratis online muligheder fordi den kører 100% i din browser, understøtter moderne Ed25519 og RSA algoritmer, virker offline som en PWA, og sender aldrig dine private nøgler til nogen server."
+        "answer": "SSH-nøglegenerator: opret SSH-nøgler online. Kryptografiske operationer kører på klientsiden. Denne onlinegenerator uploader eller overfører ikke private nøgler."
       },
       "permissions": {
         "question": "Hvilke tilladelser skal min private SSH nøgle have?",

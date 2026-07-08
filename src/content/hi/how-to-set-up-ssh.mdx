@@ -1,8 +1,16 @@
 # SSH कैसे Set Up करें: Linux, Mac, और Windows के लिए सम्पूर्ण Step-by-Step गाइड
 
-SSH को सही तरीके से set up करने में लगभग दस मिनट लगते हैं और यह वर्षों तक फायदा देता है। एक बार configure हो जाने के बाद, आप बिना password टाइप किए servers पर log in कर सकते हैं, हर operation पर credentials दर्ज किए बिना GitHub पर code push कर सकते हैं, और confidence के साथ deployments automate कर सकते हैं। यह गाइड पूरी प्रक्रिया में walk through करती है — key pair generate करने से लेकर सामान्य errors troubleshoot करने तक — Linux, macOS, और Windows के लिए।
 
-यदि आप पहले underlying technology समझना चाहते हैं, तो हमारी गाइड पढ़ें: <a href="/hi/what-is-ssh/">SSH क्या है</a> और <a href="/hi/what-is-an-ssh-key/">SSH keys क्या हैं</a>।
+## त्वरित उत्तर
+
+Normal flow: key generate करें, public key copy करें, GitHub/GitLab या server में add करें, private key ssh-agent में load करें और connection test करें।
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+ssh -T git@github.com
+```
 
 ## Prerequisites
 

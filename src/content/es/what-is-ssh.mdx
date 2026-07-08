@@ -82,7 +82,7 @@ Este enfoque tiene varias ventajas:
 - **Automatizable** — los scripts y los pipelines de CI/CD pueden autenticarse sin intervención humana.
 - **Revocable** — eliminar una clave pública de `authorized_keys` revoca el acceso de inmediato.
 
-El tipo de clave más moderno y recomendado es **Ed25519**, que utiliza criptografía de curva elíptica sobre la curva de Edwards. Las claves RSA también son ampliamente compatibles, aunque deberías usar al menos 4096 bits.
+El tipo recomendado para claves nuevas es **Ed25519**: usa la curva Edwards, es rápido y produce claves compactas. RSA sigue estando muy soportado; elige RSA de 4096 bits cuando necesites compatibilidad con sistemas antiguos y más margen de seguridad.
 
 Para profundizar en los pares de claves, consulta nuestra guía sobre <a href="/es/what-is-an-ssh-key/">qué es una clave SSH</a>.
 
@@ -263,7 +263,7 @@ SSH utiliza el **puerto TCP 22** de forma predeterminada. Es un puerto bien cono
 
 ### ¿Puede ser hackeado SSH?
 
-Un servidor SSH correctamente configurado con autenticación basada en claves es extremadamente difícil de comprometer. La criptografía — claves Ed25519, cifrado AES-256, MAC SHA-2 — se considera resistente a ordenadores cuánticos para la autenticación por clave y computacionalmente inviable para un ataque de fuerza bruta. Los ataques reales a SSH suelen implicar: ficheros de claves privadas robados, frases de contraseña débiles, servidores mal configurados que permiten autenticación por contraseña con contraseñas débiles, versiones de software vulnerables con CVEs sin parchear, o ingeniería social, en lugar de ataques criptográficos. Mantén tu servidor actualizado, deshabilita la autenticación por contraseña y protege tu fichero de clave privada.
+Un servidor SSH bien configurado con autenticación por clave es difícil de comprometer. Ed25519, AES-256 y MAC SHA-2 no son viables de romper por fuerza bruta clásica; aun así, no conviene describir Ed25519 o RSA como “seguros frente a computación cuántica”. Los incidentes reales suelen venir de claves privadas robadas, frases débiles, mala configuración, CVE sin parchear o ingeniería social.
 
 ### ¿Cuál es la diferencia entre SSH y HTTPS?
 

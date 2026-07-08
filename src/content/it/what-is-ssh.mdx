@@ -82,7 +82,7 @@ Questo approccio offre diversi vantaggi:
 - **Automatizzabile** — script e pipeline CI/CD possono autenticarsi senza interazione umana.
 - **Revocabile** — rimuovere una chiave pubblica da `authorized_keys` revoca immediatamente l'accesso.
 
-Il tipo di chiave più moderno e consigliato è **Ed25519**, che utilizza la crittografia a curva ellittica sulla curva di Edwards. Anche le chiavi RSA sono ampiamente supportate, sebbene si debbano usare almeno 4096 bit.
+Per nuove chiavi scegli di solito Ed25519. Usa RSA 4096 bit quando serve compatibilità con sistemi vecchi.
 
 Per un approfondimento sulle coppie di chiavi, vedere la nostra guida su <a href="/it/what-is-an-ssh-key/">cos'è una chiave SSH</a>.
 
@@ -263,7 +263,7 @@ SSH usa la **porta TCP 22** per impostazione predefinita. È una porta well-know
 
 ### SSH può essere violato?
 
-Un server SSH correttamente configurato con autenticazione basata su chiavi è estremamente difficile da compromettere. La crittografia — chiavi Ed25519, cifratura AES-256, MAC SHA-2 — è considerata resistente ai computer quantistici per l'autenticazione con chiave e computazionalmente impossibile da violare con la forza bruta. Le compromissioni SSH nel mondo reale tipicamente coinvolgono: file di chiave privata rubati, passphrase deboli, server mal configurati che consentono l'autenticazione con password deboli, versioni di software vulnerabili con CVE non patchati, o ingegneria sociale piuttosto che attacchi crittografici. Tieni il server aggiornato, disabilita l'autenticazione con password e proteggi il file della chiave privata.
+Modern SSH with key authentication is strong against classical brute force, but Ed25519 and RSA should not be described as quantum-safe. Real incidents usually involve stolen private keys, weak passphrases, misconfiguration, unpatched CVEs or social engineering.
 
 ### Qual è la differenza tra SSH e HTTPS?
 

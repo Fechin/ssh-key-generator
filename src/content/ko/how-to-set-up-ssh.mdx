@@ -1,8 +1,15 @@
 # SSH 설정 방법: Linux, Mac, Windows 단계별 완전 가이드
 
-SSH를 올바르게 설정하는 데는 약 10분이 걸리지만 그 효과는 수년간 지속됩니다. 일단 설정하면 비밀번호 없이 서버에 로그인하고, 매번 자격 증명을 입력하지 않고 GitHub에 코드를 푸시하며, 자신 있게 배포를 자동화할 수 있습니다. 이 가이드는 Linux, macOS, Windows에서 키 쌍 생성부터 일반적인 오류 해결까지 전체 과정을 안내합니다.
+## 빠른 답변
 
-기반이 되는 기술을 먼저 이해하고 싶다면 <a href="/ko/what-is-ssh/">SSH란 무엇인가</a>와 <a href="/ko/what-is-an-ssh-key/">SSH 키란 무엇인가</a> 가이드를 읽어보세요.
+기본 흐름은 키 생성, 공개키 복사, GitHub/GitLab 또는 서버 등록, ssh-agent 로드, 연결 테스트입니다.
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+ssh -T git@github.com
+```
 
 ## 사전 준비사항
 

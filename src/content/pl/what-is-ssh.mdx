@@ -82,7 +82,7 @@ To podejście ma kilka zalet:
 - **Automatyzowalność** — skrypty i potoki CI/CD mogą uwierzytelniać się bez udziału człowieka.
 - **Możliwość unieważnienia** — usunięcie klucza publicznego z `authorized_keys` natychmiast odbiera dostęp.
 
-Najnowocześniejszym i zalecanym typem klucza jest **Ed25519**, który wykorzystuje kryptografię na krzywych eliptycznych na krzywej Edwardsa. Klucze RSA są również szeroko obsługiwane, choć należy używać co najmniej 4096 bitów.
+Dla nowych kluczy zwykle wybieraj Ed25519. RSA 4096 bitów stosuj przy starszych systemach lub wymaganiach zgodności.
 
 Szczegółowe omówienie par kluczy znajdziesz w naszym przewodniku po <a href="/pl/what-is-an-ssh-key/">kluczach SSH</a>.
 

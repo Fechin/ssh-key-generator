@@ -1,8 +1,16 @@
 # Jak nastavit SSH: Kompletní průvodce krok za krokem pro Linux, Mac a Windows
 
-Správné nastavení SSH trvá přibližně deset minut a přináší dividendy na roky dopředu. Jakmile je nakonfigurováno, můžete se přihlašovat na servery bez zadávání hesel, pushovat kód na GitHub bez zadávání přihlašovacích údajů při každé operaci a automatizovat nasazení s důvěrou. Tento průvodce provede celým procesem — od generování páru klíčů po řešení běžných chyb — pro Linux, macOS a Windows.
 
-Chcete-li nejprve pochopit základní technologii, přečtěte si naše průvodce o <a href="/cs/what-is-ssh/">co je SSH</a> a <a href="/cs/what-is-an-ssh-key/">co jsou SSH klíče</a>.
+## Rychlá odpověď
+
+Běžný postup: vygenerovat klíč, zkopírovat veřejný klíč, přidat ho do GitHubu/GitLabu nebo na server, načíst soukromý klíč do ssh-agent a otestovat spojení.
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+ssh -T git@github.com
+```
 
 ## Předpoklady
 

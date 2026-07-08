@@ -1,6 +1,11 @@
 # Czym Jest Klucz SSH? Klucze Publiczne, Prywatne i Pary Kluczy Wyjaśnione
 
-**Klucz SSH** to kryptograficzne poświadczenie używane do uwierzytelniania na serwerach SSH bez hasła. Klucze SSH występują w parach — **klucz publiczny** i **klucz prywatny** — i razem sprawiają, że zdalny dostęp jest bezpieczniejszy i wygodniejszy niż tradycyjne uwierzytelnianie hasłem. Niniejszy przewodnik wyjaśnia, czym jest klucz SSH, jak działa system par kluczy, który typ klucza wybrać i jak używać kluczy SSH z serwisami takimi jak GitHub czy GitLab.
+
+## Szybka odpowiedź
+
+Wygenerowanie klucza SSH oznacza utworzenie pary: klucza publicznego i prywatnego. Dla nowych kluczy zwykle wybierz Ed25519; RSA 4096 zostaw dla starszych serwerów lub narzędzi.
+
+Dla nowych kluczy najczęściej wybierz Ed25519. Użyj RSA 4096, jeśli starszy serwer SSH lub narzędzie nie obsługuje Ed25519.
 
 ## Jak Działają Klucze SSH
 
@@ -92,14 +97,14 @@ RSA to starszy algorytm (wynaleziony w 1977 roku) i choć nadal jest bezpieczny 
 ssh-keygen -t rsa -b 4096 -C "your@email.com"
 ```
 
-**Nigdy nie używaj RSA z mniej niż 4096 bitami.** RSA-1024 i RSA-2048 są coraz częściej uważane za niewystarczające wraz ze wzrostem mocy obliczeniowej. Ed25519 przy 256 bitach zapewnia równoważne lub lepsze bezpieczeństwo przy ułamku rozmiaru klucza.
+Dla nowych kluczy zwykle wybieraj Ed25519. RSA 4096 bitów stosuj przy starszych systemach lub wymaganiach zgodności.
 
 ### Podsumowanie Porównania
 
 | Funkcja | Ed25519 | RSA 4096 |
 |---|---|---|
 | Rozmiar klucza (publiczny) | ~68 znaków | ~725 znaków |
-| Poziom bezpieczeństwa | 128-bitowy (struktura odporna na post-kwantowe) | ~140-bitowy klasyczny |
+| Security level | ~128-bit classical security; not quantum-safe | Depends on key size; 4096-bit gives more classical margin |
 | Szybkość | Bardzo szybki | Wolniejszy |
 | Kompatybilność | Nowoczesne SSH (OpenSSH 6.5+) | Uniwersalna |
 | Zalecany dla | Wszystkich nowych kluczy | Tylko systemów legacy |
@@ -321,7 +326,7 @@ Jeśli stracisz klucz prywatny i nie masz kopii zapasowej, tracisz możliwość 
 
 ### Który jest lepszy: Ed25519 czy RSA?
 
-**Ed25519 jest lepszy do generowania wszystkich nowych kluczy.** Jest szybszy, produkuje mniejsze klucze, nie jest podatny na pewne słabości implementacyjne wpływające na RSA i zapewnia równoważne lub wyższe bezpieczeństwo przy kluczu 256-bitowym w porównaniu do RSA-4096. Jedynym powodem, aby dziś używać RSA, jest kompatybilność z bardzo starym oprogramowaniem serwera SSH (OpenSSH przed wersją 6.5, wydaną w 2014 roku) lub starszymi sprzętowymi modułami bezpieczeństwa. Jeśli uzyskujesz dostęp do jakiegokolwiek nowoczesnego serwera lub serwisu, takiego jak GitHub, użyj Ed25519.
+Dla nowych kluczy zwykle wybieraj Ed25519. RSA 4096 bitów stosuj przy starszych systemach lub wymaganiach zgodności.
 
 ## Wygeneruj Swoją Parę Kluczy SSH
 

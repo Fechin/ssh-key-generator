@@ -1,8 +1,16 @@
 # Az SSH beállítása: Teljes, lépésről lépésre útmutató Linux, Mac és Windows rendszerekhez
 
-Az SSH helyes beállítása körülbelül tíz percet vesz igénybe, és évekig megtérül. A konfigurálás után jelszavak beírása nélkül jelentkezhet be a kiszolgálókra, kódot küldhet a GitHubba anélkül, hogy minden műveletnél megadná a hitelesítő adatokat, és magabiztosan automatizálhatja a telepítéseket. Ez az útmutató végigvezeti a teljes folyamatot – a kulcspár létrehozásától a gyakori hibák hibaelhárításáig – Linux, macOS és Windows esetén.
 
-Ha először meg szeretné érteni a mögöttes technológiát, olvassa el útmutatónkat arról, hogy <a href="/hu/what-is-ssh/">mi az SSH</a> és <a href="/hu/what-is-an-ssh-key/">mik az SSH-kulcsok</a>.
+## Gyors válasz
+
+A szokásos folyamat: kulcs létrehozása, publikus kulcs másolása, hozzáadás GitHubhoz/GitLabhoz vagy szerverhez, privát kulcs betöltése ssh-agentbe, majd kapcsolat tesztelése.
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+ssh -T git@github.com
+```
 
 ## Előfeltételek
 

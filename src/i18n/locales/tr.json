@@ -6,8 +6,8 @@
     "viewOnGitHub": "GitHub'da Görüntüle"
   },
   "hero": {
-    "title": "Çevrimiçi SSH Anahtar Oluşturucu",
-    "subtitle": "Tarayıcınızda anında güvenli SSH anahtarları oluşturun. GitHub, GitLab, Bitbucket ve tüm SSH sunucularıyla uyumludur."
+    "title": "SSH anahtar oluşturucu: çevrimiçi SSH anahtarı oluşturun",
+    "subtitle": "GitHub, GitLab, sunucular ve ssh-keygen akışları için tarayıcıda Ed25519 veya RSA SSH anahtarları oluşturun. Özel anahtar yüklenmez."
   },
   "tabs": {
     "generate": "Anahtar Oluştur",
@@ -20,8 +20,8 @@
     "guidesShort": "Kılavuzlar"
   },
   "generator": {
-    "title": "Çevrimiçi SSH Anahtar Oluşturucu",
-    "description": "Tarayıcınızda güvenli bir şekilde yeni SSH anahtar çifti oluşturun. Hiçbir veri sunucuya gönderilmez.",
+    "title": "Tarayıcıda çalışan SSH anahtar oluşturucu",
+    "description": "SSH anahtar çiftini tarayıcıda oluşturun. Özel anahtar yerel olarak üretilir ve sunucuya gönderilmez.",
     "algorithm": "Algoritma",
     "algorithmTooltip": "Ed25519 çoğu durum için önerilir. Eski sistemlerle uyumluluk gerekiyorsa RSA kullanın.",
     "comment": "Açıklama (isteğe bağlı)",
@@ -36,8 +36,8 @@
     "confirmPassphrasePlaceholder": "Parolayı tekrar girin",
     "passphrasesMismatch": "Parolalar eşleşmiyor",
     "noPassphraseWarning": "Parola belirlenmedi. Özel anahtarınız şifrelenmeyecek. Ek güvenlik için parola eklemeyi düşünün.",
-    "securityTitle": "%100 İstemci Taraflı SSH Anahtar Oluşturucu",
-    "securityDesc": "Tüm anahtar oluşturma işlemi tarayıcınızda gerçekleşir. Bu çevrimiçi SSH anahtar oluşturucu özel anahtarlarınızı asla iletmez.",
+    "securityTitle": "Tarayıcıda yerel oluşturma",
+    "securityDesc": "Kriptografik işlemler istemci tarafında çalışır. Bu çevrimiçi oluşturucu özel anahtarları yüklemez veya iletmez.",
     "noKeysYet": "Henüz anahtar oluşturulmadı",
     "noKeysHint": "SSH anahtarlarınızı oluşturmak için \"Anahtar Çifti Oluştur\" düğmesine tıklayın"
   },
@@ -178,10 +178,10 @@
   },
   "footer": {
     "about": "Bu Çevrimiçi SSH Anahtar Oluşturucu Hakkında",
-    "aboutDesc": "Bu, tamamen tarayıcınızda çalışan ücretsiz ve açık kaynaklı bir çevrimiçi SSH anahtar oluşturucudur. Sunucu taraflı işlem yok, veri toplama yok - sadece güvenli anahtar oluşturma.",
+    "aboutDesc": "GitHub, GitLab, sunucular ve ssh-keygen akışları için tarayıcıda Ed25519 veya RSA SSH anahtarları oluşturun. Özel anahtar yüklenmez.",
     "securityFirst": "Önce Güvenlik",
     "security1": "Tüm anahtar oluşturma işlemi tarayıcınızda gerçekleşir",
-    "security2": "Hiçbir veri herhangi bir sunucuya gönderilmez",
+    "security2": "Kriptografik işlemler istemci tarafında çalışır. Bu çevrimiçi oluşturucu özel anahtarları yüklemez veya iletmez.",
     "security3": "Açık kaynak ve denetlenebilir kod",
     "security4": "Endüstri standardı kriptografik kütüphaneler kullanır",
     "resources": "Kaynaklar",
@@ -195,13 +195,13 @@
   "seo": {
     "whatIs": {
       "title": "Çevrimiçi SSH Anahtar Oluşturucu Nedir?",
-      "desc": "Bu araç gibi çevrimiçi SSH anahtar oluşturucular, tarayıcınızda güvenli bir şekilde kriptografik anahtar çiftleri oluşturur. SSH anahtarları, genel anahtar (sunucularla paylaşılır) ve özel anahtar (gizli tutulur) olmak üzere iki bölümden oluşur. Parolaların aksine, çevrimiçi oluşturulan SSH anahtarlarını kaba kuvvet saldırılarıyla kırmak neredeyse imkansızdır."
+      "desc": "Çevrimiçi SSH anahtar oluşturucu anahtar çiftini tarayıcıda üretir. Açık anahtar GitHub, GitLab, Bitbucket veya sunucuya eklenir; özel anahtar bilgisayarınızda kalır."
     },
     "whyUse": {
       "title": "Bu Çevrimiçi SSH Anahtar Oluşturucuyu Neden Kullanmalısınız?",
       "secure": {
         "title": "Güvenli Çevrimiçi Oluşturma",
-        "desc": "Tüm kriptografik işlemler tarayıcınızda gerçekleşir. Bu çevrimiçi SSH anahtar oluşturucu, özel anahtarlarınızın cihazınızdan asla ayrılmamasını sağlar."
+        "desc": "Kriptografik işlemler istemci tarafında çalışır. Bu çevrimiçi oluşturucu özel anahtarları yüklemez veya iletmez."
       },
       "modern": {
         "title": "Modern Algoritmalar",
@@ -280,7 +280,7 @@
       "subtitle": "SSH anahtarları ve bu araç hakkında sık sorulan soruların yanıtlarını bulun.",
       "safe": {
         "question": "Çevrimiçi SSH anahtarı oluşturmak güvenli mi?",
-        "answer": "Evet, bu araç %100 güvenlidir çünkü tüm anahtar oluşturma işlemi Web Crypto API kullanılarak tamamen tarayıcınızda gerçekleşir. Özel anahtarlarınız cihazınızdan asla ayrılmaz ve herhangi bir sunucuya iletilmez. Kaynak kodu açık kaynaktır ve GitHub'da denetlenebilir."
+        "answer": "Yüklenen sayfaya ve tarayıcı ortamınıza güveniyorsanız evet. Anahtar yerel olarak oluşturulur ve özel anahtar yüklenmez. Sıkı güvenlik ortamlarında anahtarı çevrimdışı oluşturun veya terminalde ssh-keygen kullanın."
       },
       "ed25519VsRsa": {
         "question": "Ed25519 ve RSA arasındaki fark nedir?",
@@ -292,7 +292,7 @@
       },
       "rsaKeySize": {
         "question": "RSA için hangi anahtar boyutunu kullanmalıyım?",
-        "answer": "RSA anahtarları için maksimum güvenlik için 4096-bit önerilir. 2048-bit kabul edilebilir minimum boyuttur ve çoğu amaç için yeterli güvenlik sunar. 2048-bit'ten küçük anahtarlar güvensiz kabul edilir ve kullanılmamalıdır."
+        "answer": "Yeni anahtarlar için genellikle Ed25519 seçin. Eski bir SSH sunucusu veya araç Ed25519 desteklemiyorsa RSA 4096 kullanın."
       },
       "offline": {
         "question": "Bu SSH anahtar oluşturucuyu çevrimdışı kullanabilir miyim?",
@@ -320,7 +320,7 @@
       },
       "bestOnlineGenerator": {
         "question": "En iyi çevrimiçi SSH anahtar oluşturucu hangisidir?",
-        "answer": "Bu SSH anahtar oluşturucu, tarayıcınızda %100 çalıştığı, modern Ed25519 ve RSA algoritmalarını desteklediği, PWA olarak çevrimdışı çalıştığı ve özel anahtarlarınızı asla herhangi bir sunucuya göndermediği için en iyi ücretsiz çevrimiçi seçeneklerden biridir."
+        "answer": "SSH anahtar oluşturucu: çevrimiçi SSH anahtarı oluşturun. Kriptografik işlemler istemci tarafında çalışır. Bu çevrimiçi oluşturucu özel anahtarları yüklemez veya iletmez."
       },
       "permissions": {
         "question": "SSH özel anahtarım hangi izinlere sahip olmalı?",

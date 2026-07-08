@@ -1,8 +1,16 @@
 # SSH Command: Linux, Mac, और Windows के लिए उदाहरणों के साथ पूर्ण संदर्भ
 
-`ssh` command command line से SSH connections शुरू करने का प्राथमिक टूल है। चाहे आप किसी remote Linux server पर log in कर रहे हों, database access के लिए port forward कर रहे हों, या internal network तक पहुँचने के लिए bastion host से hop कर रहे हों — `ssh` command आपका entry point है। यह गाइड basic syntax से advanced flags, tunneling, और ProxyJump configurations तक सब कुछ cover करती है — Linux, macOS, और Windows के लिए वास्तविक उदाहरणों के साथ।
 
-SSH commands चलाने से पहले, आपको SSH keys की ज़रूरत होगी। हमारी गाइड देखें: <a href="/hi/what-is-an-ssh-key/">SSH key क्या है</a> या key pair बनाने के लिए <a href="/">free online generator</a> उपयोग करें।
+## त्वरित उत्तर
+
+ज्यादातर connections के लिए ssh user@host काफी है। Specific key के लिए -i, non-default port के लिए -p और bastion host के लिए -J इस्तेमाल करें।
+
+```bash
+ssh user@server.example.com
+ssh -i ~/.ssh/id_ed25519 user@server.example.com
+ssh -p 2222 user@server.example.com
+ssh -J bastion.example.com user@private.example.com
+```
 
 ## SSH Command Syntax
 

@@ -6,8 +6,8 @@
     "viewOnGitHub": "Auf GitHub ansehen"
   },
   "hero": {
-    "title": "Online SSH-Schlüsselgenerator",
-    "subtitle": "Generieren Sie SSH-Schlüssel sicher in Ihrem Browser mit diesem kostenlosen Online-SSH-Schlüsselgenerator. Funktioniert mit GitHub, GitLab, Bitbucket und jedem SSH-Server."
+    "title": "SSH-Schlüsselgenerator: SSH-Schlüssel online erstellen",
+    "subtitle": "Erstellen Sie Ed25519- oder RSA-SSH-Schlüssel direkt im Browser. Der Generator läuft clientseitig für GitHub, GitLab, Server und ssh-keygen-Workflows; private Schlüssel werden nicht hochgeladen."
   },
   "tabs": {
     "generate": "Schlüssel generieren",
@@ -20,8 +20,8 @@
     "guidesShort": "Anleitungen"
   },
   "generator": {
-    "title": "Online SSH-Schlüsselgenerator",
-    "description": "Generieren Sie ein neues SSH-Schlüsselpaar sicher in Ihrem Browser mit diesem kostenlosen Generator. Keine Daten werden an Server gesendet.",
+    "title": "Clientseitiger SSH-Schlüsselgenerator",
+    "description": "Erstellen Sie ein SSH-Schlüsselpaar direkt im Browser. Der private Schlüssel wird lokal erzeugt und nicht an den Server gesendet.",
     "algorithm": "Algorithmus",
     "algorithmTooltip": "Ed25519 wird für die meisten Fälle empfohlen. Verwenden Sie RSA, wenn Sie Kompatibilität mit älteren Systemen benötigen.",
     "comment": "Kommentar (optional)",
@@ -36,8 +36,8 @@
     "confirmPassphrasePlaceholder": "Passphrase erneut eingeben",
     "passphrasesMismatch": "Passphrasen stimmen nicht überein",
     "noPassphraseWarning": "Keine Passphrase festgelegt. Ihr privater Schlüssel wird nicht verschlüsselt. Erwägen Sie das Hinzufügen einer Passphrase für mehr Sicherheit.",
-    "securityTitle": "100% Clientseitiger SSH-Schlüsselgenerator",
-    "securityDesc": "Die gesamte Schlüsselgenerierung erfolgt lokal in Ihrem Browser. Dieser Online-SSH-Schlüsselgenerator überträgt niemals Ihre privaten Schlüssel.",
+    "securityTitle": "Lokal im Browser erzeugt",
+    "securityDesc": "Die kryptografischen Operationen laufen clientseitig. Dieser Online-Generator lädt private Schlüssel nicht hoch und überträgt sie nicht.",
     "noKeysYet": "Noch keine Schlüssel generiert",
     "noKeysHint": "Klicken Sie auf \"Schlüsselpaar generieren\" um Ihre SSH-Schlüssel zu erstellen"
   },
@@ -178,10 +178,10 @@
   },
   "footer": {
     "about": "Über diesen Online SSH-Schlüsselgenerator",
-    "aboutDesc": "Dies ist ein kostenloses, quelloffenes Tool, das SSH-Schlüssel vollständig in Ihrem Browser generiert. Keine Serververarbeitung, keine Datenerfassung - nur sichere Schlüsselgenerierung.",
+    "aboutDesc": "Erstellen Sie Ed25519- oder RSA-SSH-Schlüssel direkt im Browser. Der Generator läuft clientseitig für GitHub, GitLab, Server und ssh-keygen-Workflows; private Schlüssel werden nicht hochgeladen.",
     "securityFirst": "Sicherheit zuerst",
     "security1": "Die gesamte Schlüsselgenerierung erfolgt in Ihrem Browser",
-    "security2": "Keine Daten werden an Server gesendet",
+    "security2": "Die kryptografischen Operationen laufen clientseitig. Dieser Online-Generator lädt private Schlüssel nicht hoch und überträgt sie nicht.",
     "security3": "Quelloffen und prüfbar",
     "security4": "Verwendet branchenübliche kryptografische Bibliotheken",
     "resources": "Ressourcen",
@@ -195,13 +195,13 @@
   "seo": {
     "whatIs": {
       "title": "Was ist ein Online SSH-Schlüsselgenerator?",
-      "desc": "Ein Online-SSH-Schlüsselgenerator wie dieses Tool erstellt kryptografische Schlüsselpaare sicher in Ihrem Browser. SSH-Schlüssel bestehen aus einem öffentlichen Schlüssel (mit Servern geteilt) und einem privaten Schlüssel (geheim gehalten). Anders als Passwörter sind online generierte SSH-Schlüssel praktisch unmöglich durch Brute-Force zu knacken."
+      "desc": "Ein Online-Generator für SSH-Schlüssel erzeugt das Schlüsselpaar im Browser. Der öffentliche Schlüssel kommt zu GitHub, GitLab, Bitbucket oder auf den Server; der private Schlüssel bleibt auf Ihrem Rechner."
     },
     "whyUse": {
       "title": "Warum diesen Online SSH-Schlüsselgenerator verwenden?",
       "secure": {
         "title": "Sichere Online-Generierung",
-        "desc": "Alle kryptografischen Operationen finden in Ihrem Browser statt. Dieser Online-SSH-Schlüsselgenerator stellt sicher, dass Ihre privaten Schlüssel niemals Ihr Gerät verlassen."
+        "desc": "Die kryptografischen Operationen laufen clientseitig. Dieser Online-Generator lädt private Schlüssel nicht hoch und überträgt sie nicht."
       },
       "modern": {
         "title": "Moderne Algorithmen",
@@ -280,7 +280,7 @@
       "subtitle": "Finden Sie Antworten auf häufige Fragen zu SSH-Schlüsseln und diesem Tool.",
       "safe": {
         "question": "Ist es sicher, SSH-Schlüssel online zu generieren?",
-        "answer": "Ja, dieses Tool ist 100% sicher, da die gesamte Schlüsselgenerierung vollständig in Ihrem Browser über die Web Crypto API erfolgt. Ihre privaten Schlüssel verlassen niemals Ihr Gerät und werden niemals an einen Server übertragen. Der Quellcode ist Open Source und auf GitHub prüfbar."
+        "answer": "Ja, wenn Sie der geladenen Seite und Ihrem Browser vertrauen. Die Schlüssel werden lokal erzeugt, der private Schlüssel wird nicht hochgeladen. Für besonders strenge Umgebungen erzeugen Sie den Schlüssel offline oder nutzen ssh-keygen im Terminal."
       },
       "ed25519VsRsa": {
         "question": "Was ist der Unterschied zwischen Ed25519 und RSA?",
@@ -292,7 +292,7 @@
       },
       "rsaKeySize": {
         "question": "Welche Schlüsselgröße sollte ich für RSA verwenden?",
-        "answer": "Für RSA-Schlüssel werden 4096 Bit für maximale Sicherheit empfohlen. 2048 Bit ist die minimale akzeptable Größe und bietet für die meisten Zwecke ausreichende Sicherheit. Schlüssel kleiner als 2048 Bit gelten als unsicher und sollten nicht verwendet werden."
+        "answer": "Für neue Schlüssel ist Ed25519 meistens die beste Wahl. RSA 4096 Bit verwenden Sie, wenn ein älterer SSH-Server oder ein Legacy-Tool Ed25519 nicht unterstützt."
       },
       "offline": {
         "question": "Kann ich diesen SSH-Schlüsselgenerator offline verwenden?",
@@ -320,7 +320,7 @@
       },
       "bestOnlineGenerator": {
         "question": "Was ist der beste Online SSH-Schlüsselgenerator?",
-        "answer": "Dieser SSH-Schlüsselgenerator ist eine der besten kostenlosen Online-Optionen, da er 100% in Ihrem Browser läuft, moderne Ed25519- und RSA-Algorithmen unterstützt, als PWA offline funktioniert und niemals Ihre privaten Schlüssel an einen Server sendet."
+        "answer": "SSH-Schlüsselgenerator: SSH-Schlüssel online erstellen. Die kryptografischen Operationen laufen clientseitig. Dieser Online-Generator lädt private Schlüssel nicht hoch und überträgt sie nicht."
       },
       "permissions": {
         "question": "Welche Berechtigungen sollte mein privater SSH-Schlüssel haben?",

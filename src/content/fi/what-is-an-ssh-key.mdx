@@ -1,6 +1,11 @@
 # Mikä on SSH-avain? Julkiset avaimet, yksityiset avaimet ja avainparit selitetty
 
-**SSH-avain** on salaustieto, jota käytetään SSH-palvelimien todentamiseen ilman salasanaa. SSH-avaimet tulevat pareittain — **julkinen avain** ja **yksityinen avain** — ja yhdessä ne tekevät etäkäytöstä turvallisempaa ja kätevämpää kuin perinteinen salasanatodennus. Tämä opas selittää, mikä SSH-avain on, kuinka avainparijärjestelmä toimii, mitkä avaintyypit valita ja kuinka SSH-avaimia käytetään GitHubin ja GitLabin kaltaisten palveluiden kanssa.
+
+## Nopea vastaus
+
+SSH-avaimen luonti tarkoittaa julkisen ja yksityisen avaimen parin tekemistä. Uusille avaimille Ed25519 on yleensä paras valinta; RSA 4096 on lähinnä vanhoja järjestelmiä varten.
+
+Valitse uusille avaimille yleensä Ed25519. Käytä RSA 4096:ta, jos vanha SSH-palvelin tai työkalu ei tue Ed25519:ää.
 
 ## Kuinka SSH-avaimet toimivat
 
@@ -92,14 +97,14 @@ RSA on vanhempi algoritmi (keksitty 1977), ja vaikka se on edelleen turvallinen 
 ssh-keygen -t rsa -b 4096 -C "your@email.com"
 ```
 
-**Älä koskaan käytä alle 4096 bitin RSA:ta.** RSA-1024:ää ja RSA-2048:aa pidetään yhä useammin riittämättöminä laskentatehon kasvaessa. Ed25519 256 bittiä tarjoaa vastaavan tai paremman suojan avaimen koon murto-osalla.
+Uusille avaimille Ed25519 on yleensä paras. Käytä RSA 4096-bittiä, kun vanhat järjestelmät vaativat sitä.
 
 ### Yhteenvetovertailu
 
 | Ominaisuus | Ed25519 | RSA 4096 |
 |---|---|---|
 | Avaimen koko (julkinen) | ~68 merkkiä | ~725 merkkiä |
-| Turvataso | 128-bittinen (kvantin jälkeinen kestävä rakenne) | ~140-bittinen klassinen |
+| Security level | ~128-bit classical security; not quantum-safe | Depends on key size; 4096-bit gives more classical margin |
 | Nopeus | Erittäin nopea | Hitaammin |
 | Yhteensopivuus | Moderni SSH (OpenSSH 6.5+) | Universaali |
 | Suositellaan | Kaikki uudet avaimet | Vain vanhat järjestelmät |
@@ -321,7 +326,7 @@ Jos kadotat yksityisen avaimesi eikä sinulla ole varmuuskopiota, menetät kyvyn
 
 ### Onko Ed25519 vai RSA parempi?
 
-**Ed25519 on parempi kaikille uusille avainten sukupolville.** Se on nopeampi, tuottaa pienempiä avaimia, ei ole alttiina tietyille RSA:han vaikuttaville toteutuksen heikkouksille ja tarjoaa vastaavan tai paremman suojan 256-bittisellä avaimella kuin RSA-4096. Ainoa syy käyttää RSA:ta nykyään on yhteensopivuus erittäin vanhojen SSH-palvelinohjelmistojen (OpenSSH ennen versiota 6.5, julkaistu vuonna 2014) tai vanhojen laitteistoturvamoduulien kanssa. Jos käytät modernia palvelinta tai palvelua, kuten GitHub, käytä Ed25519:ää.
+Uusille avaimille Ed25519 on yleensä paras. Käytä RSA 4096-bittiä, kun vanhat järjestelmät vaativat sitä.
 
 ## Luo SSH-avainparisi
 

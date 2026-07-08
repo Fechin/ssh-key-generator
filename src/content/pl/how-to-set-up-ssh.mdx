@@ -1,8 +1,16 @@
 # Jak Skonfigurować SSH: Kompletny Przewodnik Krok po Kroku dla Linux, Mac i Windows
 
-Prawidłowe skonfigurowanie SSH zajmuje około dziesięciu minut i przynosi korzyści przez lata. Po skonfigurowaniu możesz logować się na serwery bez wpisywania haseł, wysyłać kod do GitHub bez podawania poświadczeń przy każdej operacji i automatyzować wdrożenia z pełnym zaufaniem. Niniejszy przewodnik przeprowadza przez cały proces — od generowania pary kluczy po rozwiązywanie typowych błędów — dla systemów Linux, macOS i Windows.
 
-Jeśli chcesz najpierw zrozumieć technologię leżącą u podstaw, przeczytaj nasze przewodniki o <a href="/pl/what-is-ssh/">tym, czym jest SSH</a> i <a href="/pl/what-is-an-ssh-key/">tym, czym są klucze SSH</a>.
+## Szybka odpowiedź
+
+Typowy przepływ: wygeneruj klucz, skopiuj klucz publiczny, dodaj go do GitHub/GitLab albo serwera, załaduj prywatny klucz do ssh-agent i przetestuj połączenie.
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+ssh -T git@github.com
+```
 
 ## Wymagania Wstępne
 

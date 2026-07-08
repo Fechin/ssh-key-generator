@@ -1,6 +1,11 @@
 # Cos'è una Chiave SSH? Chiavi Pubbliche, Private e Coppie di Chiavi Spiegate
 
-Una **chiave SSH** è una credenziale crittografica utilizzata per autenticarsi ai server SSH senza password. Le chiavi SSH vengono in coppia — una **chiave pubblica** e una **chiave privata** — e insieme rendono l'accesso remoto più sicuro e più comodo rispetto alla tradizionale autenticazione con password. Questa guida spiega cos'è una chiave SSH, come funziona il sistema di coppie di chiavi, quale tipo di chiave scegliere e come usare le chiavi SSH con servizi come GitHub e GitLab.
+
+## Risposta rapida
+
+Generare una chiave SSH significa creare una coppia composta da chiave pubblica e chiave privata. Per nuovi utilizzi Ed25519 è quasi sempre la scelta più semplice; RSA 4096 bit serve per compatibilità con sistemi datati.
+
+Per nuove chiavi scegli Ed25519 nella maggior parte dei casi. Usa RSA 4096 bit solo quando un vecchio server SSH o uno strumento non supporta Ed25519.
 
 ## Come Funzionano le Chiavi SSH
 
@@ -92,14 +97,14 @@ RSA è l'algoritmo più vecchio (inventato nel 1977) e, sebbene sia ancora sicur
 ssh-keygen -t rsa -b 4096 -C "your@email.com"
 ```
 
-**Non usare mai RSA con meno di 4096 bit.** RSA-1024 e RSA-2048 sono considerati sempre più insufficienti con l'aumento della potenza computazionale. Ed25519 a 256 bit fornisce una sicurezza equivalente o superiore con una frazione della dimensione della chiave.
+Per nuove chiavi scegli di solito Ed25519. Usa RSA 4096 bit quando serve compatibilità con sistemi vecchi.
 
 ### Confronto Riepilogativo
 
 | Caratteristica | Ed25519 | RSA 4096 |
 |---|---|---|
 | Dimensione chiave (pubblica) | ~68 caratteri | ~725 caratteri |
-| Livello di sicurezza | 128 bit (struttura resistente al post-quantistico) | ~140 bit classico |
+| Security level | ~128-bit classical security; not quantum-safe | Depends on key size; 4096-bit gives more classical margin |
 | Velocità | Molto veloce | Più lento |
 | Compatibilità | SSH moderno (OpenSSH 6.5+) | Universale |
 | Consigliato per | Tutte le nuove chiavi | Solo sistemi legacy |
@@ -321,7 +326,7 @@ Se perdi la chiave privata e non hai un backup, perdi la capacità di autenticar
 
 ### È meglio Ed25519 o RSA?
 
-**Ed25519 è meglio per tutta la nuova generazione di chiavi.** È più veloce, produce chiavi più piccole, non è vulnerabile a certe debolezze di implementazione che colpiscono RSA, e fornisce una sicurezza equivalente o superiore con una chiave a 256 bit rispetto a RSA-4096. L'unica ragione per usare RSA oggi è la compatibilità con software server SSH molto vecchio (OpenSSH prima della versione 6.5, rilasciato nel 2014) o moduli di sicurezza hardware legacy. Se si accede a qualsiasi server o servizio moderno come GitHub, si usi Ed25519.
+Per nuove chiavi scegli di solito Ed25519. Usa RSA 4096 bit quando serve compatibilità con sistemi vecchi.
 
 ## Genera la Tua Coppia di Chiavi SSH
 

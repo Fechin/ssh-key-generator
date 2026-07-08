@@ -6,8 +6,8 @@
     "viewOnGitHub": "Bekijk op GitHub"
   },
   "hero": {
-    "title": "Online SSH-sleutelgenerator",
-    "subtitle": "Genereer veilige SSH-sleutels direct in je browser met deze gratis online SSH-sleutelgenerator. Werkt met GitHub, GitLab, Bitbucket en elke SSH-server."
+    "title": "SSH-sleutelgenerator: maak SSH-sleutels online",
+    "subtitle": "Genereer Ed25519- of RSA-SSH-sleutels in je browser voor GitHub, GitLab, servers en ssh-keygen-flows. Je private sleutel wordt niet geüpload."
   },
   "tabs": {
     "generate": "Sleutels Genereren",
@@ -20,8 +20,8 @@
     "guidesShort": "Gidsen"
   },
   "generator": {
-    "title": "Online SSH-sleutelgenerator",
-    "description": "Genereer veilig een nieuw SSH-sleutelpaar in je browser met deze gratis online generator. Er worden geen gegevens naar een server verzonden.",
+    "title": "Client-side SSH-sleutelgenerator",
+    "description": "Maak een SSH-sleutelpaar in je browser. De private sleutel wordt lokaal gegenereerd en niet naar de server gestuurd.",
     "algorithm": "Algoritme",
     "algorithmTooltip": "Ed25519 wordt aanbevolen voor de meeste gevallen. Gebruik RSA als je compatibiliteit met oudere systemen nodig hebt.",
     "comment": "Opmerking (optioneel)",
@@ -36,8 +36,8 @@
     "confirmPassphrasePlaceholder": "Voer wachtwoordzin opnieuw in",
     "passphrasesMismatch": "Wachtwoordzinnen komen niet overeen",
     "noPassphraseWarning": "Geen wachtwoordzin ingesteld. Je privésleutel wordt niet versleuteld. Overweeg een wachtwoordzin toe te voegen voor extra beveiliging.",
-    "securityTitle": "100% Client-Side SSH-sleutelgenerator",
-    "securityDesc": "Alle sleutelgeneratie gebeurt lokaal in je browser. Deze online SSH-sleutelgenerator verzendt nooit je privésleutels.",
+    "securityTitle": "Lokaal gegenereerd in je browser",
+    "securityDesc": "De cryptografische bewerkingen draaien client-side. Deze online generator uploadt of verzendt geen private sleutels.",
     "noKeysYet": "Nog geen sleutels gegenereerd",
     "noKeysHint": "Klik op \"Sleutelpaar Genereren\" om je SSH-sleutels te maken"
   },
@@ -178,10 +178,10 @@
   },
   "footer": {
     "about": "Over Deze Online SSH-sleutelgenerator",
-    "aboutDesc": "Dit is een gratis, open-source online SSH-sleutelgenerator die volledig in je browser draait. Geen server-side verwerking, geen gegevensverzameling - alleen veilige sleutelgeneratie.",
+    "aboutDesc": "Genereer Ed25519- of RSA-SSH-sleutels in je browser voor GitHub, GitLab, servers en ssh-keygen-flows. Je private sleutel wordt niet geüpload.",
     "securityFirst": "Veiligheid Voorop",
     "security1": "Alle sleutelgeneratie gebeurt in je browser",
-    "security2": "Er worden nooit gegevens naar een server verzonden",
+    "security2": "De cryptografische bewerkingen draaien client-side. Deze online generator uploadt of verzendt geen private sleutels.",
     "security3": "Open source en controleerbare code",
     "security4": "Gebruikt industriestandaard cryptografische bibliotheken",
     "resources": "Bronnen",
@@ -195,13 +195,13 @@
   "seo": {
     "whatIs": {
       "title": "Wat is een Online SSH-sleutelgenerator?",
-      "desc": "Een online SSH-sleutelgenerator zoals deze tool maakt cryptografische sleutelparen veilig in je browser. SSH-sleutels bestaan uit een publieke sleutel (gedeeld met servers) en een privésleutel (geheim gehouden). In tegenstelling tot wachtwoorden zijn online gegenereerde SSH-sleutels vrijwel onmogelijk te kraken via brute force."
+      "desc": "De online SSH-sleutelgenerator maakt het sleutelpaar in je browser. De publieke sleutel gaat naar GitHub, GitLab, Bitbucket of je server; de private sleutel blijft op je eigen machine."
     },
     "whyUse": {
       "title": "Waarom Deze Online SSH-sleutelgenerator Gebruiken?",
       "secure": {
         "title": "Veilige Online Generatie",
-        "desc": "Alle cryptografische operaties gebeuren in je browser. Deze online SSH-sleutelgenerator zorgt ervoor dat je privésleutels nooit je apparaat verlaten."
+        "desc": "De cryptografische bewerkingen draaien client-side. Deze online generator uploadt of verzendt geen private sleutels."
       },
       "modern": {
         "title": "Moderne Algoritmen",
@@ -280,7 +280,7 @@
       "subtitle": "Vind antwoorden op veelgestelde vragen over SSH-sleutels en deze tool.",
       "safe": {
         "question": "Is het veilig om SSH-sleutels online te genereren?",
-        "answer": "Ja, deze tool is 100% veilig omdat alle sleutelgeneratie volledig in je browser gebeurt met de Web Crypto API. Je privésleutels verlaten nooit je apparaat en worden nooit naar een server verzonden. De broncode is open source en controleerbaar op GitHub."
+        "answer": "Ja, als je de geladen pagina en je browser vertrouwt. De sleutel wordt lokaal gegenereerd en de private sleutel wordt niet geüpload. Voor strengere omgevingen maak je de sleutel offline of gebruik je ssh-keygen in de terminal."
       },
       "ed25519VsRsa": {
         "question": "Wat is het verschil tussen Ed25519 en RSA?",
@@ -292,7 +292,7 @@
       },
       "rsaKeySize": {
         "question": "Welke sleutelgrootte moet ik gebruiken voor RSA?",
-        "answer": "Voor RSA-sleutels wordt 4096-bit aanbevolen voor maximale beveiliging. 2048-bit is de minimaal acceptabele grootte en biedt adequate beveiliging voor de meeste doeleinden. Sleutels kleiner dan 2048-bit worden als onveilig beschouwd en mogen niet worden gebruikt."
+        "answer": "Kies voor nieuwe sleutels meestal Ed25519. Gebruik RSA 4096 als een oudere SSH-server of tool Ed25519 niet ondersteunt."
       },
       "offline": {
         "question": "Kan ik deze SSH-sleutelgenerator offline gebruiken?",
@@ -320,7 +320,7 @@
       },
       "bestOnlineGenerator": {
         "question": "Wat is de beste online SSH-sleutelgenerator?",
-        "answer": "Deze SSH-sleutelgenerator is een van de beste gratis online opties omdat het 100% in je browser draait, moderne Ed25519 en RSA-algoritmen ondersteunt, offline werkt als PWA, en nooit je privésleutels naar een server stuurt."
+        "answer": "SSH-sleutelgenerator: maak SSH-sleutels online. De cryptografische bewerkingen draaien client-side. Deze online generator uploadt of verzendt geen private sleutels."
       },
       "permissions": {
         "question": "Welke machtigingen moet mijn SSH privésleutel hebben?",

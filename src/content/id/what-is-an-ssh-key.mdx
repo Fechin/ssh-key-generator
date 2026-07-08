@@ -1,6 +1,11 @@
 # Apa Itu Kunci SSH? Kunci Publik, Kunci Privat, dan Pasangan Kunci Dijelaskan
 
-**Kunci SSH** adalah kredensial kriptografi yang digunakan untuk mengautentikasi ke server SSH tanpa kata sandi. Kunci SSH hadir berpasangan — **kunci publik** dan **kunci privat** — dan bersama-sama membuat akses jarak jauh lebih aman dan lebih nyaman daripada autentikasi kata sandi tradisional. Panduan ini menjelaskan apa itu kunci SSH, cara kerja sistem pasangan kunci, jenis kunci mana yang dipilih, dan cara menggunakan kunci SSH dengan layanan seperti GitHub dan GitLab.
+
+## Jawaban cepat
+
+Membuat kunci SSH berarti membuat pasangan kunci publik dan kunci privat. Untuk kunci baru, Ed25519 biasanya pilihan paling praktis; RSA 4096 dipakai jika sistem lama membutuhkannya.
+
+Untuk kunci baru, biasanya pilih Ed25519. Gunakan RSA 4096 jika server SSH lama atau tool lama tidak mendukung Ed25519.
 
 ## Cara Kerja Kunci SSH
 
@@ -92,14 +97,14 @@ RSA adalah algoritma yang lebih lama (ditemukan tahun 1977), dan meskipun masih 
 ssh-keygen -t rsa -b 4096 -C "your@email.com"
 ```
 
-**Jangan pernah menggunakan RSA dengan kurang dari 4096 bit.** RSA-1024 dan RSA-2048 semakin dianggap tidak memadai seiring kekuatan komputasi berkembang. Ed25519 pada 256 bit memberikan keamanan yang setara atau lebih baik dengan sebagian kecil ukuran kunci.
+Untuk kunci baru, biasanya pilih Ed25519. Gunakan RSA 4096-bit saat sistem lama membutuhkannya.
 
 ### Perbandingan Ringkasan
 
 | Fitur | Ed25519 | RSA 4096 |
 |---|---|---|
 | Ukuran kunci (publik) | ~68 karakter | ~725 karakter |
-| Tingkat keamanan | 128-bit (struktur tahan pasca-kuantum) | ~140-bit klasik |
+| Security level | ~128-bit classical security; not quantum-safe | Depends on key size; 4096-bit gives more classical margin |
 | Kecepatan | Sangat cepat | Lebih lambat |
 | Kompatibilitas | SSH modern (OpenSSH 6.5+) | Universal |
 | Direkomendasikan untuk | Semua kunci baru | Hanya sistem warisan |
@@ -321,7 +326,7 @@ Jika Anda kehilangan kunci privat dan tidak memiliki cadangan, Anda kehilangan k
 
 ### Mana yang lebih baik, Ed25519 atau RSA?
 
-**Ed25519 lebih baik untuk semua pembuatan kunci baru.** Lebih cepat, menghasilkan kunci yang lebih kecil, tidak rentan terhadap kelemahan implementasi tertentu yang memengaruhi RSA, dan memberikan keamanan yang setara atau lebih unggul dengan kunci 256-bit dibandingkan RSA-4096. Satu-satunya alasan menggunakan RSA hari ini adalah kompatibilitas dengan perangkat lunak server SSH yang sangat lama (OpenSSH sebelum versi 6.5, dirilis tahun 2014) atau modul keamanan hardware warisan. Jika Anda mengakses server modern atau layanan seperti GitHub, gunakan Ed25519.
+Untuk kunci baru, biasanya pilih Ed25519. Gunakan RSA 4096-bit saat sistem lama membutuhkannya.
 
 ## Buat Pasangan Kunci SSH Anda
 

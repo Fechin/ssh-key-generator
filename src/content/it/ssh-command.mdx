@@ -1,8 +1,16 @@
 # Il Comando SSH: Riferimento Completo con Esempi per Linux, Mac e Windows
 
-Il comando `ssh` è lo strumento principale per avviare connessioni SSH dalla riga di comando. Che si tratti di accedere a un server Linux remoto, fare forwarding di una porta per l'accesso al database, o saltare attraverso un bastion host per raggiungere una rete interna, il comando `ssh` è il punto di ingresso. Questa guida copre tutto, dalla sintassi di base ai flag avanzati, al tunneling e alle configurazioni ProxyJump — con esempi reali per Linux, macOS e Windows.
 
-Prima di eseguire comandi SSH, avrai bisogno di chiavi SSH. Consulta la nostra guida su <a href="/it/what-is-an-ssh-key/">cos'è una chiave SSH</a> o usa il <a href="/">generatore online gratuito</a> per creare una coppia di chiavi.
+## Risposta rapida
+
+Per la maggior parte delle connessioni basta ssh user@host. Usa -i per una chiave specifica, -p per una porta diversa e -J per passare da un bastion host.
+
+```bash
+ssh user@server.example.com
+ssh -i ~/.ssh/id_ed25519 user@server.example.com
+ssh -p 2222 user@server.example.com
+ssh -J bastion.example.com user@private.example.com
+```
 
 ## Sintassi del Comando SSH
 

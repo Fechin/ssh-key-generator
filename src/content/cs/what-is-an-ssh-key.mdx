@@ -1,6 +1,11 @@
 # Co je SSH klíč? Veřejné klíče, soukromé klíče a páry klíčů vysvětleny
 
-**SSH klíč** je kryptografická přihlašovací metoda sloužící k autentizaci na SSH serverech bez hesla. SSH klíče přicházejí v párech — **veřejný klíč** a **soukromý klíč** — a společně zajišťují vzdálený přístup bezpečnější a pohodlnější než tradiční autentizace heslem. Tento průvodce vysvětluje, co SSH klíč je, jak funguje systém párů klíčů, jaké typy klíčů zvolit a jak SSH klíče používat se službami jako GitHub a GitLab.
+
+## Rychlá odpověď
+
+Vygenerovat SSH klíč znamená vytvořit pár veřejného a soukromého klíče. Pro nové klíče je obvykle nejlepší Ed25519; RSA 4096 používejte kvůli starším systémům.
+
+Pro nové klíče většinou zvolte Ed25519. RSA 4096 použijte, pokud starší SSH server nebo nástroj nepodporuje Ed25519.
 
 ## Jak SSH klíče fungují
 
@@ -92,14 +97,14 @@ RSA je starší algoritmus (vynalezený v roce 1977) a i když je stále bezpeč
 ssh-keygen -t rsa -b 4096 -C "your@email.com"
 ```
 
-**Nikdy nepoužívejte RSA s méně než 4096 bity.** RSA-1024 a RSA-2048 jsou stále více považovány za nedostatečné s rostoucím výpočetním výkonem. Ed25519 se 256 bity poskytuje rovnocenné nebo lepší zabezpečení při zlomku velikosti klíče.
+Pro nové klíče obvykle zvolte Ed25519. RSA 4096 bitů použijte, když to vyžadují starší systémy.
 
 ### Srovnávací přehled
 
 | Funkce | Ed25519 | RSA 4096 |
 |---|---|---|
 | Velikost klíče (veřejný) | ~68 znaků | ~725 znaků |
-| Úroveň zabezpečení | 128bitová (post-kvantově odolná struktura) | ~140bitová klasická |
+| Security level | ~128-bit classical security; not quantum-safe | Depends on key size; 4096-bit gives more classical margin |
 | Rychlost | Velmi rychlý | Pomalejší |
 | Kompatibilita | Moderní SSH (OpenSSH 6.5+) | Univerzální |
 | Doporučeno pro | Všechny nové klíče | Pouze starší systémy |
@@ -321,7 +326,7 @@ Pokud ztratíte soukromý klíč a nemáte zálohu, ztratíte schopnost se s ní
 
 ### Je Ed25519 nebo RSA lepší?
 
-**Ed25519 je lepší pro všechno nové generování klíčů.** Je rychlejší, produkuje menší klíče, není zranitelný vůči určitým implementačním slabinám postihujícím RSA a poskytuje rovnocenné nebo lepší zabezpečení s 256bitovým klíčem ve srovnání s RSA-4096. Jediným důvodem pro použití RSA dnes je kompatibilita se velmi starým SSH serverovým softwarem (OpenSSH před verzí 6.5, vydanou v roce 2014) nebo starší hardwarové bezpečnostní moduly. Pokud přistupujete k jakémukoli modernímu serveru nebo službě jako GitHub, použijte Ed25519.
+Pro nové klíče obvykle zvolte Ed25519. RSA 4096 bitů použijte, když to vyžadují starší systémy.
 
 ## Vygenerujte si pár SSH klíčů
 

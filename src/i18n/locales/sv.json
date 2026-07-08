@@ -6,8 +6,8 @@
     "viewOnGitHub": "Visa på GitHub"
   },
   "hero": {
-    "title": "Skapa SSH Nyckel Online",
-    "subtitle": "Generera säkra SSH-nycklar direkt i din webbläsare med denna gratis SSH nyckel generator. Fungerar med GitHub, GitLab, Bitbucket och alla SSH-servrar."
+    "title": "SSH-nyckelgenerator: skapa SSH-nycklar online",
+    "subtitle": "Generera Ed25519- eller RSA-SSH-nycklar i webbläsaren för GitHub, GitLab, servrar och ssh-keygen. Den privata nyckeln laddas inte upp."
   },
   "tabs": {
     "generate": "Generera Nycklar",
@@ -20,8 +20,8 @@
     "guidesShort": "Guider"
   },
   "generator": {
-    "title": "SSH Nyckelgenerator Online",
-    "description": "Generera ett nytt SSH-nyckelpar säkert i din webbläsare med denna gratis generator. Ingen data skickas till någon server.",
+    "title": "SSH-nyckelgenerator i webbläsaren",
+    "description": "Skapa ett SSH-nyckelpar direkt i webbläsaren. Den privata nyckeln genereras lokalt och skickas inte till servern.",
     "algorithm": "Algoritm",
     "algorithmTooltip": "Ed25519 rekommenderas för de flesta användningsområden. Använd RSA om du behöver kompatibilitet med äldre system.",
     "comment": "Kommentar (valfritt)",
@@ -36,8 +36,8 @@
     "confirmPassphrasePlaceholder": "Ange lösenfrasen igen",
     "passphrasesMismatch": "Lösenfraserna matchar inte",
     "noPassphraseWarning": "Ingen lösenfras angiven. Din privata nyckel kommer att vara okrypterad. Överväg att lägga till en lösenfras för extra säkerhet.",
-    "securityTitle": "100% Lokal SSH Nyckelgenerator",
-    "securityDesc": "All nyckelgenerering sker lokalt i din webbläsare. Denna SSH nyckel generator skickar aldrig dina privata nycklar.",
+    "securityTitle": "Genereras lokalt i webbläsaren",
+    "securityDesc": "Kryptografiska operationer körs på klientsidan. Den här onlinegeneratorn laddar inte upp eller skickar privata nycklar.",
     "noKeysYet": "Inga nycklar genererade ännu",
     "noKeysHint": "Klicka på \"Generera Nyckelpar\" för att skapa dina SSH-nycklar"
   },
@@ -178,10 +178,10 @@
   },
   "footer": {
     "about": "Om denna SSH Nyckelgenerator",
-    "aboutDesc": "Detta är en gratis SSH nyckel generator med öppen källkod som körs helt i din webbläsare. Ingen serverbearbetning, ingen datainsamling - bara säker nyckelgenerering.",
+    "aboutDesc": "Generera Ed25519- eller RSA-SSH-nycklar i webbläsaren för GitHub, GitLab, servrar och ssh-keygen. Den privata nyckeln laddas inte upp.",
     "securityFirst": "Säkerhet först",
     "security1": "All nyckelgenerering sker i din webbläsare",
-    "security2": "Ingen data skickas till någon server",
+    "security2": "Kryptografiska operationer körs på klientsidan. Den här onlinegeneratorn laddar inte upp eller skickar privata nycklar.",
     "security3": "Öppen källkod och granskningsbar kod",
     "security4": "Använder kryptografiska standardbibliotek",
     "resources": "Resurser",
@@ -195,13 +195,13 @@
   "seo": {
     "whatIs": {
       "title": "Vad är en SSH Nyckelgenerator Online?",
-      "desc": "En SSH nyckel generator online som detta verktyg skapar kryptografiska nyckelpar säkert i din webbläsare. SSH-nycklar består av en publik nyckel (delas med servrar) och en privat nyckel (hålls hemlig). Till skillnad från lösenord är SSH-nycklar genererade online praktiskt taget omöjliga att knäcka genom brute force."
+      "desc": "Onlinegeneratorn skapar nyckelparet i webbläsaren. Den publika nyckeln läggs i GitHub, GitLab, Bitbucket eller på servern; den privata nyckeln stannar på din dator."
     },
     "whyUse": {
       "title": "Varför använda denna SSH Nyckelgenerator?",
       "secure": {
         "title": "Säker onlinegenerering",
-        "desc": "Alla kryptografiska operationer sker i din webbläsare. Denna SSH nyckel generator online säkerställer att dina privata nycklar aldrig lämnar din enhet."
+        "desc": "Kryptografiska operationer körs på klientsidan. Den här onlinegeneratorn laddar inte upp eller skickar privata nycklar."
       },
       "modern": {
         "title": "Moderna algoritmer",
@@ -280,7 +280,7 @@
       "subtitle": "Hitta svar på vanliga frågor om SSH-nycklar och detta verktyg.",
       "safe": {
         "question": "Är det säkert att generera SSH-nycklar online?",
-        "answer": "Ja, detta verktyg är 100% säkert eftersom all nyckelgenerering sker helt i din webbläsare med Web Crypto API. Dina privata nycklar lämnar aldrig din enhet och skickas aldrig till någon server. Källkoden är öppen och granskningsbar på GitHub."
+        "answer": "Ja, om du litar på den laddade sidan och webbläsaren. Nyckeln genereras lokalt och den privata nyckeln laddas inte upp. I strikta miljöer bör du generera offline eller använda ssh-keygen i terminalen."
       },
       "ed25519VsRsa": {
         "question": "Vad är skillnaden mellan Ed25519 och RSA?",
@@ -292,7 +292,7 @@
       },
       "rsaKeySize": {
         "question": "Vilken nyckelstorlek ska jag använda för RSA?",
-        "answer": "För RSA-nycklar rekommenderas 4096-bitar för maximal säkerhet. 2048-bitar är den minsta acceptabla storleken och erbjuder tillräcklig säkerhet för de flesta ändamål. Nycklar mindre än 2048-bitar anses osäkra och bör inte användas."
+        "answer": "För nya nycklar väljer du oftast Ed25519. Använd RSA 4096 när en äldre SSH-server eller ett verktyg saknar stöd för Ed25519."
       },
       "offline": {
         "question": "Kan jag använda denna SSH nyckelgenerator offline?",
@@ -320,7 +320,7 @@
       },
       "bestOnlineGenerator": {
         "question": "Vilken är den bästa SSH nyckel generator online?",
-        "answer": "Denna SSH nyckel generator är ett av de bästa gratis alternativen online eftersom den körs 100% i din webbläsare, stöder moderna Ed25519- och RSA-algoritmer, fungerar offline som en PWA och aldrig skickar dina privata nycklar till någon server."
+        "answer": "SSH-nyckelgenerator: skapa SSH-nycklar online. Kryptografiska operationer körs på klientsidan. Den här onlinegeneratorn laddar inte upp eller skickar privata nycklar."
       },
       "permissions": {
         "question": "Vilka behörigheter ska min privata SSH-nyckel ha?",

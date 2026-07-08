@@ -6,8 +6,8 @@
     "viewOnGitHub": "GitHub-এ দেখুন"
   },
   "hero": {
-    "title": "অনলাইন SSH Key Generator",
-    "subtitle": "এই বিনামূল্যের অনলাইন SSH Key Generator দিয়ে আপনার ব্রাউজারে তাৎক্ষণিকভাবে নিরাপদ SSH কী তৈরি করুন। GitHub, GitLab, Bitbucket এবং যেকোনো SSH সার্ভারের সাথে কাজ করে।"
+    "title": "SSH Key Generator: online SSH key তৈরি করুন",
+    "subtitle": "Browser-এ Ed25519 বা RSA SSH keys তৈরি করুন। GitHub, GitLab, servers ও ssh-keygen workflow-এর জন্য; private key upload হয় না।"
   },
   "tabs": {
     "generate": "কী তৈরি করুন",
@@ -20,8 +20,8 @@
     "guidesShort": "গাইড"
   },
   "generator": {
-    "title": "অনলাইন SSH Key Generator",
-    "description": "এই বিনামূল্যের অনলাইন জেনারেটর ব্যবহার করে আপনার ব্রাউজারে নিরাপদভাবে নতুন SSH কী পেয়ার তৈরি করুন। কোনো ডেটা কোনো সার্ভারে পাঠানো হয় না।",
+    "title": "Browser-side SSH key generator",
+    "description": "Browser-এ SSH key pair তৈরি করুন। Private key local generate হয় এবং server-এ পাঠানো হয় না।",
     "algorithm": "অ্যালগরিদম",
     "algorithmTooltip": "বেশিরভাগ ক্ষেত্রে Ed25519 প্রস্তাবিত। পুরনো সিস্টেমের সাথে সামঞ্জস্যের জন্য RSA ব্যবহার করুন।",
     "comment": "মন্তব্য (ঐচ্ছিক)",
@@ -36,8 +36,8 @@
     "confirmPassphrasePlaceholder": "পাসফ্রেজ পুনরায় দিন",
     "passphrasesMismatch": "পাসফ্রেজ মিলছে না",
     "noPassphraseWarning": "কোনো পাসফ্রেজ সেট করা হয়নি। আপনার প্রাইভেট কী এনক্রিপ্ট করা থাকবে না। অতিরিক্ত নিরাপত্তার জন্য পাসফ্রেজ যোগ করার কথা বিবেচনা করুন।",
-    "securityTitle": "১০০% ক্লায়েন্ট-সাইড SSH Key Generator",
-    "securityDesc": "সব কী জেনারেশন আপনার ব্রাউজারে স্থানীয়ভাবে হয়। এই অনলাইন SSH Key Generator কখনো আপনার প্রাইভেট কী পাঠায় না।",
+    "securityTitle": "Browser-এ local generation",
+    "securityDesc": "Cryptographic operations client-side চলে। এই online SSH key generator private keys upload বা transmit করে না।",
     "noKeysYet": "এখনো কোনো কী তৈরি হয়নি",
     "noKeysHint": "আপনার SSH কী তৈরি করতে \"কী পেয়ার তৈরি করুন\" এ ক্লিক করুন"
   },
@@ -178,10 +178,10 @@
   },
   "footer": {
     "about": "এই অনলাইন SSH Key Generator সম্পর্কে",
-    "aboutDesc": "এটি একটি বিনামূল্যের, ওপেন-সোর্স অনলাইন SSH Key Generator যা সম্পূর্ণরূপে আপনার ব্রাউজারে চলে। কোনো সার্ভার-সাইড প্রসেসিং নেই, কোনো ডেটা সংগ্রহ নেই - শুধু নিরাপদ কী জেনারেশন।",
+    "aboutDesc": "Browser-এ Ed25519 বা RSA SSH keys তৈরি করুন। GitHub, GitLab, servers ও ssh-keygen workflow-এর জন্য; private key upload হয় না।",
     "securityFirst": "নিরাপত্তা প্রথমে",
     "security1": "সব কী জেনারেশন আপনার ব্রাউজারে হয়",
-    "security2": "কোনো ডেটা কখনো কোনো সার্ভারে পাঠানো হয় না",
+    "security2": "Cryptographic operations client-side চলে। এই online SSH key generator private keys upload বা transmit করে না।",
     "security3": "ওপেন সোর্স এবং অডিটযোগ্য কোড",
     "security4": "ইন্ডাস্ট্রি-স্ট্যান্ডার্ড ক্রিপ্টোগ্রাফিক লাইব্রেরি ব্যবহার করে",
     "resources": "রিসোর্স",
@@ -195,13 +195,13 @@
   "seo": {
     "whatIs": {
       "title": "অনলাইন SSH Key Generator কী?",
-      "desc": "এই টুলের মতো একটি অনলাইন SSH Key Generator আপনার ব্রাউজারে নিরাপদভাবে ক্রিপ্টোগ্রাফিক কী পেয়ার তৈরি করে। SSH কী একটি পাবলিক কী (সার্ভারের সাথে শেয়ার করা হয়) এবং একটি প্রাইভেট কী (গোপন রাখা হয়) নিয়ে গঠিত। পাসওয়ার্ডের বিপরীতে, অনলাইনে তৈরি SSH কী brute force দিয়ে ক্র্যাক করা কার্যত অসম্ভব।"
+      "desc": "Online SSH key generator browser-এর মধ্যে key pair তৈরি করে। Public key GitHub, GitLab, Bitbucket বা server-এ যোগ হয়; private key আপনার machine-এ থাকে।"
     },
     "whyUse": {
       "title": "এই অনলাইন SSH Key Generator কেন ব্যবহার করবেন?",
       "secure": {
         "title": "নিরাপদ অনলাইন জেনারেশন",
-        "desc": "সব ক্রিপ্টোগ্রাফিক অপারেশন আপনার ব্রাউজারে হয়। এই অনলাইন SSH Key Generator নিশ্চিত করে যে আপনার প্রাইভেট কী কখনো আপনার ডিভাইস ছেড়ে যায় না।"
+        "desc": "Cryptographic operations client-side চলে। এই online SSH key generator private keys upload বা transmit করে না।"
       },
       "modern": {
         "title": "আধুনিক অ্যালগরিদম",
@@ -280,7 +280,7 @@
       "subtitle": "SSH কী এবং এই টুল সম্পর্কে সাধারণ প্রশ্নের উত্তর খুঁজুন।",
       "safe": {
         "question": "অনলাইনে SSH কী তৈরি করা কি নিরাপদ?",
-        "answer": "হ্যাঁ, এই টুল ১০০% নিরাপদ কারণ সব কী জেনারেশন সম্পূর্ণরূপে আপনার ব্রাউজারে Web Crypto API ব্যবহার করে হয়। আপনার প্রাইভেট কী কখনো আপনার ডিভাইস ছেড়ে যায় না এবং কোনো সার্ভারে পাঠানো হয় না। সোর্স কোড ওপেন সোর্স এবং GitHub এ অডিটযোগ্য।"
+        "answer": "Loaded page ও browser environment বিশ্বাসযোগ্য হলে ব্যবহার করা যায়। Key local generate হয় এবং private key upload হয় না। Strict security policy হলে offline generate করুন বা terminal-এ ssh-keygen ব্যবহার করুন।"
       },
       "ed25519VsRsa": {
         "question": "Ed25519 এবং RSA এর মধ্যে পার্থক্য কী?",
@@ -292,7 +292,7 @@
       },
       "rsaKeySize": {
         "question": "RSA এর জন্য কোন কী সাইজ ব্যবহার করব?",
-        "answer": "RSA কী এর জন্য, সর্বাধিক নিরাপত্তার জন্য ৪০৯৬-বিট প্রস্তাবিত। ২০৪৮-বিট হল ন্যূনতম গ্রহণযোগ্য আকার এবং বেশিরভাগ উদ্দেশ্যে পর্যাপ্ত নিরাপত্তা দেয়। ২০৪৮-বিটের চেয়ে ছোট কী অনিরাপদ বলে বিবেচিত এবং ব্যবহার করা উচিত নয়।"
+        "answer": "নতুন key-এর জন্য সাধারণত Ed25519 বেছে নিন। পুরোনো SSH server বা tool Ed25519 support না করলে RSA 4096 ব্যবহার করুন।"
       },
       "offline": {
         "question": "এই SSH Key Generator কি অফলাইনে ব্যবহার করা যায়?",
@@ -320,7 +320,7 @@
       },
       "bestOnlineGenerator": {
         "question": "সেরা অনলাইন SSH Key Generator কোনটি?",
-        "answer": "এই SSH Key Generator সেরা বিনামূল্যের অনলাইন বিকল্পগুলোর মধ্যে একটি কারণ এটি ১০০% আপনার ব্রাউজারে চলে, আধুনিক Ed25519 এবং RSA অ্যালগরিদম সমর্থন করে, PWA হিসাবে অফলাইনে কাজ করে, এবং কখনো আপনার প্রাইভেট কী কোনো সার্ভারে পাঠায় না।"
+        "answer": "SSH Key Generator: online SSH key তৈরি করুন. Cryptographic operations client-side চলে। এই online SSH key generator private keys upload বা transmit করে না।"
       },
       "permissions": {
         "question": "আমার SSH প্রাইভেট কী এর কী পারমিশন থাকা উচিত?",

@@ -1,8 +1,16 @@
 # Cách Thiết Lập SSH: Hướng Dẫn Từng Bước Đầy Đủ cho Linux, Mac và Windows
 
-Thiết lập SSH đúng cách mất khoảng mười phút và mang lại lợi ích trong nhiều năm. Sau khi được cấu hình, bạn có thể đăng nhập vào server mà không cần gõ mật khẩu, đẩy code lên GitHub mà không cần nhập thông tin đăng nhập ở mỗi thao tác và tự động hóa các triển khai một cách tự tin. Hướng dẫn này đi qua toàn bộ quá trình — từ tạo cặp khóa đến khắc phục các lỗi phổ biến — cho Linux, macOS và Windows.
 
-Nếu bạn muốn hiểu công nghệ cơ bản trước, hãy đọc hướng dẫn của chúng tôi về <a href="/vi/what-is-ssh/">SSH là gì</a> và <a href="/vi/what-is-an-ssh-key/">SSH key là gì</a>.
+## Trả lời nhanh
+
+Luồng thông thường: tạo key, copy public key, thêm vào GitHub/GitLab hoặc server, nạp private key vào ssh-agent rồi kiểm tra kết nối.
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+ssh -T git@github.com
+```
 
 ## Điều Kiện Tiên Quyết
 

@@ -1,8 +1,16 @@
 # Cum să configurezi SSH: Un ghid complet pas cu pas pentru Linux, Mac și Windows
 
-Configurarea SSH corect durează aproximativ zece minute și aduce beneficii timp de ani de zile. Odată configurat, poți să te autentifici pe servere fără a tasta parole, să trimiți cod pe GitHub fără a introduce credențiale la fiecare operațiune și să automatizezi deployment-urile cu încredere. Acest ghid parcurge întregul proces — de la generarea unei perechi de chei până la depanarea erorilor comune — pentru Linux, macOS și Windows.
 
-Dacă vrei să înțelegi mai întâi tehnologia de bază, citește ghidurile noastre despre <a href="/ro/what-is-ssh/">ce este SSH</a> și <a href="/ro/what-is-an-ssh-key/">ce sunt cheile SSH</a>.
+## Răspuns rapid
+
+Fluxul normal: generezi cheia, copiezi cheia publică, o adaugi în GitHub/GitLab sau pe server, încarci cheia privată în ssh-agent și testezi conexiunea.
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+ssh -T git@github.com
+```
 
 ## Cerințe prealabile
 

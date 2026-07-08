@@ -1,8 +1,17 @@
-# The SSH Command: Complete Reference with Examples for Linux, Mac, and Windows
+# SSH Command Examples: Syntax, Flags, Tunnels, and Keys
 
-The `ssh` command is the primary tool for initiating SSH connections from the command line. Whether you are logging into a remote Linux server, forwarding a port for database access, or jumping through a bastion host to reach an internal network, the `ssh` command is your entry point. This guide covers everything from the basic syntax to advanced flags, tunneling, and ProxyJump configurations — with real examples for Linux, macOS, and Windows.
+The `ssh` command connects your terminal to a remote machine over an encrypted Secure Shell session. Use it to log into servers, run remote commands, select an SSH key with `-i`, connect on custom ports with `-p`, create tunnels with `-L` or `-D`, and jump through bastion hosts with `-J`. This guide gives practical SSH command examples for Linux, macOS, and Windows.
 
-Before running SSH commands, you will need SSH keys. See our guide on <a href="/what-is-an-ssh-key/">what is an SSH key</a> or use the <a href="/">free online generator</a> to create a key pair.
+## Quick answer
+
+Most connections use ssh user@host. Use -i for a specific key, -p for a non-default port, and -J when you connect through a bastion host.
+
+```bash
+ssh user@server.example.com
+ssh -i ~/.ssh/id_ed25519 user@server.example.com
+ssh -p 2222 user@server.example.com
+ssh -J bastion.example.com user@private.example.com
+```
 
 ## SSH Command Syntax
 

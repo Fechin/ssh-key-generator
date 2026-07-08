@@ -82,7 +82,7 @@ Denne tilgang har adskillige fordele:
 - **Automatiserbar** — scripts og CI/CD-pipelines kan godkende uden menneskelig interaktion.
 - **Tilbagekaldelig** — fjernelse af en offentlig nøgle fra `authorized_keys` tilbagekalder øjeblikkeligt adgang.
 
-Den mest moderne og anbefalede nøgletype er **Ed25519**, der bruger elliptisk kurvekryptografi over Edwards-kurven. RSA-nøgler understøttes også bredt, selvom du bør bruge mindst 4096 bit.
+Til nye nøgler er Ed25519 normalt bedst. Brug RSA 4096 bit, når ældre systemer kræver det.
 
 For en dybdegående gennemgang af nøglepar, se vores guide om <a href="/da/what-is-an-ssh-key/">hvad en SSH-nøgle er</a>.
 
@@ -263,7 +263,7 @@ SSH bruger **TCP-port 22** som standard. Dette er en velkendt port tildelt af IA
 
 ### Kan SSH hackes?
 
-En korrekt konfigureret SSH-server med nøglebaseret godkendelse er ekstremt svær at kompromittere. Kryptografien — Ed25519-nøgler, AES-256-kryptering, SHA-2-MAC'er — anses for at være kvanteresistent til nøglegodkendelse og beregnings­mæssigt umulig at brute-force. Virkelige SSH-kompromitteringer involverer typisk: stjålne private nøglefiler, svage adgangssætninger, fejlkonfigurerede servere, der tillader adgangskodegodkendelse med svage adgangskoder, sårbare softwareversioner med upatchede CVE'er eller social engineering snarere end kryptografiske angreb. Hold din server opdateret, deaktivér adgangskodegodkendelse, og beskyt din private nøglefil.
+Modern SSH with key authentication is strong against classical brute force, but Ed25519 and RSA should not be described as quantum-safe. Real incidents usually involve stolen private keys, weak passphrases, misconfiguration, unpatched CVEs or social engineering.
 
 ### Hvad er forskellen mellem SSH og HTTPS?
 

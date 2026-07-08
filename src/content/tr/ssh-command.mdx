@@ -1,8 +1,16 @@
 # SSH Komutu: Linux, Mac ve Windows için Örneklerle Tam Başvuru Kılavuzu
 
-`ssh` komutu, komut satırından SSH bağlantıları başlatmak için birincil araçtır. Uzak bir Linux sunucusuna giriş yapıyor, veritabanı erişimi için port yönlendirme yapıyor ya da dahili bir ağa ulaşmak için bir bastion host üzerinden atlıyor olun, `ssh` komutu giriş noktanızdır. Bu kılavuz, temel sözdiziminden gelişmiş bayraklara, tünellemeye ve ProxyJump yapılandırmalarına kadar her şeyi kapsar — Linux, macOS ve Windows için gerçek örneklerle.
 
-SSH komutlarını çalıştırmadan önce SSH anahtarlarına ihtiyacınız olacak. <a href="/tr/what-is-an-ssh-key/">SSH anahtarı nedir</a> kılavuzumuza bakın ya da anahtar çifti oluşturmak için <a href="/">ücretsiz çevrimiçi oluşturucuyu</a> kullanın.
+## Kısa cevap
+
+Çoğu bağlantı için ssh user@host yeterlidir. Belirli anahtar için -i, farklı port için -p, bastion üzerinden geçmek için -J kullanın.
+
+```bash
+ssh user@server.example.com
+ssh -i ~/.ssh/id_ed25519 user@server.example.com
+ssh -p 2222 user@server.example.com
+ssh -J bastion.example.com user@private.example.com
+```
 
 ## SSH Komut Sözdizimi
 

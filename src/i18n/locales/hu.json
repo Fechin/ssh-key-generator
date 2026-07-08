@@ -6,8 +6,8 @@
     "viewOnGitHub": "Megtekintés GitHubon"
   },
   "hero": {
-    "title": "Online SSH Key Generator",
-    "subtitle": "Hozz létre biztonságos SSH kulcsokat azonnal a böngésződben ezzel az ingyenes online SSH kulcsgenerátorral. Működik GitHub, GitLab, Bitbucket és bármely SSH szerver esetén."
+    "title": "SSH-kulcs generátor: SSH-kulcs létrehozása online",
+    "subtitle": "Generálj Ed25519 vagy RSA SSH-kulcsokat a böngészőben GitHubhoz, GitLabhoz, szerverekhez és ssh-keygen folyamatokhoz. A privát kulcs nem töltődik fel."
   },
   "tabs": {
     "generate": "Kulcsok generálása",
@@ -20,8 +20,8 @@
     "guidesShort": "Útmutatók"
   },
   "generator": {
-    "title": "Online SSH Key Generator",
-    "description": "Generálj új SSH kulcspárt biztonságosan a böngésződben ezzel az ingyenes online eszközzel. Semmilyen adat nem kerül továbbításra szerverekre.",
+    "title": "Böngészőben futó SSH-kulcs generátor",
+    "description": "Hozz létre SSH-kulcspárt közvetlenül a böngészőben. A privát kulcs helyben készül, és nem kerül a szerverre.",
     "algorithm": "Algoritmus",
     "algorithmTooltip": "Az Ed25519 a legtöbb esetben ajánlott. RSA-t használj, ha régebbi rendszerekkel való kompatibilitásra van szükséged.",
     "comment": "Megjegyzés (opcionális)",
@@ -36,8 +36,8 @@
     "confirmPassphrasePlaceholder": "Add meg újra a jelmondatot",
     "passphrasesMismatch": "A jelmondatok nem egyeznek",
     "noPassphraseWarning": "Nincs jelmondat beállítva. A privát kulcsod titkosítatlan marad. Fontold meg jelmondat hozzáadását a nagyobb biztonság érdekében.",
-    "securityTitle": "100% kliens oldali SSH Key Generator",
-    "securityDesc": "A kulcsgenerálás teljes egészében a böngésződben történik. Ez az online SSH kulcsgenerátor soha nem továbbítja a privát kulcsaidat.",
+    "securityTitle": "Helyben generálva a böngészőben",
+    "securityDesc": "A kriptográfiai műveletek kliensoldalon futnak. Ez az online generátor nem tölti fel és nem továbbítja a privát kulcsokat.",
     "noKeysYet": "Még nincsenek generált kulcsok",
     "noKeysHint": "Kattints a „Kulcspár generálása“ gombra az SSH kulcsok létrehozásához"
   },
@@ -178,10 +178,10 @@
   },
   "footer": {
     "about": "Az online SSH Key Generatorról",
-    "aboutDesc": "Ez egy ingyenes, nyílt forráskódú online SSH kulcsgenerátor, amely teljes egészében a böngésződben fut. Nincs szerver oldali feldolgozás, nincs adatgyűjtés – csak biztonságos kulcsgenerálás.",
+    "aboutDesc": "Generálj Ed25519 vagy RSA SSH-kulcsokat a böngészőben GitHubhoz, GitLabhoz, szerverekhez és ssh-keygen folyamatokhoz. A privát kulcs nem töltődik fel.",
     "securityFirst": "Biztonság az első",
     "security1": "A kulcsgenerálás teljes egészében a böngésződben történik",
-    "security2": "Semmilyen adat nem kerül továbbításra szerverekre",
+    "security2": "A kriptográfiai műveletek kliensoldalon futnak. Ez az online generátor nem tölti fel és nem továbbítja a privát kulcsokat.",
     "security3": "Nyílt forráskódú, ellenőrizhető kód",
     "security4": "Iparági szabvány kriptográfiai könyvtárakat használ",
     "resources": "Források",
@@ -195,13 +195,13 @@
   "seo": {
     "whatIs": {
       "title": "Mi az az online SSH Key Generator?",
-      "desc": "Egy online SSH kulcsgenerátor, mint ez az eszköz, kriptográfiai kulcspárokat hoz létre biztonságosan a böngésződben. Az SSH kulcsok egy publikus kulcsból (amit megosztasz a szerverekkel) és egy privát kulcsból (amit titokban tartasz) állnak. A jelszavakkal ellentétben az online generált SSH kulcsokat gyakorlatilag lehetetlen feltörni brute force módszerekkel."
+      "desc": "Az online generátor a böngészőben hozza létre a kulcspárt. A publikus kulcs kerül GitHubra, GitLabra, Bitbucketre vagy szerverre; a privát kulcs a gépeden marad."
     },
     "whyUse": {
       "title": "Miért használd ezt az online SSH Key Generatort?",
       "secure": {
         "title": "Biztonságos online generálás",
-        "desc": "Minden kriptográfiai művelet a böngésződben történik. Ez az online SSH kulcsgenerátor garantálja, hogy a privát kulcsaid soha nem hagyják el az eszközödet."
+        "desc": "A kriptográfiai műveletek kliensoldalon futnak. Ez az online generátor nem tölti fel és nem továbbítja a privát kulcsokat."
       },
       "modern": {
         "title": "Modern algoritmusok",
@@ -280,7 +280,7 @@
       "subtitle": "Válaszok az SSH kulcsokkal és ezzel az eszközzel kapcsolatos gyakori kérdésekre.",
       "safe": {
         "question": "Biztonságos online SSH kulcsokat generálni?",
-        "answer": "Igen, ez az eszköz 100%-ban biztonságos, mert a teljes kulcsgenerálás a böngésződben történik a Web Crypto API használatával. A privát kulcsaid soha nem hagyják el az eszközödet és soha nem kerülnek továbbításra szerverekre. A forráskód nyílt és ellenőrizhető a GitHubon."
+        "answer": "Igen, ha megbízol a betöltött oldalban és a böngésződben. A kulcs helyben készül, a privát kulcs nem töltődik fel. Szigorú környezetben generálj offline, vagy használd az ssh-keygent terminálban."
       },
       "ed25519VsRsa": {
         "question": "Mi a különbség az Ed25519 és az RSA között?",
@@ -292,7 +292,7 @@
       },
       "rsaKeySize": {
         "question": "Milyen kulcsméretet használjak RSA-hoz?",
-        "answer": "RSA kulcsokhoz a 4096-bit ajánlott a maximális biztonság érdekében. A 2048-bit a minimálisan elfogadható méret, és megfelelő biztonságot nyújt a legtöbb célra. A 2048-bitnél kisebb kulcsok nem tekinthetők biztonságosnak és nem ajánlott használatuk."
+        "answer": "Új kulcsokhoz általában Ed25519-et válassz. RSA 4096 akkor kell, ha egy régi SSH-szerver vagy eszköz nem támogatja az Ed25519-et."
       },
       "offline": {
         "question": "Használhatom ezt az SSH kulcsgenerátort offline?",
@@ -320,7 +320,7 @@
       },
       "bestOnlineGenerator": {
         "question": "Mi a legjobb online SSH kulcsgenerátor?",
-        "answer": "Ez az SSH kulcsgenerátor az egyik legjobb ingyenes online lehetőség, mert 100%-ban a böngésződben fut, támogatja a modern Ed25519 és RSA algoritmusokat, PWA-ként offline is működik, és soha nem küldi el a privát kulcsaidat semmilyen szerverre."
+        "answer": "SSH-kulcs generátor: SSH-kulcs létrehozása online. A kriptográfiai műveletek kliensoldalon futnak. Ez az online generátor nem tölti fel és nem továbbítja a privát kulcsokat."
       },
       "permissions": {
         "question": "Milyen jogosultságok kellenek az SSH privát kulcsomnak?",

@@ -1,8 +1,15 @@
 # SSHのセットアップ方法：Linux・Mac・Windows向けステップバイステップ完全ガイド
 
-SSHを正しくセットアップするには約10分かかりますが、その効果は何年にもわたって続きます。一度設定すれば、パスワードを入力せずにサーバーにログインし、すべてのGit操作で認証情報を入力せずにGitHubにコードをプッシュし、自信を持ってデプロイを自動化できます。本ガイドでは、Linux・macOS・Windowsでの鍵ペア生成から一般的なエラーのトラブルシューティングまで、全工程を解説します。
+## すぐ分かる答え
 
-まず基盤となる技術を理解したい場合は、<a href="/ja/what-is-ssh/">SSHとは何か</a>と<a href="/ja/what-is-an-ssh-key/">SSH鍵とは何か</a>のガイドをご覧ください。
+基本の流れは、鍵を作成し、公開鍵をコピーし、GitHub/GitLabまたはサーバーに登録し、ssh-agentに読み込み、接続をテストすることです。
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+ssh -T git@github.com
+```
 
 ## 前提条件
 

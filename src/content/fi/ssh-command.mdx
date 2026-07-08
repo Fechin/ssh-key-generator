@@ -1,8 +1,16 @@
 # SSH-komento: Täydellinen viite esimerkkeineen Linuxille, Macille ja Windowsille
 
-`ssh`-komento on ensisijainen työkalu SSH-yhteyksien käynnistämiseen komentoriviltä. Olitpa kirjautumassa Linux-etäpalvelimeen, välittämässä porttia tietokantaan pääsyä varten tai hyppäämässä linnakeisäntäkoneen läpi päästäksesi sisäiseen verkkoon, `ssh`-komento on aloituskohtasi. Tämä opas kattaa kaiken perussyntaksista edistyneisiin lippuihin, tunnelointiin ja ProxyJump-kokoonpanoihin – oikeilla esimerkeillä Linuxille, macOS:lle ja Windowsille.
 
-Ennen kuin suoritat SSH-komentoja, tarvitset SSH-avaimet. Katso oppaamme <a href="/fi/what-is-an-ssh-key/">mikä on SSH-avain</a> tai luo avainpari käyttämällä <a href="/">ilmaista verkkogeneraattoria</a>.
+## Nopea vastaus
+
+Useimpiin yhteyksiin riittää ssh user@host. Käytä -i:tä tietylle avaimelle, -p:tä eri portille ja -J:tä bastionin kautta yhdistämiseen.
+
+```bash
+ssh user@server.example.com
+ssh -i ~/.ssh/id_ed25519 user@server.example.com
+ssh -p 2222 user@server.example.com
+ssh -J bastion.example.com user@private.example.com
+```
 
 ## SSH-komentosyntaksi
 

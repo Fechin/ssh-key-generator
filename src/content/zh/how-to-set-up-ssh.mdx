@@ -1,8 +1,15 @@
 # 如何设置 SSH：Linux、Mac 和 Windows 完整分步指南
 
-设置 SSH 密钥认证是每位开发人员都应该掌握的基础技能。完成配置后，您可以安全、免密码地连接远程服务器，向 GitHub/GitLab 推送代码，并自动化部署流程。
+## 快速答案
 
-本指南涵盖在 Linux、macOS 和 Windows 上完整的 SSH 配置流程，从密钥生成到测试验证，每个步骤均附有具体命令。
+常规流程是：生成密钥，复制公钥，把公钥添加到 GitHub/GitLab 或服务器，将私钥加载到 ssh-agent，然后测试连接。
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+ssh -T git@github.com
+```
 
 ## 前提条件
 

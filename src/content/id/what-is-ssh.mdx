@@ -82,7 +82,7 @@ Pendekatan ini memiliki beberapa keunggulan:
 - **Dapat diotomasi** — skrip dan pipeline CI/CD dapat mengautentikasi tanpa interaksi manusia.
 - **Dapat dicabut** — menghapus kunci publik dari `authorized_keys` langsung mencabut akses.
 
-Jenis kunci paling modern dan direkomendasikan adalah **Ed25519**, yang menggunakan kriptografi kurva eliptik pada kurva Edwards. Kunci RSA juga didukung secara luas, meskipun Anda harus menggunakan minimal 4096 bit.
+Untuk kunci baru, biasanya pilih Ed25519. Gunakan RSA 4096-bit saat sistem lama membutuhkannya.
 
 Untuk penjelasan mendalam tentang pasangan kunci, lihat panduan kami tentang <a href="/id/what-is-an-ssh-key/">apa itu kunci SSH</a>.
 
@@ -263,7 +263,7 @@ SSH menggunakan **port TCP 22** secara default. Ini adalah port terkenal yang di
 
 ### Bisakah SSH diretas?
 
-Server SSH yang dikonfigurasi dengan benar dengan autentikasi berbasis kunci sangat sulit untuk dikompromikan. Kriptografinya — kunci Ed25519, enkripsi AES-256, HMAC SHA-2 — dianggap tahan kuantum untuk autentikasi kunci dan tidak layak secara komputasi untuk di-brute force. Kompromi SSH di dunia nyata biasanya melibatkan: file kunci privat yang dicuri, passphrase yang lemah, server yang salah dikonfigurasi yang mengizinkan autentikasi kata sandi dengan kata sandi yang lemah, versi perangkat lunak rentan dengan CVE yang belum ditambal, atau rekayasa sosial daripada serangan kriptografi. Perbarui server Anda, nonaktifkan autentikasi kata sandi, dan lindungi file kunci privat Anda.
+Modern SSH with key authentication is strong against classical brute force, but Ed25519 and RSA should not be described as quantum-safe. Real incidents usually involve stolen private keys, weak passphrases, misconfiguration, unpatched CVEs or social engineering.
 
 ### Apa perbedaan antara SSH dan HTTPS?
 

@@ -1,6 +1,11 @@
 # Hvad er en SSH-nøgle? Offentlige nøgler, private nøgler og nøglepar forklaret
 
-En **SSH-nøgle** er en kryptografisk legitimationsoplysning, der bruges til at godkende sig over for SSH-servere uden en adgangskode. SSH-nøgler kommer i par — en **offentlig nøgle** og en **privat nøgle** — og tilsammen gør de fjernadgang mere sikker og mere bekvem end traditionel adgangskodegodkendelse. Denne guide forklarer, hvad en SSH-nøgle er, hvordan nøgleparsystemet fungerer, hvilke nøgletyper du skal vælge, og hvordan du bruger SSH-nøgler med tjenester som GitHub og GitLab.
+
+## Kort svar
+
+At oprette en SSH-nøgle betyder at lave et par med en offentlig og en privat nøgle. Til nye nøgler er Ed25519 normalt det bedste valg; RSA 4096 bruges primært til ældre systemer.
+
+Vælg Ed25519 til de fleste nye nøgler. Brug RSA 4096, hvis en ældre SSH-server eller et værktøj ikke understøtter Ed25519.
 
 ## Hvordan SSH-nøgler fungerer
 
@@ -92,14 +97,14 @@ RSA er den ældre algoritme (opfundet 1977), og selvom den stadig er sikker ved 
 ssh-keygen -t rsa -b 4096 -C "your@email.com"
 ```
 
-**Brug aldrig RSA med færre end 4096 bit.** RSA-1024 og RSA-2048 anses i stigende grad for utilstrækkelige i takt med at beregningskraften vokser. Ed25519 ved 256 bit giver tilsvarende eller bedre sikkerhed med en brøkdel af nøglestørrelsen.
+Til nye nøgler er Ed25519 normalt bedst. Brug RSA 4096 bit, når ældre systemer kræver det.
 
 ### Sammenligningsoversigt
 
 | Funktion | Ed25519 | RSA 4096 |
 |---|---|---|
 | Nøglestørrelse (offentlig) | ~68 tegn | ~725 tegn |
-| Sikkerhedsniveau | 128-bit (post-kvante-resistent struktur) | ~140-bit klassisk |
+| Security level | ~128-bit classical security; not quantum-safe | Depends on key size; 4096-bit gives more classical margin |
 | Hastighed | Meget hurtig | Langsommere |
 | Kompatibilitet | Moderne SSH (OpenSSH 6.5+) | Universal |
 | Anbefalet til | Alle nye nøgler | Kun ældre systemer |
@@ -321,7 +326,7 @@ Hvis du mister din private nøgle og ikke har en sikkerhedskopi, mister du evnen
 
 ### Er Ed25519 eller RSA bedre?
 
-**Ed25519 er bedre til al ny nøglegenerering.** Det er hurtigere, producerer mindre nøgler, er ikke sårbart over for visse implementationssvagheder, der påvirker RSA, og giver tilsvarende eller overlegen sikkerhed med en 256-bit nøgle sammenlignet med RSA-4096. Den eneste grund til at bruge RSA i dag er kompatibilitet med meget gammel SSH-serversoftware (OpenSSH før version 6.5, udgivet i 2014) eller ældre hardware-sikkerhedsmoduler. Hvis du tilgår en moderne server eller tjeneste som GitHub, brug Ed25519.
+Til nye nøgler er Ed25519 normalt bedst. Brug RSA 4096 bit, når ældre systemer kræver det.
 
 ## Generér dit SSH-nøglepar
 

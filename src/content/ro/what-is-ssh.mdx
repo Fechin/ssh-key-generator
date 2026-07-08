@@ -82,7 +82,7 @@ Această abordare are mai multe avantaje:
 - **Automatizabilă** — scripturile și pipeline-urile CI/CD se pot autentifica fără interacțiune umană.
 - **Revocabilă** — eliminarea unei chei publice din `authorized_keys` revocă imediat accesul.
 
-Cel mai modern și recomandat tip de cheie este **Ed25519**, care utilizează criptografia pe curbe eliptice pe curba Edwards. Cheile RSA sunt, de asemenea, larg suportate, deși ar trebui să folosești cel puțin 4096 de biți.
+Pentru chei noi, alege de obicei Ed25519. Folosește RSA 4096-bit când sistemele vechi o cer.
 
 Pentru o aprofundare a perechilor de chei, consultă ghidul nostru despre <a href="/ro/what-is-an-ssh-key/">ce este o cheie SSH</a>.
 

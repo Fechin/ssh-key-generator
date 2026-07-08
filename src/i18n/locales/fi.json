@@ -6,8 +6,8 @@
     "viewOnGitHub": "Katso GitHubissa"
   },
   "hero": {
-    "title": "SSH Key Generator verkossa",
-    "subtitle": "Luo turvalliset SSH-avaimet välittömästi selaimessasi tällä ilmaisella SSH Key Generator -työkalulla. Toimii GitHubin, GitLabin, Bitbucketin ja kaikkien SSH-palvelimien kanssa."
+    "title": "SSH-avaingeneraattori: luo SSH-avaimia verkossa",
+    "subtitle": "Luo Ed25519- tai RSA-SSH-avaimia selaimessa GitHubia, GitLabia, palvelimia ja ssh-keygeniä varten. Yksityistä avainta ei lähetetä."
   },
   "tabs": {
     "generate": "Luo avaimet",
@@ -20,8 +20,8 @@
     "guidesShort": "Ohjeet"
   },
   "generator": {
-    "title": "SSH Key Generator verkossa",
-    "description": "Luo uusi SSH-avainpari turvallisesti selaimessasi tällä ilmaisella työkalulla. Mitään tietoja ei lähetetä palvelimelle.",
+    "title": "Selaimessa toimiva SSH-avaingeneraattori",
+    "description": "Luo SSH-avainpari selaimessa. Yksityinen avain luodaan paikallisesti eikä sitä lähetetä palvelimelle.",
     "algorithm": "Algoritmi",
     "algorithmTooltip": "Ed25519 sopii useimpiin käyttötarkoituksiin. Käytä RSA:ta, jos tarvitset yhteensopivuutta vanhempien järjestelmien kanssa.",
     "comment": "Kommentti (valinnainen)",
@@ -36,8 +36,8 @@
     "confirmPassphrasePlaceholder": "Syötä salasana uudelleen",
     "passphrasesMismatch": "Salasanat eivät täsmää",
     "noPassphraseWarning": "Salasanaa ei asetettu. Yksityinen avaimesi tallennetaan salaamattomana. Harkitse salasanan lisäämistä.",
-    "securityTitle": "100 % selainpohjainen SSH Key Generator",
-    "securityDesc": "Kaikki avainten luonti tapahtuu paikallisesti selaimessasi. Tämä SSH Key Generator ei koskaan lähetä yksityisiä avaimiasi.",
+    "securityTitle": "Luodaan paikallisesti selaimessa",
+    "securityDesc": "Salausoperaatiot suoritetaan asiakaspuolella. Tämä verkkogeneraattori ei lähetä yksityisiä avaimia.",
     "noKeysYet": "Avaimia ei ole vielä luotu",
     "noKeysHint": "Napsauta \"Luo avainpari\" luodaksesi SSH-avaimet"
   },
@@ -178,10 +178,10 @@
   },
   "footer": {
     "about": "Tietoa tästä SSH Key Generator -työkalusta",
-    "aboutDesc": "Tämä on ilmainen, avoimen lähdekoodin SSH Key Generator, joka toimii kokonaan selaimessasi. Ei palvelinpuolen käsittelyä, ei tietojen keräämistä – vain turvallista avainten luontia.",
+    "aboutDesc": "Luo Ed25519- tai RSA-SSH-avaimia selaimessa GitHubia, GitLabia, palvelimia ja ssh-keygeniä varten. Yksityistä avainta ei lähetetä.",
     "securityFirst": "Turvallisuus ensin",
     "security1": "Kaikki avainten luonti tapahtuu selaimessasi",
-    "security2": "Mitään tietoja ei koskaan lähetetä palvelimelle",
+    "security2": "Salausoperaatiot suoritetaan asiakaspuolella. Tämä verkkogeneraattori ei lähetä yksityisiä avaimia.",
     "security3": "Avoin lähdekoodi ja tarkastettava",
     "security4": "Käyttää alan standardien mukaisia salauskirjastoja",
     "resources": "Resurssit",
@@ -195,13 +195,13 @@
   "seo": {
     "whatIs": {
       "title": "Mikä on SSH Key Generator?",
-      "desc": "SSH Key Generator luo salausavainpareja turvallisesti selaimessasi. SSH-avaimet koostuvat julkisesta avaimesta (jaetaan palvelimille) ja yksityisestä avaimesta (pidetään salassa). Toisin kuin salasanat, SSH-avaimia on käytännössä mahdotonta murtaa."
+      "desc": "Verkkogeneraattori luo avainparin selaimessa. Julkinen avain lisätään GitHubiin, GitLabiin, Bitbucketiin tai palvelimelle; yksityinen avain jää omalle koneellesi."
     },
     "whyUse": {
       "title": "Miksi käyttää tätä SSH Key Generator -työkalua?",
       "secure": {
         "title": "Turvallinen verkkopohjainen luonti",
-        "desc": "Kaikki salausoperaatiot tapahtuvat selaimessasi. Tämä SSH Key Generator varmistaa, etteivät yksityiset avaimesi koskaan poistu laitteeltasi."
+        "desc": "Salausoperaatiot suoritetaan asiakaspuolella. Tämä verkkogeneraattori ei lähetä yksityisiä avaimia."
       },
       "modern": {
         "title": "Modernit algoritmit",
@@ -280,7 +280,7 @@
       "subtitle": "Vastauksia yleisiin kysymyksiin SSH-avaimista ja tästä työkalusta.",
       "safe": {
         "question": "Onko SSH-avainten luominen verkossa turvallista?",
-        "answer": "Kyllä, tämä työkalu on 100 % turvallinen, koska kaikki avainten luonti tapahtuu kokonaan selaimessasi Web Crypto API:n avulla. Yksityiset avaimesi eivät koskaan poistu laitteeltasi eivätkä siirry mihinkään palvelimelle. Lähdekoodi on avointa ja tarkastettavissa GitHubissa."
+        "answer": "Kyllä, jos luotat ladattuun sivuun ja selaimeesi. Avain luodaan paikallisesti eikä yksityistä avainta lähetetä. Tiukoissa ympäristöissä luo avain offline-tilassa tai käytä terminaalissa ssh-keygeniä."
       },
       "ed25519VsRsa": {
         "question": "Mikä on Ed25519:n ja RSA:n ero?",
@@ -292,7 +292,7 @@
       },
       "rsaKeySize": {
         "question": "Mitä avainkokoa RSA:lle pitäisi käyttää?",
-        "answer": "RSA-avaimille 4096-bittinen on suositeltava maksimaalisen turvallisuuden takaamiseksi. 2048-bittinen on vähimmäishyväksyttävä koko ja tarjoaa riittävän turvallisuuden useimpiin käyttötarkoituksiin. Alle 2048-bittisiä avaimia pidetään turvattomina eikä niitä tulisi käyttää."
+        "answer": "Valitse uusille avaimille yleensä Ed25519. Käytä RSA 4096:ta, jos vanha SSH-palvelin tai työkalu ei tue Ed25519:ää."
       },
       "offline": {
         "question": "Voiko tätä SSH Key Generator -työkalua käyttää offline-tilassa?",
@@ -320,7 +320,7 @@
       },
       "bestOnlineGenerator": {
         "question": "Mikä on paras SSH Key Generator verkossa?",
-        "answer": "Tämä SSH Key Generator on yksi parhaista ilmaisista verkkovaihtoehdoista, koska se toimii 100 % selaimessasi, tukee moderneja Ed25519- ja RSA-algoritmeja, toimii offline-tilassa PWA:na eikä koskaan lähetä yksityisiä avaimiasi millekään palvelimelle."
+        "answer": "SSH-avaingeneraattori: luo SSH-avaimia verkossa. Salausoperaatiot suoritetaan asiakaspuolella. Tämä verkkogeneraattori ei lähetä yksityisiä avaimia."
       },
       "permissions": {
         "question": "Mitkä käyttöoikeudet SSH-yksityisellä avaimella pitäisi olla?",

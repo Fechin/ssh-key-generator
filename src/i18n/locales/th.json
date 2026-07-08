@@ -6,8 +6,8 @@
     "viewOnGitHub": "ดูบน GitHub"
   },
   "hero": {
-    "title": "สร้าง SSH Key ออนไลน์",
-    "subtitle": "สร้าง SSH Key ที่ปลอดภัยได้ทันทีบนเบราว์เซอร์ของคุณด้วยเครื่องมือสร้าง SSH Key ออนไลน์ฟรี รองรับ GitHub, GitLab, Bitbucket และ SSH Server ทุกประเภท"
+    "title": "SSH Key Generator: สร้าง SSH key ออนไลน์",
+    "subtitle": "สร้าง SSH key แบบ Ed25519 หรือ RSA ในเบราว์เซอร์สำหรับ GitHub, GitLab, server และ ssh-keygen โดย private key ไม่ถูกอัปโหลด"
   },
   "tabs": {
     "generate": "สร้าง Key",
@@ -20,8 +20,8 @@
     "guidesShort": "คู่มือ"
   },
   "generator": {
-    "title": "เครื่องมือสร้าง SSH Key ออนไลน์",
-    "description": "สร้าง SSH Key Pair ที่ปลอดภัยบนเบราว์เซอร์ของคุณ ไม่มีข้อมูลใดถูกส่งไปยังเซิร์ฟเวอร์",
+    "title": "SSH key generator ในเบราว์เซอร์",
+    "description": "สร้างคู่ SSH key ในเบราว์เซอร์ Private key ถูกสร้างในเครื่องและไม่ถูกส่งไปยัง server",
     "algorithm": "Algorithm",
     "algorithmTooltip": "แนะนำให้ใช้ Ed25519 สำหรับกรณีทั่วไป ใช้ RSA หากต้องการความเข้ากันได้กับระบบเก่า",
     "comment": "Comment (ไม่บังคับ)",
@@ -36,8 +36,8 @@
     "confirmPassphrasePlaceholder": "ใส่ Passphrase อีกครั้ง",
     "passphrasesMismatch": "Passphrase ไม่ตรงกัน",
     "noPassphraseWarning": "ไม่ได้ตั้ง Passphrase Private Key ของคุณจะไม่ถูกเข้ารหัส แนะนำให้เพิ่ม Passphrase เพื่อความปลอดภัย",
-    "securityTitle": "SSH Key Generator ทำงานบนเบราว์เซอร์ 100%",
-    "securityDesc": "การสร้าง Key ทั้งหมดเกิดขึ้นบนเบราว์เซอร์ของคุณ เครื่องมือนี้ไม่เคยส่ง Private Key ของคุณออกไป",
+    "securityTitle": "สร้างในเครื่องผ่านเบราว์เซอร์",
+    "securityDesc": "การทำงานด้าน cryptography ทำในฝั่ง client เครื่องมือนี้ไม่อัปโหลดหรือส่ง private key",
     "noKeysYet": "ยังไม่มี Key ที่สร้าง",
     "noKeysHint": "คลิก \"สร้าง Key Pair\" เพื่อสร้าง SSH Key ของคุณ"
   },
@@ -178,10 +178,10 @@
   },
   "footer": {
     "about": "เกี่ยวกับ SSH Key Generator ออนไลน์นี้",
-    "aboutDesc": "นี่คือเครื่องมือสร้าง SSH Key ออนไลน์แบบ Open Source และฟรี ที่ทำงานบนเบราว์เซอร์ของคุณทั้งหมด ไม่มีการประมวลผลบนเซิร์ฟเวอร์ ไม่มีการเก็บข้อมูล มีแค่การสร้าง Key ที่ปลอดภัย",
+    "aboutDesc": "สร้าง SSH key แบบ Ed25519 หรือ RSA ในเบราว์เซอร์สำหรับ GitHub, GitLab, server และ ssh-keygen โดย private key ไม่ถูกอัปโหลด",
     "securityFirst": "ความปลอดภัยมาก่อน",
     "security1": "การสร้าง Key ทั้งหมดเกิดขึ้นบนเบราว์เซอร์ของคุณ",
-    "security2": "ไม่มีข้อมูลใดถูกส่งไปยังเซิร์ฟเวอร์",
+    "security2": "การทำงานด้าน cryptography ทำในฝั่ง client เครื่องมือนี้ไม่อัปโหลดหรือส่ง private key",
     "security3": "โค้ด Open Source ตรวจสอบได้",
     "security4": "ใช้ไลบรารีเข้ารหัสมาตรฐานอุตสาหกรรม",
     "resources": "แหล่งข้อมูล",
@@ -195,13 +195,13 @@
   "seo": {
     "whatIs": {
       "title": "SSH Key Generator ออนไลน์คืออะไร?",
-      "desc": "SSH Key Generator ออนไลน์อย่างเครื่องมือนี้ สร้าง Key Pair แบบเข้ารหัสอย่างปลอดภัยบนเบราว์เซอร์ของคุณ SSH Key ประกอบด้วย Public Key (แชร์กับเซิร์ฟเวอร์) และ Private Key (เก็บเป็นความลับ) ต่างจากรหัสผ่าน SSH Key ที่สร้างออนไลน์แทบจะไม่สามารถถูกถอดรหัสด้วยวิธี Brute Force ได้"
+      "desc": "เครื่องมือออนไลน์จะสร้าง key pair ในเบราว์เซอร์ Public key ใช้กับ GitHub, GitLab, Bitbucket หรือ server ส่วน private key อยู่ในเครื่องของคุณ"
     },
     "whyUse": {
       "title": "ทำไมต้องใช้ SSH Key Generator ออนไลน์นี้?",
       "secure": {
         "title": "สร้างออนไลน์อย่างปลอดภัย",
-        "desc": "การเข้ารหัสทั้งหมดเกิดขึ้นบนเบราว์เซอร์ของคุณ SSH Key Generator ออนไลน์นี้รับประกันว่า Private Key ไม่เคยออกจากอุปกรณ์ของคุณ"
+        "desc": "การทำงานด้าน cryptography ทำในฝั่ง client เครื่องมือนี้ไม่อัปโหลดหรือส่ง private key"
       },
       "modern": {
         "title": "Algorithm ทันสมัย",
@@ -280,7 +280,7 @@
       "subtitle": "ค้นหาคำตอบสำหรับคำถามทั่วไปเกี่ยวกับ SSH Key และเครื่องมือนี้",
       "safe": {
         "question": "การสร้าง SSH Key ออนไลน์ปลอดภัยหรือไม่?",
-        "answer": "ใช่ เครื่องมือนี้ปลอดภัย 100% เพราะการสร้าง Key ทั้งหมดเกิดขึ้นบนเบราว์เซอร์ของคุณโดยใช้ Web Crypto API Private Key ของคุณไม่เคยออกจากอุปกรณ์และไม่เคยถูกส่งไปยังเซิร์ฟเวอร์ใดๆ โค้ดเป็น Open Source และตรวจสอบได้บน GitHub"
+        "answer": "ใช้ได้ถ้าคุณเชื่อถือหน้าเว็บที่โหลดและสภาพแวดล้อมของเบราว์เซอร์ Key ถูกสร้างในเครื่องและ private key ไม่ถูกอัปโหลด สำหรับระบบที่เข้มงวดควรสร้างแบบ offline หรือใช้ ssh-keygen ใน terminal"
       },
       "ed25519VsRsa": {
         "question": "Ed25519 และ RSA ต่างกันอย่างไร?",
@@ -292,7 +292,7 @@
       },
       "rsaKeySize": {
         "question": "ควรใช้ขนาด Key เท่าไหร่สำหรับ RSA?",
-        "answer": "สำหรับ RSA Key แนะนำ 4096-bit สำหรับความปลอดภัยสูงสุด 2048-bit เป็นขนาดขั้นต่ำที่ยอมรับได้และให้ความปลอดภัยเพียงพอสำหรับการใช้งานทั่วไป Key ที่เล็กกว่า 2048-bit ถือว่าไม่ปลอดภัยและไม่ควรใช้"
+        "answer": "สำหรับ key ใหม่ให้เลือก Ed25519 เป็นหลัก ใช้ RSA 4096 เมื่อ SSH server หรือเครื่องมือเก่าไม่รองรับ Ed25519"
       },
       "offline": {
         "question": "ใช้ SSH Key Generator นี้แบบออฟไลน์ได้หรือไม่?",
@@ -320,7 +320,7 @@
       },
       "bestOnlineGenerator": {
         "question": "SSH Key Generator ออนไลน์ที่ดีที่สุดคืออะไร?",
-        "answer": "SSH Key Generator นี้เป็นหนึ่งในตัวเลือกออนไลน์ฟรีที่ดีที่สุด เพราะทำงานบนเบราว์เซอร์ 100% รองรับ Ed25519 และ RSA Algorithm สมัยใหม่ ทำงานแบบออฟไลน์เป็น PWA ได้ และไม่เคยส่ง Private Key ไปยังเซิร์ฟเวอร์ใดๆ"
+        "answer": "SSH Key Generator: สร้าง SSH key ออนไลน์. การทำงานด้าน cryptography ทำในฝั่ง client เครื่องมือนี้ไม่อัปโหลดหรือส่ง private key"
       },
       "permissions": {
         "question": "SSH Private Key ควรมี Permissions อย่างไร?",

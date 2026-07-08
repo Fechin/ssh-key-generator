@@ -6,8 +6,8 @@
     "viewOnGitHub": "GitHub पर देखें"
   },
   "hero": {
-    "title": "ऑनलाइन SSH कुंजी जनरेटर",
-    "subtitle": "इस मुफ्त ऑनलाइन SSH कुंजी जनरेटर से अपने ब्राउज़र में तुरंत सुरक्षित SSH कुंजियाँ बनाएं। GitHub, GitLab, Bitbucket और किसी भी SSH सर्वर के साथ काम करता है।"
+    "title": "SSH Key Generator: online SSH key बनाएं",
+    "subtitle": "Browser में Ed25519 या RSA SSH keys generate करें। GitHub, GitLab, servers और ssh-keygen workflow के लिए; private key upload नहीं होती।"
   },
   "tabs": {
     "generate": "कुंजी बनाएं",
@@ -20,8 +20,8 @@
     "guidesShort": "गाइड"
   },
   "generator": {
-    "title": "ऑनलाइन SSH कुंजी जनरेटर",
-    "description": "इस मुफ्त ऑनलाइन जनरेटर का उपयोग करके अपने ब्राउज़र में सुरक्षित रूप से नई SSH कुंजी जोड़ी बनाएं। कोई डेटा किसी सर्वर को नहीं भेजा जाता।",
+    "title": "Browser-side SSH key generator",
+    "description": "Browser में SSH key pair बनाएं। Private key local generate होती है और server पर नहीं भेजी जाती।",
     "algorithm": "एल्गोरिथ्म",
     "algorithmTooltip": "अधिकांश मामलों के लिए Ed25519 की सिफारिश की जाती है। पुरानी प्रणालियों के साथ संगतता के लिए RSA का उपयोग करें।",
     "comment": "टिप्पणी (वैकल्पिक)",
@@ -36,8 +36,8 @@
     "confirmPassphrasePlaceholder": "पासफ़्रेज़ दोबारा दर्ज करें",
     "passphrasesMismatch": "पासफ़्रेज़ मेल नहीं खाते",
     "noPassphraseWarning": "कोई पासफ़्रेज़ सेट नहीं है। आपकी निजी कुंजी अनएन्क्रिप्टेड रहेगी। अतिरिक्त सुरक्षा के लिए पासफ़्रेज़ जोड़ने पर विचार करें।",
-    "securityTitle": "100% क्लाइंट-साइड SSH कुंजी जनरेटर",
-    "securityDesc": "सभी कुंजी निर्माण आपके ब्राउज़र में स्थानीय रूप से होता है। यह ऑनलाइन SSH कुंजी जनरेटर कभी भी आपकी निजी कुंजियाँ प्रसारित नहीं करता।",
+    "securityTitle": "Browser में local generation",
+    "securityDesc": "Cryptographic operations client-side चलती हैं। यह online SSH key generator private keys upload या transmit नहीं करता।",
     "noKeysYet": "अभी तक कोई कुंजी नहीं बनाई गई",
     "noKeysHint": "अपनी SSH कुंजियाँ बनाने के लिए \"कुंजी जोड़ी बनाएं\" पर क्लिक करें"
   },
@@ -178,10 +178,10 @@
   },
   "footer": {
     "about": "इस ऑनलाइन SSH कुंजी जनरेटर के बारे में",
-    "aboutDesc": "यह एक मुफ्त, ओपन-सोर्स ऑनलाइन SSH कुंजी जनरेटर है जो पूरी तरह से आपके ब्राउज़र में चलता है। कोई सर्वर-साइड प्रोसेसिंग नहीं, कोई डेटा संग्रह नहीं - बस सुरक्षित कुंजी निर्माण।",
+    "aboutDesc": "Browser में Ed25519 या RSA SSH keys generate करें। GitHub, GitLab, servers और ssh-keygen workflow के लिए; private key upload नहीं होती।",
     "securityFirst": "सुरक्षा पहले",
     "security1": "सभी कुंजी निर्माण आपके ब्राउज़र में होता है",
-    "security2": "कभी भी कोई डेटा किसी सर्वर को नहीं भेजा जाता",
+    "security2": "Cryptographic operations client-side चलती हैं। यह online SSH key generator private keys upload या transmit नहीं करता।",
     "security3": "ओपन सोर्स और ऑडिट योग्य कोड",
     "security4": "उद्योग-मानक क्रिप्टोग्राफ़िक लाइब्रेरी का उपयोग करता है",
     "resources": "संसाधन",
@@ -195,13 +195,13 @@
   "seo": {
     "whatIs": {
       "title": "ऑनलाइन SSH कुंजी जनरेटर क्या है?",
-      "desc": "इस टूल जैसा ऑनलाइन SSH कुंजी जनरेटर आपके ब्राउज़र में सुरक्षित रूप से क्रिप्टोग्राफ़िक कुंजी जोड़े बनाता है। SSH कुंजियों में एक सार्वजनिक कुंजी (सर्वर के साथ साझा) और एक निजी कुंजी (गोपनीय रखी जाती है) होती है। पासवर्ड के विपरीत, ऑनलाइन जनरेट की गई SSH कुंजियों को ब्रूट फ़ोर्स से क्रैक करना लगभग असंभव है।"
+      "desc": "Online SSH key generator browser में key pair बनाता है। Public key GitHub, GitLab, Bitbucket या server पर जाती है; private key आपकी machine पर रहती है।"
     },
     "whyUse": {
       "title": "इस ऑनलाइन SSH कुंजी जनरेटर का उपयोग क्यों करें?",
       "secure": {
         "title": "सुरक्षित ऑनलाइन निर्माण",
-        "desc": "सभी क्रिप्टोग्राफ़िक ऑपरेशन आपके ब्राउज़र में होते हैं। यह ऑनलाइन SSH कुंजी जनरेटर सुनिश्चित करता है कि आपकी निजी कुंजियाँ कभी आपके डिवाइस को नहीं छोड़ती।"
+        "desc": "Cryptographic operations client-side चलती हैं। यह online SSH key generator private keys upload या transmit नहीं करता।"
       },
       "modern": {
         "title": "आधुनिक एल्गोरिथ्म",
@@ -280,7 +280,7 @@
       "subtitle": "SSH कुंजियों और इस टूल के बारे में सामान्य प्रश्नों के उत्तर पाएं।",
       "safe": {
         "question": "क्या ऑनलाइन SSH कुंजियाँ बनाना सुरक्षित है?",
-        "answer": "हाँ, यह टूल 100% सुरक्षित है क्योंकि सभी कुंजी निर्माण पूरी तरह से आपके ब्राउज़र में Web Crypto API का उपयोग करके होता है। आपकी निजी कुंजियाँ कभी आपके डिवाइस को नहीं छोड़ती और कभी किसी सर्वर को प्रेषित नहीं होती। सोर्स कोड ओपन सोर्स है और GitHub पर ऑडिट योग्य है।"
+        "answer": "अगर आप loaded page और browser environment पर भरोसा करते हैं तो हाँ। Key local generate होती है और private key upload नहीं होती। Strict security policy के लिए offline generate करें या terminal में ssh-keygen use करें।"
       },
       "ed25519VsRsa": {
         "question": "Ed25519 और RSA में क्या अंतर है?",
@@ -292,7 +292,7 @@
       },
       "rsaKeySize": {
         "question": "RSA के लिए मुझे कौन सा कुंजी आकार उपयोग करना चाहिए?",
-        "answer": "RSA कुंजियों के लिए, अधिकतम सुरक्षा के लिए 4096-बिट की सिफारिश की जाती है। 2048-बिट न्यूनतम स्वीकार्य आकार है और अधिकांश उद्देश्यों के लिए पर्याप्त सुरक्षा प्रदान करता है। 2048-बिट से छोटी कुंजियाँ असुरक्षित मानी जाती हैं और इनका उपयोग नहीं किया जाना चाहिए।"
+        "answer": "नई keys के लिए आम तौर पर Ed25519 चुनें। पुराना SSH server या tool Ed25519 support न करे तो RSA 4096 इस्तेमाल करें।"
       },
       "offline": {
         "question": "क्या मैं इस SSH कुंजी जनरेटर का ऑफ़लाइन उपयोग कर सकता हूँ?",
@@ -320,7 +320,7 @@
       },
       "bestOnlineGenerator": {
         "question": "सबसे अच्छा ऑनलाइन SSH कुंजी जनरेटर कौन सा है?",
-        "answer": "यह SSH कुंजी जनरेटर सबसे अच्छे मुफ्त ऑनलाइन विकल्पों में से एक है क्योंकि यह 100% आपके ब्राउज़र में चलता है, आधुनिक Ed25519 और RSA एल्गोरिथ्म का समर्थन करता है, PWA के रूप में ऑफ़लाइन काम करता है, और कभी भी आपकी निजी कुंजियाँ किसी सर्वर को नहीं भेजता।"
+        "answer": "SSH Key Generator: online SSH key बनाएं. Cryptographic operations client-side चलती हैं। यह online SSH key generator private keys upload या transmit नहीं करता।"
       },
       "permissions": {
         "question": "मेरी SSH निजी कुंजी की क्या अनुमतियाँ होनी चाहिए?",

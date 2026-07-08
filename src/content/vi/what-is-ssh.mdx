@@ -82,7 +82,7 @@ Cách tiếp cận này có một số ưu điểm:
 - **Có thể tự động hóa** — script và pipeline CI/CD có thể xác thực mà không cần tương tác của con người.
 - **Có thể thu hồi** — xóa khóa công khai khỏi `authorized_keys` ngay lập tức thu hồi quyền truy cập.
 
-Loại khóa hiện đại và được khuyến nghị nhất là **Ed25519**, sử dụng mật mã học đường cong elliptic trên đường cong Edwards. Khóa RSA cũng được hỗ trợ rộng rãi, dù bạn nên dùng tối thiểu 4096 bit.
+Với key mới, thường chọn Ed25519. Dùng RSA 4096-bit khi hệ thống cũ yêu cầu.
 
 Để tìm hiểu sâu về các cặp khóa, xem hướng dẫn của chúng tôi về <a href="/vi/what-is-an-ssh-key/">SSH key là gì</a>.
 

@@ -1,8 +1,17 @@
-# How to Set Up SSH: A Complete Step-by-Step Guide for Linux, Mac, and Windows
+# How to Set Up SSH Keys for GitHub, Linux, Mac, and Windows
 
-Setting up SSH correctly takes about ten minutes and pays dividends for years. Once configured, you can log into servers without typing passwords, push code to GitHub without entering credentials on every operation, and automate deployments with confidence. This guide walks through the entire process — from generating a key pair to troubleshooting common errors — for Linux, macOS, and Windows.
+To **set up SSH**, generate an SSH key pair, install the public key on the server or Git provider, load the private key with `ssh-agent`, and test the connection. This guide walks through SSH key setup for GitHub, GitLab, Linux servers, macOS, and Windows, including common fixes for `Permission denied (publickey)`.
 
-If you want to understand the underlying technology first, read our guides on <a href="/what-is-ssh/">what SSH is</a> and <a href="/what-is-an-ssh-key/">what SSH keys are</a>.
+## Quick answer
+
+The usual flow is: generate the key, copy the public key, add it to GitHub/GitLab or the server, load the private key into ssh-agent, then test the connection.
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+ssh -T git@github.com
+```
 
 ## Prerequisites
 
@@ -87,7 +96,7 @@ If you need to connect to very old systems that do not support Ed25519:
 ssh-keygen -t rsa -b 4096 -C "your@email.com"
 ```
 
-Use 4096 bits minimum. RSA keys smaller than 4096 bits are no longer considered adequate security.
+For new RSA keys, use 4096 bits when legacy compatibility is required. Use Ed25519 for most modern systems.
 
 ## Step 2: Set Up SSH on Linux
 

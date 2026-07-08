@@ -1,8 +1,16 @@
 # Comanda SSH: Referință completă cu exemple pentru Linux, Mac și Windows
 
-Comanda `ssh` este instrumentul principal pentru inițierea conexiunilor SSH din linia de comandă. Fie că te autentifici pe un server Linux la distanță, redirecționezi un port pentru accesul la baze de date sau sari printr-un bastion host pentru a ajunge la o rețea internă, comanda `ssh` este punctul tău de intrare. Acest ghid acoperă totul, de la sintaxa de bază la flag-uri avansate, tunelare și configurații ProxyJump — cu exemple reale pentru Linux, macOS și Windows.
 
-Înainte de a rula comenzi SSH, vei avea nevoie de chei SSH. Consultă ghidul nostru despre <a href="/ro/what-is-an-ssh-key/">ce este o cheie SSH</a> sau folosește <a href="/">generatorul gratuit online</a> pentru a crea o pereche de chei.
+## Răspuns rapid
+
+Pentru majoritatea conexiunilor ajunge ssh user@host. Folosește -i pentru o cheie anume, -p pentru alt port și -J pentru un bastion host.
+
+```bash
+ssh user@server.example.com
+ssh -i ~/.ssh/id_ed25519 user@server.example.com
+ssh -p 2222 user@server.example.com
+ssh -J bastion.example.com user@private.example.com
+```
 
 ## Sintaxa comenzii SSH
 

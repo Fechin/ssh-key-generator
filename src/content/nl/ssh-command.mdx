@@ -1,8 +1,16 @@
 # Het SSH-commando: Volledige Referentie met Voorbeelden voor Linux, Mac en Windows
 
-Het commando `ssh` is het primaire hulpmiddel voor het initiëren van SSH-verbindingen vanaf de opdrachtregel. Of je nu inlogt op een externe Linux-server, een poort doorstuurt voor databasetoegang of via een bastionhost springt om een intern netwerk te bereiken — het commando `ssh` is je startpunt. Deze gids behandelt alles, van de basissyntaxis tot geavanceerde vlaggen, tunneling en ProxyJump-configuraties — met echte voorbeelden voor Linux, macOS en Windows.
 
-Voordat je SSH-commando's uitvoert, heb je SSH-sleutels nodig. Zie onze gids over <a href="/nl/what-is-an-ssh-key/">wat een SSH-sleutel is</a> of gebruik de <a href="/">gratis online generator</a> om een sleutelpaar aan te maken.
+## Kort antwoord
+
+Voor de meeste verbindingen is ssh user@host genoeg. Gebruik -i voor een specifieke sleutel, -p voor een andere poort en -J voor een bastion host.
+
+```bash
+ssh user@server.example.com
+ssh -i ~/.ssh/id_ed25519 user@server.example.com
+ssh -p 2222 user@server.example.com
+ssh -J bastion.example.com user@private.example.com
+```
 
 ## SSH-opdrachtsyntaxis
 

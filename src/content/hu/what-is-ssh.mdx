@@ -82,7 +82,7 @@ Ennek a megközelítésnek számos előnye van:
 - **Automatizálható** – a szkriptek és a CI/CD-folyamatok emberi beavatkozás nélkül is hitelesíthetők.
 - **Visszavonható** – a nyilvános kulcs eltávolítása a `authorized_keys` címről azonnal visszavonja a hozzáférést.
 
-A legmodernebb és legajánlottabb kulcstípus az **Ed25519**, amely elliptikus görbe kriptográfiát használ az Edwards-görbe felett. Az RSA kulcsok is széles körben támogatottak, bár legalább 4096 bitet kell használni.
+Új kulcsokhoz általában Ed25519-et válasszon. RSA 4096-bit akkor kell, ha régi rendszerek megkövetelik.
 
 A kulcspárok mélyebb megismeréséhez tekintse meg az <a href="/hu/what-is-an-ssh-key/">mi az SSH-kulcs</a> című útmutatónkat.
 
@@ -263,7 +263,7 @@ Az SSH alapértelmezés szerint a **22-es TCP-portot** használja. Ez egy jól i
 
 ### Feltörhető az SSH?
 
-Egy megfelelően konfigurált SSH-kiszolgáló kulcsalapú hitelesítéssel rendkívül nehéz kompromisszumot kötni. A kriptográfia – Ed25519 kulcsok, AES-256 titkosítás, SHA-2 MAC-ok – a kulcshitelesítés szempontjából kvantumellenállónak tekinthető, és számításilag nem kivitelezhető a nyers erővel szemben. A valós SSH-kompromisszumok jellemzően a következőket foglalják magukban: ellopott privát kulcsfájlok, gyenge jelszavak, rosszul konfigurált szerverek, amelyek gyenge jelszavakkal lehetővé teszik a jelszavas hitelesítést, sebezhető szoftververziók javítatlan CVE-kkel, vagy kriptográfiai támadások helyett társadalmi manipuláció. Tartsa naprakészen szerverét, tiltsa le a jelszavas hitelesítést, és védje meg privát kulcsfájlját.
+Modern SSH with key authentication is strong against classical brute force, but Ed25519 and RSA should not be described as quantum-safe. Real incidents usually involve stolen private keys, weak passphrases, misconfiguration, unpatched CVEs or social engineering.
 
 ### Mi a különbség az SSH és a HTTPS között?
 

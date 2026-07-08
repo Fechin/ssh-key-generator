@@ -1,6 +1,11 @@
 # Mi az SSH-kulcs? Nyilvános kulcsok, privát kulcsok és kulcspárok magyarázata
 
-Az **SSH-kulcs** egy titkosítási hitelesítő adat, amellyel jelszó nélkül hitelesíthetők az SSH-kiszolgálók. Az SSH-kulcsok párban állnak rendelkezésre – egy **nyilvános kulcs** és egy **privát kulcs** –, és együtt biztonságosabbá és kényelmesebbé teszik a távoli hozzáférést, mint a hagyományos jelszavas hitelesítés. Ez az útmutató elmagyarázza, mi az SSH-kulcs, hogyan működik a kulcspár-rendszer, milyen kulcstípusokat válasszunk, és hogyan használhatjuk az SSH-kulcsokat olyan szolgáltatásokkal, mint a GitHub és a GitLab.
+
+## Gyors válasz
+
+SSH-kulcs létrehozásakor egy publikus és egy privát kulcspár jön létre. Új kulcshoz általában az Ed25519 a jó választás; RSA 4096 főleg régi rendszerekhez kell.
+
+Új kulcsokhoz általában Ed25519-et válassz. RSA 4096 akkor kell, ha egy régi SSH-szerver vagy eszköz nem támogatja az Ed25519-et.
 
 ## Hogyan működnek az SSH-kulcsok
 
@@ -92,14 +97,14 @@ Az RSA a régebbi (1977-ben feltalált) algoritmus, és bár még mindig biztons
 ssh-keygen -t rsa -b 4096 -C "your@email.com"
 ```
 
-**Soha ne használjon 4096 bitnél kevesebb RSA-t.** Az RSA-1024 és az RSA-2048 a számítási teljesítmény növekedésével egyre inkább elégtelennek számít. A 256 bites Ed25519 egyenértékű vagy jobb biztonságot nyújt a kulcsméret töredékével.
+Új kulcsokhoz általában Ed25519-et válasszon. RSA 4096-bit akkor kell, ha régi rendszerek megkövetelik.
 
 ### Összefoglaló összehasonlítás
 
 | Funkció | Ed25519 | RSA 4096 |
 |---|---|---|
 | Kulcsméret (nyilvános) | ~68 karakter | ~725 karakter |
-| Biztonsági szint | 128 bites (kvantum-ellenálló szerkezet) | ~140 bites klasszikus |
+| Security level | ~128-bit classical security; not quantum-safe | Depends on key size; 4096-bit gives more classical margin |
 | Sebesség | Nagyon gyors | Lassabban |
 | Kompatibilitás | Modern SSH (OpenSSH 6.5+) | Univerzális |
 | Ajánlott | Minden új kulcs | Csak örökölt rendszerek |
@@ -321,7 +326,7 @@ Ha elveszíti privát kulcsát, és nincs biztonsági másolata, akkor elveszít
 
 ### Az Ed25519 vagy az RSA jobb?
 
-**Az Ed25519 jobb az összes új kulcsgenerációhoz.** Gyorsabb, kisebb kulcsokat állít elő, nincs kitéve bizonyos, az RSA-t érintő megvalósítási hiányosságoknak, és az RSA-4096-hoz képest egyenértékű vagy jobb biztonságot nyújt 256 bites kulccsal. Az egyetlen ok az RSA használatára manapság a nagyon régi SSH-kiszolgálószoftverekkel (az OpenSSH a 6.5-ös verzió előtt, 2014-ben megjelent) vagy a régi hardver biztonsági modulokkal való kompatibilitás. Ha bármilyen modern szerverhez vagy szolgáltatáshoz, például GitHubhoz fér hozzá, használja az Ed25519-et.
+Új kulcsokhoz általában Ed25519-et válasszon. RSA 4096-bit akkor kell, ha régi rendszerek megkövetelik.
 
 ## SSH kulcspár létrehozása
 

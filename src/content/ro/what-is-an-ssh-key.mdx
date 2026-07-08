@@ -1,6 +1,11 @@
 # Ce este o cheie SSH? Chei publice, chei private și perechi de chei explicate
 
-O **cheie SSH** este o acreditare criptografică utilizată pentru autentificarea la serverele SSH fără parolă. Cheile SSH vin în perechi — o **cheie publică** și o **cheie privată** — și împreună fac accesul de la distanță mai sigur și mai convenabil decât autentificarea tradițională prin parolă. Acest ghid explică ce este o cheie SSH, cum funcționează sistemul de perechi de chei, ce tipuri de chei să alegi și cum să folosești cheile SSH cu servicii precum GitHub și GitLab.
+
+## Răspuns rapid
+
+Generarea unei chei SSH înseamnă crearea unei perechi cheie publică/cheie privată. Pentru chei noi, Ed25519 este de obicei alegerea potrivită; RSA 4096 rămâne pentru sisteme vechi.
+
+Pentru chei noi, alege de obicei Ed25519. Folosește RSA 4096 dacă un server SSH vechi sau un tool nu acceptă Ed25519.
 
 ## Cum funcționează cheile SSH
 
@@ -92,14 +97,14 @@ RSA este algoritmul mai vechi (inventat în 1977) și, deși este în continuare
 ssh-keygen -t rsa -b 4096 -C "your@email.com"
 ```
 
-**Nu folosi niciodată RSA cu mai puțin de 4096 de biți.** RSA-1024 și RSA-2048 sunt considerate din ce în ce mai insuficiente pe măsură ce puterea de calcul crește. Ed25519 la 256 de biți oferă securitate echivalentă sau mai bună cu o fracțiune din dimensiunea cheii.
+Pentru chei noi, alege de obicei Ed25519. Folosește RSA 4096-bit când sistemele vechi o cer.
 
 ### Comparație rezumativă
 
 | Caracteristică | Ed25519 | RSA 4096 |
 |---|---|---|
 | Dimensiunea cheii (publică) | ~68 caractere | ~725 caractere |
-| Nivel de securitate | 128-bit (structură rezistentă post-cuantic) | ~140-bit clasic |
+| Security level | ~128-bit classical security; not quantum-safe | Depends on key size; 4096-bit gives more classical margin |
 | Viteză | Foarte rapid | Mai lent |
 | Compatibilitate | SSH modern (OpenSSH 6.5+) | Universal |
 | Recomandat pentru | Toate cheile noi | Numai sisteme legacy |
@@ -321,7 +326,7 @@ Dacă îți pierzi cheia privată și nu ai un backup, pierzi capacitatea de a t
 
 ### Este Ed25519 sau RSA mai bun?
 
-**Ed25519 este mai bun pentru toată generarea de chei noi.** Este mai rapid, produce chei mai mici, nu este vulnerabil la anumite slăbiciuni de implementare care afectează RSA și oferă securitate echivalentă sau superioară cu o cheie de 256 de biți comparativ cu RSA-4096. Singurul motiv pentru a folosi RSA astăzi este compatibilitatea cu software-ul de server SSH foarte vechi (OpenSSH înainte de versiunea 6.5, lansată în 2014) sau module de securitate hardware legacy. Dacă accesezi orice server modern sau serviciu precum GitHub, folosește Ed25519.
+Pentru chei noi, alege de obicei Ed25519. Folosește RSA 4096-bit când sistemele vechi o cer.
 
 ## Generează-ți perechea de chei SSH
 
