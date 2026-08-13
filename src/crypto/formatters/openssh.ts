@@ -116,7 +116,7 @@ export async function formatEd25519PrivateKey(
 
   lines.push(OPENSSH_PRIVATE_KEY_FOOTER)
 
-  return lines.join('\n')
+  return `${lines.join('\n')}\n`
 }
 
 /**
@@ -249,7 +249,7 @@ export async function formatRsaPrivateKey(
 
   lines.push(OPENSSH_PRIVATE_KEY_FOOTER)
 
-  return lines.join('\n')
+  return `${lines.join('\n')}\n`
 }
 
 /**
