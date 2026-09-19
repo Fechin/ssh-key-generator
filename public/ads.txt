@@ -1,0 +1,51 @@
+#Google
+google.com, pub-3004679189235742, DIRECT, f08c47fec0942fa0
+google.com, pub-5812357352335075, DIRECT, f08c47fec0942fa0
+google.com, pub-9728353415461720, DIRECT, f08c47fec0942fa0
+google.com, pub-8691406134231910, DIRECT, f08c47fec0942fa0
+google.com, pub-3027395197878404, DIRECT, f08c47fec0942fa0
+
+#Ad.Plus
+ad.plus, 23081400635, DIRECT
+google.com, pub-4573231550355221, RESELLER, f08c47fec0942fa0
+pubmatic.com, 160907, RESELLER, 5d62403b186f2ace
+indexexchange.com, 194273, RESELLER, 50b1c356f2c5c8fc
+rubiconproject.com, 24442, RESELLER, 0bfd66d529a55807
+media.net, 8CU5DERG1, DIRECT
+onetag.com, 7a07637ca4dd99f-OB, DIRECT
+rhythmone.com, 895733750, DIRECT, a670c89d4a324e47
+video.unrulymedia.com, 895733750, DIRECT
+sovrn.com, 357833, DIRECT, fafdf38b16bf6b2b
+lijit.com, 357833, DIRECT, fafdf38b16bf6b2b
+lijit.com, 357833-eb, DIRECT, fafdf38b16bf6b2b
+
+#Gumgum
+gumgum.com, 11602, DIRECT, ffdef49475d318a9
+improvedigital.com, 1884, RESELLER
+google.com, pub-3848273848634341, RESELLER, f08c47fec0942fa0
+contextweb.com, 558355, RESELLER, 89ff185a4c4e857c
+
+#Index Exchange
+indexexchange.com, 192410, DIRECT, 50b1c356f2c5c8fc
+indexexchange.com, 186266, DIRECT, 50b1c356f2c5c8fc
+indexexchange.com, 193336, DIRECT, 50b1c356f2c5c8fc
+indexexchange.com, 186779, DIRECT, 50b1c356f2c5c8fc
+indexexchange.com, 209857, DIRECT, 50b1c356f2c5c8fc
+
+#Inmobi
+inmobi.com, 6801ebe3b36d4afba25f67b2d0e9d9ed, DIRECT, 83e75a7ae333ca9d
+
+#Kulture
+dxkulture.com, 12005, DIRECT
+
+#MediaGrid
+themediagrid.com, 5A8D1U, DIRECT, 35d5010d7789b49d
+themediagrid.com, KA3Q45, DIRECT, 35d5010d7789b49d
+
+#Media.net
+media.net, 8CUIBM874, DIRECT
+media.net, 8CUP47128, DIRECT
+media.net, 8CU11059L, DIRECT
+
+#Nativo
+nativo.com, 5722, DIRECT, 59521ca7cc5e9fee
