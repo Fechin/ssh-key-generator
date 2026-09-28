@@ -144,6 +144,51 @@
       })();
     </script>
 
+    <!-- Ad.Plus: Interstitial and Premium Sticky Anchor -->
+    <script>
+      (function () {
+        // Only request ads on the production site, never on local or preview hosts.
+        if (window.location.hostname !== 'sshkeygenerator.com') return;
+
+        window.googletag = window.googletag || { cmd: [] };
+        window.googletag.cmd.push(function () {
+          var googletag = window.googletag;
+          var interstitialSlot = googletag.defineOutOfPageSlot(
+            '/21849154601,23081400635/Ad.Plus-Interstitial',
+            googletag.enums.OutOfPageFormat.INTERSTITIAL
+          );
+          var anchorSlot = googletag.defineOutOfPageSlot(
+            '/21849154601,23081400635/Ad.Plus-Anchor',
+            googletag.enums.OutOfPageFormat.BOTTOM_ANCHOR
+          );
+
+          // Unsupported formats can return null; register both before requesting ads.
+          if (interstitialSlot) interstitialSlot.addService(googletag.pubads());
+          if (anchorSlot) anchorSlot.addService(googletag.pubads());
+          if (!interstitialSlot && !anchorSlot) return;
+
+          googletag.pubads().enableSingleRequest();
+          googletag.enableServices();
+
+          if (interstitialSlot) googletag.display(interstitialSlot);
+          if (anchorSlot) {
+            googletag.display(anchorSlot);
+            window.setInterval(function () {
+              if (document.visibilityState === 'visible') {
+                googletag.pubads().refresh([anchorSlot]);
+              }
+            }, 30000);
+          }
+        });
+
+        var script = document.createElement('script');
+        script.async = true;
+        script.src = 'https://securepubads.g.doubleclick.net/tag/js/gpt.js';
+        script.crossOrigin = 'anonymous';
+        document.head.appendChild(script);
+      })();
+    </script>
+
     <!-- Additional Meta Tags for PWA/Mobile -->
     <meta name="application-name" content="SSH Key Generator" />
     <meta name="apple-mobile-web-app-title" content="SSH Key Generator" />
