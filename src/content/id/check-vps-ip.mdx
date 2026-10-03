@@ -1,0 +1,47 @@
+# Cara cek IP publik VPS setelah login lewat SSH
+
+<img src="/images/articles/check-vps-ip.webp" alt="Terminal SSH pada VPS menjalankan curl myip.dog dan menampilkan contoh IP publik" width="1536" height="1024" className="w-full h-auto rounded-xl border border-border" />
+
+*Ilustrasi orisinal. Alamat IP pada gambar hanya contoh.*
+
+Sudah login ke VPS lewat [SSH](/id/ssh-command/) dan ingin tahu alamat yang dipakai server untuk terhubung ke internet? Jalankan `curl myip.dog` di terminal VPS. Cara ini praktis untuk mengecek jaringan atau menyiapkan informasi bagi tim dukungan, tanpa membuka panel hosting.
+
+## Jalankan perintah di VPS
+
+Pastikan terminal berada di sesi SSH server. Kalau perintah dijalankan di komputer sendiri tanpa terhubung ke VPS, hasilnya adalah alamat koneksi internet lokal Anda.
+
+```bash
+curl myip.dog
+```
+
+Jika permintaan berhasil, Anda akan mendapat alamat dalam bentuk teks biasa:
+
+```text
+203.0.113.42
+```
+
+Alamat di atas hanya contoh. IP publik VPS Anda adalah nilai yang benar-benar muncul di terminal. curl mengirim permintaan, lalu MyIP.dog mengembalikan alamat sumber yang dilihatnya. Tidak perlu memasang skrip pencarian tambahan.
+
+Untuk mengecek lewat koneksi HTTPS yang terenkripsi, gunakan:
+
+```bash
+curl https://myip.dog
+```
+
+## Apa arti hasilnya?
+
+Hasil tersebut adalah IP publik yang dipakai untuk permintaan keluar ini. Jika VPS melewati gateway NAT, proxy, atau VPN, alamat yang muncul bisa milik layanan perantara itu. Jadi, hasilnya belum tentu sama dengan IP antarmuka jaringan atau alamat yang dipakai untuk login SSH. Perintah ini juga tidak menampilkan semua IP yang terpasang pada server.
+
+Anda bisa mendapat IPv4 atau IPv6, tergantung koneksinya. Pilihan terkait dijelaskan dalam [dokumentasi curl](https://curl.se/docs/manpage.html). Sebelum mengarahkan domain ke IP publik VPS, konfirmasikan alamat untuk koneksi masuk kepada penyedia hosting, lalu periksa pemetaan NAT dan firewall. Berhasil mengetahui IP tidak berarti situs atau port SSH sudah bisa diakses dari luar.
+
+## Jika muncul pesan error
+
+`curl: command not found` berarti curl belum terpasang. Instal lewat pengelola paket distribusi Linux Anda. Jika nama domain tidak bisa diterjemahkan menjadi alamat, periksa DNS. Jika koneksi mengalami timeout, cek akses keluar server dan pengaturan proxy. Simpan pesan error lengkap untuk membantu mencari penyebabnya.
+
+## Tool lain di MyIP.dog
+
+[Halaman utama MyIP.dog](https://myip.dog/) menunjukkan IP publik koneksi browser. Membukanya di komputer sendiri tidak otomatis mengecek alamat VPS jarak jauh.
+
+[Halaman tool](https://myip.dog/tools) menyediakan pencarian DNS, tes IPv6, pemeriksaan port TCP, Ping, Traceroute, IP WHOIS, dan kalkulator subnet. Pilih sesuai kebutuhan: DNS untuk catatan domain atau pemeriksaan port untuk layanan TCP publik. Ping dan Traceroute online dijalankan dari titik pengukuran jarak jauh, jadi perhatikan juga lokasinya.
+
+Setelah mengecek IP publik VPS, catat alamat dan waktu pengecekan. Ini memudahkan perbandingan setelah perubahan konfigurasi atau saat menghubungi tim dukungan.

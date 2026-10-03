@@ -1,0 +1,47 @@
+# VPS-palvelimen julkisen IP-osoitteen tarkistaminen SSH-yhteydellä
+
+<img src="/images/articles/check-vps-ip.webp" alt="VPS-palvelimen SSH-pääte, curl myip.dog -komento ja julkinen esimerkkiosoite" width="1536" height="1024" className="w-full h-auto rounded-xl border border-border" />
+
+*Alkuperäinen kuvitus. Kuvan IP-osoite on vain esimerkki.*
+
+Olet kirjautunut VPS-palvelimelle [SSH-yhteydellä](/fi/ssh-command/) ja haluat tietää, millä osoitteella palvelin muodostaa yhteyksiä internetiin. Suorita etäpäätteessä `curl myip.dog`. Näin tarkistat palvelimen julkisen IP-osoitteen nopeasti esimerkiksi verkkovian selvittämistä tai tukipyyntöä varten.
+
+## Suorita komento palvelimella
+
+Varmista, että käytät VPS:n SSH-istuntoa. Omalla tietokoneellasi suoritettu komento näyttää oman verkkoyhteytesi osoitteen.
+
+```bash
+curl myip.dog
+```
+
+Onnistunut pyyntö palauttaa IP-osoitteen tavallisena tekstinä:
+
+```text
+203.0.113.42
+```
+
+Yllä oleva osoite on esimerkki. VPS:n julkinen IP-osoite on päätteeseen oikeasti palautuva arvo. curl lähettää pyynnön ja MyIP.dog kertoo havaitsemansa lähdeosoitteen. Erillistä hakuskriptiä ei tarvita.
+
+Voit tehdä tarkistuksen myös salatulla HTTPS-yhteydellä:
+
+```bash
+curl https://myip.dog
+```
+
+## Mitä tulos kertoo?
+
+Saat tämän yksittäisen lähtevän pyynnön julkisen IP-osoitteen. Jos palvelin käyttää NAT-yhdyskäytävää, välityspalvelinta tai VPN:ää, tulos voi olla kyseisen välikäden osoite. Sen ei siis tarvitse vastata verkkoliitännän osoitetta tai SSH-kirjautumisessa käytettyä osoitetta. Komento ei myöskään luettele kaikkia VPS:lle määritettyjä IP-osoitteita.
+
+Tulos voi olla IPv4- tai IPv6-osoite yhteydestä riippuen. Vaihtoehdot on kuvattu [curlin ohjeessa](https://curl.se/docs/manpage.html). Ennen kuin osoitat verkkotunnuksen palvelimelle, varmista palveluntarjoajalta saapuvan liikenteen osoite ja tarkista NAT-määritykset sekä palomuuri. Onnistunut IP-haku ei vielä osoita, että verkkosivusto tai SSH-portti on saavutettavissa ulkopuolelta.
+
+## Jos komento ei toimi
+
+Ilmoitus `curl: command not found` tarkoittaa, että curl on asennettava Linux-jakelusi paketinhallinnalla. Nimenselvityksen epäonnistuessa tarkista DNS. Aikakatkaisun yhteydessä tarkista lähtevät yhteydet ja välityspalvelimen asetukset. Säilytä tarkka virheilmoitus jatkoselvitystä varten.
+
+## Muita MyIP.dogin työkaluja
+
+[MyIP.dogin etusivu](https://myip.dog/) näyttää selaimen yhteyden julkisen IP-osoitteen. Omalla koneellasi avattu sivu ei tarkista etäpalvelimen osoitetta automaattisesti.
+
+[Työkalusivulla](https://myip.dog/tools) on DNS-haku, IPv6-testi, TCP-porttien tarkistus, Ping, Traceroute, IP WHOIS ja aliverkkolaskuri. Valitse työkalu sen mukaan, tutkitko verkkotunnuksen tietueita vai julkista TCP-palvelua. Ping ja Traceroute käynnistyvät etämittauspisteestä, joten huomioi myös sen sijainti.
+
+Kirjaa VPS:n julkinen IP-osoite ja tarkistuksen ajankohta. Näin voit verrata tuloksia asetusten muuttamisen jälkeen ja kertoa tukipalvelulle, mitä havaitsit.

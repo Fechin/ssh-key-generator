@@ -1,0 +1,47 @@
+# Como descobrir o IP público do VPS depois de acessar por SSH
+
+<img src="/images/articles/check-vps-ip.webp" alt="Terminal SSH de um VPS executando curl myip.dog para consultar o IP de saída" width="1536" height="1024" className="w-full h-auto rounded-xl border border-border" />
+
+*Ilustração original. O endereço exibido é apenas um exemplo.*
+
+Você acessou o VPS por [SSH](/pt/ssh-command/) e quer saber qual IP ele usa para sair para a internet? Basta executar `curl myip.dog` no terminal remoto. A consulta ajuda a conferir a conexão do servidor e reunir informações para o suporte, sem precisar abrir o painel da hospedagem.
+
+## Rode o comando no VPS
+
+Primeiro, confira se o terminal está na sessão SSH do servidor. Se você rodar o comando no próprio computador, sem acessar o VPS, verá o IP da sua conexão local.
+
+```bash
+curl myip.dog
+```
+
+Quando a consulta dá certo, a resposta é um endereço em texto simples:
+
+```text
+203.0.113.42
+```
+
+Esse endereço serve apenas como exemplo. O IP público do VPS será o valor retornado na sua sessão. O curl envia a requisição, e o MyIP.dog devolve o IP de origem que observou. Não é necessário instalar um script específico para isso.
+
+Para consultar usando uma conexão HTTPS criptografada, use:
+
+```bash
+curl https://myip.dog
+```
+
+## O que esse IP representa?
+
+A consulta mostra o IP público usado naquela requisição de saída. Se o VPS passa por um gateway NAT, proxy ou VPN, o resultado pode ser o endereço desse intermediário. Por isso, ele pode diferir do IP da interface de rede ou do endereço usado no login SSH. O comando também não lista todos os IPs atribuídos ao servidor.
+
+Você pode receber IPv4 ou IPv6, conforme a conexão utilizada. O [manual do curl](https://curl.se/docs/manpage.html) explica as opções. Antes de apontar um domínio para o IP público do VPS, confirme com a hospedagem o endereço para conexões de entrada e confira o NAT e o firewall. Consultar o IP não garante que o site ou a porta SSH estejam acessíveis de fora.
+
+## Como lidar com erros
+
+Se aparecer `curl: command not found`, instale o curl pelo gerenciador de pacotes da sua distribuição Linux. Falhas na resolução do nome pedem uma revisão do DNS. Em caso de tempo esgotado, verifique a conexão de saída e as configurações de proxy. Guarde a mensagem exibida para investigar o problema.
+
+## Outras ferramentas do MyIP.dog
+
+A [página inicial do MyIP.dog](https://myip.dog/) mostra o IP público da conexão do navegador. Abrir o site no seu computador não consulta automaticamente o servidor remoto.
+
+A [página de ferramentas](https://myip.dog/tools) reúne consulta DNS, teste de IPv6, verificação de portas TCP, Ping, Traceroute, IP WHOIS e calculadora de sub-redes. Use a consulta DNS para conferir os registros de um domínio e o verificador de portas para investigar um serviço TCP público. Ping e Traceroute partem de uma sonda remota, então confira também o local da medição.
+
+Depois de consultar o IP público do VPS, anote o endereço e o horário. Isso facilita comparar alterações na rede e explicar o caso ao suporte.

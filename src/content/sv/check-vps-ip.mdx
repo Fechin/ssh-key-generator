@@ -1,0 +1,47 @@
+# Ta reda på din VPS publika IP-adress via SSH
+
+<img src="/images/articles/check-vps-ip.webp" alt="SSH-terminal på en VPS med curl myip.dog och en publik exempeladress" width="1536" height="1024" className="w-full h-auto rounded-xl border border-border" />
+
+*Egen illustration. IP-adressen på bilden är ett exempel.*
+
+Du har loggat in på din VPS med [SSH](/sv/ssh-command/) och vill kontrollera vilken adress servern använder ut mot internet. Kör `curl myip.dog` i fjärrterminalen. Det är ett enkelt sätt att se serverns publika IP-adress när du felsöker nätverket eller behöver uppgifter till supporten.
+
+## Kör kommandot på din VPS
+
+Kontrollera att terminalen verkligen är ansluten till servern via SSH. Kör du samma kommando på din egen dator får du adressen för din egen internetanslutning.
+
+```bash
+curl myip.dog
+```
+
+Om förfrågan lyckas visas en IP-adress som vanlig text:
+
+```text
+203.0.113.42
+```
+
+Adressen ovan är bara ett exempel. Den publika IP-adressen för din VPS är värdet som faktiskt returneras i terminalen. curl skickar förfrågan och MyIP.dog svarar med den källadress som tjänsten ser. Du behöver inget särskilt skript.
+
+Vill du använda en krypterad HTTPS-anslutning kan du köra:
+
+```bash
+curl https://myip.dog
+```
+
+## Så tolkar du resultatet
+
+Resultatet visar den publika IP-adress som användes för just den utgående förfrågan. Om servern går via en NAT-gateway, proxy eller VPN kan adressen tillhöra den mellanliggande tjänsten. Den behöver därför inte vara samma som på nätverksgränssnittet eller den du använder för SSH. Kommandot listar inte heller alla serverns IP-adresser.
+
+Du kan få IPv4 eller IPv6 beroende på anslutningen. Mer om alternativen finns i [curl-manualen](https://curl.se/docs/manpage.html). Innan du pekar en domän mot din VPS bör du be leverantören bekräfta adressen för inkommande trafik och kontrollera NAT och brandvägg. En lyckad IP-kontroll visar inte att webbplatsen eller SSH-porten går att nå utifrån.
+
+## Om något går fel
+
+`curl: command not found` betyder att du behöver installera curl med pakethanteraren i din Linux-distribution. Vid fel i namnuppslagningen kontrollerar du DNS. Om anslutningen gör timeout kontrollerar du utgående trafik och eventuella proxyinställningar. Spara det exakta felmeddelandet inför fortsatt felsökning.
+
+## Fler verktyg på MyIP.dog
+
+[MyIP.dogs startsida](https://myip.dog/) visar den publika IP-adressen för webbläsarens anslutning. Öppnar du sidan på din egen dator kontrolleras inte din VPS automatiskt.
+
+[Verktygssidan](https://myip.dog/tools) innehåller DNS-uppslagning, IPv6-test, kontroll av TCP-portar, Ping, Traceroute, IP WHOIS och en subnätskalkylator. Välj verktyg efter frågan du vill besvara. Online-Ping och Traceroute startar från en fjärrnod, så läs också var mätningen görs.
+
+Skriv ned din VPS publika IP-adress och tidpunkten för kontrollen. Då blir det lättare att jämföra resultat efter en ändring eller beskriva problemet för supporten.

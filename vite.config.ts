@@ -29,7 +29,7 @@ const localeNavigationDenylist = [
   /^\/\.well-known\/llms\.txt$/,
   /^\/robots\.txt$/,
   /^\/sitemap\.xml$/,
-  /^\/(?:what-is-ssh|what-is-an-ssh-key|ssh-command|how-to-set-up-ssh)(?:\/.*)?$/,
+  /^\/(?:what-is-ssh|what-is-an-ssh-key|ssh-command|how-to-set-up-ssh|check-vps-ip)(?:\/.*)?$/,
 ]
 
 // https://vite.dev/config/
@@ -73,7 +73,7 @@ export default defineConfig({
         ]
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        globPatterns: ['**/*.{js,css,html,ico,png,webp,svg,woff2}'],
         navigateFallbackDenylist: localeNavigationDenylist,
         runtimeCaching: [
           {

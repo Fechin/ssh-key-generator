@@ -1,0 +1,47 @@
+# Jak zjistit veřejnou IP adresu VPS po přihlášení přes SSH
+
+<img src="/images/articles/check-vps-ip.webp" alt="SSH terminál na VPS s příkazem curl myip.dog a ukázkovou veřejnou IP adresou" width="1536" height="1024" className="w-full h-auto rounded-xl border border-border" />
+
+*Vlastní ilustrace. Zobrazená IP adresa je pouze příklad.*
+
+Přihlásili jste se k VPS přes [SSH](/cs/ssh-command/) a chcete zjistit, pod jakou adresou server komunikuje s internetem? Spusťte ve vzdáleném terminálu `curl myip.dog`. Veřejnou IP adresu VPS tak rychle ověříte při hledání síťového problému nebo přípravě dotazu na podporu, bez otevírání panelu hostingu.
+
+## Spusťte příkaz na serveru
+
+Nejprve ověřte, že pracujete v SSH relaci svého VPS. Pokud příkaz spustíte na vlastním počítači bez připojení k serveru, získáte adresu svého internetového připojení.
+
+```bash
+curl myip.dog
+```
+
+Při úspěšném požadavku se vrátí IP adresa jako prostý text:
+
+```text
+203.0.113.42
+```
+
+Tato adresa je jen příklad. Veřejná IP adresa vašeho VPS je skutečná hodnota vrácená v terminálu. curl odešle požadavek a MyIP.dog odpoví zdrojovou adresou, kterou vidí. Žádný další vyhledávací skript nepotřebujete.
+
+Pro dotaz přes šifrované připojení HTTPS můžete použít:
+
+```bash
+curl https://myip.dog
+```
+
+## Co výsledek znamená?
+
+Jde o veřejnou IP adresu použitou pro tento odchozí požadavek. Pokud VPS komunikuje přes NAT bránu, proxy nebo VPN, může se zobrazit adresa této prostřední služby. Nemusí tedy odpovídat adrese síťového rozhraní ani adrese, na kterou se přihlašujete přes SSH. Příkaz také nevypisuje všechny adresy přiřazené serveru.
+
+Podle spojení může být výsledkem IPv4 nebo IPv6. Možnosti popisuje [dokumentace curl](https://curl.se/docs/manpage.html). Než na veřejnou IP adresu VPS nasměrujete doménu, potvrďte u poskytovatele adresu pro příchozí spojení a zkontrolujte NAT i firewall. Úspěšný dotaz na IP neprokazuje, že je web nebo SSH port dostupný zvenčí.
+
+## Když se objeví chyba
+
+Hláška `curl: command not found` znamená, že musíte curl nainstalovat pomocí správce balíčků své linuxové distribuce. Při chybě překladu jména zkontrolujte DNS. Při vypršení časového limitu ověřte odchozí připojení a nastavení proxy. Přesnou chybovou zprávu si ponechte pro další hledání příčiny.
+
+## Další nástroje na MyIP.dog
+
+[Úvodní stránka MyIP.dog](https://myip.dog/) ukazuje veřejnou IP adresu připojení prohlížeče. Otevření stránky na vašem počítači automaticky nezjišťuje adresu vzdáleného VPS.
+
+[Přehled nástrojů](https://myip.dog/tools) obsahuje DNS dotazy, test IPv6, kontrolu TCP portů, Ping, Traceroute, IP WHOIS a kalkulačku podsítí. Vyberte nástroj podle toho, zda zkoumáte záznamy domény, nebo dostupnost veřejné TCP služby. Online Ping a Traceroute začínají na vzdáleném měřicím uzlu, proto sledujte také jeho umístění.
+
+Zapište si veřejnou IP adresu VPS a čas kontroly. Výsledky pak snáze porovnáte po změně nastavení nebo předáte podpoře.

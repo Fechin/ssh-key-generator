@@ -1,0 +1,47 @@
+# Öffentliche IP des VPS per SSH herausfinden
+
+<img src="/images/articles/check-vps-ip.webp" alt="SSH-Terminal eines VPS mit curl myip.dog und einer öffentlichen Beispiel-IP" width="1536" height="1024" className="w-full h-auto rounded-xl border border-border" />
+
+*Eigene Illustration. Die angezeigte IP-Adresse dient nur als Beispiel.*
+
+Du bist per [SSH](/de/ssh-command/) auf deinem VPS angemeldet und möchtest wissen, mit welcher IP er ins Internet geht? Führe im entfernten Terminal `curl myip.dog` aus. Damit lässt sich die öffentliche IP des VPS schnell prüfen, etwa für eine Fehlersuche oder eine Anfrage beim Hoster.
+
+## Den Befehl auf dem Server ausführen
+
+Prüfe zuerst, ob du wirklich in der SSH-Sitzung des VPS arbeitest. Führst du den Befehl auf deinem eigenen Rechner aus, erhältst du die Adresse deiner lokalen Internetverbindung.
+
+```bash
+curl myip.dog
+```
+
+Bei erfolgreicher Anfrage erscheint eine IP-Adresse als Klartext:
+
+```text
+203.0.113.42
+```
+
+Das ist eine Beispieladresse. Maßgeblich ist die tatsächliche Ausgabe auf deinem VPS. curl stellt die Anfrage; MyIP.dog gibt die dabei beobachtete Quelladresse zurück. Ein zusätzliches Abfrageskript brauchst du dafür nicht.
+
+Für eine verschlüsselte HTTPS-Verbindung kannst du diese Variante verwenden:
+
+```bash
+curl https://myip.dog
+```
+
+## Was sagt die Ausgabe aus?
+
+Du siehst die öffentliche IP, die für diese ausgehende Anfrage verwendet wurde. Nutzt der VPS ein NAT-Gateway, einen Proxy oder ein VPN, kann stattdessen dessen Ausgangsadresse erscheinen. Sie muss daher weder zur Adresse der Netzwerkschnittstelle noch zur SSH-Zieladresse passen. Der Befehl zeigt auch nicht alle IP-Adressen des Servers an.
+
+Je nach Verbindung erhältst du IPv4 oder IPv6. Weitere Optionen beschreibt die [curl-Dokumentation](https://curl.se/docs/manpage.html). Bevor du eine Domain auf die öffentliche IP des VPS zeigen lässt, kläre beim Hoster die Adresse für eingehende Verbindungen und prüfe NAT-Zuordnungen sowie Firewall-Regeln. Eine erfolgreiche IP-Abfrage beweist nicht, dass die Website oder der SSH-Port von außen erreichbar ist.
+
+## Wenn die Abfrage fehlschlägt
+
+Bei `curl: command not found` musst du curl über den Paketmanager deiner Linux-Distribution installieren. Schlägt die Namensauflösung fehl, prüfe DNS. Bei einer Zeitüberschreitung solltest du die ausgehende Verbindung und mögliche Proxy-Einstellungen untersuchen. Bewahre die genaue Fehlermeldung für die weitere Diagnose auf.
+
+## Weitere Werkzeuge bei MyIP.dog
+
+Die [MyIP.dog-Startseite](https://myip.dog/) zeigt die öffentliche IP deiner Browser-Verbindung. Öffnest du sie auf deinem eigenen Rechner, wird die Adresse des entfernten VPS nicht automatisch abgefragt.
+
+Die [Werkzeugübersicht](https://myip.dog/tools) bietet DNS-Abfragen, IPv6-Tests, TCP-Portprüfungen, Ping, Traceroute, IP WHOIS und einen Subnetzrechner. Damit kannst du etwa Domain-Einträge oder einen öffentlich angebotenen TCP-Dienst untersuchen. Online-Ping und Traceroute starten an einem entfernten Messpunkt; achte deshalb auch auf dessen Standort.
+
+Notiere die öffentliche IP des VPS zusammen mit dem Zeitpunkt der Abfrage. So kannst du spätere Änderungen besser vergleichen oder dem Support nachvollziehbare Angaben geben.

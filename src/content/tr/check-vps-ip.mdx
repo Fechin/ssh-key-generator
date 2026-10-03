@@ -1,0 +1,47 @@
+# SSH ile bağlandıktan sonra VPS’nin genel IP adresi nasıl öğrenilir?
+
+<img src="/images/articles/check-vps-ip.webp" alt="VPS üzerindeki SSH terminalinde curl myip.dog komutu ve örnek bir genel IP adresi" width="1536" height="1024" className="w-full h-auto rounded-xl border border-border" />
+
+*Özgün çizim. Görseldeki IP adresi yalnızca örnektir.*
+
+VPS’nize [SSH](/tr/ssh-command/) ile bağlandınız ve sunucunun internete hangi adresle çıktığını görmek istiyorsunuz. Uzak terminalde `curl myip.dog` çalıştırmanız yeterli. Ağ sorunlarını araştırırken veya destek talebi hazırlarken, hosting panelini açmadan VPS’nin genel IP adresini kontrol edebilirsiniz.
+
+## Komutu VPS üzerinde çalıştırın
+
+Önce terminalin sunucunun SSH oturumunda olduğundan emin olun. Aynı komutu sunucuya bağlanmadan kendi bilgisayarınızda çalıştırırsanız kendi internet bağlantınızın adresini görürsünüz.
+
+```bash
+curl myip.dog
+```
+
+İstek başarılı olduğunda düz metin olarak bir adres döner:
+
+```text
+203.0.113.42
+```
+
+Bu adres yalnızca örnek içindir. VPS’nin genel IP adresi, terminalinizde gerçekten dönen değerdir. curl isteği gönderir; MyIP.dog ise gördüğü kaynak adresini yanıt olarak verir. Ek bir sorgulama betiği kurmanız gerekmez.
+
+Şifreli HTTPS bağlantısıyla sorgulamak için şu komutu kullanabilirsiniz:
+
+```bash
+curl https://myip.dog
+```
+
+## Dönen adres ne anlama gelir?
+
+Sonuç, bu dışarı giden istekte kullanılan genel IP adresidir. VPS bir NAT ağ geçidi, proxy veya VPN kullanıyorsa aradaki hizmetin adresi görünebilir. Bu yüzden ağ arayüzündeki IP ile veya SSH bağlantısında kullandığınız adresle aynı olmak zorunda değildir. Komut sunucuya atanmış bütün IP adreslerini de listelemez.
+
+Bağlantıya göre IPv4 ya da IPv6 dönebilir. Seçenekler [curl kılavuzunda](https://curl.se/docs/manpage.html) açıklanır. Bir alan adını VPS’nin genel IP adresine yönlendirmeden önce sağlayıcınızdan gelen bağlantılar için kullanılacak adresi doğrulayın; NAT eşlemelerini ve güvenlik duvarını kontrol edin. IP sorgusunun başarılı olması, sitenin veya SSH portunun dışarıdan erişilebilir olduğunu kanıtlamaz.
+
+## Komut hata verirse
+
+`curl: command not found`, curl’ün kurulu olmadığını gösterir. Linux dağıtımınızın paket yöneticisiyle kurabilirsiniz. Ad çözümleme hatasında DNS’i, zaman aşımında ise sunucunun dış bağlantısını ve proxy ayarlarını kontrol edin. Sorunu araştırmak için tam hata mesajını saklayın.
+
+## MyIP.dog’daki diğer araçlar
+
+[MyIP.dog ana sayfası](https://myip.dog/) tarayıcınızın bağlantısına ait genel IP adresini gösterir. Sayfayı kendi bilgisayarınızda açmak uzak VPS’nin adresini otomatik olarak sorgulamaz.
+
+[Araçlar sayfasında](https://myip.dog/tools) DNS sorgulama, IPv6 testi, TCP port kontrolü, Ping, Traceroute, IP WHOIS ve alt ağ hesaplayıcı bulunur. Alan adı kayıtları için DNS sorgusunu, herkese açık bir TCP hizmeti için port kontrolünü seçebilirsiniz. Çevrimiçi Ping ve Traceroute uzak bir ölçüm noktasından başlar; sonuçları değerlendirirken konumunu da dikkate alın.
+
+VPS’nin genel IP adresini ve sorgulama saatini not edin. Böylece ayar değişikliklerinden sonra karşılaştırma yapabilir veya desteğe daha açık bilgi verebilirsiniz.

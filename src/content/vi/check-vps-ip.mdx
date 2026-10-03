@@ -1,0 +1,47 @@
+# Cách kiểm tra IP công khai của VPS sau khi đăng nhập SSH
+
+<img src="/images/articles/check-vps-ip.webp" alt="Terminal SSH trên VPS chạy curl myip.dog và hiển thị một IP công khai minh họa" width="1536" height="1024" className="w-full h-auto rounded-xl border border-border" />
+
+*Ảnh minh họa tự tạo. IP trong ảnh chỉ là địa chỉ ví dụ.*
+
+Sau khi đăng nhập VPS qua [SSH](/vi/ssh-command/), bạn có thể cần biết máy chủ đang dùng địa chỉ nào để kết nối ra Internet. Chạy `curl myip.dog` ngay trong terminal của VPS là cách kiểm tra nhanh, hữu ích khi xử lý lỗi mạng hoặc gửi thông tin cho bộ phận hỗ trợ.
+
+## Chạy lệnh trên VPS
+
+Trước hết, hãy chắc chắn terminal đang ở phiên SSH của máy chủ. Nếu chạy lệnh trên máy tính cá nhân khi chưa kết nối VPS, kết quả sẽ là IP của mạng bạn đang dùng.
+
+```bash
+curl myip.dog
+```
+
+Khi yêu cầu thành công, dịch vụ trả về một địa chỉ dưới dạng văn bản:
+
+```text
+203.0.113.42
+```
+
+Đây chỉ là địa chỉ ví dụ. IP công khai của VPS là giá trị thực tế xuất hiện trong terminal của bạn. curl gửi yêu cầu, còn MyIP.dog trả lại địa chỉ nguồn mà dịch vụ nhìn thấy. Bạn không cần cài thêm một script tra cứu riêng.
+
+Để kiểm tra qua kết nối HTTPS được mã hóa, dùng:
+
+```bash
+curl https://myip.dog
+```
+
+## Hiểu đúng địa chỉ được trả về
+
+Kết quả là IP công khai dùng cho chính yêu cầu đi ra đó. Nếu VPS đi qua cổng NAT, proxy hoặc VPN, địa chỉ có thể thuộc về dịch vụ trung gian. Vì vậy, nó có thể khác IP của card mạng hoặc địa chỉ bạn dùng để đăng nhập SSH. Lệnh cũng không liệt kê toàn bộ IP được gán cho máy chủ.
+
+Kết nối có thể trả về IPv4 hoặc IPv6. Các tùy chọn được giải thích trong [tài liệu curl](https://curl.se/docs/manpage.html). Trước khi trỏ tên miền về IP công khai của VPS, hãy xác nhận địa chỉ nhận kết nối với nhà cung cấp, đồng thời kiểm tra ánh xạ NAT và tường lửa. Tra được IP không đồng nghĩa với việc website hay cổng SSH đã truy cập được từ bên ngoài.
+
+## Nếu lệnh báo lỗi
+
+Thông báo `curl: command not found` nghĩa là bạn cần cài curl bằng trình quản lý gói của bản phân phối Linux đang dùng. Nếu không phân giải được tên miền, hãy kiểm tra DNS. Nếu hết thời gian chờ, kiểm tra kết nối ra Internet và cấu hình proxy. Giữ lại thông báo lỗi đầy đủ để tìm nguyên nhân.
+
+## Các công cụ khác trên MyIP.dog
+
+[Trang chủ MyIP.dog](https://myip.dog/) hiển thị IP công khai của kết nối trình duyệt. Mở trang trên máy tính cá nhân không tự động kiểm tra địa chỉ của VPS từ xa.
+
+[Trang công cụ](https://myip.dog/tools) có tra cứu DNS, kiểm tra IPv6, kiểm tra cổng TCP, Ping, Traceroute, IP WHOIS và tính toán subnet. Chọn DNS để xem bản ghi tên miền, hoặc kiểm tra cổng để tìm hiểu một dịch vụ TCP công khai. Ping và Traceroute trực tuyến chạy từ điểm đo từ xa, nên cần xem cả vị trí điểm đo khi đọc kết quả.
+
+Sau khi kiểm tra IP công khai của VPS, hãy ghi lại địa chỉ và thời điểm. Bạn sẽ dễ so sánh trước và sau khi thay đổi cấu hình hoặc trao đổi với bộ phận hỗ trợ hơn.

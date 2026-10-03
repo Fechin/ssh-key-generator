@@ -21,7 +21,7 @@ export function Header() {
             <Key className="h-4 w-4 text-primary" />
           </div>
           <div>
-            <span className="font-semibold text-base leading-none">{t('header.title')}</span>
+            <span className="font-semibold text-sm sm:text-base leading-none">{t('header.title')}</span>
             <p className="text-xs text-muted-foreground">{t('header.subtitle')}</p>
           </div>
         </Link>

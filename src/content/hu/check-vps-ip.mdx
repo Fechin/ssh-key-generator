@@ -1,0 +1,47 @@
+# A VPS nyilvános IP-címének ellenőrzése SSH-bejelentkezés után
+
+<img src="/images/articles/check-vps-ip.webp" alt="VPS SSH-terminál a curl myip.dog paranccsal és egy nyilvános példa-IP-címmel" width="1536" height="1024" className="w-full h-auto rounded-xl border border-border" />
+
+*Saját illusztráció. A képen látható IP-cím csak példa.*
+
+Bejelentkeztél a VPS-re [SSH-val](/hu/ssh-command/), és szeretnéd tudni, milyen címmel kapcsolódik a szerver az internethez? Futtasd a `curl myip.dog` parancsot a távoli terminálban. Gyorsan ellenőrizheted a VPS nyilvános IP-címét hálózati hiba keresésekor vagy egy támogatási kérés összeállításához.
+
+## A parancsot a VPS-en futtasd
+
+Először nézd meg, hogy valóban a szerver SSH-munkamenetében dolgozol-e. Ha a saját gépeden futtatod a parancsot a VPS-hez való kapcsolódás nélkül, a saját internetkapcsolatod címét kapod.
+
+```bash
+curl myip.dog
+```
+
+Sikeres kérés esetén egy cím jelenik meg egyszerű szövegként:
+
+```text
+203.0.113.42
+```
+
+Ez a cím csak szemléltető példa. A VPS nyilvános IP-címe a terminálban ténylegesen visszakapott érték. A curl elküldi a kérést, a MyIP.dog pedig a megfigyelt forráscímet adja vissza. Külön lekérdező szkriptet nem kell telepítened.
+
+Titkosított HTTPS-kapcsolathoz ezt a változatot használhatod:
+
+```bash
+curl https://myip.dog
+```
+
+## Mit jelent a kapott cím?
+
+A kérésben használt nyilvános IP-címet látod, vagyis azt a címet, amellyel ez a kapcsolat kilépett az internetre. NAT-átjáró, proxy vagy VPN esetén ez a köztes szolgáltatás címe lehet. Ezért nem feltétlenül egyezik a hálózati interfész címével vagy az SSH-bejelentkezéshez használt címmel. A parancs nem sorolja fel a szerver összes IP-címét.
+
+A kapcsolat IPv4-et vagy IPv6-ot is használhat. A lehetőségeket a [curl dokumentációja](https://curl.se/docs/manpage.html) ismerteti. Mielőtt egy domaint a VPS nyilvános IP-címére irányítasz, egyeztesd a szolgáltatóval a bejövő kapcsolatok címét, és ellenőrizd a NAT-beállításokat meg a tűzfalat. Egy sikeres IP-lekérdezés nem bizonyítja, hogy a webhely vagy az SSH-port kívülről elérhető.
+
+## Ha hibát kapsz
+
+A `curl: command not found` azt jelenti, hogy a curlt telepítened kell a Linux-disztribúciód csomagkezelőjével. Névfeloldási hibánál ellenőrizd a DNS-t. Időtúllépésnél nézd meg a kimenő kapcsolatokat és a proxy beállításait. Őrizd meg a pontos hibaüzenetet a további vizsgálathoz.
+
+## További eszközök a MyIP.dog oldalon
+
+A [MyIP.dog főoldala](https://myip.dog/) a böngésző kapcsolatának nyilvános IP-címét mutatja. A saját gépeden megnyitva nem ellenőrzi automatikusan a távoli VPS-t.
+
+Az [eszközök oldalán](https://myip.dog/tools) DNS-lekérdezés, IPv6-teszt, TCP-portellenőrzés, Ping, Traceroute, IP WHOIS és alhálózat-kalkulátor is található. Válassz a kérdésedhez illő ellenőrzést: például domainrekordokhoz DNS-t, nyilvános TCP-szolgáltatáshoz portellenőrzést. Az online Ping és Traceroute távoli mérési pontról indul, ezért annak helyét is vedd figyelembe.
+
+Jegyezd fel a VPS nyilvános IP-címét és az ellenőrzés idejét. Így könnyebben összehasonlíthatod az eredményt egy beállítás módosítása után.

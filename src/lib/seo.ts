@@ -20,6 +20,7 @@ export interface PageMetadata {
   alternateLanguages?: Language[]
   robots: string
   ogType: 'website' | 'article'
+  imageUrl?: string
   structuredData: {
     website: JsonLdValue
     page: JsonLdValue
@@ -331,11 +332,13 @@ export function buildArticlePageMetadata(
     keywords: string[]
     publishDate: string
     modifiedDate?: string
+    image?: string
   },
   alternateLanguages: Language[],
 ): PageMetadata {
   const canonicalUrl = getAlternateUrl(language, slug)
   const dateModified = meta.modifiedDate ?? meta.publishDate
+  const imageUrl = meta.image ? normalizeAbsoluteUrl(meta.image) : SOCIAL_IMAGE_URL
 
   return {
     title: meta.title,
@@ -345,6 +348,7 @@ export function buildArticlePageMetadata(
     alternateLanguages,
     robots: 'index, follow',
     ogType: 'article',
+    imageUrl,
     structuredData: {
       website: buildWebsiteSchema(language),
       page: {
@@ -356,7 +360,7 @@ export function buildArticlePageMetadata(
         datePublished: meta.publishDate,
         dateModified,
         url: canonicalUrl,
-        image: SOCIAL_IMAGE_URL,
+        image: imageUrl,
         mainEntityOfPage: {
           '@type': 'WebPage',
           '@id': canonicalUrl,
@@ -428,6 +432,7 @@ export function syncPageMetadata(language: Language, metadata: PageMetadata) {
     alternateLanguages,
     robots,
     ogType,
+    imageUrl = SOCIAL_IMAGE_URL,
     structuredData,
   } = metadata
 
@@ -440,13 +445,13 @@ export function syncPageMetadata(language: Language, metadata: PageMetadata) {
   upsertMetaByProperty('og:url', canonicalUrl)
   upsertMetaByProperty('og:title', title)
   upsertMetaByProperty('og:description', description)
-  upsertMetaByProperty('og:image', SOCIAL_IMAGE_URL)
+  upsertMetaByProperty('og:image', imageUrl)
   upsertMetaByProperty('og:site_name', SITE_NAME)
   upsertMetaByProperty('og:locale', getOpenGraphLocale(language))
   upsertMetaByProperty('twitter:url', canonicalUrl)
   upsertMetaByProperty('twitter:title', title)
   upsertMetaByProperty('twitter:description', description)
-  upsertMetaByProperty('twitter:image', SOCIAL_IMAGE_URL)
+  upsertMetaByProperty('twitter:image', imageUrl)
   upsertCanonicalLink(canonicalUrl)
   syncAlternateLinks(alternatePath, alternateLanguages)
   upsertStructuredDataScript('structured-data-website', structuredData.website)

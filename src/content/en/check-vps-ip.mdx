@@ -1,0 +1,47 @@
+# How to check your VPS IP address after connecting with SSH
+
+<img src="/images/articles/check-vps-ip.webp" alt="A remote VPS terminal running curl myip.dog and displaying an example public IP address" width="1536" height="1024" className="w-full h-auto rounded-xl border border-border" />
+
+*Original illustration. The IP shown is an example, not a live result.*
+
+Already connected to your VPS over [SSH](/ssh-command/)? To check its public IP without opening your hosting dashboard, run `curl myip.dog` in the remote terminal. This is handy when checking an outbound connection, preparing a support request, or working out why a server appears to use a different address.
+
+## Run the command on your VPS
+
+Make sure you are in the server's SSH session. Running the same command on your laptop checks your laptop's network instead. A terminal window alone does not mean you are connected to the server.
+
+```bash
+curl myip.dog
+```
+
+A successful request returns a plain-text address, for example:
+
+```text
+203.0.113.42
+```
+
+That address is for illustration only. Your VPS public IP will be whatever the service actually returns. curl makes the request; MyIP.dog reports the source address it sees. You do not need a separate lookup script.
+
+For an encrypted HTTPS connection, use:
+
+```bash
+curl https://myip.dog
+```
+
+## What does the result tell you?
+
+You are checking the public IP used by this particular outbound request. A NAT gateway, proxy, or VPN can change that address, so it may differ from the IP on the server's network interface or the address you used to log in. It does not list every IP assigned to your VPS.
+
+The result can be IPv4 or IPv6, depending on the connection. The [curl manual](https://curl.se/docs/manpage.html) explains address-family options and proxy behavior. Before pointing a domain at your VPS public IP, confirm the inbound address with your hosting provider and check any NAT mappings and firewall rules. An outbound lookup does not prove that a website or SSH port is reachable.
+
+## If the command fails
+
+`curl: command not found` means curl needs to be installed with your Linux distribution's package manager. A name-resolution error calls for checking DNS; a timeout calls for checking outbound connectivity, firewall rules, or proxy settings. Keep the actual error rather than treating an example address as the result.
+
+## More tools on MyIP.dog
+
+The [MyIP.dog homepage](https://myip.dog/) checks the public IP of your browser's connection. Opening it on your own computer does not automatically check your VPS.
+
+Its [online tools](https://myip.dog/tools) include DNS lookup, IPv6 testing, a TCP port checker, Ping, Traceroute, IP WHOIS, and a subnet calculator. Use DNS lookup to review a domain's records or the port checker to investigate an exposed TCP service. Online Ping and Traceroute start from a remote probe, so read the probe location alongside the result.
+
+Next time you need your VPS public IP, run `curl myip.dog` after logging in, note the address and time, and choose the next check based on the problem you are trying to solve.

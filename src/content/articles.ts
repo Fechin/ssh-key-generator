@@ -7,11 +7,13 @@ export type ArticleSlug =
   | 'how-to-set-up-ssh'
   | 'generate-ssh-key'
   | 'ssh-keygen'
+  | 'check-vps-ip'
 
 // Re-export for consumers that imported ArticleLang from here
 export type ArticleLang = Language
 
 export const ARTICLE_SLUGS: ArticleSlug[] = [
+  'check-vps-ip',
   'what-is-ssh',
   'what-is-an-ssh-key',
   'ssh-command',
@@ -26,6 +28,7 @@ export interface ArticleMeta {
   keywords: string[]
   publishDate: string
   modifiedDate?: string
+  image?: string
 }
 
 // 'en' is always required as the canonical fallback; all other languages are optional

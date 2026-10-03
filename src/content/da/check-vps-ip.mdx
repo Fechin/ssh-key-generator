@@ -1,0 +1,47 @@
+# Find din VPS’ offentlige IP-adresse via SSH
+
+<img src="/images/articles/check-vps-ip.webp" alt="SSH-terminal på en VPS med kommandoen curl myip.dog og en offentlig eksempeladresse" width="1536" height="1024" className="w-full h-auto rounded-xl border border-border" />
+
+*Original illustration. IP-adressen på billedet er et eksempel.*
+
+Er du logget ind på din VPS via [SSH](/da/ssh-command/) og vil se, hvilken adresse serveren bruger ud mod internettet? Kør `curl myip.dog` i den eksterne terminal. Det er en hurtig måde at kontrollere serverens offentlige IP-adresse på, uden at åbne kontrolpanelet hos din udbyder.
+
+## Kør kommandoen på serveren
+
+Tjek, at du arbejder i VPS’ens SSH-session. Kører du kommandoen på din egen computer, får du adressen for din egen internetforbindelse.
+
+```bash
+curl myip.dog
+```
+
+Når forespørgslen lykkes, får du en adresse som almindelig tekst:
+
+```text
+203.0.113.42
+```
+
+Adressen ovenfor er kun et eksempel. Din VPS’ offentlige IP-adresse er den værdi, der faktisk kommer tilbage. curl sender forespørgslen, og MyIP.dog svarer med den kildeadresse, tjenesten observerer. Du behøver ikke et ekstra script.
+
+Du kan også bruge en krypteret HTTPS-forbindelse:
+
+```bash
+curl https://myip.dog
+```
+
+## Hvad fortæller resultatet?
+
+Du ser den offentlige IP-adresse for denne udgående forespørgsel. Hvis serveren bruger en NAT-gateway, proxy eller VPN, kan det være adressen på den mellemliggende tjeneste. Den er derfor ikke nødvendigvis identisk med netværkskortets adresse eller den adresse, du logger ind på via SSH. Kommandoen viser heller ikke alle IP-adresser på din VPS.
+
+Forbindelsen kan bruge IPv4 eller IPv6. Du kan læse om mulighederne i [curl-manualen](https://curl.se/docs/manpage.html). Før du peger et domæne mod serveren, bør du få udbyderen til at bekræfte adressen for indgående trafik og kontrollere NAT og firewall. Et vellykket IP-opslag viser ikke, at hjemmesiden eller SSH-porten er tilgængelig udefra.
+
+## Hvis du får en fejl
+
+`curl: command not found` betyder, at curl skal installeres med pakkehåndteringen i din Linux-distribution. Fejl ved navneopslag kræver et tjek af DNS. Ved timeout bør du kontrollere udgående forbindelser og eventuelle proxyindstillinger. Gem fejlmeddelelsen, så du kan undersøge årsagen nærmere.
+
+## Flere værktøjer hos MyIP.dog
+
+[MyIP.dogs forside](https://myip.dog/) viser den offentlige IP-adresse for browserens forbindelse. Åbner du siden på din computer, finder den ikke automatisk din VPS’ adresse.
+
+[Værktøjssiden](https://myip.dog/tools) indeholder DNS-opslag, IPv6-test, kontrol af TCP-porte, Ping, Traceroute, IP WHOIS og en beregner til subnet. Vælg værktøjet ud fra det, du vil undersøge. Ping og Traceroute køres fra en ekstern målenode, så placeringen er også vigtig, når du læser resultatet.
+
+Notér din VPS’ offentlige IP-adresse og tidspunktet. Så kan du sammenligne efter en ændring eller give supporten konkrete oplysninger.

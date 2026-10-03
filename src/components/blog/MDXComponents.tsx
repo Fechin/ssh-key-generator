@@ -14,10 +14,10 @@ export const mdxComponents = {
     <p className="mb-4 leading-7 text-foreground/90" {...props} />
   ),
   code: (props: ComponentPropsWithoutRef<'code'>) => (
-    <code className="bg-muted px-1.5 py-0.5 rounded text-sm font-mono" {...props} />
+    <code dir="ltr" className="bg-muted px-1.5 py-0.5 rounded text-sm font-mono" {...props} />
   ),
   pre: (props: ComponentPropsWithoutRef<'pre'>) => (
-    <pre className="bg-muted p-4 rounded-lg overflow-x-auto mb-4 text-sm" {...props} />
+    <pre dir="ltr" className="bg-muted p-4 rounded-lg overflow-x-auto mb-4 text-sm text-left" {...props} />
   ),
   a: (props: ComponentPropsWithoutRef<'a'>) => (
     <a className="text-primary underline underline-offset-2 hover:text-primary/80" {...props} />

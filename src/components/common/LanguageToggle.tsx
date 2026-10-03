@@ -1,5 +1,5 @@
 import { Globe, ChevronDown, Check } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -8,14 +8,19 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { LANGUAGE_CONFIG, getLanguagePathname, useLanguageStore } from '@/i18n'
+import { ARTICLE_SLUGS, hasArticleTranslation } from '@/content/articles'
 
 export function LanguageToggle() {
   const { language } = useLanguageStore()
   const navigate = useNavigate()
+  const { pathname } = useLocation()
   const current = LANGUAGE_CONFIG.find((candidate) => candidate.code === language)
 
   const handleLanguageChange = (nextLanguage: typeof LANGUAGE_CONFIG[number]) => {
-    navigate(getLanguagePathname(nextLanguage.code))
+    const currentSlug = pathname.split('/').filter(Boolean).at(-1)
+    const slug = ARTICLE_SLUGS.find((candidate) => candidate === currentSlug)
+    const basePath = getLanguagePathname(nextLanguage.code)
+    navigate(slug && hasArticleTranslation(slug, nextLanguage.code) ? `${basePath}${slug}/` : basePath)
   }
 
   return (
@@ -24,7 +29,7 @@ export function LanguageToggle() {
         <Button variant="ghost" size="sm" className="gap-1.5">
           <Globe className="h-4 w-4" />
           <span className="text-xs">{current?.label}</span>
-          <ChevronDown className="h-3 w-3" />
+          <ChevronDown className="hidden sm:block h-3 w-3" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="max-h-80 overflow-y-auto">

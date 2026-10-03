@@ -4,7 +4,7 @@ import { ArticleLayout } from './ArticleLayout'
 import { mdxComponents } from './MDXComponents'
 import { getArticleLanguages, getArticleMeta, type ArticleSlug } from '@/content/articles'
 import { buildArticlePageMetadata, syncPageMetadata } from '@/lib/seo'
-import { getLanguagePathname } from '@/i18n'
+import { getLanguagePathname, useLanguageStore } from '@/i18n'
 import type { Language } from '@/i18n'
 
 type LazyMDX = LazyExoticComponent<ComponentType<Record<string, unknown>>>
@@ -27,6 +27,7 @@ interface Props {
 }
 
 export function ArticlePage({ slug, lang }: Props) {
+  const setLanguage = useLanguageStore((state) => state.setLanguage)
   const meta = getArticleMeta(slug, lang)
   const alternateLanguages = useMemo(() => getArticleLanguages(slug), [slug])
   const basePath = getLanguagePathname(lang).replace(/\/$/, '')
@@ -38,8 +39,9 @@ export function ArticlePage({ slug, lang }: Props) {
   }
 
   useEffect(() => {
+    setLanguage(lang)
     syncPageMetadata(lang, buildArticlePageMetadata(slug, lang, meta, alternateLanguages))
-  }, [slug, lang, meta, alternateLanguages])
+  }, [slug, lang, meta, alternateLanguages, setLanguage])
 
   return (
     <ArticleLayout backHref={`${basePath}/`} backLabel="SSH Key Generator">

@@ -1,0 +1,455 @@
+{
+  "en": {
+    "check-vps-ip": {
+      "title": "How to check your VPS IP address after connecting with SSH",
+      "description": "Check your VPS public IP after connecting with SSH using curl myip.dog. Understand the result, fix common errors, and explore useful network tools.",
+      "keywords": [
+        "VPS public IP",
+        "check VPS IP",
+        "curl myip.dog",
+        "SSH server IP",
+        "public egress IP",
+        "how to find VPS IP after SSH login"
+      ],
+      "publishDate": "2026-10-02",
+      "image": "/images/articles/check-vps-ip.webp"
+    }
+  },
+  "zh": {
+    "check-vps-ip": {
+      "title": "SSH 登录 VPS 后如何查询服务器IP？一条 curl 命令就够了",
+      "description": "SSH 登录 VPS 后，使用 curl myip.dog 查询服务器IP。了解公网出口地址、常见报错，以及 MyIP.dog 的在线网络工具。",
+      "keywords": [
+        "查询服务器IP",
+        "VPS 公网 IP",
+        "SSH 登录 VPS",
+        "curl myip.dog",
+        "公网出口 IP",
+        "SSH 登录后如何查看 VPS 公网 IP"
+      ],
+      "publishDate": "2026-10-02",
+      "image": "/images/articles/check-vps-ip.webp"
+    }
+  },
+  "zh-Hant": {
+    "check-vps-ip": {
+      "title": "SSH 登入 VPS 後如何查詢伺服器IP？用 curl 快速確認",
+      "description": "SSH 登入 VPS 後，用 curl myip.dog 查詢伺服器IP。了解對外出口位址、常見錯誤與實用的線上網路工具。",
+      "keywords": [
+        "查詢伺服器IP",
+        "VPS 對外 IP",
+        "SSH 登入 VPS",
+        "curl myip.dog",
+        "公用出口 IP",
+        "SSH 登入後如何查看 VPS IP"
+      ],
+      "publishDate": "2026-10-02",
+      "image": "/images/articles/check-vps-ip.webp"
+    }
+  },
+  "ja": {
+    "check-vps-ip": {
+      "title": "SSH 接続後に VPS の IP アドレスを確認する方法",
+      "description": "SSH 接続後に curl myip.dog で VPS の IP アドレスを確認。外向き通信のアドレスの意味、エラー時の確認点、便利なオンラインツールを紹介します。",
+      "keywords": [
+        "VPS IP アドレス",
+        "グローバル IP 確認",
+        "curl myip.dog",
+        "SSH 接続",
+        "VPS の IP アドレスを調べる方法"
+      ],
+      "publishDate": "2026-10-02",
+      "image": "/images/articles/check-vps-ip.webp"
+    }
+  },
+  "ko": {
+    "check-vps-ip": {
+      "title": "SSH 접속 후 VPS 공인 IP 확인하는 방법",
+      "description": "SSH 접속 후 curl myip.dog로 VPS 공인 IP를 확인하는 방법을 알아보세요. 조회 결과의 의미, 오류 해결과 온라인 네트워크 도구도 설명합니다.",
+      "keywords": [
+        "VPS 공인 IP",
+        "서버 IP 확인",
+        "curl myip.dog",
+        "SSH 접속",
+        "SSH 접속 후 VPS 공인 IP 확인 방법"
+      ],
+      "publishDate": "2026-10-02",
+      "image": "/images/articles/check-vps-ip.webp"
+    }
+  },
+  "es": {
+    "check-vps-ip": {
+      "title": "Cómo ver la IP pública de tu VPS después de entrar por SSH",
+      "description": "Comprueba la IP pública de tu VPS por SSH con curl myip.dog. Aprende a interpretar el resultado y a usar las herramientas de red de MyIP.dog.",
+      "keywords": [
+        "IP pública del VPS",
+        "ver IP del servidor",
+        "curl myip.dog",
+        "acceso SSH",
+        "cómo ver la IP pública de un VPS por SSH"
+      ],
+      "publishDate": "2026-10-02",
+      "image": "/images/articles/check-vps-ip.webp"
+    }
+  },
+  "pt": {
+    "check-vps-ip": {
+      "title": "Como descobrir o IP público do VPS depois de acessar por SSH",
+      "description": "Veja o IP público do VPS por SSH com curl myip.dog. Entenda o endereço de saída, confira erros comuns e conheça ferramentas de rede online.",
+      "keywords": [
+        "IP público do VPS",
+        "consultar IP do servidor",
+        "curl myip.dog",
+        "acesso SSH",
+        "como descobrir o IP do VPS pelo terminal"
+      ],
+      "publishDate": "2026-10-02",
+      "image": "/images/articles/check-vps-ip.webp"
+    }
+  },
+  "fr": {
+    "check-vps-ip": {
+      "title": "Trouver l’adresse IP publique de son VPS après une connexion SSH",
+      "description": "Trouvez l’IP publique de votre VPS en SSH avec curl myip.dog. Comprenez l’adresse de sortie, les erreurs et les outils réseau disponibles.",
+      "keywords": [
+        "IP publique du VPS",
+        "adresse IP du serveur",
+        "curl myip.dog",
+        "connexion SSH",
+        "trouver l’IP publique d’un VPS en SSH"
+      ],
+      "publishDate": "2026-10-02",
+      "image": "/images/articles/check-vps-ip.webp"
+    }
+  },
+  "de": {
+    "check-vps-ip": {
+      "title": "Öffentliche IP des VPS per SSH herausfinden",
+      "description": "Prüfe die öffentliche IP deines VPS per SSH mit curl myip.dog. Erfahre, was die Ausgangsadresse bedeutet und welche Netzwerktools helfen.",
+      "keywords": [
+        "öffentliche IP des VPS",
+        "Server-IP herausfinden",
+        "curl myip.dog",
+        "SSH-Verbindung",
+        "VPS-IP per SSH prüfen"
+      ],
+      "publishDate": "2026-10-02",
+      "image": "/images/articles/check-vps-ip.webp"
+    }
+  },
+  "ru": {
+    "check-vps-ip": {
+      "title": "Как узнать внешний IP VPS после входа по SSH",
+      "description": "Узнайте внешний IP VPS через SSH командой curl myip.dog. Объясняем результат, частые ошибки и полезные инструменты проверки сети.",
+      "keywords": [
+        "внешний IP VPS",
+        "IP-адрес сервера",
+        "curl myip.dog",
+        "вход по SSH",
+        "как узнать внешний IP сервера через SSH"
+      ],
+      "publishDate": "2026-10-02",
+      "image": "/images/articles/check-vps-ip.webp"
+    }
+  },
+  "it": {
+    "check-vps-ip": {
+      "title": "Come trovare l’IP pubblico del VPS dopo l’accesso SSH",
+      "description": "Trova l’IP pubblico del VPS via SSH con curl myip.dog. Scopri cosa indica il risultato, come gestire gli errori e quali strumenti usare.",
+      "keywords": [
+        "IP pubblico del VPS",
+        "indirizzo IP del server",
+        "curl myip.dog",
+        "accesso SSH",
+        "come trovare l’IP del VPS via SSH"
+      ],
+      "publishDate": "2026-10-02",
+      "image": "/images/articles/check-vps-ip.webp"
+    }
+  },
+  "nl": {
+    "check-vps-ip": {
+      "title": "Het openbare IP-adres van je VPS opvragen via SSH",
+      "description": "Vraag het openbare IP-adres van je VPS op via SSH met curl myip.dog. Lees wat het resultaat betekent en welke netwerktools je kunt gebruiken.",
+      "keywords": [
+        "openbare IP-adres van je VPS",
+        "IP-adres server opvragen",
+        "curl myip.dog",
+        "SSH-verbinding",
+        "VPS-IP via SSH controleren"
+      ],
+      "publishDate": "2026-10-02",
+      "image": "/images/articles/check-vps-ip.webp"
+    }
+  },
+  "pl": {
+    "check-vps-ip": {
+      "title": "Jak sprawdzić publiczny adres IP VPS po zalogowaniu przez SSH",
+      "description": "Sprawdź publiczny adres IP VPS przez SSH poleceniem curl myip.dog. Poznaj znaczenie wyniku, typowe błędy i narzędzia do diagnostyki sieci.",
+      "keywords": [
+        "publiczny adres IP VPS",
+        "IP serwera",
+        "curl myip.dog",
+        "logowanie SSH",
+        "jak sprawdzić IP VPS przez SSH"
+      ],
+      "publishDate": "2026-10-02",
+      "image": "/images/articles/check-vps-ip.webp"
+    }
+  },
+  "sv": {
+    "check-vps-ip": {
+      "title": "Ta reda på din VPS publika IP-adress via SSH",
+      "description": "Kontrollera din VPS publika IP-adress via SSH med curl myip.dog. Förstå resultatet, vanliga fel och verktygen för nätverksfelsökning.",
+      "keywords": [
+        "VPS publika IP-adress",
+        "serverns IP-adress",
+        "curl myip.dog",
+        "SSH-inloggning",
+        "hitta VPS IP via SSH"
+      ],
+      "publishDate": "2026-10-02",
+      "image": "/images/articles/check-vps-ip.webp"
+    }
+  },
+  "he": {
+    "check-vps-ip": {
+      "title": "איך לבדוק את כתובת ה-IP הציבורית של ה-VPS דרך SSH",
+      "description": "בדקו את כתובת ה-IP הציבורית של ה-VPS דרך SSH בעזרת curl myip.dog. הסבר על התוצאה, תקלות נפוצות וכלים נוספים לבדיקת הרשת.",
+      "keywords": [
+        "כתובת IP ציבורית של VPS",
+        "בדיקת IP של שרת",
+        "curl myip.dog",
+        "חיבור SSH",
+        "איך לבדוק IP של VPS דרך SSH"
+      ],
+      "publishDate": "2026-10-02",
+      "image": "/images/articles/check-vps-ip.webp"
+    }
+  },
+  "da": {
+    "check-vps-ip": {
+      "title": "Find din VPS’ offentlige IP-adresse via SSH",
+      "description": "Find din VPS’ offentlige IP-adresse via SSH med curl myip.dog. Læs om resultatet, typiske fejl og nyttige netværksværktøjer.",
+      "keywords": [
+        "VPS offentlige IP-adresse",
+        "serverens IP-adresse",
+        "curl myip.dog",
+        "SSH-login",
+        "find VPS IP via SSH"
+      ],
+      "publishDate": "2026-10-02",
+      "image": "/images/articles/check-vps-ip.webp"
+    }
+  },
+  "nb": {
+    "check-vps-ip": {
+      "title": "Finn den offentlige IP-adressen til VPS-en din via SSH",
+      "description": "Finn den offentlige IP-adressen til VPS-en via SSH med curl myip.dog. Forstå resultatet, vanlige feil og nyttige nettverksverktøy.",
+      "keywords": [
+        "offentlig IP-adresse til VPS",
+        "serverens IP-adresse",
+        "curl myip.dog",
+        "SSH-innlogging",
+        "finne VPS IP via SSH"
+      ],
+      "publishDate": "2026-10-02",
+      "image": "/images/articles/check-vps-ip.webp"
+    }
+  },
+  "hi": {
+    "check-vps-ip": {
+      "title": "SSH से लॉगिन करने के बाद VPS का पब्लिक IP कैसे देखें",
+      "description": "SSH लॉगिन के बाद curl myip.dog से VPS का पब्लिक IP देखें। नतीजे का मतलब, आम त्रुटियाँ और नेटवर्क जाँच के ऑनलाइन टूल जानें।",
+      "keywords": [
+        "VPS का पब्लिक IP",
+        "सर्वर का IP",
+        "curl myip.dog",
+        "SSH लॉगिन",
+        "SSH से VPS का IP कैसे देखें"
+      ],
+      "publishDate": "2026-10-02",
+      "image": "/images/articles/check-vps-ip.webp"
+    }
+  },
+  "vi": {
+    "check-vps-ip": {
+      "title": "Cách kiểm tra IP công khai của VPS sau khi đăng nhập SSH",
+      "description": "Kiểm tra IP công khai của VPS qua SSH bằng curl myip.dog. Hiểu địa chỉ kết nối ra ngoài, xử lý lỗi và khám phá công cụ mạng trực tuyến.",
+      "keywords": [
+        "IP công khai của VPS",
+        "kiểm tra IP máy chủ",
+        "curl myip.dog",
+        "đăng nhập SSH",
+        "cách xem IP VPS sau khi đăng nhập SSH"
+      ],
+      "publishDate": "2026-10-02",
+      "image": "/images/articles/check-vps-ip.webp"
+    }
+  },
+  "tr": {
+    "check-vps-ip": {
+      "title": "SSH ile bağlandıktan sonra VPS’nin genel IP adresi nasıl öğrenilir?",
+      "description": "SSH bağlantısından sonra curl myip.dog ile VPS’nin genel IP adresini öğrenin. Sonucu, sık hataları ve çevrimiçi ağ araçlarını inceleyin.",
+      "keywords": [
+        "VPS genel IP adresi",
+        "sunucu IP adresi",
+        "curl myip.dog",
+        "SSH bağlantısı",
+        "SSH ile VPS IP adresi öğrenme"
+      ],
+      "publishDate": "2026-10-02",
+      "image": "/images/articles/check-vps-ip.webp"
+    }
+  },
+  "id": {
+    "check-vps-ip": {
+      "title": "Cara cek IP publik VPS setelah login lewat SSH",
+      "description": "Cek IP publik VPS lewat SSH dengan curl myip.dog. Pahami alamat koneksi keluar, tangani error, dan kenali tool jaringan online.",
+      "keywords": [
+        "IP publik VPS",
+        "cek IP server",
+        "curl myip.dog",
+        "login SSH",
+        "cara cek IP VPS setelah login SSH"
+      ],
+      "publishDate": "2026-10-02",
+      "image": "/images/articles/check-vps-ip.webp"
+    }
+  },
+  "fi": {
+    "check-vps-ip": {
+      "title": "VPS-palvelimen julkisen IP-osoitteen tarkistaminen SSH-yhteydellä",
+      "description": "Tarkista VPS:n julkinen IP-osoite SSH-yhteydellä ja curl myip.dog -komennolla. Lue tuloksen merkityksestä, virheistä ja verkkotyökaluista.",
+      "keywords": [
+        "VPS:n julkinen IP-osoite",
+        "palvelimen IP-osoite",
+        "curl myip.dog",
+        "SSH-yhteys",
+        "VPS IP-osoitteen tarkistaminen"
+      ],
+      "publishDate": "2026-10-02",
+      "image": "/images/articles/check-vps-ip.webp"
+    }
+  },
+  "uk": {
+    "check-vps-ip": {
+      "title": "Як дізнатися зовнішню IP-адресу VPS після входу через SSH",
+      "description": "Дізнайтеся зовнішню IP-адресу VPS через SSH командою curl myip.dog. Пояснюємо результат, типові помилки та інструменти перевірки мережі.",
+      "keywords": [
+        "зовнішня IP-адреса VPS",
+        "IP-адреса сервера",
+        "curl myip.dog",
+        "вхід через SSH",
+        "як перевірити IP VPS через SSH"
+      ],
+      "publishDate": "2026-10-02",
+      "image": "/images/articles/check-vps-ip.webp"
+    }
+  },
+  "ar": {
+    "check-vps-ip": {
+      "title": "معرفة عنوان IP العام لخادم VPS بعد الاتصال عبر SSH",
+      "description": "اعرف عنوان IP العام لخادم VPS عبر SSH باستخدام curl myip.dog. تعرّف على معنى النتيجة والأخطاء الشائعة وأدوات فحص الشبكة.",
+      "keywords": [
+        "عنوان IP العام لخادم VPS",
+        "معرفة IP الخادم",
+        "curl myip.dog",
+        "الاتصال عبر SSH",
+        "كيفية معرفة IP خادم VPS عبر SSH"
+      ],
+      "publishDate": "2026-10-02",
+      "image": "/images/articles/check-vps-ip.webp"
+    }
+  },
+  "th": {
+    "check-vps-ip": {
+      "title": "วิธีดู IP สาธารณะของ VPS หลังเข้าสู่ระบบผ่าน SSH",
+      "description": "ดู IP สาธารณะของ VPS ผ่าน SSH ด้วย curl myip.dog พร้อมคำอธิบายผลลัพธ์ วิธีตรวจสอบข้อผิดพลาด และเครื่องมือเครือข่ายออนไลน์",
+      "keywords": [
+        "IP สาธารณะของ VPS",
+        "ดู IP เซิร์ฟเวอร์",
+        "curl myip.dog",
+        "เข้าสู่ระบบ SSH",
+        "วิธีดู IP ของ VPS ผ่าน SSH"
+      ],
+      "publishDate": "2026-10-02",
+      "image": "/images/articles/check-vps-ip.webp"
+    }
+  },
+  "ro": {
+    "check-vps-ip": {
+      "title": "Cum afli IP-ul public al VPS-ului după conectarea prin SSH",
+      "description": "Află IP-ul public al VPS-ului prin SSH cu curl myip.dog. Înțelege rezultatul, erorile frecvente și instrumentele online pentru rețea.",
+      "keywords": [
+        "IP-ul public al VPS-ului",
+        "IP server",
+        "curl myip.dog",
+        "conectare SSH",
+        "cum afli IP-ul VPS prin SSH"
+      ],
+      "publishDate": "2026-10-02",
+      "image": "/images/articles/check-vps-ip.webp"
+    }
+  },
+  "cs": {
+    "check-vps-ip": {
+      "title": "Jak zjistit veřejnou IP adresu VPS po přihlášení přes SSH",
+      "description": "Zjistěte veřejnou IP adresu VPS přes SSH příkazem curl myip.dog. Vysvětlení výsledku, běžných chyb a užitečných síťových nástrojů.",
+      "keywords": [
+        "veřejná IP adresa VPS",
+        "IP adresa serveru",
+        "curl myip.dog",
+        "přihlášení SSH",
+        "jak zjistit IP VPS přes SSH"
+      ],
+      "publishDate": "2026-10-02",
+      "image": "/images/articles/check-vps-ip.webp"
+    }
+  },
+  "bn": {
+    "check-vps-ip": {
+      "title": "SSH দিয়ে লগইন করার পর VPS-এর পাবলিক IP দেখবেন যেভাবে",
+      "description": "SSH দিয়ে লগইনের পর curl myip.dog দিয়ে VPS-এর পাবলিক IP দেখুন। ফলাফলের অর্থ, সাধারণ ত্রুটি ও অনলাইন নেটওয়ার্ক টুল সম্পর্কে জানুন।",
+      "keywords": [
+        "VPS-এর পাবলিক IP",
+        "সার্ভারের IP",
+        "curl myip.dog",
+        "SSH লগইন",
+        "SSH দিয়ে VPS-এর IP দেখার উপায়"
+      ],
+      "publishDate": "2026-10-02",
+      "image": "/images/articles/check-vps-ip.webp"
+    }
+  },
+  "el": {
+    "check-vps-ip": {
+      "title": "Πώς να βρείτε τη δημόσια IP του VPS μετά τη σύνδεση με SSH",
+      "description": "Βρείτε τη δημόσια IP του VPS μέσω SSH με curl myip.dog. Μάθετε τι σημαίνει το αποτέλεσμα και ποια εργαλεία βοηθούν στον έλεγχο δικτύου.",
+      "keywords": [
+        "δημόσια IP του VPS",
+        "IP διακομιστή",
+        "curl myip.dog",
+        "σύνδεση SSH",
+        "εύρεση IP VPS μέσω SSH"
+      ],
+      "publishDate": "2026-10-02",
+      "image": "/images/articles/check-vps-ip.webp"
+    }
+  },
+  "hu": {
+    "check-vps-ip": {
+      "title": "A VPS nyilvános IP-címének ellenőrzése SSH-bejelentkezés után",
+      "description": "Ellenőrizd a VPS nyilvános IP-címét SSH-n keresztül a curl myip.dog paranccsal. Az eredmény, a gyakori hibák és a hálózati eszközök magyarázata.",
+      "keywords": [
+        "VPS nyilvános IP-címe",
+        "szerver IP-cím",
+        "curl myip.dog",
+        "SSH-bejelentkezés",
+        "VPS IP-címének ellenőrzése SSH-val"
+      ],
+      "publishDate": "2026-10-02",
+      "image": "/images/articles/check-vps-ip.webp"
+    }
+  }
+}

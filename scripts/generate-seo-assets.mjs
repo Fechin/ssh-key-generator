@@ -76,6 +76,7 @@ const faqKeys = [
 
 const howToStepKeys = ['step1', 'step2', 'step3', 'step4', 'step5']
 const articleSlugs = [
+  'check-vps-ip',
   'what-is-ssh',
   'what-is-an-ssh-key',
   'ssh-command',
@@ -412,6 +413,7 @@ function buildArticleMetadata(language, slug) {
   const meta = getArticleMeta(slug, language)
   const canonicalUrl = getArticleAbsoluteUrl(language, slug)
   const dateModified = getArticleDateModified(meta)
+  const imageUrl = meta.image ? new URL(meta.image, siteUrl).toString() : socialImageUrl
 
   return {
     title: meta.title,
@@ -420,6 +422,7 @@ function buildArticleMetadata(language, slug) {
     alternatePath: slug,
     robots: 'index, follow',
     ogType: 'article',
+    imageUrl,
     ogLocale: getOpenGraphLocale(language),
     structuredData: {
       website: {
@@ -441,7 +444,7 @@ function buildArticleMetadata(language, slug) {
         description: meta.description,
         datePublished: meta.publishDate,
         dateModified,
-        image: socialImageUrl,
+        image: imageUrl,
         url: canonicalUrl,
         mainEntityOfPage: {
           '@type': 'WebPage',
@@ -801,13 +804,13 @@ ${alternateLinks}
   nextHtml = replaceMetaContentById(nextHtml, 'meta-og-url', metadata.canonicalUrl)
   nextHtml = replaceMetaContentById(nextHtml, 'meta-og-title', metadata.title)
   nextHtml = replaceMetaContentById(nextHtml, 'meta-og-description', metadata.description)
-  nextHtml = replaceMetaContentById(nextHtml, 'meta-og-image', socialImageUrl)
+  nextHtml = replaceMetaContentById(nextHtml, 'meta-og-image', metadata.imageUrl ?? socialImageUrl)
   nextHtml = replaceMetaContentById(nextHtml, 'meta-og-site-name', 'SSH Key Generator')
   nextHtml = replaceMetaContentById(nextHtml, 'meta-og-locale', metadata.ogLocale)
   nextHtml = replaceMetaContentById(nextHtml, 'meta-twitter-url', metadata.canonicalUrl)
   nextHtml = replaceMetaContentById(nextHtml, 'meta-twitter-title', metadata.title)
   nextHtml = replaceMetaContentById(nextHtml, 'meta-twitter-description', metadata.description)
-  nextHtml = replaceMetaContentById(nextHtml, 'meta-twitter-image', socialImageUrl)
+  nextHtml = replaceMetaContentById(nextHtml, 'meta-twitter-image', metadata.imageUrl ?? socialImageUrl)
   nextHtml = replaceScriptById(nextHtml, 'structured-data-website', metadata.structuredData.website)
   nextHtml = replaceScriptById(nextHtml, 'structured-data-page', metadata.structuredData.page)
   nextHtml = replaceScriptById(nextHtml, 'structured-data-faq', metadata.structuredData.faq)

@@ -1,0 +1,49 @@
+# SSH 登入 VPS 後如何查詢伺服器IP？用 curl 快速確認
+
+<img src="/images/articles/check-vps-ip.webp" alt="在 VPS 的 SSH 終端機執行 curl myip.dog，查看對外 IP 的示意圖" width="1536" height="1024" className="w-full h-auto rounded-xl border border-border" />
+
+*原創示意圖，畫面中的 IP 是範例位址。*
+
+透過 [SSH](/zh-Hant/ssh-command/) 登入 VPS 後，架設網站、確認網路出口或排查連線問題時，常常需要查詢伺服器IP。直接查看網卡資訊，可能會看到好幾個位址，卻不確定外部網站實際看到的是哪一個。這時可以在遠端終端機輸入 `curl myip.dog`，快速取得這次連線使用的對外 IP。
+
+## 先確認自己已連上 VPS
+
+請在伺服器的 SSH 工作階段中操作。如果尚未登入，只是在自己的電腦開啟終端機執行命令，查到的會是目前本地網路的出口位址。無論平常使用 IP、網域名稱或 SSH 別名登入，都要先確認命令實際是在 VPS 上執行。
+
+## 輸入查詢命令
+
+在遠端終端機執行以下命令，就能查詢伺服器IP：
+
+```bash
+curl myip.dog
+```
+
+連線成功時，會收到一個純文字 IP，例如：
+
+```text
+203.0.113.42
+```
+
+這個位址僅供說明，請以自己的終端機回傳結果為準。curl 會向網站送出請求，MyIP.dog 則回傳它觀察到的來源位址。整個過程不需要另外開啟主機管理面板，也不需要下載查詢腳本。
+
+若想以加密連線進行查詢，可使用 HTTPS 寫法：
+
+```bash
+curl https://myip.dog
+```
+
+## 回傳位址代表什麼？
+
+這個方法取得的是本次請求的公用出口 IP。如果 VPS 的連線經過 NAT 閘道、Proxy 或 VPN，外部網站看到的可能是這些服務的出口位址，未必等於網卡上的 IP，也未必等於 SSH 登入位址。因此，它不會列出 VPS 綁定的全部位址。
+
+結果可能是 IPv4，也可能是 IPv6，取決於當次連線使用的協定；相關選項可參閱 [curl 官方文件](https://curl.se/docs/manpage.html)。若要設定網域解析或讓外部使用者連入，仍需向主機商確認對外服務位址、連入映射與防火牆規則。查到出口 IP，不代表網站或 SSH 連接埠一定能從外部連上。
+
+若出現 `curl: command not found`，代表系統尚未安裝 curl，請使用該 Linux 發行版的套件管理工具安裝。遇到名稱解析失敗或連線逾時，可先檢查 DNS、對外連線與 Proxy 設定，再保留錯誤訊息進一步排查。
+
+## 也能搭配線上網路工具
+
+[MyIP.dog 首頁](https://myip.dog/)能顯示目前瀏覽器連線的對外 IP。在自己的電腦開啟網站，顯示的是本地網路出口，不會自動查到遠端 VPS。
+
+[工具頁](https://myip.dog/tools)還提供 DNS 查詢、IPv6 測試、TCP 連接埠檢查、Ping、Traceroute、IP WHOIS 與子網路計算。確認網域紀錄可用 DNS 查詢，檢查對外 TCP 服務則可用連接埠工具。線上 Ping 與 Traceroute 是由遠端探測節點發起，閱讀結果時也要留意節點位置。
+
+下次需要查詢伺服器IP，登入 VPS 後執行 `curl myip.dog`，記下位址和查詢時間，再依問題挑選後續工具即可。

@@ -1,0 +1,47 @@
+# Het openbare IP-adres van je VPS opvragen via SSH
+
+<img src="/images/articles/check-vps-ip.webp" alt="Een SSH-terminal op een VPS met curl myip.dog en een openbaar voorbeeldadres" width="1536" height="1024" className="w-full h-auto rounded-xl border border-border" />
+
+*Eigen illustratie. Het getoonde IP-adres is een voorbeeld.*
+
+Je bent via [SSH](/nl/ssh-command/) ingelogd op je VPS en wilt weten welk adres de server gebruikt voor verkeer naar internet. Voer dan `curl myip.dog` uit in de externe terminal. Zo controleer je snel het openbare IP-adres, zonder het beheerpaneel van je hostingprovider te openen.
+
+## Voer het commando op de VPS uit
+
+Controleer of je terminal echt verbonden is met de server. Voer je het commando op je eigen computer uit, dan krijg je het adres van je eigen internetverbinding.
+
+```bash
+curl myip.dog
+```
+
+Bij een geslaagde aanvraag verschijnt een IP-adres als gewone tekst:
+
+```text
+203.0.113.42
+```
+
+Dit adres is alleen ter illustratie. Het openbare IP-adres van jouw VPS is de waarde die je werkelijk terugkrijgt. curl verstuurt de aanvraag en MyIP.dog geeft het waargenomen bronadres terug. Daarvoor hoef je geen apart opzoekscript te installeren.
+
+Voor een versleutelde HTTPS-verbinding kun je deze variant gebruiken:
+
+```bash
+curl https://myip.dog
+```
+
+## Wat betekent het resultaat?
+
+Je ziet het openbare IP-adres dat voor deze uitgaande aanvraag is gebruikt. Achter een NAT-gateway, proxy of VPN kan dat het adres van die tussenliggende dienst zijn. Het hoeft dus niet gelijk te zijn aan het adres op de netwerkinterface of aan het adres waarmee je via SSH bent ingelogd. Je krijgt ook geen overzicht van alle IP-adressen van de VPS.
+
+Afhankelijk van de verbinding verschijnt IPv4 of IPv6. De [curl-handleiding](https://curl.se/docs/manpage.html) legt de opties uit. Wil je een domein naar de VPS laten verwijzen, bevestig dan bij je provider welk adres voor inkomende verbindingen geldt en controleer NAT en firewallregels. Een geslaagde IP-controle bewijst niet dat je website of SSH-poort van buitenaf bereikbaar is.
+
+## Als er een foutmelding verschijnt
+
+Bij `curl: command not found` installeer je curl met de pakketbeheerder van je Linux-distributie. Mislukt de naamomzetting, controleer dan DNS. Bij een time-out onderzoek je de uitgaande internetverbinding en eventuele proxy-instellingen. Bewaar de precieze foutmelding voor verder onderzoek.
+
+## Meer hulpmiddelen op MyIP.dog
+
+De [homepage van MyIP.dog](https://myip.dog/) toont het openbare IP-adres van je browserverbinding. Open je de site op je eigen computer, dan wordt het adres van je VPS niet automatisch gecontroleerd.
+
+De [gereedschapspagina](https://myip.dog/tools) bevat onder meer DNS-opzoekingen, een IPv6-test, een TCP-poortcontrole, Ping, Traceroute, IP WHOIS en een subnetcalculator. Kies de controle die bij je vraag past. Online Ping en Traceroute starten vanaf een extern meetpunt; bekijk daarom ook waar dat meetpunt zich bevindt.
+
+Noteer het openbare IP-adres van je VPS samen met het tijdstip. Zo kun je metingen vergelijken nadat je een instelling hebt aangepast.

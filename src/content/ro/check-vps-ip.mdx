@@ -1,0 +1,47 @@
+# Cum afli IP-ul public al VPS-ului după conectarea prin SSH
+
+<img src="/images/articles/check-vps-ip.webp" alt="Terminal SSH pe un VPS care rulează curl myip.dog și afișează un IP public de exemplu" width="1536" height="1024" className="w-full h-auto rounded-xl border border-border" />
+
+*Ilustrație originală. Adresa IP din imagine este doar un exemplu.*
+
+Te-ai conectat la VPS prin [SSH](/ro/ssh-command/) și vrei să verifici cu ce adresă iese serverul pe internet? Rulează `curl myip.dog` în terminalul de pe server. Este o verificare rapidă, utilă când investighezi o problemă de rețea sau pregătești o cerere pentru echipa de suport.
+
+## Rulează comanda pe VPS
+
+Asigură-te că terminalul este în sesiunea SSH a serverului. Dacă rulezi comanda pe propriul calculator fără să te conectezi la VPS, vei primi adresa conexiunii tale locale.
+
+```bash
+curl myip.dog
+```
+
+Când cererea reușește, răspunsul este o adresă în format text:
+
+```text
+203.0.113.42
+```
+
+Adresa de mai sus este doar un exemplu. IP-ul public al VPS-ului este valoarea returnată efectiv în terminal. curl trimite cererea, iar MyIP.dog răspunde cu adresa sursă pe care o vede. Nu trebuie să instalezi un script suplimentar.
+
+Pentru o conexiune HTTPS criptată, poți folosi:
+
+```bash
+curl https://myip.dog
+```
+
+## Ce înseamnă rezultatul?
+
+Vezi IP-ul public folosit pentru această cerere de ieșire. Dacă VPS-ul trece printr-un gateway NAT, un proxy sau un VPN, poate apărea adresa acelui intermediar. Prin urmare, rezultatul poate diferi de adresa interfeței de rețea sau de cea folosită pentru autentificarea SSH. Comanda nu listează toate adresele atribuite serverului.
+
+În funcție de conexiune, vei primi IPv4 sau IPv6. Opțiunile sunt explicate în [manualul curl](https://curl.se/docs/manpage.html). Înainte să configurezi un domeniu cu IP-ul public al VPS-ului, confirmă la furnizor adresa pentru conexiunile de intrare și verifică regulile NAT și firewall. O interogare reușită nu dovedește că site-ul sau portul SSH este accesibil din exterior.
+
+## Dacă apare o eroare
+
+Mesajul `curl: command not found` înseamnă că trebuie să instalezi curl cu managerul de pachete al distribuției Linux. Dacă numele nu poate fi rezolvat, verifică DNS. Dacă expiră timpul de conectare, verifică accesul de ieșire la internet și setările proxy. Păstrează mesajul complet pentru diagnosticare.
+
+## Alte instrumente MyIP.dog
+
+[Pagina principală MyIP.dog](https://myip.dog/) afișează IP-ul public al conexiunii browserului. Dacă o deschizi pe calculatorul tău, nu verifici automat adresa VPS-ului.
+
+[Pagina de instrumente](https://myip.dog/tools) include interogări DNS, test IPv6, verificarea porturilor TCP, Ping, Traceroute, IP WHOIS și un calculator de subrețele. Alege verificarea potrivită pentru înregistrările domeniului sau pentru un serviciu TCP public. Ping și Traceroute online pornesc de la o sondă la distanță, deci contează și locul măsurătorii.
+
+Notează IP-ul public al VPS-ului și ora verificării. Îți va fi mai ușor să compari rezultatele după o schimbare de configurație sau să explici situația echipei de suport.

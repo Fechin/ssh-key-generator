@@ -1,0 +1,47 @@
+# Jak sprawdzić publiczny adres IP VPS po zalogowaniu przez SSH
+
+<img src="/images/articles/check-vps-ip.webp" alt="Terminal SSH serwera VPS z poleceniem curl myip.dog i przykładowym publicznym adresem IP" width="1536" height="1024" className="w-full h-auto rounded-xl border border-border" />
+
+*Autorska ilustracja. Widoczny adres IP jest przykładem.*
+
+Po zalogowaniu na VPS przez [SSH](/pl/ssh-command/) możesz szybko sprawdzić, z jakiego adresu serwer łączy się z internetem. Wystarczy uruchomić `curl myip.dog` w zdalnym terminalu. To przydatne podczas diagnozowania połączeń i zgłaszania problemu do pomocy technicznej, bez otwierania panelu dostawcy.
+
+## Uruchom polecenie na serwerze
+
+Upewnij się, że pracujesz w sesji SSH serwera VPS. Jeśli wykonasz polecenie na własnym komputerze, otrzymasz adres swojej lokalnej sieci.
+
+```bash
+curl myip.dog
+```
+
+Po udanym zapytaniu pojawi się adres zapisany zwykłym tekstem:
+
+```text
+203.0.113.42
+```
+
+Powyższy adres służy wyłącznie jako przykład. Publiczny adres IP VPS to wartość zwrócona w Twoim terminalu. curl wysyła żądanie, a MyIP.dog odpowiada adresem źródłowym, który widzi. Nie musisz instalować dodatkowego skryptu.
+
+Jeśli chcesz użyć szyfrowanego połączenia HTTPS, wpisz:
+
+```bash
+curl https://myip.dog
+```
+
+## Co dokładnie sprawdzasz?
+
+Wynik pokazuje publiczny adres IP użyty w tym żądaniu wychodzącym. Gdy VPS korzysta z bramy NAT, serwera proxy lub VPN, może to być adres tego pośrednika. Nie musi być taki sam jak adres interfejsu sieciowego ani adres używany do logowania przez SSH. Polecenie nie wyświetla wszystkich adresów przypisanych do serwera.
+
+W zależności od połączenia otrzymasz IPv4 albo IPv6. Dostępne opcje opisuje [dokumentacja curl](https://curl.se/docs/manpage.html). Przed skierowaniem domeny na publiczny adres IP VPS potwierdź u dostawcy adres dla połączeń przychodzących oraz sprawdź mapowanie NAT i zaporę. Udane zapytanie nie dowodzi, że strona lub port SSH są dostępne z zewnątrz.
+
+## Gdy pojawi się błąd
+
+Komunikat `curl: command not found` oznacza, że curl trzeba zainstalować za pomocą menedżera pakietów danej dystrybucji Linux. Przy błędzie rozwiązywania nazwy sprawdź DNS. Przy przekroczeniu czasu połączenia sprawdź dostęp do internetu i ustawienia proxy. Zachowaj pełną treść błędu do dalszej diagnozy.
+
+## Pozostałe narzędzia MyIP.dog
+
+[Strona główna MyIP.dog](https://myip.dog/) pokazuje publiczny adres IP połączenia przeglądarki. Otwarcie jej na własnym komputerze nie sprawdza automatycznie zdalnego VPS.
+
+W [katalogu narzędzi](https://myip.dog/tools) znajdziesz zapytania DNS, test IPv6, sprawdzanie portów TCP, Ping, Traceroute, IP WHOIS i kalkulator podsieci. Wybierz narzędzie do konkretnego pytania, na przykład rekordów domeny lub dostępności usługi TCP. Ping i Traceroute działają ze zdalnej sondy, więc przy interpretacji uwzględnij jej lokalizację.
+
+Zapisz publiczny adres IP VPS wraz z godziną sprawdzenia. Ułatwi to porównanie wyników po zmianie konfiguracji lub rozmowę z pomocą techniczną.
