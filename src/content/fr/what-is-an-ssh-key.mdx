@@ -28,6 +28,11 @@ Pour plus d'informations sur le protocole SSH dans son ensemble, consultez notre
 
 Comprendre la distinction entre les deux clés est essentiel pour utiliser SSH correctement.
 
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/public-private-keys.webp" alt="La clé privée reste sur le portable, les copies de la clé publique vont au serveur et à la plateforme de code" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Partagez le fichier .pub avec les serveurs et services Git ; gardez la clé privée sur votre appareil.</figcaption>
+</figure>
+
 ### La clé publique — votre cadenas
 
 La **clé publique** est conçue pour être partagée librement. Considérez-la comme un cadenas : vous en distribuez des copies à tous les systèmes auxquels vous souhaitez accéder. Lorsqu'un serveur possède votre clé publique dans son fichier `authorized_keys`, il peut vérifier votre identité sans connaître votre clé privée.
@@ -113,6 +118,11 @@ Pour les nouvelles clés, privilégiez Ed25519. Utilisez RSA 4096 bits quand la 
 ## Comment ajouter une clé SSH à GitHub
 
 L'ajout de votre clé publique SSH à GitHub vous permet de pousser et tirer via SSH sans saisir votre nom d'utilisateur et votre mot de passe à chaque opération. Voici la procédure étape par étape.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/github-public-key-setup.webp" alt="La clé publique est copiée dans les paramètres GitHub, puis la connexion SSH est testée" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Ajoutez id_ed25519.pub à GitHub, puis testez l’authentification avec ssh -T git@github.com.</figcaption>
+</figure>
 
 ### Étape 1 : Générer votre paire de clés
 
@@ -238,6 +248,11 @@ Host serveur-prod
 ## Phrases secrètes des clés SSH
 
 Lorsque vous générez une paire de clés SSH, `ssh-keygen` vous demande si vous souhaitez définir une **phrase secrète**. Il s'agit d'un mot de passe optionnel qui chiffre le fichier de clé privée sur le disque.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/passphrase-ssh-agent.webp" alt="Le fichier de clé privée chiffré est déverrouillé et chargé dans la mémoire locale de ssh-agent" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">La phrase secrète chiffre le fichier de clé privée sur le disque ; ssh-agent conserve la clé déchiffrée en mémoire locale.</figcaption>
+</figure>
 
 ### Pourquoi utiliser une phrase secrète ?
 

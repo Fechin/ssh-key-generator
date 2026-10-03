@@ -29,6 +29,11 @@
 
 فهم التمييز بين المفتاحين ضروري لاستخدام SSH بشكل صحيح.
 
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/public-private-keys.webp" alt="يبقى المفتاح الخاص على الحاسوب وتُرسل نسخ المفتاح العام إلى الخادم ومنصة استضافة الكود" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">شارك ملف .pub مع الخوادم وخدمات Git؛ واحتفظ بالمفتاح الخاص على جهازك.</figcaption>
+</figure>
+
 ### المفتاح العام — قفلك
 
 **المفتاح العام** مصمم للمشاركة الحرة. فكّر فيه كقفل: توزع نسخًا منه على الجميع في الأنظمة التي تريد الوصول إليها. حين يمتلك الخادم مفتاحك العام في ملف `authorized_keys`، يمكنه التحقق من هويتك دون معرفة مفتاحك الخاص.
@@ -114,6 +119,11 @@ ssh-keygen -t rsa -b 4096 -C "your@email.com"
 ## كيفية إضافة مفتاح SSH إلى GitHub
 
 تتيح إضافة مفتاحك العام لـ SSH إلى GitHub الرفع والسحب عبر SSH دون إدخال اسم مستخدم وكلمة مرور في كل عملية. إليك العملية خطوة بخطوة.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/github-public-key-setup.webp" alt="يُنسخ المفتاح العام إلى إعدادات GitHub ثم يُختبر اتصال SSH" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">أضف id_ed25519.pub إلى GitHub، ثم اختبر المصادقة باستخدام ssh -T git@github.com.</figcaption>
+</figure>
 
 ### الخطوة 1: توليد زوج المفاتيح
 
@@ -239,6 +249,11 @@ Host prod-server
 ## عبارات مرور مفاتيح SSH
 
 عند توليد زوج مفاتيح SSH، يسألك `ssh-keygen` إن كنت تريد تعيين **عبارة مرور**. هذه كلمة مرور اختيارية تشفّر ملف المفتاح الخاص على القرص.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/passphrase-ssh-agent.webp" alt="يُفتح ملف المفتاح الخاص المشفر ويُحمّل في الذاكرة المحلية لـ ssh-agent" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">تشفّر عبارة المرور ملف المفتاح الخاص على القرص؛ ويحتفظ ssh-agent بالمفتاح بعد فك تشفيره في الذاكرة المحلية.</figcaption>
+</figure>
 
 ### لماذا تستخدم عبارة مرور؟
 

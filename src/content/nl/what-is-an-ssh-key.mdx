@@ -29,6 +29,11 @@ Voor achtergrondinformatie over het bredere SSH-protocol, zie onze gids over <a 
 
 Inzicht in het onderscheid tussen de twee sleutels is essentieel voor correct gebruik van SSH.
 
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/public-private-keys.webp" alt="De privésleutel blijft op de laptop terwijl kopieën van de openbare sleutel naar servers en codehosting gaan" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Deel het .pub-bestand met servers en Git-diensten; bewaar de privésleutel op je eigen apparaat.</figcaption>
+</figure>
+
 ### De Openbare Sleutel — Je Slot
 
 De **openbare sleutel** is ontworpen om vrij te delen. Zie het als een hangslot: je deelt kopieën met iedereen wiens systemen je wilt benaderen. Wanneer een server je openbare sleutel heeft in zijn bestand `authorized_keys`, kan het je identiteit verifiëren zonder je privésleutel te kennen.
@@ -114,6 +119,11 @@ Kies voor nieuwe sleutels meestal Ed25519. Gebruik RSA 4096-bit wanneer oudere s
 ## Een SSH-sleutel Toevoegen aan GitHub
 
 Het toevoegen van je openbare SSH-sleutel aan GitHub stelt je in staat te pushen en pullen via SSH zonder bij elke bewerking je gebruikersnaam en wachtwoord in te voeren. Dit is het stapsgewijze proces.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/github-public-key-setup.webp" alt="De openbare sleutel wordt naar GitHub gekopieerd en daarna wordt de SSH-verbinding getest" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Voeg id_ed25519.pub toe aan GitHub en test de authenticatie met ssh -T git@github.com.</figcaption>
+</figure>
 
 ### Stap 1: Genereer Je Sleutelpaar
 
@@ -239,6 +249,11 @@ Host prod-server
 ## SSH-sleutelwachtwoordzinnen
 
 Wanneer je een SSH-sleutelpaar genereert, vraagt `ssh-keygen` of je een **wachtwoordzin** wilt instellen. Dit is een optioneel wachtwoord dat het privésleutelbestand op schijf versleutelt.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/passphrase-ssh-agent.webp" alt="Een versleuteld privésleutelbestand wordt ontgrendeld en in het lokale ssh-agent-geheugen geladen" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Een wachtwoordzin versleutelt het privésleutelbestand op schijf; ssh-agent bewaart de ontsleutelde sleutel in het lokale geheugen.</figcaption>
+</figure>
 
 ### Waarom een Wachtwoordzin Gebruiken?
 

@@ -29,6 +29,11 @@ For bakgrunn om den bredere SSH-protokollen, se vår guide om <a href="/nb/what-
 
 Å forstå skillet mellom de to nøklene er avgjørende for korrekt bruk av SSH.
 
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/public-private-keys.webp" alt="Den private nøkkelen blir på datamaskinen, mens kopier av den offentlige nøkkelen sendes til server og kodeplattform" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Del .pub-filen med servere og Git-tjenester; behold den private nøkkelen på enheten din.</figcaption>
+</figure>
+
 ### Den offentlige nøkkelen — din hengelås
 
 Den **offentlige nøkkelen** er designet for å deles fritt. Tenk på den som en hengelås: du deler ut kopier til alle hvis systemer du ønsker tilgang til. Når en server har din offentlige nøkkel i sin `authorized_keys`-fil, kan den verifisere identiteten din uten å kjenne din private nøkkel.
@@ -114,6 +119,11 @@ For nye nøkler er Ed25519 vanligvis riktig valg. Bruk RSA 4096 bit når eldre s
 ## Slik legger du til en SSH-nøkkel på GitHub
 
 Å legge til din offentlige SSH-nøkkel på GitHub lar deg pushe og pulle via SSH uten å angi brukernavnet og passordet ditt ved hver operasjon. Her er trinn-for-trinn-prosessen.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/github-public-key-setup.webp" alt="Den offentlige nøkkelen kopieres til GitHub, og SSH-tilkoblingen testes" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Legg til id_ed25519.pub i GitHub, og test autentiseringen med ssh -T git@github.com.</figcaption>
+</figure>
 
 ### Trinn 1: Generer nøkkelparet ditt
 
@@ -239,6 +249,11 @@ Host prod-server
 ## SSH-nøkkelpassfraserord
 
 Når du genererer et SSH-nøkkelpar, spør `ssh-keygen` om du vil angi en **passfrase**. Dette er et valgfritt passord som krypterer den private nøkkelfilen på disken.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/passphrase-ssh-agent.webp" alt="En kryptert privat nøkkelfil låses opp og lastes inn i det lokale ssh-agent-minnet" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">En passfrase krypterer den private nøkkelfilen på disken; ssh-agent holder den dekrypterte nøkkelen i lokalt minne.</figcaption>
+</figure>
 
 ### Hvorfor bruke en passfrase?
 

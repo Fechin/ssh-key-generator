@@ -29,6 +29,11 @@
 
 Η κατανόηση της διάκρισης μεταξύ των δύο κλειδιών είναι απαραίτητη για τη σωστή χρήση του SSH.
 
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/public-private-keys.webp" alt="Το ιδιωτικό κλειδί μένει στον φορητό υπολογιστή και αντίγραφα του δημόσιου κλειδιού πηγαίνουν στον διακομιστή και στην πλατφόρμα κώδικα" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Μοιραστείτε το αρχείο .pub με διακομιστές και υπηρεσίες Git· κρατήστε το ιδιωτικό κλειδί στη συσκευή σας.</figcaption>
+</figure>
+
 ### Το δημόσιο κλειδί — η κλειδαριά σας
 
 Το **δημόσιο κλειδί** είναι σχεδιασμένο να μοιράζεται ελεύθερα. Σκεφτείτε το ως ένα λουκέτο: μοιράζετε αντίγραφα σε όλους τους servers που θέλετε να προσπελάσετε. Όταν ένας server έχει το δημόσιο κλειδί σας στο αρχείο `authorized_keys`, μπορεί να επαληθεύσει την ταυτότητά σας χωρίς να γνωρίζει το ιδιωτικό σας κλειδί.
@@ -114,6 +119,11 @@ ssh-keygen -t rsa -b 4096 -C "your@email.com"
 ## Πώς να προσθέσετε κλειδί SSH στο GitHub
 
 Η προσθήκη του δημόσιου κλειδιού SSH σας στο GitHub σας επιτρέπει να κάνετε push και pull μέσω SSH χωρίς να εισάγετε όνομα χρήστη και κωδικό σε κάθε λειτουργία. Ακολουθεί η διαδικασία βήμα-βήμα.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/github-public-key-setup.webp" alt="Το δημόσιο κλειδί αντιγράφεται στο GitHub και έπειτα ελέγχεται η σύνδεση SSH" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Προσθέστε το id_ed25519.pub στο GitHub και ελέγξτε την ταυτοποίηση με ssh -T git@github.com.</figcaption>
+</figure>
 
 ### Βήμα 1: Δημιουργήστε το ζεύγος κλειδιών σας
 
@@ -239,6 +249,11 @@ Host prod-server
 ## Passphrases κλειδιών SSH
 
 Όταν δημιουργείτε ένα ζεύγος κλειδιών SSH, το `ssh-keygen` ρωτά αν θέλετε να ορίσετε ένα **passphrase**. Αυτός είναι ένας προαιρετικός κωδικός που κρυπτογραφεί το αρχείο ιδιωτικού κλειδιού στον δίσκο.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/passphrase-ssh-agent.webp" alt="Το κρυπτογραφημένο αρχείο ιδιωτικού κλειδιού ξεκλειδώνεται και φορτώνεται στην τοπική μνήμη του ssh-agent" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Η φράση πρόσβασης κρυπτογραφεί το αρχείο ιδιωτικού κλειδιού στον δίσκο· το ssh-agent κρατά το αποκρυπτογραφημένο κλειδί στην τοπική μνήμη.</figcaption>
+</figure>
 
 ### Γιατί να χρησιμοποιείτε passphrase;
 

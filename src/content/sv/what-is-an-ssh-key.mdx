@@ -29,6 +29,11 @@ För bakgrund om det bredare SSH-protokollet, se vår guide om <a href="/sv/what
 
 Att förstå skillnaden mellan de två nycklarna är avgörande för att använda SSH korrekt.
 
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/public-private-keys.webp" alt="Den privata nyckeln stannar på datorn medan kopior av den publika nyckeln skickas till server och kodplattform" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Dela .pub-filen med servrar och Git-tjänster; behåll den privata nyckeln på din enhet.</figcaption>
+</figure>
+
 ### Den publika nyckeln — ditt lås
 
 Den **publika nyckeln** är utformad för att delas fritt. Tänk på den som ett hänglås: du delar ut kopior till alla vars system du vill komma åt. När en server har din publika nyckel i sin `authorized_keys`-fil kan den verifiera din identitet utan att känna till din privata nyckel.
@@ -114,6 +119,11 @@ För nya nycklar är Ed25519 oftast rätt val. Använd RSA 4096 bitar när äldr
 ## Hur man lägger till en SSH-nyckel till GitHub
 
 Att lägga till din publika SSH-nyckel till GitHub gör att du kan pusha och dra via SSH utan att ange ditt användarnamn och lösenord vid varje operation. Här är steg-för-steg-processen.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/github-public-key-setup.webp" alt="Den publika nyckeln kopieras till GitHub och SSH-anslutningen testas" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Lägg till id_ed25519.pub i GitHub och testa autentiseringen med ssh -T git@github.com.</figcaption>
+</figure>
 
 ### Steg 1: Generera ditt nyckelpar
 
@@ -239,6 +249,11 @@ Host prod-server
 ## SSH-nyckellösenfraser
 
 När du genererar ett SSH-nyckelpar frågar `ssh-keygen` om du vill ange en **lösenfras**. Detta är ett valfritt lösenord som krypterar den privata nyckelfilen på disken.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/passphrase-ssh-agent.webp" alt="En krypterad privat nyckelfil låses upp och laddas i det lokala ssh-agent-minnet" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">En lösenfras krypterar den privata nyckelfilen på disken; ssh-agent håller den dekrypterade nyckeln i det lokala minnet.</figcaption>
+</figure>
 
 ### Varför använda en lösenfras?
 

@@ -29,6 +29,11 @@ Lisätietoja laajemmasta SSH-protokollasta on oppaassamme <a href="/fi/what-is-s
 
 Näiden kahden avaimen eron ymmärtäminen on välttämätöntä SSH:n oikean käytön kannalta.
 
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/public-private-keys.webp" alt="Yksityinen avain jää kannettavaan, julkisen avaimen kopiot siirtyvät palvelimelle ja koodipalveluun" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Jaa .pub-tiedosto palvelimille ja Git-palveluille; säilytä yksityinen avain omalla laitteellasi.</figcaption>
+</figure>
+
 ### Julkinen avain – lukkosi
 
 **Julkinen avain** on suunniteltu jaettavaksi vapaasti. Ajattele sitä riippulukkona: jaat kopiot kaikille, joiden järjestelmiä haluat käyttää. Kun palvelimella on julkinen avaimesi `authorized_keys`-tiedostossaan, se voi vahvistaa henkilöllisyytesi tietämättä yksityistä avaimesi.
@@ -114,6 +119,11 @@ Uusille avaimille Ed25519 on yleensä paras. Käytä RSA 4096-bittiä, kun vanha
 ## Kuinka lisätä SSH-avain GitHubiin
 
 Lisäämällä julkisen SSH-avaimesi GitHubiin voit työntää ja vetää SSH:ta syöttämättä käyttäjänimeäsi ja salasanaasi jokaisessa toiminnossa. Tässä on vaiheittainen prosessi.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/github-public-key-setup.webp" alt="Julkinen avain kopioidaan GitHubiin ja SSH-yhteys testataan" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Lisää id_ed25519.pub GitHubiin ja testaa todennus komennolla ssh -T git@github.com.</figcaption>
+</figure>
 
 ### Vaihe 1: Luo avainpari
 
@@ -239,6 +249,11 @@ Host prod-server
 ## SSH-avainsalasanat
 
 Kun luot SSH-avainparin, `ssh-keygen` kysyy, haluatko asettaa **salalauseen**. Tämä on valinnainen salasana, joka salaa levyllä olevan yksityisen avaintiedoston.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/passphrase-ssh-agent.webp" alt="Salattu yksityisen avaimen tiedosto avataan ja ladataan paikallisen ssh-agentin muistiin" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Salalause salaa yksityisen avaimen tiedoston levyllä; ssh-agent säilyttää puretun avaimen paikallisessa muistissa.</figcaption>
+</figure>
 
 ### Miksi käyttää tunnuslausetta?
 

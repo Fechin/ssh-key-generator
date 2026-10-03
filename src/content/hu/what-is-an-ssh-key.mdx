@@ -29,6 +29,11 @@ A tágabb értelemben vett SSH-protokoll hátteréért tekintse meg az <a href="
 
 A két kulcs közötti különbség megértése elengedhetetlen az SSH helyes használatához.
 
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/public-private-keys.webp" alt="A privát kulcs a laptopon marad, a nyilvános kulcs másolatai a szerverre és a kódtárhelyre kerülnek" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">A .pub fájlt oszd meg a szerverekkel és Git-szolgáltatásokkal; a privát kulcsot tartsd a saját eszközödön.</figcaption>
+</figure>
+
 ### A nyilvános kulcs – a zár
 
 A **nyilvános kulcs** szabadon megosztható. Tekintsd úgy, mint egy lakatot: mindenkinek kiosztod a másolatokat, akiknek a rendszeréhez hozzá szeretnél férni. Ha egy szerver `authorized_keys` fájljában szerepel az Ön nyilvános kulcsa, a privát kulcs ismerete nélkül is ellenőrizheti az Ön személyazonosságát.
@@ -114,6 +119,11 @@ ssh-keygen -t rsa -b 4096 -C "your@email.com"
 ## SSH-kulcs hozzáadása a GitHubhoz
 
 Ha hozzáadja nyilvános SSH-kulcsát a GitHubhoz, lehetővé teszi az SSH-t anélkül, hogy minden műveletnél megadná felhasználónevét és jelszavát. Íme a lépésenkénti folyamat.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/github-public-key-setup.webp" alt="A nyilvános kulcs a GitHub beállításaiba kerül, majd az SSH-kapcsolat tesztelése következik" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Add hozzá az id_ed25519.pub fájlt a GitHubhoz, majd teszteld a hitelesítést az ssh -T git@github.com paranccsal.</figcaption>
+</figure>
 
 ### 1. lépés: A kulcspár létrehozása
 
@@ -239,6 +249,11 @@ Host prod-server
 ## SSH-kulcs jelszavak
 
 Amikor létrehoz egy SSH-kulcspárt, a `ssh-keygen` megkérdezi, hogy kíván-e beállítani egy **jelszót**. Ez egy opcionális jelszó, amely titkosítja a lemezen lévő privát kulcsfájlt.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/passphrase-ssh-agent.webp" alt="A titkosított privátkulcs-fájl feloldva a helyi ssh-agent memóriájába kerül" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">A jelszó titkosítja a lemezen lévő privátkulcs-fájlt; az ssh-agent a visszafejtett kulcsot a helyi memóriában tartja.</figcaption>
+</figure>
 
 ### Miért használjunk jelszót?
 

@@ -30,6 +30,11 @@ SSH 密钥基于**非对称加密**（也称公钥密码学）。与传统的对
 
 理解公钥和私钥的区别是正确使用 SSH 密钥的基础。
 
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/public-private-keys.webp" alt="私钥留在电脑内，公钥副本发送到服务器和代码托管平台" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">将 .pub 公钥文件分享给服务器或 Git 平台；私钥始终保留在自己的设备上。</figcaption>
+</figure>
+
 ### 公钥
 
 公钥可以、也应该自由分享。它的特点是：
@@ -99,6 +104,11 @@ ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
 ## 如何将 SSH 密钥添加到 GitHub
 
 GitHub 使用 SSH 密钥进行 Git 操作认证。添加步骤如下：
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/github-public-key-setup.webp" alt="将公钥复制到 GitHub 设置页面后测试 SSH 连接" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">复制 id_ed25519.pub 并添加到 GitHub，然后运行 ssh -T git@github.com 测试认证。</figcaption>
+</figure>
 
 ### 第一步：生成 SSH 密钥
 
@@ -208,6 +218,11 @@ chmod 600 ~/.ssh/authorized_keys
 ## SSH 密钥密码短语
 
 生成 SSH 密钥时，系统会提示设置**密码短语（passphrase）**。这是对私钥文件的额外加密保护。
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/passphrase-ssh-agent.webp" alt="加密的私钥文件被解锁并加载到本地 ssh-agent 内存中" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">密码短语加密保护磁盘上的私钥文件；ssh-agent 在本地内存中持有解密后的密钥。</figcaption>
+</figure>
 
 ### 密码短语的作用
 

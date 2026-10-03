@@ -29,6 +29,11 @@ SSH protokolünün genel arka planı için <a href="/tr/what-is-ssh/">SSH nedir<
 
 İki anahtar arasındaki farkı anlamak, SSH'yi doğru kullanmak için temel önem taşır.
 
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/public-private-keys.webp" alt="Özel anahtar dizüstü bilgisayarda kalır, açık anahtar kopyaları sunucuya ve kod platformuna gönderilir" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">.pub dosyasını sunucular ve Git hizmetleriyle paylaşın; özel anahtarı cihazınızda tutun.</figcaption>
+</figure>
+
 ### Açık Anahtar — Kiliniz
 
 **Açık anahtar**, serbestçe paylaşılmak üzere tasarlanmıştır. Bunu bir asma kilit olarak düşünün: erişmek istediğiniz sistemlerin herkesine kopyasını dağıtırsınız. Bir sunucunun `authorized_keys` dosyasında açık anahtarınız bulunduğunda, sunucu özel anahtarınızı bilmeden kimliğinizi doğrulayabilir.
@@ -114,6 +119,11 @@ Yeni anahtarlar için genellikle Ed25519 seçin. Eski sistemler gerektiriyorsa R
 ## GitHub'a SSH Anahtarı Nasıl Eklenir?
 
 SSH açık anahtarınızı GitHub'a eklemek, her işlemde kullanıcı adı ve parola girmeden SSH üzerinden push ve pull yapmanızı sağlar. İşte adım adım süreç.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/github-public-key-setup.webp" alt="Açık anahtar GitHub ayarlarına kopyalanır ve ardından SSH bağlantısı test edilir" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">id_ed25519.pub dosyasını GitHub’a ekleyin, ardından ssh -T git@github.com ile kimlik doğrulamayı test edin.</figcaption>
+</figure>
 
 ### Adım 1: Anahtar Çiftinizi Oluşturun
 
@@ -239,6 +249,11 @@ Host prod-server
 ## SSH Anahtar Parola İfadeleri
 
 SSH anahtar çifti oluşturduğunuzda, `ssh-keygen` bir **parola ifadesi** belirlemek isteyip istemediğinizi sorar. Bu, diskteki özel anahtar dosyasını şifreleyen isteğe bağlı bir paroladır.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/passphrase-ssh-agent.webp" alt="Şifrelenmiş özel anahtar dosyası açılır ve yerel ssh-agent belleğine yüklenir" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Parola ifadesi diskteki özel anahtar dosyasını şifreler; ssh-agent çözülmüş anahtarı yerel bellekte tutar.</figcaption>
+</figure>
 
 ### Neden Parola İfadesi Kullanılır?
 

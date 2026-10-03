@@ -28,6 +28,11 @@ Para contexto sobre o protocolo SSH em geral, consulte nosso guia sobre <a href=
 
 Entender a distinção entre as duas chaves é essencial para usar o SSH corretamente.
 
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/public-private-keys.webp" alt="A chave privada fica no computador e cópias da chave pública são enviadas ao servidor e à plataforma de código" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Compartilhe o arquivo .pub com servidores e serviços Git; mantenha a chave privada no seu dispositivo.</figcaption>
+</figure>
+
 ### A chave pública — seu cadeado
 
 A **chave pública** é projetada para ser compartilhada livremente. Pense nela como um cadeado: você distribui cópias para todos os sistemas aos quais quer ter acesso. Quando um servidor tem sua chave pública no arquivo `authorized_keys`, ele pode verificar sua identidade sem conhecer sua chave privada.
@@ -113,6 +118,11 @@ ssh-keygen -t rsa -b 4096 -C "seu@email.com"
 ## Como adicionar uma chave SSH ao GitHub
 
 Adicionar sua chave pública SSH ao GitHub permite que você faça push e pull via SSH sem inserir seu nome de usuário e senha em cada operação. Veja o processo passo a passo.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/github-public-key-setup.webp" alt="A chave pública é copiada para o GitHub e a conexão SSH é testada" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Adicione id_ed25519.pub ao GitHub e teste a autenticação com ssh -T git@github.com.</figcaption>
+</figure>
 
 ### Passo 1: gere seu par de chaves
 
@@ -238,6 +248,11 @@ Host prod-server
 ## Frases-senha de chaves SSH
 
 Quando você gera um par de chaves SSH, o `ssh-keygen` pergunta se você quer definir uma **frase secreta** (passphrase). Esta é uma senha opcional que criptografa o arquivo de chave privada no disco.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/passphrase-ssh-agent.webp" alt="O arquivo de chave privada criptografado é desbloqueado e carregado na memória local do ssh-agent" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">A frase-senha criptografa o arquivo de chave privada no disco; o ssh-agent mantém a chave descriptografada na memória local.</figcaption>
+</figure>
 
 ### Por que usar uma frase-senha?
 

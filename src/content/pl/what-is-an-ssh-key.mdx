@@ -29,6 +29,11 @@ Informacje o szerszym protokole SSH znajdziesz w naszym przewodniku o <a href="/
 
 Zrozumienie różnicy między tymi dwoma kluczami jest niezbędne do prawidłowego korzystania z SSH.
 
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/public-private-keys.webp" alt="Klucz prywatny pozostaje na laptopie, a kopie klucza publicznego trafiają na serwer i platformę kodu" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Udostępniaj plik .pub serwerom i usługom Git; klucz prywatny zachowaj na swoim urządzeniu.</figcaption>
+</figure>
+
 ### Klucz Publiczny — Twoja Kłódka
 
 **Klucz publiczny** jest przeznaczony do swobodnego udostępniania. Pomyśl o nim jak o kłódce: rozdajesz jej kopie wszystkim systemom, do których chcesz mieć dostęp. Gdy serwer ma Twój klucz publiczny w pliku `authorized_keys`, może weryfikować Twoją tożsamość bez znajomości klucza prywatnego.
@@ -114,6 +119,11 @@ Dla nowych kluczy zwykle wybieraj Ed25519. RSA 4096 bitów stosuj przy starszych
 ## Jak Dodać Klucz SSH do GitHub
 
 Dodanie klucza publicznego SSH do GitHub umożliwia wykonywanie operacji push i pull przez SSH bez konieczności każdorazowego podawania nazwy użytkownika i hasła. Oto krok po kroku.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/github-public-key-setup.webp" alt="Klucz publiczny jest kopiowany do GitHub, a następnie testowane jest połączenie SSH" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Dodaj id_ed25519.pub do GitHub i sprawdź uwierzytelnianie poleceniem ssh -T git@github.com.</figcaption>
+</figure>
 
 ### Krok 1: Wygeneruj Parę Kluczy
 
@@ -239,6 +249,11 @@ Host prod-server
 ## Hasła dla Kluczy SSH
 
 Podczas generowania pary kluczy SSH polecenie `ssh-keygen` pyta, czy chcesz ustawić **hasło** (passphrase). Jest to opcjonalne hasło szyfrujące plik klucza prywatnego na dysku.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/passphrase-ssh-agent.webp" alt="Zaszyfrowany plik klucza prywatnego jest odblokowywany i ładowany do lokalnej pamięci ssh-agent" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Hasło szyfruje plik klucza prywatnego na dysku; ssh-agent przechowuje odszyfrowany klucz w lokalnej pamięci.</figcaption>
+</figure>
 
 ### Dlaczego Warto Używać Hasła?
 

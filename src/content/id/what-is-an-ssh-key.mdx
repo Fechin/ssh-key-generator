@@ -29,6 +29,11 @@ Untuk latar belakang tentang protokol SSH yang lebih luas, lihat panduan kami te
 
 Memahami perbedaan antara kedua kunci ini sangat penting untuk menggunakan SSH dengan benar.
 
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/public-private-keys.webp" alt="Kunci privat tetap di laptop, sedangkan salinan kunci publik dikirim ke server dan platform kode" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Bagikan file .pub ke server dan layanan Git; simpan kunci privat di perangkat Anda.</figcaption>
+</figure>
+
 ### Kunci Publik — Gembok Anda
 
 **Kunci publik** dirancang untuk dibagikan secara bebas. Anggap saja sebagai gembok: Anda membagikan salinannya kepada semua orang yang sistemnya ingin Anda akses. Ketika server memiliki kunci publik Anda di file `authorized_keys`-nya, server dapat memverifikasi identitas Anda tanpa mengetahui kunci privat Anda.
@@ -114,6 +119,11 @@ Untuk kunci baru, biasanya pilih Ed25519. Gunakan RSA 4096-bit saat sistem lama 
 ## Cara Menambahkan Kunci SSH ke GitHub
 
 Menambahkan kunci publik SSH Anda ke GitHub memungkinkan Anda push dan pull melalui SSH tanpa memasukkan nama pengguna dan kata sandi di setiap operasi. Berikut prosesnya langkah demi langkah.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/github-public-key-setup.webp" alt="Kunci publik disalin ke pengaturan GitHub lalu koneksi SSH diuji" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Tambahkan id_ed25519.pub ke GitHub, lalu uji autentikasi dengan ssh -T git@github.com.</figcaption>
+</figure>
 
 ### Langkah 1: Buat Pasangan Kunci Anda
 
@@ -239,6 +249,11 @@ Host prod-server
 ## Passphrase Kunci SSH
 
 Saat Anda membuat pasangan kunci SSH, `ssh-keygen` menanyakan apakah Anda ingin menetapkan **passphrase**. Ini adalah kata sandi opsional yang mengenkripsi file kunci privat di disk.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/passphrase-ssh-agent.webp" alt="File kunci privat terenkripsi dibuka dan dimuat ke memori lokal ssh-agent" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Passphrase mengenkripsi file kunci privat di disk; ssh-agent menyimpan kunci yang telah didekripsi di memori lokal.</figcaption>
+</figure>
 
 ### Mengapa Menggunakan Passphrase?
 

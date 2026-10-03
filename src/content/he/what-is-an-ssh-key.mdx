@@ -29,6 +29,11 @@
 
 הבנת ההבחנה בין שני המפתחות חיונית לשימוש נכון ב-SSH.
 
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/public-private-keys.webp" alt="המפתח הפרטי נשאר במחשב הנייד ועותקי המפתח הציבורי מועברים לשרת ולפלטפורמת קוד" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">שתפו את קובץ .pub עם שרתים ושירותי Git; שמרו את המפתח הפרטי במכשיר שלכם.</figcaption>
+</figure>
+
 ### המפתח הציבורי — המנעול שלך
 
 **המפתח הציבורי** מיועד לשיתוף חופשי. חשוב עליו כמנעול: אתה מחלק עותקים לכולם במערכות שאתה רוצה לגשת אליהן. כשלשרת יש את המפתח הציבורי שלך בקובץ `authorized_keys` שלו, הוא יכול לאמת את זהותך מבלי לדעת את המפתח הפרטי שלך.
@@ -114,6 +119,11 @@ ssh-keygen -t rsa -b 4096 -C "your@email.com"
 ## כיצד להוסיף מפתח SSH ל-GitHub
 
 הוספת המפתח הציבורי שלך ל-GitHub מאפשרת לדחוף ולמשוך דרך SSH מבלי להזין שם משתמש וסיסמה בכל פעולה. הנה התהליך שלב-אחר-שלב.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/github-public-key-setup.webp" alt="המפתח הציבורי מועתק להגדרות GitHub ולאחר מכן נבדק חיבור SSH" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">הוסיפו את id_ed25519.pub ל-GitHub ובדקו את האימות באמצעות ssh -T git@github.com.</figcaption>
+</figure>
 
 ### שלב 1: צור את זוג המפתחות
 
@@ -239,6 +249,11 @@ Host prod-server
 ## סיסמאות למפתח SSH
 
 כשאתה יוצר זוג מפתח SSH, `ssh-keygen` שואל אם ברצונך להגדיר **סיסמה**. זוהי סיסמה אופציונלית שמצפינה את קובץ המפתח הפרטי בדיסק.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/passphrase-ssh-agent.webp" alt="קובץ מפתח פרטי מוצפן נפתח ונטען לזיכרון המקומי של ssh-agent" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">ביטוי הסיסמה מצפין את קובץ המפתח הפרטי בדיסק; ssh-agent מחזיק את המפתח המפוענח בזיכרון המקומי.</figcaption>
+</figure>
 
 ### למה להשתמש בסיסמה?
 

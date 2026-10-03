@@ -28,6 +28,11 @@ Para conocer el protocolo SSH en términos más amplios, consulta nuestra guía 
 
 Entender la distinción entre las dos claves es esencial para usar SSH correctamente.
 
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/public-private-keys.webp" alt="La clave privada permanece en el portátil y las copias de la clave pública van al servidor y al alojamiento de código" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Comparte el archivo .pub con servidores y servicios Git; conserva la clave privada en tu dispositivo.</figcaption>
+</figure>
+
 ### La clave pública — tu candado
 
 La **clave pública** está diseñada para compartirse libremente. Piensa en ella como un candado: distribuyes copias a todos los sistemas a los que quieres acceder. Cuando un servidor tiene tu clave pública en su fichero `authorized_keys`, puede verificar tu identidad sin conocer tu clave privada.
@@ -113,6 +118,11 @@ ssh-keygen -t rsa -b 4096 -C "tu@email.com"
 ## Cómo añadir una clave SSH a GitHub
 
 Añadir tu clave pública SSH a GitHub te permite hacer push y pull por SSH sin introducir tu nombre de usuario y contraseña en cada operación. Aquí está el proceso paso a paso.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/github-public-key-setup.webp" alt="Se copia la clave pública en GitHub y después se prueba la conexión SSH" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Añade id_ed25519.pub a GitHub y prueba la autenticación con ssh -T git@github.com.</figcaption>
+</figure>
 
 ### Paso 1: Genera tu par de claves
 
@@ -238,6 +248,11 @@ Host prod-server
 ## Frases de contraseña para claves SSH
 
 Cuando generas un par de claves SSH, `ssh-keygen` pregunta si quieres establecer una **frase de contraseña**. Es una contraseña opcional que cifra el fichero de clave privada en el disco.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/passphrase-ssh-agent.webp" alt="El archivo de clave privada cifrado se desbloquea y se carga en la memoria local de ssh-agent" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">La frase de contraseña cifra el archivo de clave privada en disco; ssh-agent mantiene la clave descifrada en la memoria local.</figcaption>
+</figure>
 
 ### ¿Por qué usar una frase de contraseña?
 

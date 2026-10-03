@@ -28,6 +28,11 @@ Hintergrundinformationen zum SSH-Protokoll im Allgemeinen finden Sie in unserem 
 
 Das Verständnis des Unterschieds zwischen den beiden Schlüsseln ist für die korrekte Nutzung von SSH unerlässlich.
 
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/public-private-keys.webp" alt="Ein privater Schlüssel bleibt auf dem Laptop, öffentliche Kopien gehen an Server und Code-Hoster" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Teilen Sie die .pub-Datei mit Servern und Git-Diensten; behalten Sie den privaten Schlüssel auf Ihrem Gerät.</figcaption>
+</figure>
+
 ### Der öffentliche Schlüssel — Ihr Schloss
 
 Der **öffentliche Schlüssel** ist darauf ausgelegt, frei geteilt zu werden. Stellen Sie ihn sich wie ein Vorhängeschloss vor: Sie verteilen Kopien davon an alle Systeme, auf die Sie zugreifen möchten. Wenn ein Server Ihren öffentlichen Schlüssel in seiner `authorized_keys`-Datei hat, kann er Ihre Identität verifizieren, ohne Ihren privaten Schlüssel zu kennen.
@@ -113,6 +118,11 @@ Für neue Schlüssel ist meist Ed25519 die richtige Wahl. RSA 4096 Bit nutzen Si
 ## Einen SSH-Schlüssel zu GitHub hinzufügen
 
 Das Hinzufügen Ihres öffentlichen SSH-Schlüssels zu GitHub ermöglicht Ihnen, über SSH zu pushen und zu pullen, ohne bei jeder Operation Ihren Benutzernamen und Ihr Passwort einzugeben. Hier ist die schrittweise Vorgehensweise.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/github-public-key-setup.webp" alt="Ein öffentlicher Schlüssel wird in GitHub eingefügt, danach wird die SSH-Verbindung getestet" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Fügen Sie id_ed25519.pub zu GitHub hinzu und testen Sie die Anmeldung mit ssh -T git@github.com.</figcaption>
+</figure>
 
 ### Schritt 1: Ihr Schlüsselpaar generieren
 
@@ -238,6 +248,11 @@ Host prod-server
 ## SSH-Schlüssel-Passphrasen
 
 Wenn Sie ein SSH-Schlüsselpaar generieren, fragt `ssh-keygen`, ob Sie eine **Passphrase** festlegen möchten. Dies ist ein optionales Passwort, das die private Schlüsseldatei auf der Festplatte verschlüsselt.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/passphrase-ssh-agent.webp" alt="Eine verschlüsselte private Schlüsseldatei wird entsperrt und in den lokalen ssh-agent geladen" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Die Passphrase verschlüsselt die Schlüsseldatei auf der Festplatte; ssh-agent hält den entschlüsselten Schlüssel im lokalen Arbeitsspeicher.</figcaption>
+</figure>
 
 ### Warum eine Passphrase verwenden?
 

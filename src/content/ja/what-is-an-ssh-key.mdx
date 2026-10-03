@@ -28,6 +28,11 @@ SSHプロトコル全体の背景については、<a href="/ja/what-is-ssh/">SS
 
 SSHを正しく使用するには、2つの鍵の違いを理解することが不可欠です。
 
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/public-private-keys.webp" alt="秘密鍵はノートパソコンに残り、公開鍵のコピーだけがサーバーとコードホストに渡る" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">.pub ファイルをサーバーや Git サービスに登録し、秘密鍵は自分のデバイスに保管します。</figcaption>
+</figure>
+
 ### 公開鍵――あなたの錠前
 
 **公開鍵**は自由に共有できるよう設計されています。南京錠のようなものと考えてください：アクセスしたいシステムを持つ全員にコピーを渡します。サーバーの `authorized_keys` ファイルにあなたの公開鍵があれば、秘密鍵を知らなくてもあなたの身元を確認できます。
@@ -113,6 +118,11 @@ ssh-keygen -t rsa -b 4096 -C "your@email.com"
 ## GitHubにSSH鍵を追加する方法
 
 GitHubにSSH公開鍵を追加することで、すべての操作でユーザー名とパスワードを入力することなくSSH経由でプッシュ・プルできます。手順を説明します。
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/github-public-key-setup.webp" alt="公開鍵を GitHub の設定にコピーし、SSH 接続をテストする" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">id_ed25519.pub を GitHub に追加し、ssh -T git@github.com で認証をテストします。</figcaption>
+</figure>
 
 ### ステップ1：鍵ペアを生成する
 
@@ -238,6 +248,11 @@ Host prod-server
 ## SSHパスフレーズ
 
 SSH鍵ペアを生成する際、`ssh-keygen` は**パスフレーズ**を設定するかどうか尋ねます。これはディスク上の秘密鍵ファイルを暗号化するオプションのパスワードです。
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/passphrase-ssh-agent.webp" alt="暗号化された秘密鍵ファイルを復号し、ローカルの ssh-agent のメモリに読み込む" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">パスフレーズはディスク上の秘密鍵ファイルを暗号化し、ssh-agent は復号した鍵をローカルメモリに保持します。</figcaption>
+</figure>
 
 ### なぜパスフレーズを使うのか？
 

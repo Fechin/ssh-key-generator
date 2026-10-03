@@ -29,6 +29,11 @@ SSH-ключі засновані на **асиметричній криптог
 
 Розуміння відмінності між двома ключами необхідне для правильного використання SSH.
 
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/public-private-keys.webp" alt="Приватний ключ залишається на ноутбуці, а копії відкритого ключа передаються серверу й платформі коду" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Передавайте файл .pub серверам і Git-сервісам; приватний ключ зберігайте на своєму пристрої.</figcaption>
+</figure>
+
 ### Відкритий ключ — ваш замок
 
 **Відкритий ключ** призначений для вільного поширення. Думайте про нього як про навісний замок: ви роздаєте копії всім, чиїми системами хочете користуватися для входу. Коли сервер зберігає ваш відкритий ключ у файлі `authorized_keys`, він може перевірити вашу особу, не знаючи приватного ключа.
@@ -114,6 +119,11 @@ ssh-keygen -t rsa -b 4096 -C "your@email.com"
 ## Як додати SSH-ключ до GitHub
 
 Додавання вашого відкритого SSH-ключа до GitHub дозволяє виконувати push і pull по SSH без введення імені користувача та пароля при кожній операції. Ось покроковий процес.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/github-public-key-setup.webp" alt="Відкритий ключ копіюється в налаштування GitHub, потім перевіряється з’єднання SSH" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Додайте id_ed25519.pub до GitHub і перевірте автентифікацію командою ssh -T git@github.com.</figcaption>
+</figure>
 
 ### Крок 1: Згенеруйте пару ключів
 
@@ -239,6 +249,11 @@ Host prod-server
 ## Парольні фрази для SSH-ключів
 
 При генерації пари SSH-ключів `ssh-keygen` запитує, чи хочете ви задати **парольну фразу**. Це необов'язковий пароль, який шифрує файл приватного ключа на диску.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/passphrase-ssh-agent.webp" alt="Зашифрований файл приватного ключа розблоковується й завантажується в локальну пам’ять ssh-agent" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Парольна фраза шифрує файл приватного ключа на диску; ssh-agent зберігає розшифрований ключ у локальній пам’яті.</figcaption>
+</figure>
 
 ### Навіщо використовувати парольну фразу?
 

@@ -29,6 +29,11 @@ SSH protocol की broader background के लिए, हमारी गा�
 
 SSH को सही तरीके से उपयोग करने के लिए दोनों keys के बीच का अंतर समझना ज़रूरी है।
 
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/public-private-keys.webp" alt="निजी कुंजी लैपटॉप पर रहती है और सार्वजनिक कुंजी की प्रतियाँ सर्वर व कोड होस्ट तक जाती हैं" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">.pub फ़ाइल सर्वर और Git सेवाओं से साझा करें; निजी कुंजी अपने डिवाइस पर रखें।</figcaption>
+</figure>
+
 ### Public Key — आपका ताला
 
 **Public key** को स्वतंत्र रूप से साझा करने के लिए बनाया गया है। इसे एक padlock की तरह सोचें: आप हर उस system को copies देते हैं जिसे आप access करना चाहते हैं। जब किसी सर्वर के पास उसकी `authorized_keys` फ़ाइल में आपकी public key होती है, तो वह आपकी private key जाने बिना आपकी पहचान verify कर सकता है।
@@ -114,6 +119,11 @@ ssh-keygen -t rsa -b 4096 -C "your@email.com"
 ## GitHub पर SSH Key कैसे जोड़ें
 
 अपनी SSH public key GitHub पर जोड़ने से आप हर operation पर username और password दर्ज किए बिना SSH के माध्यम से push और pull कर सकते हैं। यहाँ step-by-step प्रक्रिया है।
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/github-public-key-setup.webp" alt="सार्वजनिक कुंजी GitHub सेटिंग में कॉपी करने के बाद SSH कनेक्शन की जाँच की जाती है" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">id_ed25519.pub को GitHub में जोड़ें, फिर ssh -T git@github.com से प्रमाणीकरण की जाँच करें।</figcaption>
+</figure>
 
 ### Step 1: अपना Key Pair Generate करें
 
@@ -239,6 +249,11 @@ Host prod-server
 ## SSH Key Passphrases
 
 जब आप SSH key pair generate करते हैं, तो `ssh-keygen` पूछता है कि क्या आप **passphrase** सेट करना चाहते हैं। यह एक optional password है जो disk पर private key file को encrypt करता है।
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/passphrase-ssh-agent.webp" alt="एन्क्रिप्ट की गई निजी कुंजी फ़ाइल अनलॉक होकर स्थानीय ssh-agent मेमोरी में लोड होती है" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">पासफ़्रेज़ डिस्क पर निजी कुंजी फ़ाइल को एन्क्रिप्ट करता है; ssh-agent डिक्रिप्ट की गई कुंजी को स्थानीय मेमोरी में रखता है।</figcaption>
+</figure>
 
 ### Passphrase क्यों उपयोग करें?
 

@@ -29,6 +29,11 @@ SSH key dựa trên **mật mã học bất đối xứng**, còn gọi là mậ
 
 Hiểu sự khác biệt giữa hai khóa là điều cần thiết để sử dụng SSH đúng cách.
 
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/public-private-keys.webp" alt="Khóa riêng tư ở lại trên máy tính, còn bản sao khóa công khai được gửi đến máy chủ và nền tảng mã nguồn" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Chia sẻ tệp .pub với máy chủ và dịch vụ Git; giữ khóa riêng tư trên thiết bị của bạn.</figcaption>
+</figure>
+
 ### Khóa Công Khai — Ổ Khóa Của Bạn
 
 **Khóa công khai** được thiết kế để chia sẻ tự do. Hãy coi nó như ổ khóa: bạn phân phát bản sao cho tất cả những người có hệ thống bạn muốn truy cập. Khi server có khóa công khai của bạn trong file `authorized_keys`, server có thể xác minh danh tính của bạn mà không cần biết khóa riêng tư của bạn.
@@ -114,6 +119,11 @@ Với key mới, thường chọn Ed25519. Dùng RSA 4096-bit khi hệ thống c
 ## Cách Thêm SSH Key vào GitHub
 
 Thêm khóa công khai SSH vào GitHub cho phép bạn push và pull qua SSH mà không cần nhập tên người dùng và mật khẩu ở mỗi thao tác. Đây là quy trình từng bước.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/github-public-key-setup.webp" alt="Khóa công khai được sao chép vào cài đặt GitHub rồi kiểm tra kết nối SSH" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Thêm id_ed25519.pub vào GitHub, sau đó kiểm tra xác thực bằng ssh -T git@github.com.</figcaption>
+</figure>
 
 ### Bước 1: Tạo Cặp Khóa Của Bạn
 
@@ -239,6 +249,11 @@ Host prod-server
 ## Passphrase của SSH Key
 
 Khi bạn tạo cặp SSH key, `ssh-keygen` hỏi bạn có muốn đặt **passphrase** không. Đây là mật khẩu tùy chọn mã hóa file khóa riêng tư trên đĩa.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/passphrase-ssh-agent.webp" alt="Tệp khóa riêng tư được mã hóa được mở khóa và nạp vào bộ nhớ cục bộ của ssh-agent" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Cụm mật khẩu mã hóa tệp khóa riêng tư trên đĩa; ssh-agent giữ khóa đã giải mã trong bộ nhớ cục bộ.</figcaption>
+</figure>
 
 ### Tại Sao Dùng Passphrase?
 

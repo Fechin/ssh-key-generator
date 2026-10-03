@@ -29,6 +29,11 @@ SSH প্রোটোকলের বৃহত্তর পটভূমির �
 
 SSH সঠিকভাবে ব্যবহার করার জন্য দুটি key-এর মধ্যে পার্থক্য বোঝা অপরিহার্য।
 
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/public-private-keys.webp" alt="ব্যক্তিগত কী ল্যাপটপে থাকে, আর পাবলিক কীর কপি সার্ভার ও কোড হোস্টে পাঠানো হয়" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">.pub ফাইল সার্ভার ও Git পরিষেবার সঙ্গে শেয়ার করুন; ব্যক্তিগত কী নিজের ডিভাইসে রাখুন।</figcaption>
+</figure>
+
 ### Public Key — আপনার তালা
 
 **Public key** স্বাধীনভাবে শেয়ার করার জন্য ডিজাইন করা হয়েছে। এটিকে একটি তালার মতো ভাবুন: আপনি প্রত্যেককে কপি দেন যার সিস্টেম আপনি অ্যাক্সেস করতে চান। কোনো সার্ভার তার `authorized_keys` ফাইলে আপনার public key রাখলে, এটি আপনার private key না জেনেই আপনার পরিচয় যাচাই করতে পারে।
@@ -114,6 +119,11 @@ ssh-keygen -t rsa -b 4096 -C "your@email.com"
 ## GitHub-এ SSH Key কীভাবে যোগ করবেন
 
 আপনার SSH public key GitHub-এ যোগ করলে প্রতিটি অপারেশনে username ও পাসওয়ার্ড না দিয়েই SSH-এর মাধ্যমে push ও pull করতে পারবেন। এখানে ধাপে ধাপে প্রক্রিয়া।
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/github-public-key-setup.webp" alt="পাবলিক কী GitHub সেটিংসে কপি করার পর SSH সংযোগ পরীক্ষা করা হয়" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">GitHub-এ id_ed25519.pub যোগ করুন, তারপর ssh -T git@github.com দিয়ে প্রমাণীকরণ পরীক্ষা করুন।</figcaption>
+</figure>
 
 ### ধাপ ১: আপনার Key Pair তৈরি করুন
 
@@ -239,6 +249,11 @@ Host prod-server
 ## SSH Key Passphrase
 
 আপনি SSH key pair তৈরি করলে, `ssh-keygen` জিজ্ঞেস করে আপনি **passphrase** সেট করতে চান কিনা। এটি একটি ঐচ্ছিক পাসওয়ার্ড যা disk-এ private key ফাইল এনক্রিপ্ট করে।
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/passphrase-ssh-agent.webp" alt="এনক্রিপ্ট করা ব্যক্তিগত কী ফাইল আনলক করে স্থানীয় ssh-agent মেমোরিতে লোড করা হয়" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">পাসফ্রেজ ডিস্কে থাকা ব্যক্তিগত কী ফাইল এনক্রিপ্ট করে; ssh-agent ডিক্রিপ্ট করা কী স্থানীয় মেমোরিতে রাখে।</figcaption>
+</figure>
 
 ### Passphrase কেন ব্যবহার করবেন?
 

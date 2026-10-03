@@ -29,6 +29,11 @@ Pentru context despre protocolul SSH mai larg, consultă ghidul nostru despre <a
 
 Înțelegerea distincției dintre cele două chei este esențială pentru utilizarea corectă a SSH.
 
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/public-private-keys.webp" alt="Cheia privată rămâne pe laptop, iar copiile cheii publice ajung la server și la platforma de cod" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Distribuie fișierul .pub către servere și servicii Git; păstrează cheia privată pe dispozitivul tău.</figcaption>
+</figure>
+
 ### Cheia publică — Lacătul tău
 
 **Cheia publică** este concepută pentru a fi partajată liber. Gândește-te la ea ca la un lacăt: distribui copii tuturor ale căror sisteme dorești să le accesezi. Când un server are cheia ta publică în fișierul `authorized_keys`, poate verifica identitatea ta fără să cunoască cheia ta privată.
@@ -114,6 +119,11 @@ Pentru chei noi, alege de obicei Ed25519. Folosește RSA 4096-bit când sistemel
 ## Cum să adaugi o cheie SSH pe GitHub
 
 Adăugarea cheii tale publice SSH pe GitHub îți permite să faci push și pull prin SSH fără a introduce numele de utilizator și parola la fiecare operațiune. Iată procesul pas cu pas.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/github-public-key-setup.webp" alt="Cheia publică este copiată în GitHub, apoi se testează conexiunea SSH" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Adaugă id_ed25519.pub în GitHub și testează autentificarea cu ssh -T git@github.com.</figcaption>
+</figure>
 
 ### Pasul 1: Generează-ți perechea de chei
 
@@ -239,6 +249,11 @@ Host prod-server
 ## Frazele de acces pentru cheile SSH
 
 Când generezi o pereche de chei SSH, `ssh-keygen` întreabă dacă dorești să setezi o **frază de acces**. Aceasta este o parolă opțională care criptează fișierul cheii private pe disc.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/passphrase-ssh-agent.webp" alt="Fișierul criptat al cheii private este deblocat și încărcat în memoria locală a ssh-agent" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Fraza de acces criptează fișierul cheii private de pe disc; ssh-agent păstrează cheia decriptată în memoria locală.</figcaption>
+</figure>
 
 ### De ce să folosești o frază de acces?
 

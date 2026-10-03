@@ -29,6 +29,11 @@ Základní informace o SSH protokolu najdete v našem průvodci <a href="/cs/wha
 
 Pochopení rozdílu mezi těmito dvěma klíči je zásadní pro správné používání SSH.
 
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/public-private-keys.webp" alt="Soukromý klíč zůstává na notebooku, kopie veřejného klíče míří na server a platformu pro kód" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Sdílejte soubor .pub se servery a službami Git; soukromý klíč ponechte na svém zařízení.</figcaption>
+</figure>
+
 ### Veřejný klíč — váš zámek
 
 **Veřejný klíč** je navržen k volnému sdílení. Představte si ho jako visací zámek: rozdáváte kopie všem, jejichž systémy chcete mít přístup. Když server má váš veřejný klíč v souboru `authorized_keys`, může ověřit vaši identitu bez znalosti vašeho soukromého klíče.
@@ -114,6 +119,11 @@ Pro nové klíče obvykle zvolte Ed25519. RSA 4096 bitů použijte, když to vy�
 ## Jak přidat SSH klíč na GitHub
 
 Přidání vašeho SSH veřejného klíče na GitHub umožňuje push a pull přes SSH bez zadávání uživatelského jména a hesla při každé operaci. Zde je postup krok za krokem.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/github-public-key-setup.webp" alt="Veřejný klíč se zkopíruje do GitHubu a poté se otestuje spojení SSH" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Přidejte id_ed25519.pub na GitHub a ověřte autentizaci příkazem ssh -T git@github.com.</figcaption>
+</figure>
 
 ### Krok 1: Vygenerujte si pár klíčů
 
@@ -239,6 +249,11 @@ Host prod-server
 ## Hesla (passphrase) pro SSH klíče
 
 Při generování páru SSH klíčů se `ssh-keygen` zeptá, zda chcete nastavit **heslo passphrase**. Jedná se o volitelné heslo, které šifruje soubor soukromého klíče na disku.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/passphrase-ssh-agent.webp" alt="Zašifrovaný soubor soukromého klíče se odemkne a načte do místní paměti ssh-agent" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Heslová fráze šifruje soubor soukromého klíče na disku; ssh-agent uchovává dešifrovaný klíč v místní paměti.</figcaption>
+</figure>
 
 ### Proč používat heslo passphrase?
 

@@ -28,6 +28,11 @@ SSH 프로토콜의 배경에 대해서는 <a href="/ko/what-is-ssh/">SSH란 무
 
 SSH를 올바르게 사용하려면 두 키의 차이를 이해하는 것이 필수입니다.
 
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/public-private-keys.webp" alt="개인키는 노트북에 남고 공개키 사본은 서버와 코드 호스팅 서비스로 전달됨" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">.pub 파일은 서버나 Git 서비스에 등록하고 개인키는 자신의 기기에 보관하세요.</figcaption>
+</figure>
+
 ### 공개키—자물쇠
 
 **공개키**는 자유롭게 공유할 수 있도록 설계되었습니다. 자물쇠라고 생각하세요. 접속하고 싶은 시스템을 가진 모든 사람에게 복사본을 나누어 줍니다. 서버의 `authorized_keys` 파일에 공개키가 있으면 개인키를 몰라도 신원을 확인할 수 있습니다.
@@ -113,6 +118,11 @@ ssh-keygen -t rsa -b 4096 -C "your@email.com"
 ## GitHub에 SSH 키 추가하는 방법
 
 SSH 공개키를 GitHub에 추가하면 모든 작업에서 사용자 이름과 비밀번호 없이 SSH를 통해 푸시하고 풀할 수 있습니다. 단계별 과정을 안내합니다.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/github-public-key-setup.webp" alt="공개키를 GitHub 설정에 복사한 뒤 SSH 연결을 테스트함" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">id_ed25519.pub를 GitHub에 추가한 뒤 ssh -T git@github.com으로 인증을 테스트하세요.</figcaption>
+</figure>
 
 ### 1단계: 키 쌍 생성
 
@@ -238,6 +248,11 @@ Host prod-server
 ## SSH 키 패스프레이즈
 
 SSH 키 쌍을 생성할 때 `ssh-keygen`이 **패스프레이즈** 설정 여부를 묻습니다. 이것은 디스크의 개인키 파일을 암호화하는 선택적 비밀번호입니다.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/passphrase-ssh-agent.webp" alt="암호화된 개인키 파일을 해제해 로컬 ssh-agent 메모리에 로드함" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">패스프레이즈는 디스크의 개인키 파일을 암호화하고 ssh-agent는 해독된 키를 로컬 메모리에 보관합니다.</figcaption>
+</figure>
 
 ### 패스프레이즈를 사용하는 이유?
 

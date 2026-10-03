@@ -29,6 +29,11 @@ For baggrund om den bredere SSH-protokol, se vores guide om <a href="/da/what-is
 
 At forstå skelnen mellem de to nøgler er afgørende for korrekt brug af SSH.
 
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/public-private-keys.webp" alt="Den private nøgle bliver på computeren, mens kopier af den offentlige nøgle sendes til server og kodeplatform" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Del .pub-filen med servere og Git-tjenester; behold den private nøgle på din enhed.</figcaption>
+</figure>
+
 ### Den offentlige nøgle — dit hængelås
 
 Den **offentlige nøgle** er designet til at blive delt frit. Tænk på den som et hængelås: du uddeler kopier til alle, hvis systemer du ønsker at tilgå. Når en server har din offentlige nøgle i sin `authorized_keys`-fil, kan den verificere din identitet uden at kende din private nøgle.
@@ -114,6 +119,11 @@ Til nye nøgler er Ed25519 normalt bedst. Brug RSA 4096 bit, når ældre systeme
 ## Sådan tilføjer du en SSH-nøgle til GitHub
 
 At tilføje din offentlige SSH-nøgle til GitHub giver dig mulighed for at pushe og pulle via SSH uden at indtaste dit brugernavn og adgangskode ved hver operation. Her er trin-for-trin-processen.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/github-public-key-setup.webp" alt="Den offentlige nøgle kopieres til GitHub, og SSH-forbindelsen testes" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Tilføj id_ed25519.pub til GitHub, og test godkendelsen med ssh -T git@github.com.</figcaption>
+</figure>
 
 ### Trin 1: Generér dit nøglepar
 
@@ -239,6 +249,11 @@ Host prod-server
 ## SSH-nøgleadgangssætninger
 
 Når du genererer et SSH-nøglepar, spørger `ssh-keygen`, om du vil angive en **adgangssætning**. Dette er en valgfri adgangskode, der krypterer den private nøglefil på disken.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/passphrase-ssh-agent.webp" alt="En krypteret privat nøglefil låses op og indlæses i den lokale ssh-agent-hukommelse" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">En adgangssætning krypterer den private nøglefil på disken; ssh-agent holder den dekrypterede nøgle i lokal hukommelse.</figcaption>
+</figure>
 
 ### Hvorfor bruge en adgangssætning?
 

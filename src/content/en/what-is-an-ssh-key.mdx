@@ -30,6 +30,11 @@ For background on the broader SSH protocol, see our guide on <a href="/what-is-s
 
 Understanding the distinction between the two keys is essential for using SSH correctly.
 
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/public-private-keys.webp" alt="A private key stays on a laptop while public key copies go to a server and code host" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Share the .pub file with servers and Git providers; keep the private key on your device.</figcaption>
+</figure>
+
 ### The Public Key — Your Lock
 
 The **public key** is designed to be shared freely. Think of it as a padlock: you hand out copies to everyone whose systems you want to access. When a server has your public key in its `authorized_keys` file, it can verify your identity without knowing your private key.
@@ -115,6 +120,11 @@ For new RSA keys, prefer **4096 bits** when compatibility is the reason you are 
 ## How to Add an SSH Key to GitHub
 
 Adding your SSH public key to GitHub allows you to push and pull over SSH without entering your username and password on every operation. Here is the step-by-step process.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/github-public-key-setup.webp" alt="A public key is copied into GitHub settings, followed by an SSH connection test" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Copy id_ed25519.pub, add it to GitHub, then test authentication with ssh -T git@github.com.</figcaption>
+</figure>
 
 ### Step 1: Generate Your Key Pair
 
@@ -240,6 +250,11 @@ Host prod-server
 ## SSH Key Passphrases
 
 When you generate an SSH key pair, `ssh-keygen` asks if you want to set a **passphrase**. This is an optional password that encrypts the private key file on disk.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/passphrase-ssh-agent.webp" alt="An encrypted private key file is unlocked and loaded into local ssh-agent memory" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">A passphrase encrypts the private key file on disk; ssh-agent holds the decrypted key in local memory.</figcaption>
+</figure>
 
 ### Why Use a Passphrase?
 

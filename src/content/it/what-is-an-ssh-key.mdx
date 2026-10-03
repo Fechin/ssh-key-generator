@@ -29,6 +29,11 @@ Per informazioni di base sul protocollo SSH più ampio, vedere la nostra guida s
 
 Comprendere la distinzione tra le due chiavi è fondamentale per usare SSH correttamente.
 
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/public-private-keys.webp" alt="La chiave privata resta sul portatile e le copie della chiave pubblica raggiungono server e piattaforme di codice" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Condividi il file .pub con server e servizi Git; conserva la chiave privata sul tuo dispositivo.</figcaption>
+</figure>
+
 ### La Chiave Pubblica — Il Lucchetto
 
 La **chiave pubblica** è progettata per essere condivisa liberamente. Pensala come un lucchetto: ne distribuisci copie a tutti i sistemi a cui vuoi accedere. Quando un server ha la tua chiave pubblica nel suo file `authorized_keys`, può verificare la tua identità senza conoscere la chiave privata.
@@ -114,6 +119,11 @@ Per nuove chiavi scegli di solito Ed25519. Usa RSA 4096 bit quando serve compati
 ## Come Aggiungere una Chiave SSH a GitHub
 
 Aggiungere la chiave pubblica SSH a GitHub consente di fare push e pull via SSH senza inserire nome utente e password ad ogni operazione. Ecco il processo passo dopo passo.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/github-public-key-setup.webp" alt="La chiave pubblica viene copiata nelle impostazioni GitHub e si verifica la connessione SSH" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">Aggiungi id_ed25519.pub a GitHub, poi verifica l’autenticazione con ssh -T git@github.com.</figcaption>
+</figure>
 
 ### Passo 1: Genera la Coppia di Chiavi
 
@@ -239,6 +249,11 @@ Host prod-server
 ## Passphrase per le Chiavi SSH
 
 Quando si genera una coppia di chiavi SSH, `ssh-keygen` chiede se si vuole impostare una **passphrase**. È una password opzionale che cifra il file della chiave privata su disco.
+
+<figure className="my-6">
+  <img src="/images/articles/what-is-an-ssh-key/passphrase-ssh-agent.webp" alt="Il file della chiave privata cifrato viene sbloccato e caricato nella memoria locale di ssh-agent" width="1536" height="1024" loading="lazy" decoding="async" className="w-full h-auto rounded-xl border border-border" />
+  <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">La passphrase cifra il file della chiave privata sul disco; ssh-agent conserva la chiave decifrata nella memoria locale.</figcaption>
+</figure>
 
 ### Perché Usare una Passphrase?
 
