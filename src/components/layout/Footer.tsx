@@ -11,20 +11,20 @@ export function Footer() {
       <div className="max-w-4xl mx-auto px-4 py-8 w-full">
         <div className="grid gap-6 md:grid-cols-3">
           {/* About */}
-          <div className="space-y-2">
-            <h3 className="font-semibold text-sm">{t('footer.about')}</h3>
-            <p className="text-xs text-muted-foreground">
+          <div className="flex flex-col gap-2">
+            <h3 className="font-semibold text-body">{t('footer.about')}</h3>
+            <p className="text-support text-muted-foreground">
               {t('footer.aboutDesc')}
             </p>
           </div>
 
           {/* Security */}
-          <div className="space-y-2">
-            <h3 className="font-semibold text-sm flex items-center gap-2">
+          <div className="flex flex-col gap-2">
+            <h3 className="font-semibold text-body flex items-center gap-2">
               <Shield className="h-3.5 w-3.5 text-success" />
               {t('footer.securityFirst')}
             </h3>
-            <ul className="text-xs text-muted-foreground space-y-0.5">
+            <ul className="text-support text-muted-foreground flex flex-col gap-1">
               <li>{t('footer.security1')}</li>
               <li>{t('footer.security2')}</li>
               <li>{t('footer.security3')}</li>
@@ -33,15 +33,15 @@ export function Footer() {
           </div>
 
           {/* Resources */}
-          <div className="space-y-2">
-            <h3 className="font-semibold text-sm">{t('footer.resources')}</h3>
-            <ul className="text-sm text-muted-foreground space-y-1">
+          <div className="flex flex-col gap-2">
+            <h3 className="font-semibold text-body">{t('footer.resources')}</h3>
+            <ul className="text-support text-muted-foreground flex flex-col gap-1">
               <li>
                 <a
                   href="https://docs.github.com/en/authentication/connecting-to-github-with-ssh"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-primary transition-colors inline-block py-1.5"
+                  className="hover:text-link transition-colors inline-block py-1.5"
                 >
                   {t('footer.sshKeyGuide')}
                 </a>
@@ -51,7 +51,7 @@ export function Footer() {
                   href="https://docs.gitlab.com/ee/user/ssh.html"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-primary transition-colors inline-block py-1.5"
+                  className="hover:text-link transition-colors inline-block py-1.5"
                 >
                   {t('footer.githubSetup')}
                 </a>
@@ -61,7 +61,7 @@ export function Footer() {
                   href="https://www.ssh.com/academy/ssh"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-primary transition-colors inline-block py-1.5"
+                  className="hover:text-link transition-colors inline-block py-1.5"
                 >
                   {t('footer.bestPractices')}
                 </a>
@@ -71,7 +71,7 @@ export function Footer() {
                   href="https://cheatsheets.zip/ssh"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-primary transition-colors inline-block py-1.5"
+                  className="hover:text-link transition-colors inline-block py-1.5"
                 >
                   {t('footer.sshCheatSheet')}
                 </a>
@@ -80,15 +80,15 @@ export function Footer() {
           </div>
         </div>
 
-        <nav aria-label="Project information" lang="en" className="mt-6 pt-4 border-t border-border flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
+        <nav aria-label="Project information" lang="en" className="mt-6 pt-4 border-t border-border flex flex-wrap justify-center gap-x-6 gap-y-2 text-support text-muted-foreground">
           {siteInfo.map((page) => (
-            <a key={page.slug} href={`/${page.slug}/`} className="inline-block py-1.5 hover:text-primary transition-colors">
+            <a key={page.slug} href={`/${page.slug}/`} className="inline-block py-1.5 hover:text-link transition-colors">
               {page.navLabel}
             </a>
           ))}
         </nav>
 
-        <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
+        <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-caption text-muted-foreground">
           <p>
             {t('footer.madeWith')} <Heart className="h-3 w-3 inline text-destructive" /> {t('footer.forDevelopers')}
           </p>

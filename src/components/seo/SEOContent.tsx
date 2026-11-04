@@ -53,61 +53,61 @@ export function SEOContent() {
     <section id="ssh-key-generator-guide" className="mt-16 space-y-10">
       {/* What is an SSH Key */}
       <div id="what-is-ssh-key-generator" className="space-y-3">
-        <h2 className="text-xl font-bold">{t('seo.whatIs.title')}</h2>
-        <p className="text-sm text-muted-foreground leading-relaxed">
+        <h2 className="text-section font-semibold">{t('seo.whatIs.title')}</h2>
+        <p className="max-w-prose text-body">
           {t('seo.whatIs.desc')}
         </p>
       </div>
 
       {/* Why Use This SSH Key Generator */}
       <div id="why-use-this-ssh-key-generator" className="space-y-4">
-        <h2 className="text-xl font-bold">{t('seo.whyUse.title')}</h2>
+        <h2 className="text-section font-semibold">{t('seo.whyUse.title')}</h2>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <Card className="bg-card/50">
             <CardHeader className="pb-2">
-              <CardTitle className="flex items-center gap-2 text-sm">
+              <CardTitle className="flex items-center gap-2 text-panel font-semibold">
                 <Shield className="h-4 w-4 text-success" />
                 {t('seo.whyUse.secure.title')}
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-xs text-muted-foreground">{t('seo.whyUse.secure.desc')}</p>
+              <p className="text-support">{t('seo.whyUse.secure.desc')}</p>
             </CardContent>
           </Card>
 
           <Card className="bg-card/50">
             <CardHeader className="pb-2">
-              <CardTitle className="flex items-center gap-2 text-sm">
+              <CardTitle className="flex items-center gap-2 text-panel font-semibold">
                 <Zap className="h-4 w-4 text-warning" />
                 {t('seo.whyUse.modern.title')}
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-xs text-muted-foreground">{t('seo.whyUse.modern.desc')}</p>
+              <p className="text-support">{t('seo.whyUse.modern.desc')}</p>
             </CardContent>
           </Card>
 
           <Card className="bg-card/50">
             <CardHeader className="pb-2">
-              <CardTitle className="flex items-center gap-2 text-sm">
+              <CardTitle className="flex items-center gap-2 text-panel font-semibold">
                 <ThumbsUp className="h-4 w-4 text-primary" />
                 {t('seo.whyUse.easy.title')}
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-xs text-muted-foreground">{t('seo.whyUse.easy.desc')}</p>
+              <p className="text-support">{t('seo.whyUse.easy.desc')}</p>
             </CardContent>
           </Card>
 
           <Card className="bg-card/50">
             <CardHeader className="pb-2">
-              <CardTitle className="flex items-center gap-2 text-sm">
+              <CardTitle className="flex items-center gap-2 text-panel font-semibold">
                 <Heart className="h-4 w-4 text-destructive" />
                 {t('seo.whyUse.free.title')}
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-xs text-muted-foreground">{t('seo.whyUse.free.desc')}</p>
+              <p className="text-support">{t('seo.whyUse.free.desc')}</p>
             </CardContent>
           </Card>
         </div>
@@ -115,26 +115,26 @@ export function SEOContent() {
 
       {/* How to Generate */}
       <div id="how-to-generate-ssh-key" className="space-y-3">
-        <h2 className="text-xl font-bold">{t('seo.howTo.title')}</h2>
-        <ol className="space-y-2 text-sm text-muted-foreground">
+        <h2 className="text-section font-semibold">{t('seo.howTo.title')}</h2>
+        <ol className="space-y-2 max-w-prose text-body">
           <li id="how-to-step-1" className="flex gap-3">
-            <span className="flex-shrink-0 w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-semibold">1</span>
+            <span className="flex-shrink-0 w-5 h-5 mt-0.5 rounded-full bg-primary/10 text-link flex items-center justify-center text-caption font-semibold">1</span>
             <span>{t('seo.howTo.step1')}</span>
           </li>
           <li id="how-to-step-2" className="flex gap-3">
-            <span className="flex-shrink-0 w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-semibold">2</span>
+            <span className="flex-shrink-0 w-5 h-5 mt-0.5 rounded-full bg-primary/10 text-link flex items-center justify-center text-caption font-semibold">2</span>
             <span>{t('seo.howTo.step2')}</span>
           </li>
           <li id="how-to-step-3" className="flex gap-3">
-            <span className="flex-shrink-0 w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-semibold">3</span>
+            <span className="flex-shrink-0 w-5 h-5 mt-0.5 rounded-full bg-primary/10 text-link flex items-center justify-center text-caption font-semibold">3</span>
             <span>{t('seo.howTo.step3')}</span>
           </li>
           <li id="how-to-step-4" className="flex gap-3">
-            <span className="flex-shrink-0 w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-semibold">4</span>
+            <span className="flex-shrink-0 w-5 h-5 mt-0.5 rounded-full bg-primary/10 text-link flex items-center justify-center text-caption font-semibold">4</span>
             <span>{t('seo.howTo.step4')}</span>
           </li>
           <li id="how-to-step-5" className="flex gap-3">
-            <span className="flex-shrink-0 w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-semibold">5</span>
+            <span className="flex-shrink-0 w-5 h-5 mt-0.5 rounded-full bg-primary/10 text-link flex items-center justify-center text-caption font-semibold">5</span>
             <span>{t('seo.howTo.step5')}</span>
           </li>
         </ol>
@@ -142,18 +142,18 @@ export function SEOContent() {
 
       {/* Ed25519 vs RSA Comparison */}
       <div id="ed25519-vs-rsa" className="space-y-3">
-        <h2 className="text-xl font-bold">{t('seo.comparison.title')}</h2>
-        <p className="text-sm text-muted-foreground">{t('seo.comparison.intro')}</p>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm border border-border rounded-lg overflow-hidden">
+        <h2 className="text-section font-semibold">{t('seo.comparison.title')}</h2>
+        <p className="max-w-prose text-body">{t('seo.comparison.intro')}</p>
+        <div className="max-w-full overflow-x-auto">
+          <table className="w-full text-support border border-border rounded-lg overflow-hidden">
             <thead className="bg-muted">
               <tr>
-                <th className="text-left p-3 font-semibold border-b border-border">{t('seo.comparison.feature')}</th>
-                <th className="text-left p-3 font-semibold border-b border-border">Ed25519</th>
-                <th className="text-left p-3 font-semibold border-b border-border">RSA</th>
+                <th className="text-start p-3 font-semibold border-b border-border">{t('seo.comparison.feature')}</th>
+                <th className="text-start p-3 font-semibold border-b border-border">Ed25519</th>
+                <th className="text-start p-3 font-semibold border-b border-border">RSA</th>
               </tr>
             </thead>
-            <tbody className="text-muted-foreground">
+            <tbody className="text-foreground">
               <tr>
                 <td className="p-3 border-b border-border">{t('seo.comparison.algorithmType')}</td>
                 <td className="p-3 border-b border-border">{t('seo.comparison.ed25519AlgoType')}</td>
@@ -196,7 +196,7 @@ export function SEOContent() {
               </tr>
               <tr>
                 <td className="p-3">{t('seo.comparison.recommendation')}</td>
-                <td className="p-3 text-primary font-medium">{t('seo.comparison.ed25519Rec')}</td>
+                <td className="p-3 text-foreground font-semibold">{t('seo.comparison.ed25519Rec')}</td>
                 <td className="p-3">{t('seo.comparison.rsaRec')}</td>
               </tr>
             </tbody>
@@ -206,37 +206,37 @@ export function SEOContent() {
 
       {/* Common Use Cases */}
       <div id="ssh-key-use-cases" className="space-y-4">
-        <h2 className="text-xl font-bold">{t('seo.useCases.title')}</h2>
+        <h2 className="text-section font-semibold">{t('seo.useCases.title')}</h2>
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="flex gap-3 p-3 rounded-lg bg-card/50 border border-border">
             <Github className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
             <div>
-              <h3 className="font-medium text-sm">{t('seo.useCases.git.title')}</h3>
-              <p className="text-xs text-muted-foreground mt-1">{t('seo.useCases.git.desc')}</p>
+              <h3 className="font-semibold text-panel">{t('seo.useCases.git.title')}</h3>
+              <p className="text-support mt-1">{t('seo.useCases.git.desc')}</p>
             </div>
           </div>
 
           <div className="flex gap-3 p-3 rounded-lg bg-card/50 border border-border">
             <Server className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
             <div>
-              <h3 className="font-medium text-sm">{t('seo.useCases.server.title')}</h3>
-              <p className="text-xs text-muted-foreground mt-1">{t('seo.useCases.server.desc')}</p>
+              <h3 className="font-semibold text-panel">{t('seo.useCases.server.title')}</h3>
+              <p className="text-support mt-1">{t('seo.useCases.server.desc')}</p>
             </div>
           </div>
 
           <div className="flex gap-3 p-3 rounded-lg bg-card/50 border border-border">
             <RefreshCw className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
             <div>
-              <h3 className="font-medium text-sm">{t('seo.useCases.automation.title')}</h3>
-              <p className="text-xs text-muted-foreground mt-1">{t('seo.useCases.automation.desc')}</p>
+              <h3 className="font-semibold text-panel">{t('seo.useCases.automation.title')}</h3>
+              <p className="text-support mt-1">{t('seo.useCases.automation.desc')}</p>
             </div>
           </div>
 
           <div className="flex gap-3 p-3 rounded-lg bg-card/50 border border-border">
             <Lock className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
             <div>
-              <h3 className="font-medium text-sm">{t('seo.useCases.tunnels.title')}</h3>
-              <p className="text-xs text-muted-foreground mt-1">{t('seo.useCases.tunnels.desc')}</p>
+              <h3 className="font-semibold text-panel">{t('seo.useCases.tunnels.title')}</h3>
+              <p className="text-support mt-1">{t('seo.useCases.tunnels.desc')}</p>
             </div>
           </div>
         </div>
@@ -246,7 +246,7 @@ export function SEOContent() {
       <div id="ssh-guides" className="space-y-4">
         <div className="flex items-center gap-2">
           <BookOpen className="h-5 w-5 text-primary" />
-          <h2 className="text-xl font-bold">{sectionTitle}</h2>
+          <h2 className="text-section font-semibold">{sectionTitle}</h2>
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
           {GUIDE_DISPLAY_ORDER.filter((slug) => hasArticleTranslation(slug, language)).map((slug) => {
@@ -258,8 +258,8 @@ export function SEOContent() {
                 className="flex items-start justify-between gap-3 p-4 rounded-lg bg-card/50 border border-border hover:border-primary/50 hover:bg-card transition-colors group"
               >
                 <div className="space-y-1 min-w-0">
-                  <p className="font-medium text-sm leading-snug">{meta.title}</p>
-                  <p className="text-xs text-muted-foreground line-clamp-2">{meta.description}</p>
+                  <p className="font-semibold text-body text-link">{meta.title}</p>
+                  <p className="text-support line-clamp-2">{meta.description}</p>
                 </div>
                 <ArrowRight className="h-4 w-4 text-muted-foreground flex-shrink-0 mt-0.5 group-hover:text-primary transition-colors" />
               </Link>
@@ -272,20 +272,20 @@ export function SEOContent() {
       <FAQSection />
 
       <section id="sources-and-review" className="space-y-3 border-t border-border pt-6">
-        <h2 className="text-lg font-semibold">{t('seo.sources.title')}</h2>
-        <ul className="space-y-2 text-sm">
+        <h2 className="text-section font-semibold">{t('seo.sources.title')}</h2>
+        <ul className="space-y-2 text-support">
           <li>
-            <a href="https://man.openbsd.org/ssh-keygen" className="text-primary underline underline-offset-4 hover:opacity-80">
+            <a href="https://man.openbsd.org/ssh-keygen" className="text-link underline underline-offset-4 hover:opacity-80">
               {t('seo.sources.openssh')}
             </a>
           </li>
           <li>
-            <a href="https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent" className="text-primary underline underline-offset-4 hover:opacity-80">
+            <a href="https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent" className="text-link underline underline-offset-4 hover:opacity-80">
               {t('seo.sources.github')}
             </a>
           </li>
         </ul>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-caption text-muted-foreground">
           {t('seo.sources.reviewed')}: <time dateTime={siteReview.dateModified}>{siteReview.dateModified}</time>
         </p>
       </section>

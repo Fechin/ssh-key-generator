@@ -74,11 +74,11 @@ export function KeyGeneratorForm({ onGenerated }: KeyGeneratorFormProps) {
   return (
     <div className="min-w-0">
       <div className="mb-4">
-        <h2 className="flex items-center gap-2 text-base font-semibold">
+        <h2 className="flex items-center gap-2 text-panel font-semibold">
           <Key className="h-4 w-4" />
           {t('generator.title')}
         </h2>
-        <p className="text-xs text-muted-foreground mt-1">
+        <p className="text-support text-muted-foreground mt-1">
           {t('generator.description')}
         </p>
       </div>
@@ -86,7 +86,7 @@ export function KeyGeneratorForm({ onGenerated }: KeyGeneratorFormProps) {
         {/* Algorithm Selection */}
         <div className="space-y-1.5">
           <div className="flex items-center gap-2">
-            <Label htmlFor="algorithm" className="text-sm">{t('generator.algorithm')}</Label>
+            <Label htmlFor="algorithm" className="text-ui">{t('generator.algorithm')}</Label>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -107,7 +107,7 @@ export function KeyGeneratorForm({ onGenerated }: KeyGeneratorFormProps) {
                 <SelectItem key={algo.value} value={algo.value}>
                   <div className="flex flex-col">
                     <span>{algo.label}</span>
-                    <span className="text-xs text-muted-foreground">{algo.description}</span>
+                    <span className="text-support text-muted-foreground">{algo.description}</span>
                   </div>
                 </SelectItem>
               ))}
@@ -118,7 +118,7 @@ export function KeyGeneratorForm({ onGenerated }: KeyGeneratorFormProps) {
         {/* Comment Input */}
         <div className="space-y-1.5">
           <div className="flex items-center gap-2">
-            <Label htmlFor="comment" className="text-sm">{t('generator.comment')}</Label>
+            <Label htmlFor="comment" className="text-ui">{t('generator.comment')}</Label>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -142,7 +142,7 @@ export function KeyGeneratorForm({ onGenerated }: KeyGeneratorFormProps) {
         {/* Passphrase Input */}
         <div className="space-y-1.5">
           <div className="flex items-center gap-2">
-            <Label htmlFor="passphrase" className="text-sm">{t('generator.passphrase')}</Label>
+            <Label htmlFor="passphrase" className="text-ui">{t('generator.passphrase')}</Label>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -177,7 +177,7 @@ export function KeyGeneratorForm({ onGenerated }: KeyGeneratorFormProps) {
         {/* Confirm Passphrase (shown only when passphrase is entered) */}
         {hasPassphrase && (
           <div className="space-y-1.5">
-            <Label htmlFor="confirmPassphrase" className="text-sm">{t('generator.confirmPassphrase')}</Label>
+            <Label htmlFor="confirmPassphrase" className="text-ui">{t('generator.confirmPassphrase')}</Label>
             <Input
               id="confirmPassphrase"
               type={showPassphrase ? 'text' : 'password'}
@@ -189,7 +189,7 @@ export function KeyGeneratorForm({ onGenerated }: KeyGeneratorFormProps) {
               aria-describedby={passphraseError ? 'passphrase-confirmation-hint' : undefined}
             />
             {passphraseError && (
-              <p id="passphrase-confirmation-hint" className="text-xs text-destructive">
+              <p id="passphrase-confirmation-hint" className="text-support text-destructive">
                 {confirmPassphrase.length === 0 ? t('workflow.confirmRequired') : t('generator.passphrasesMismatch')}
               </p>
             )}
@@ -200,21 +200,21 @@ export function KeyGeneratorForm({ onGenerated }: KeyGeneratorFormProps) {
         {!hasPassphrase && (
           <div className="flex items-start gap-2 p-2.5 rounded-lg bg-warning/10 border border-warning/20">
             <AlertTriangle className="h-4 w-4 text-warning mt-0.5 shrink-0" />
-            <p className="text-xs text-muted-foreground">
+            <p className="text-support text-muted-foreground">
               {t('generator.noPassphraseWarning')}
             </p>
           </div>
         )}
 
         {error && (
-          <div role="alert" className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm">
+          <div role="alert" className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-support">
             <p className="font-medium">{t('workflow.errorTitle')}</p>
             <p className="mt-1 text-muted-foreground">
               {t(error === 'unsupported_browser' ? 'workflow.errorUnsupported' : 'workflow.errorGeneric', {
                 mode: t('navigation.computer'),
               })}
             </p>
-            <Link to={getToolHref(language, 'commands')} className="mt-2 inline-block text-primary underline underline-offset-2">
+            <Link to={getToolHref(language, 'commands')} className="mt-2 inline-block text-link underline underline-offset-2">
               {t('navigation.computer')}
             </Link>
           </div>
@@ -224,7 +224,7 @@ export function KeyGeneratorForm({ onGenerated }: KeyGeneratorFormProps) {
         <Button
           onClick={handleGenerate}
           disabled={isGenerating || passphraseError}
-          className="w-full"
+          className="w-full h-auto min-h-11 whitespace-normal px-4 py-2"
           size="default"
         >
           {isGenerating ? (
@@ -243,12 +243,12 @@ export function KeyGeneratorForm({ onGenerated }: KeyGeneratorFormProps) {
         {/* Security Notice */}
         <div className="flex items-start gap-2.5 p-2.5 rounded-lg bg-success/10 border border-success/20">
           <Shield className="h-4 w-4 text-success mt-0.5 shrink-0" />
-          <div className="text-xs">
+          <div className="text-support">
             <p className="font-medium text-success">{t('generator.securityTitle')}</p>
             <p className="text-muted-foreground mt-0.5">
               {t('generator.securityDesc')}
             </p>
-            <a href="/privacy/" className="mt-1 inline-block text-primary underline underline-offset-2">
+            <a href="/privacy/" className="mt-1 inline-block text-link underline underline-offset-2">
               {t('workflow.privacy')}
             </a>
           </div>

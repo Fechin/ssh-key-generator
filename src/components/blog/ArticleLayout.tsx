@@ -59,20 +59,20 @@ export function ArticleLayout({ children, backHref, backLabel, publication }: Pr
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="flex-1 max-w-3xl mx-auto px-4 py-10 w-full">
+      <main className="flex-1 min-w-0 max-w-3xl mx-auto px-4 py-10 w-full">
         <Link
           to={backHref}
-          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-8"
+          className="inline-flex items-center gap-1 text-support text-link hover:underline underline-offset-4 mb-8"
         >
           <ChevronLeft className="h-4 w-4" />
           {backLabel}
         </Link>
-        <article>
+        <article className="article-prose min-w-0">
           {publication && labels && (
-            <div className="mb-6 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+            <div className="not-prose mb-6 flex flex-wrap gap-x-4 gap-y-1 text-caption text-muted-foreground">
               <span>
                 {labels[0]}{' '}
-                <a href="https://github.com/Fechin/ssh-key-generator" rel="author" className="underline underline-offset-2">
+                <a href="https://github.com/Fechin/ssh-key-generator" rel="author" className="text-link underline underline-offset-2">
                   SSH Key Generator
                 </a>
               </span>

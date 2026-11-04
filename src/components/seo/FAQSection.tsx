@@ -19,11 +19,11 @@ function FAQAccordionItem({ item, isOpen, onToggle }: { item: FAQItem; isOpen: b
         id={questionId}
         type="button"
         onClick={onToggle}
-        className="w-full flex items-center justify-between gap-3 p-4 text-left hover:bg-muted/50 transition-colors"
+        className="w-full flex items-center justify-between gap-3 p-4 text-start hover:bg-muted/50 transition-colors"
         aria-expanded={isOpen}
         aria-controls={answerId}
       >
-        <span className="font-medium text-sm">{item.question}</span>
+        <span className="font-medium text-body">{item.question}</span>
         <ChevronDown
           className={cn(
             'h-4 w-4 text-muted-foreground flex-shrink-0 transition-transform duration-200',
@@ -41,7 +41,7 @@ function FAQAccordionItem({ item, isOpen, onToggle }: { item: FAQItem; isOpen: b
         )}
       >
         <div className="overflow-hidden">
-          <p className="p-4 pt-0 text-sm text-muted-foreground leading-relaxed">
+          <p className="max-w-prose p-4 pt-0 text-body">
             {item.answer}
           </p>
         </div>
@@ -125,9 +125,9 @@ export function FAQSection() {
     <section id="faq" className="space-y-4">
       <div className="flex items-center gap-2">
         <HelpCircle className="h-5 w-5 text-primary" />
-        <h2 className="text-xl font-bold">{t('seo.faq.title')}</h2>
+        <h2 className="text-section font-semibold">{t('seo.faq.title')}</h2>
       </div>
-      <p className="text-sm text-muted-foreground">
+      <p className="max-w-prose text-body">
         {t('seo.faq.subtitle')}
       </p>
       <div className="space-y-2">

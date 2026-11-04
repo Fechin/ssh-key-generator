@@ -23,13 +23,13 @@ export function Header() {
             <Key className="h-4 w-4 text-primary" />
           </div>
           <div className="hidden min-w-0 min-[360px]:block">
-            <span className="block truncate font-semibold text-sm sm:text-base leading-none" title={t('header.title')}>{t('header.title')}</span>
-            <p className="truncate text-xs text-muted-foreground">{t('header.subtitle')}</p>
+            <span className="block truncate font-semibold text-ui sm:text-control" title={t('header.title')}>{t('header.title')}</span>
+            <p className="truncate text-caption text-muted-foreground">{t('header.subtitle')}</p>
           </div>
         </Link>
 
         <div className="flex shrink-0 items-center gap-1">
-          <div className="hidden lg:flex items-center gap-1.5 px-2 py-1 rounded-full bg-success/10 text-success text-xs font-medium">
+          <div className="hidden lg:flex items-center gap-1.5 px-2 py-1 rounded-full bg-success/10 text-success text-caption font-medium">
             <Shield className="h-3 w-3" />
             {t('header.clientSide')}
           </div>

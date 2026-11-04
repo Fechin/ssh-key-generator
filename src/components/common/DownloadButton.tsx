@@ -60,7 +60,7 @@ export function DownloadButton({
         <Download className="h-4 w-4" aria-hidden="true" />
         {label && <span>{label}</span>}
       </Button>
-      <span role="status" aria-live="polite" className={downloadFailed ? 'max-w-48 text-xs text-destructive' : 'sr-only'}>
+      <span role="status" aria-live="polite" className={downloadFailed ? 'max-w-48 text-support text-destructive' : 'sr-only'}>
         {downloadFailed ? t('interaction.downloadFailed') : ''}
       </span>
     </span>

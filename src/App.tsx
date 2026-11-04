@@ -62,7 +62,7 @@ const ArticlePage = lazy(async () => {
 
 function TabContentFallback() {
   return (
-    <div className="min-h-[220px] flex items-center justify-center text-sm text-muted-foreground">
+    <div className="min-h-[220px] flex items-center justify-center text-support text-muted-foreground">
       Loading...
     </div>
   )
@@ -103,10 +103,10 @@ function MainContent() {
       <main className="flex-1 min-w-0 max-w-4xl mx-auto px-4 py-6 sm:py-10 w-full">
         {/* Hero Section */}
         <div className="text-center mb-6 sm:mb-10">
-          <h1 className="text-2xl sm:text-3xl font-bold mb-3">
+          <h1 className="text-page-title font-bold mb-3">
             {t('hero.title')}
           </h1>
-          <p className="text-base text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-lead text-muted-foreground max-w-prose mx-auto">
             {t('hero.subtitle')}
           </p>
         </div>
@@ -120,20 +120,20 @@ function MainContent() {
             <Tabs value={mode} onValueChange={selectMode} className="min-w-0 w-full">
               <div className="px-4 pt-4 pb-0">
                 <TabsList aria-label={t('navigation.toolLabel')} className="grid h-auto w-full grid-cols-2 gap-1 lg:grid-cols-4">
-                  <TabsTrigger value="generate" className="min-h-11 min-w-0 gap-2 whitespace-normal px-2 text-xs sm:text-sm">
+                  <TabsTrigger value="generate" className="min-h-11 min-w-0 gap-2 whitespace-normal px-2 text-ui">
                     <Key className="h-4 w-4 shrink-0" />
                     <span>{t('navigation.browser')}</span>
                   </TabsTrigger>
-                  <TabsTrigger value="commands" className="min-h-11 min-w-0 gap-2 whitespace-normal px-2 text-xs sm:text-sm">
+                  <TabsTrigger value="commands" className="min-h-11 min-w-0 gap-2 whitespace-normal px-2 text-ui">
                     <Terminal className="h-4 w-4 shrink-0" />
                     <span>{t('navigation.computer')}</span>
                   </TabsTrigger>
-                  <TabsTrigger value="config" className="min-h-11 min-w-0 gap-2 whitespace-normal px-2 text-xs sm:text-sm">
+                  <TabsTrigger value="config" className="min-h-11 min-w-0 gap-2 whitespace-normal px-2 text-ui">
                     <Settings className="h-4 w-4 shrink-0" />
                     <span className="hidden sm:inline">{t('tabs.config')}</span>
                     <span className="sm:hidden">{t('tabs.configShort')}</span>
                   </TabsTrigger>
-                  <TabsTrigger value="guides" className="min-h-11 min-w-0 gap-2 whitespace-normal px-2 text-xs sm:text-sm">
+                  <TabsTrigger value="guides" className="min-h-11 min-w-0 gap-2 whitespace-normal px-2 text-ui">
                     <BookOpen className="h-4 w-4 shrink-0" />
                     <span className="hidden sm:inline">{t('tabs.guides')}</span>
                     <span className="sm:hidden">{t('tabs.guidesShort')}</span>
@@ -154,8 +154,8 @@ function MainContent() {
                         <div className="h-full min-h-[120px] lg:min-h-[360px] flex items-center justify-center rounded-xl border border-dashed border-border bg-card/30">
                           <div className="text-center text-muted-foreground">
                             <Key className="h-10 w-10 mx-auto mb-3 opacity-30" />
-                            <p className="text-base font-medium">{t('generator.noKeysYet')}</p>
-                            <p className="text-sm">
+                            <p className="text-panel font-medium">{t('generator.noKeysYet')}</p>
+                            <p className="text-support">
                               {t('generator.noKeysHint')}
                             </p>
                           </div>
@@ -190,12 +190,12 @@ function MainContent() {
           </CardContent>
         </Card>
 
-        <nav aria-label={t('navigation.tasks')} className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3 text-sm">
+        <nav aria-label={t('navigation.tasks')} className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3 text-support">
           <span className="w-full font-medium">{t('navigation.tasks')}</span>
-          <Link className="text-primary underline underline-offset-4" to={`${languagePath}how-to-set-up-ssh/`}>{t('navigation.install')}</Link>
-          <Link className="text-primary underline underline-offset-4" to={`${languagePath}ssh-command/`}>{t('navigation.connect')}</Link>
-          <Link className="text-primary underline underline-offset-4" to={`${languagePath}what-is-an-ssh-key/`}>{t('navigation.safety')}</Link>
-          <Link className="text-primary underline underline-offset-4" to={getToolHref(language, 'guides')} onClick={() => trackToolEvent('tool_mode_change', { mode: 'guides', language, origin: 'home' })}>{t('navigation.browseGuides')}</Link>
+          <Link className="text-link underline underline-offset-4" to={`${languagePath}how-to-set-up-ssh/`}>{t('navigation.install')}</Link>
+          <Link className="text-link underline underline-offset-4" to={`${languagePath}ssh-command/`}>{t('navigation.connect')}</Link>
+          <Link className="text-link underline underline-offset-4" to={`${languagePath}what-is-an-ssh-key/`}>{t('navigation.safety')}</Link>
+          <Link className="text-link underline underline-offset-4" to={getToolHref(language, 'guides')} onClick={() => trackToolEvent('tool_mode_change', { mode: 'guides', language, origin: 'home' })}>{t('navigation.browseGuides')}</Link>
         </nav>
 
         <Suspense fallback={<div className="mt-16 h-24" />}>

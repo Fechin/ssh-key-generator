@@ -68,22 +68,22 @@ export function ArticleTools() {
             to={getToolHref(context.language, mode)}
             onClick={() => track(mode)}
             className={index === 0
-              ? 'inline-flex min-h-9 items-center gap-2 rounded-lg border border-primary/25 bg-primary/10 px-3 py-2 text-xs font-medium text-primary hover:bg-primary/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
-              : 'inline-flex min-h-9 items-center gap-2 rounded-lg border border-border px-3 py-2 text-xs font-medium hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'}
+              ? 'inline-flex min-h-9 items-center gap-2 rounded-lg border border-primary/25 bg-primary/10 px-3 py-2 text-ui font-medium text-link hover:bg-primary/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
+              : 'inline-flex min-h-9 items-center gap-2 rounded-lg border border-border px-3 py-2 text-ui font-medium text-link hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'}
           >
-            {mode === 'generate' ? <Key aria-hidden="true" className="h-3.5 w-3.5" /> : <Terminal aria-hidden="true" className="h-3.5 w-3.5" />}
+            {mode === 'generate' ? <Key aria-hidden="true" className="h-3.5 w-3.5 shrink-0 text-primary" /> : <Terminal aria-hidden="true" className="h-3.5 w-3.5 shrink-0 text-primary" />}
             {label(mode)}
           </Link>
         ))}
       </div>
       {sections.length > 0 && (
         <nav aria-label={t('guideActions.contents')}>
-          <details className="rounded-lg border border-border px-3 py-2 text-sm">
+          <details className="rounded-lg border border-border px-3 py-2 text-ui">
             <summary className="cursor-pointer font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{t('guideActions.contents')}</summary>
-            <ul className="mt-3 space-y-2 pb-1 text-sm">
+            <ul className="mt-3 space-y-2 pb-1 text-support">
               {sections.map((section) => (
                 <li key={section.id}>
-                  <a href={`#${encodeURIComponent(section.id)}`} className="text-muted-foreground underline-offset-4 hover:text-foreground hover:underline">
+                  <a href={`#${encodeURIComponent(section.id)}`} className="text-link underline-offset-4 hover:underline">
                     {section.text}
                   </a>
                 </li>

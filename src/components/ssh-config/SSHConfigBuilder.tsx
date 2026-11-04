@@ -66,18 +66,18 @@ export function SSHConfigBuilder() {
       {/* Add Host Form Section */}
       <div>
         <div className="mb-4">
-          <h2 className="flex items-center gap-2 text-base font-semibold">
+          <h2 className="flex items-center gap-2 text-panel font-semibold">
             <Settings className="h-4 w-4" />
             {t('sshConfig.title')}
           </h2>
-          <p className="text-xs text-muted-foreground mt-1">
+          <p className="text-support text-muted-foreground mt-1">
             {t('sshConfig.description')}
           </p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-3">
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <Label htmlFor="host-name" className="text-sm">{t('sshConfig.hostAliasRequired')}</Label>
+              <Label htmlFor="host-name" className="text-ui">{t('sshConfig.hostAliasRequired')}</Label>
               <Input
                 id="host-name"
                 placeholder="myserver"
@@ -87,7 +87,7 @@ export function SSHConfigBuilder() {
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="hostname" className="text-sm">{t('sshConfig.hostnameRequired')}</Label>
+              <Label htmlFor="hostname" className="text-ui">{t('sshConfig.hostnameRequired')}</Label>
               <Input
                 id="hostname"
                 placeholder={t('sshConfig.hostnamePlaceholder')}
@@ -97,7 +97,7 @@ export function SSHConfigBuilder() {
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="user" className="text-sm">{t('sshConfig.user')}</Label>
+              <Label htmlFor="user" className="text-ui">{t('sshConfig.user')}</Label>
               <Input
                 id="user"
                 placeholder="root"
@@ -106,7 +106,7 @@ export function SSHConfigBuilder() {
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="port" className="text-sm">{t('sshConfig.port')}</Label>
+              <Label htmlFor="port" className="text-ui">{t('sshConfig.port')}</Label>
               <Input
                 id="port"
                 type="number"
@@ -116,7 +116,7 @@ export function SSHConfigBuilder() {
               />
             </div>
             <div className="space-y-1.5 sm:col-span-2">
-              <Label htmlFor="identity-file" className="text-sm">{t('sshConfig.identityFile')}</Label>
+              <Label htmlFor="identity-file" className="text-ui">{t('sshConfig.identityFile')}</Label>
               <Input
                 id="identity-file"
                 placeholder={t('sshConfig.identityFilePlaceholder')}
@@ -130,7 +130,7 @@ export function SSHConfigBuilder() {
           <button
             type="button"
             onClick={() => setShowAdvanced(!showAdvanced)}
-            className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+            className="flex items-center gap-1.5 text-ui text-muted-foreground hover:text-foreground transition-colors"
           >
             {showAdvanced ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
             {t('sshConfig.advancedOptions')}
@@ -140,14 +140,14 @@ export function SSHConfigBuilder() {
           {showAdvanced && (
             <div className="grid gap-3 sm:grid-cols-2 pt-2 border-t border-border/50">
               <div className="space-y-1.5">
-                <Label htmlFor="proxy-jump" className="text-sm">{t('sshConfig.proxyJump')}</Label>
+                <Label htmlFor="proxy-jump" className="text-ui">{t('sshConfig.proxyJump')}</Label>
                 <Input
                   id="proxy-jump"
                   placeholder={t('sshConfig.proxyJumpPlaceholder')}
                   value={formData.proxyJump}
                   onChange={handleChange('proxyJump')}
                 />
-                <p className="text-xs text-muted-foreground">{t('sshConfig.proxyJumpDesc')}</p>
+                <p className="text-support text-muted-foreground">{t('sshConfig.proxyJumpDesc')}</p>
               </div>
               <div className="space-y-1.5">
                 <div className="flex items-center gap-2 pt-6">
@@ -158,11 +158,11 @@ export function SSHConfigBuilder() {
                     onChange={handleChange('forwardAgent')}
                     className="h-4 w-4 rounded border-input"
                   />
-                  <Label htmlFor="forward-agent" className="text-sm cursor-pointer">
+                  <Label htmlFor="forward-agent" className="text-ui cursor-pointer">
                     {t('sshConfig.forwardAgent')}
                   </Label>
                 </div>
-                <p className="text-xs text-muted-foreground">{t('sshConfig.forwardAgentDesc')}</p>
+                <p className="text-support text-muted-foreground">{t('sshConfig.forwardAgentDesc')}</p>
               </div>
             </div>
           )}
@@ -179,16 +179,16 @@ export function SSHConfigBuilder() {
         <>
           <div className="border-t border-border/50" />
           <div>
-            <h4 className="text-sm font-medium mb-3">{t('sshConfig.configuredHosts')}</h4>
+            <h4 className="text-panel font-semibold mb-3">{t('sshConfig.configuredHosts')}</h4>
             <div className="space-y-2">
               {hosts.map((host) => (
                 <div
                   key={host.id}
-                  className="flex items-center justify-between p-2.5 rounded-md bg-muted/50"
+                  className="flex min-w-0 items-center justify-between gap-3 p-2.5 rounded-md bg-muted/50"
                 >
-                  <div>
-                    <p className="font-medium text-sm">{host.name}</p>
-                    <p className="text-xs text-muted-foreground">
+                  <div className="min-w-0 break-all">
+                    <p className="font-medium text-ui">{host.name}</p>
+                    <p className="text-support text-muted-foreground">
                       {host.user && `${host.user}@`}
                       {host.hostname}
                       {host.port && host.port !== 22 && `:${host.port}`}
@@ -198,7 +198,7 @@ export function SSHConfigBuilder() {
                     variant="ghost"
                     size="icon"
                     onClick={() => removeHost(host.id)}
-                    className="text-destructive hover:text-destructive h-8 w-8"
+                    className="shrink-0 text-destructive hover:text-destructive h-9 w-9"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -212,25 +212,25 @@ export function SSHConfigBuilder() {
       {/* Generated Config Section */}
       <div className="border-t border-border/50" />
       <div>
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2">
-            <FileText className="h-4 w-4" />
-            <h4 className="text-sm font-medium">{t('sshConfig.generatedConfig')}</h4>
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+          <div className="flex min-w-0 items-center gap-2">
+            <FileText className="h-4 w-4 shrink-0" />
+            <h4 className="text-panel font-semibold">{t('sshConfig.generatedConfig')}</h4>
           </div>
           {config && (
-            <div className="flex gap-1.5">
+            <div className="flex flex-wrap gap-1.5">
               <CopyButton text={config} label={t('keyDisplay.copy')} />
               <DownloadButton content={config} filename="config" label={t('keyDisplay.download')} />
             </div>
           )}
         </div>
-        <p className="text-xs text-muted-foreground mb-2">
+        <p className="text-support text-muted-foreground mb-2">
           {t('sshConfig.saveToPath')}
         </p>
         <Textarea
           readOnly
           value={config || t('sshConfig.noHosts')}
-          className="min-h-[180px] resize-none text-xs"
+          className="min-h-[180px] resize-none text-code"
           placeholder={t('sshConfig.noHosts')}
         />
       </div>

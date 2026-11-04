@@ -10,24 +10,24 @@ export function SiteInfoPage({ slug }: { slug: string }) {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main lang="en" dir="ltr" className="flex-1 max-w-4xl mx-auto px-4 py-10 w-full">
-        <article className="max-w-3xl mx-auto">
-          <h1 className="text-2xl sm:text-3xl font-bold mb-4">{page.heading}</h1>
-          <p className="text-sm text-muted-foreground mb-8">
+      <main lang="en" dir="ltr" className="flex-1 min-w-0 max-w-4xl mx-auto px-4 py-10 w-full">
+        <article className="article-prose min-w-0 max-w-3xl mx-auto">
+          <h1>{page.heading}</h1>
+          <p className="not-prose text-caption text-muted-foreground mb-8">
             Last reviewed: <time dateTime={page.dateModified}>{page.dateModified}</time>
           </p>
-          <div className="space-y-8">
+          <div>
             {page.sections.map((section) => (
               <section key={section.heading}>
-                <h2 className="text-xl font-semibold mb-3">{section.heading}</h2>
-                <div className="space-y-3 text-muted-foreground leading-relaxed">
+                <h2>{section.heading}</h2>
+                <div>
                   {section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
                 </div>
                 {section.links && (
-                  <ul className="mt-3 space-y-2">
+                  <ul>
                     {section.links.map((link) => (
                       <li key={link.href}>
-                        <a href={link.href} className="text-primary underline underline-offset-4 hover:opacity-80">
+                        <a href={link.href}>
                           {link.label}
                         </a>
                       </li>

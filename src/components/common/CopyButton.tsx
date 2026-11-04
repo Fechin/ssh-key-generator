@@ -71,7 +71,7 @@ export function CopyButton({
           </>
         )}
       </Button>
-      <span role="status" aria-live="polite" className={copyFailed ? 'max-w-48 text-xs text-destructive' : 'sr-only'}>
+      <span role="status" aria-live="polite" className={copyFailed ? 'max-w-48 text-support text-destructive' : 'sr-only'}>
         {copyFailed ? t('interaction.copyFailed') : copied ? t('keyDisplay.copied') : ''}
       </span>
     </span>

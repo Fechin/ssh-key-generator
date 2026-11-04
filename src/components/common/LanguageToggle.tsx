@@ -32,7 +32,7 @@ export function LanguageToggle() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="sm" className="gap-1.5 px-2 sm:px-3" title={current?.label}>
           <Globe className="h-4 w-4 shrink-0" />
-          <span className="max-w-16 truncate text-xs">{current?.label}</span>
+          <span className="max-w-16 truncate text-caption">{current?.label}</span>
           <ChevronDown className="hidden sm:block h-3 w-3" />
         </Button>
       </DropdownMenuTrigger>

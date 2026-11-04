@@ -35,15 +35,15 @@ export function NotFound() {
             </div>
           </div>
 
-          <h1 className="text-6xl font-bold text-primary mb-2">
+          <h1 className="text-page-title font-bold mb-2">
             {t('notFound.code')}
           </h1>
 
-          <h2 className="text-xl font-semibold mb-4">
+          <h2 className="text-section font-semibold mb-4">
             {t('notFound.title')}
           </h2>
 
-          <p className="text-muted-foreground mb-8">
+          <p className="text-body mb-8">
             {t('notFound.description')}
           </p>
 

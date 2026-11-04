@@ -43,7 +43,7 @@ export function ThemeToggle() {
       aria-label={`Current theme: ${getLabel()}. Click to change.`}
     >
       {getIcon()}
-      <span className="hidden sm:inline text-xs">{getLabel()}</span>
+      <span className="hidden sm:inline text-caption">{getLabel()}</span>
     </Button>
   )
 }

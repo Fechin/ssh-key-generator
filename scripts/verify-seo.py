@@ -25,6 +25,8 @@ class Page(HTMLParser):
     def __init__(self, html):
         super().__init__(convert_charrefs=True)
         self.h1 = 0
+        self.article_count = 0
+        self.pre_count = 0
         self.lang = None
         self.links = []
         self.alternates = {}
@@ -58,6 +60,8 @@ class Page(HTMLParser):
             self.pending_suspense.append(identifier)
         if tag == 'html': self.lang = a.get('lang')
         if tag == 'h1': self.h1 += 1
+        if tag == 'article': self.article_count += 1
+        if tag == 'pre': self.pre_count += 1
         if tag == 'title': self.title_open = True
         if tag == 'main': self.main = True
         if tag in ('script', 'style'): self.ignored += 1
@@ -185,7 +189,7 @@ for url in urls:
     assert schemas, f'No schema: {url}'
     assert any(s.get('@type') == 'Organization' for s in schemas), f'No organization: {url}'
     if expected['kind'] == 'article':
-        assert '<article>' in html and '<pre ' in html, f'Missing article body: {url}'
+        assert page.article_count == 1 and page.pre_count > 0, f'Missing article body: {url}'
         article = next(s for s in schemas if s.get('@type') == 'TechArticle')
         assert article['datePublished'] == expected['publishDate'], f'Article publication schema mismatch: {url}'
         assert article['dateModified'] == expected['lastmod'], f'Article modification schema mismatch: {url}'

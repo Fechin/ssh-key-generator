@@ -48,11 +48,11 @@ export function CommandGenerator() {
   return (
     <div>
       <div className="mb-4">
-        <h2 className="flex items-center gap-2 text-base font-semibold">
+        <h2 className="flex items-center gap-2 text-panel font-semibold">
           <Terminal className="h-4 w-4" />
           {t('commands.title')}
         </h2>
-        <p className="text-xs text-muted-foreground mt-1">
+        <p className="text-support text-muted-foreground mt-1">
           {t('commands.description')}
         </p>
       </div>
@@ -60,7 +60,7 @@ export function CommandGenerator() {
         {/* Options */}
         <div className="grid gap-3 sm:grid-cols-3">
           <div className="space-y-1.5">
-            <Label htmlFor="cmd-algorithm" className="text-sm">{t('commands.algorithm')}</Label>
+            <Label htmlFor="cmd-algorithm" className="text-ui">{t('commands.algorithm')}</Label>
             <Select value={algorithm} onValueChange={(v) => setAlgorithm(v as KeyAlgorithm)}>
               <SelectTrigger id="cmd-algorithm">
                 <SelectValue />
@@ -76,7 +76,7 @@ export function CommandGenerator() {
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="cmd-comment" className="text-sm">{t('commands.comment')}</Label>
+            <Label htmlFor="cmd-comment" className="text-ui">{t('commands.comment')}</Label>
             <Input
               id="cmd-comment"
               type="text"
@@ -89,7 +89,7 @@ export function CommandGenerator() {
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="cmd-filename" className="text-sm">{t('commands.filename')}</Label>
+            <Label htmlFor="cmd-filename" className="text-ui">{t('commands.filename')}</Label>
             <Input
               id="cmd-filename"
               type="text"
@@ -99,11 +99,11 @@ export function CommandGenerator() {
               aria-invalid={invalid === 'filename'}
               aria-describedby={invalid === 'filename' ? 'cmd-error' : 'cmd-filename-hint'}
             />
-            <p id="cmd-filename-hint" className="text-xs text-muted-foreground">{t('commandUx.filenameHint')}</p>
+            <p id="cmd-filename-hint" className="text-support text-muted-foreground">{t('commandUx.filenameHint')}</p>
           </div>
         </div>
         {invalid && (
-          <p id="cmd-error" role="alert" className="text-sm text-destructive">
+          <p id="cmd-error" role="alert" className="text-support text-destructive">
             {t(invalid === 'filename' ? 'commandUx.invalidFilename' : 'commandUx.invalidComment')}
           </p>
         )}
@@ -127,7 +127,7 @@ export function CommandGenerator() {
 
           <TabsContent value={platform} className="space-y-4">
             {platform === 'windows' && (
-              <div className="space-y-1 text-xs text-muted-foreground">
+              <div className="space-y-1 text-support text-muted-foreground">
                 <p className="font-medium text-foreground">{t('commandUx.windowsShell')}</p>
                 <p>{t('commandUx.windowsHint')}</p>
               </div>
@@ -136,7 +136,7 @@ export function CommandGenerator() {
               <>
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between gap-2">
-                    <Label className="text-sm">{t('commands.quickCommand')}</Label>
+                    <Label className="text-ui">{t('commands.quickCommand')}</Label>
                     <CopyButton
                       text={command}
                       label={t('keyDisplay.copy')}
@@ -144,10 +144,10 @@ export function CommandGenerator() {
                       analyticsContext={{ target: 'command', algorithm, origin: 'home' }}
                     />
                   </div>
-                  <pre dir="ltr" className="max-w-full p-2.5 bg-background rounded-md text-xs font-mono overflow-x-auto border border-border/50"><code>{command}</code></pre>
+                  <pre dir="ltr" className="max-w-full p-2.5 bg-background rounded-md text-code font-mono overflow-x-auto border border-border/50"><code>{command}</code></pre>
                 </div>
                 {platform === 'windows' && (
-                  <details className="rounded-md border border-border/50 p-3 text-xs">
+                  <details className="rounded-md border border-border/50 p-3 text-support">
                     <summary className="cursor-pointer font-medium">{t('commandUx.agentSetup')}</summary>
                     <p className="mt-2 text-muted-foreground">{t('commandUx.agentHint')}</p>
                     <div className="mt-2 flex justify-end">
@@ -158,12 +158,12 @@ export function CommandGenerator() {
                         analyticsContext={{ target: 'command', algorithm, origin: 'home' }}
                       />
                     </div>
-                    <pre dir="ltr" className="mt-2 max-w-full overflow-x-auto rounded-md bg-background p-2.5 font-mono"><code>{generateWindowsAgentCommands()}</code></pre>
+                    <pre dir="ltr" className="mt-2 max-w-full overflow-x-auto rounded-md bg-background p-2.5 text-code font-mono"><code>{generateWindowsAgentCommands()}</code></pre>
                   </details>
                 )}
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between gap-2">
-                    <Label className="text-sm">{t('commands.completeSetup')}</Label>
+                    <Label className="text-ui">{t('commands.completeSetup')}</Label>
                     <CopyButton
                       text={setup}
                       label={t('commands.copyAll')}
@@ -171,7 +171,7 @@ export function CommandGenerator() {
                       analyticsContext={{ target: 'command', algorithm, origin: 'home' }}
                     />
                   </div>
-                  <pre dir="ltr" className="max-w-full p-2.5 bg-background rounded-md text-xs font-mono overflow-x-auto max-h-[280px] border border-border/50"><code>{setup}</code></pre>
+                  <pre dir="ltr" className="max-w-full p-2.5 bg-background rounded-md text-code font-mono overflow-x-auto max-h-[280px] border border-border/50"><code>{setup}</code></pre>
                 </div>
               </>
             )}
@@ -179,7 +179,7 @@ export function CommandGenerator() {
               href={platform === 'windows'
                 ? 'https://learn.microsoft.com/en-us/windows-server/administration/openssh/openssh_keymanagement'
                 : 'https://man.openbsd.org/ssh-keygen'}
-              className="inline-flex text-xs text-primary underline underline-offset-2"
+              className="inline-flex text-support text-link underline underline-offset-2"
             >
               {t('commandUx.source')}
             </a>

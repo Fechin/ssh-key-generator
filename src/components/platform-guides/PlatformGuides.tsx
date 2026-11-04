@@ -223,15 +223,15 @@ export function PlatformGuides() {
   return (
     <div>
       <div className="mb-4">
-        <h2 className="text-base font-semibold">{t('guides.title')}</h2>
-        <p className="text-xs text-muted-foreground mt-1">
+        <h2 className="text-panel font-semibold">{t('guides.title')}</h2>
+        <p className="text-support text-muted-foreground mt-1">
           {t('guides.description')}
         </p>
       </div>
       <Tabs defaultValue="github">
           <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6 gap-1 h-auto">
             {platforms.map((platform) => (
-              <TabsTrigger key={platform.id} value={platform.id} aria-label={platform.name} className="min-h-11 min-w-0 flex-col gap-1 whitespace-normal px-1 py-2 text-xs sm:flex-row sm:gap-1.5">
+              <TabsTrigger key={platform.id} value={platform.id} aria-label={platform.name} className="min-h-11 min-w-0 flex-col gap-1 whitespace-normal px-1 py-2 text-ui sm:flex-row sm:gap-1.5">
                 {platform.icon}
                 <span>{platform.name}</span>
               </TabsTrigger>
@@ -240,8 +240,8 @@ export function PlatformGuides() {
 
           {platforms.map((platform) => (
             <TabsContent key={platform.id} value={platform.id} className="space-y-4 mt-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-sm font-semibold flex items-center gap-2">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <h3 className="text-panel font-semibold flex items-center gap-2">
                   {platform.icon}
                   {t('guides.sshSetup', { platform: platform.name })}
                 </h3>
@@ -261,15 +261,15 @@ export function PlatformGuides() {
               <ol className="space-y-3">
                 {platform.steps.map((step, index) => (
                   <li key={index} className="flex gap-3">
-                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold text-xs">
+                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-link flex items-center justify-center font-semibold text-caption">
                       {index + 1}
                     </div>
-                    <div className="flex-1 space-y-1.5">
-                      <h4 className="font-medium text-sm">{t(step.titleKey)}</h4>
-                      <p className="text-xs text-muted-foreground">{t(step.descKey)}</p>
+                    <div className="min-w-0 flex-1 space-y-1.5">
+                      <h4 className="font-medium text-body">{t(step.titleKey)}</h4>
+                      <p className="text-support text-muted-foreground">{t(step.descKey)}</p>
                       {step.command && (
                         <div className="relative">
-                          <pre className="p-2.5 bg-background rounded-md text-xs font-mono overflow-x-auto pr-10">
+                          <pre className="max-w-full p-2.5 bg-background rounded-md text-code font-mono overflow-x-auto pr-14">
                             {step.command}
                           </pre>
                           <div className="absolute right-2 top-2">
