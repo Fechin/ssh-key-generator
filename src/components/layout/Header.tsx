@@ -1,8 +1,9 @@
-import { Key, Github, Shield } from 'lucide-react'
+import { Key, Shield } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/common/ThemeToggle'
 import { LanguageToggle } from '@/components/common/LanguageToggle'
+import { GitHubMark } from '@/components/common/GitHubMark'
 import { getLanguagePathname, useLanguageStore, useTranslation } from '@/i18n'
 
 export function Header() {
@@ -33,14 +34,14 @@ export function Header() {
           </div>
           <LanguageToggle />
           <ThemeToggle />
-          <Button variant="ghost" size="icon" asChild>
+          <Button variant="ghost" size="icon" className="h-10 w-10 shrink-0 [&_svg]:size-5" asChild>
             <a
               href="https://github.com/Fechin/ssh-key-generator"
               target="_blank"
               rel="noopener noreferrer"
               aria-label={t('header.viewOnGitHub')}
             >
-              <Github className="h-4 w-4" />
+              <GitHubMark className="h-5 w-5" />
             </a>
           </Button>
         </div>

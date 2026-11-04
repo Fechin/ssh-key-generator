@@ -4,6 +4,7 @@ import { sha512 } from '@noble/hashes/sha2.js'
  * Blowfish S-box and P-box initialization constants
  */
 const BF_N = 16
+const EMPTY_BYTES = new Uint8Array(0)
 const BF_S: number[][] = [
   [
     0xd1310ba6, 0x98dfb5ac, 0x2ffd72db, 0xd01adfb7, 0xb8e1afed, 0x6a267e96,
@@ -259,10 +260,14 @@ class Blowfish {
     const lr = new Uint32Array(2)
     let dataIndex = 0
     for (let i = 0; i < 18; i += 2) {
-      lr[0] ^= this.stream2word(data, dataLen, dataIndex)
-      dataIndex = (dataIndex + 4) % dataLen
-      lr[1] ^= this.stream2word(data, dataLen, dataIndex)
-      dataIndex = (dataIndex + 4) % dataLen
+      // A zero-length data input is Blowfish_expand0state: only encrypt the
+      // running block, without reading salt bytes or taking modulo zero.
+      if (dataLen > 0) {
+        lr[0] ^= this.stream2word(data, dataLen, dataIndex)
+        dataIndex = (dataIndex + 4) % dataLen
+        lr[1] ^= this.stream2word(data, dataLen, dataIndex)
+        dataIndex = (dataIndex + 4) % dataLen
+      }
       this.encipher(lr)
       this.P[i] = lr[0]
       this.P[i + 1] = lr[1]
@@ -271,10 +276,12 @@ class Blowfish {
     // Encrypt and replace S-boxes
     for (let i = 0; i < 4; i++) {
       for (let j = 0; j < 256; j += 2) {
-        lr[0] ^= this.stream2word(data, dataLen, dataIndex)
-        dataIndex = (dataIndex + 4) % dataLen
-        lr[1] ^= this.stream2word(data, dataLen, dataIndex)
-        dataIndex = (dataIndex + 4) % dataLen
+        if (dataLen > 0) {
+          lr[0] ^= this.stream2word(data, dataLen, dataIndex)
+          dataIndex = (dataIndex + 4) % dataLen
+          lr[1] ^= this.stream2word(data, dataLen, dataIndex)
+          dataIndex = (dataIndex + 4) % dataLen
+        }
         this.encipher(lr)
         this.S[i][j] = lr[0]
         this.S[i][j + 1] = lr[1]
@@ -298,21 +305,22 @@ class Blowfish {
 /**
  * bcrypt hash function (not the full password hashing, just the core)
  */
-function bcryptHash(password: Uint8Array, salt: Uint8Array, rounds: number): Uint8Array {
+function bcryptHash(password: Uint8Array, salt: Uint8Array): Uint8Array {
   const bf = new Blowfish()
 
   // Initialize with expensive key setup
   bf.expandKey(salt, password)
 
-  // Expensive key schedule
-  for (let i = 0; i < rounds; i++) {
-    bf.expandKey(new Uint8Array(0), password)
-    bf.expandKey(new Uint8Array(0), salt)
+  // bcrypt_pbkdf always uses 64 inner expansions, salt first, independently
+  // of the caller's outer PBKDF iteration count (OpenBSD bcrypt_pbkdf.c).
+  for (let i = 0; i < 64; i++) {
+    bf.expandKey(EMPTY_BYTES, salt)
+    bf.expandKey(EMPTY_BYTES, password)
   }
 
-  // Encrypt the magic string "OxychromaticBlowwordf" 64 times
+  // Encrypt "OxychromaticBlowfishSwatDynamite" 64 times.
   const ciphertext = new Uint32Array([
-    0x4f786963, 0x68726f6d, 0x61746963, 0x426c6f77,
+    0x4f787963, 0x68726f6d, 0x61746963, 0x426c6f77,
     0x66697368, 0x53776174, 0x44796e61, 0x6d697465
   ])
 
@@ -325,13 +333,14 @@ function bcryptHash(password: Uint8Array, salt: Uint8Array, rounds: number): Uin
     }
   }
 
-  // Convert to bytes (big-endian)
+  // bcrypt_pbkdf serializes each encrypted word little-endian, unlike the
+  // big-endian Blowfish input words and SSH container integers.
   const result = new Uint8Array(32)
   for (let i = 0; i < 8; i++) {
-    result[i * 4] = (ciphertext[i] >>> 24) & 0xff
-    result[i * 4 + 1] = (ciphertext[i] >>> 16) & 0xff
-    result[i * 4 + 2] = (ciphertext[i] >>> 8) & 0xff
-    result[i * 4 + 3] = ciphertext[i] & 0xff
+    result[i * 4] = ciphertext[i] & 0xff
+    result[i * 4 + 1] = (ciphertext[i] >>> 8) & 0xff
+    result[i * 4 + 2] = (ciphertext[i] >>> 16) & 0xff
+    result[i * 4 + 3] = (ciphertext[i] >>> 24) & 0xff
   }
 
   return result
@@ -347,7 +356,15 @@ export function bcryptPbkdf(
   keyLen: number,
   rounds: number
 ): Uint8Array {
-  if (rounds < 1) throw new Error('Rounds must be at least 1')
+  if (!Number.isSafeInteger(rounds) || rounds < 1 || rounds > 0xffffffff) {
+    throw new RangeError('Rounds must be a positive 32-bit integer')
+  }
+  if (!Number.isSafeInteger(keyLen) || keyLen < 1 || keyLen > 1024) {
+    throw new RangeError('Key length must be an integer from 1 to 1024 bytes')
+  }
+  if (password.length === 0 || salt.length === 0 || salt.length > (1 << 20)) {
+    throw new RangeError('Password and salt must be nonempty; salt must not exceed 1 MiB')
+  }
 
   const stride = Math.ceil(keyLen / 32)
   const numBlocks = stride
@@ -365,12 +382,12 @@ export function bcryptPbkdf(
     blockSalt[salt.length + 3] = block & 0xff
 
     let out = sha512(blockSalt)
-    let tmp = bcryptHash(passwordHash, out, rounds)
+    let tmp = bcryptHash(passwordHash, out)
     const acc = new Uint8Array(tmp)
 
     for (let i = 1; i < rounds; i++) {
       out = sha512(tmp)
-      tmp = bcryptHash(passwordHash, out, rounds)
+      tmp = bcryptHash(passwordHash, out)
       for (let j = 0; j < 32; j++) {
         acc[j] ^= tmp[j]
       }
@@ -419,7 +436,7 @@ export async function encryptAes256Ctr(
 
 /**
  * Derive encryption key and IV from passphrase using bcrypt-pbkdf
- * OpenSSH uses 16 rounds by default
+ * The round count is stored in the SSH key's KDF options; this tool uses 16.
  */
 export async function deriveKeyAndIv(
   passphrase: string,
