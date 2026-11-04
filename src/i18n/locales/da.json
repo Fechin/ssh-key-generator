@@ -344,5 +344,64 @@
     "code": "404",
     "description": "Siden du leder efter findes ikke eller er blevet flyttet.",
     "backHome": "Tilbage til forsiden"
+  },
+  "interaction": {
+    "copyFailed": "Kunne ikke kopiere. Markér og kopiér teksten manuelt.",
+    "downloadFailed": "Downloaden kunne ikke starte. Kopiér teksten i stedet."
+  },
+  "guideActions": {
+    "generate": "Opret nøgler",
+    "commands": "SSH Nøglegenereringskommandoer",
+    "guides": "Platformopsætningsguides",
+    "contents": "På denne side",
+    "copyCode": "Kopiér"
+  },
+  "commandUx": {
+    "windowsShell": "Windows PowerShell",
+    "filenameHint": "Gemmes i ~/.ssh. Angiv et filnavn, ikke en fuld sti.",
+    "invalidFilename": "Brug ét filnavn, som understøttes på denne platform, uden stier eller kontroltegn.",
+    "invalidComment": "Brug en kommentar på én linje uden kontroltegn.",
+    "windowsHint": "Kør i PowerShell med OpenSSH-klienten installeret.",
+    "agentSetup": "Første opsætning af ssh-agent (administrator-PowerShell)",
+    "agentHint": "Kør disse tjenestekommandoer én gang som administrator. Brug derefter din normale PowerShell til nøglekommandoerne nedenfor.",
+    "createDirectory": "Opret SSH-mappen",
+    "generateKey": "Generer SSH nøgle",
+    "startAgent": "Start SSH Agent",
+    "addKey": "Tilføj nøgle til Agent",
+    "permissions": "Angiv tilladelser",
+    "publicKey": "Offentlig nøgle",
+    "source": "Officiel dokumentation"
+  },
+  "navigation": {
+    "toolLabel": "SSH-værktøjer",
+    "browser": "I browseren",
+    "computer": "På din computer",
+    "tasks": "Fortsæt SSH-opsætningen",
+    "install": "Installer din offentlige nøgle",
+    "connect": "Opret forbindelse og fejlsøg",
+    "safety": "Forstå SSH-nøgler",
+    "browseGuides": "Vejledninger til platforme"
+  },
+  "workflow": {
+    "resultsTitle": "Dine SSH-nøgler er klar",
+    "success": "Gem den private nøgle, og installér derefter den offentlige.",
+    "errorTitle": "Nøglen kunne ikke genereres",
+    "errorUnsupported": "Brug en opdateret browser via HTTPS, eller opret nøgler lokalt i {mode}.",
+    "errorGeneric": "Prøv igen. Hvis problemet fortsætter, kan du oprette nøgler lokalt i {mode}.",
+    "retry": "Prøv igen",
+    "confirmRequired": "Bekræft din adgangssætning for at fortsætte.",
+    "privacy": "Nøglehåndtering og privatliv",
+    "showPassphrase": "Vis adgangssætning",
+    "hidePassphrase": "Skjul adgangssætning",
+    "nextTitle": "Afslut SSH-opsætningen",
+    "saveTitle": "Gem din private nøgle",
+    "saveHint": "Download den til din enhed, og hold den hemmelig.",
+    "installTitle": "Installér den offentlige nøgle",
+    "installHint": "Tilføj kun den offentlige nøgle til GitHub, GitLab eller din server.",
+    "serverGuide": "Vejledning til serveropsætning",
+    "testTitle": "Test forbindelsen",
+    "testHint": "Følg platformens vejledning for at bekræfte adgangen.",
+    "githubDocs": "GitHub SSH dokumentation",
+    "gitlabDocs": "GitLab SSH dokumentation"
   }
 }

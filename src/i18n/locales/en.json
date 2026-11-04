@@ -345,5 +345,64 @@
     "code": "404",
     "description": "The page you're looking for doesn't exist or has been moved.",
     "backHome": "Back to Home"
+  },
+  "interaction": {
+    "copyFailed": "Couldn't copy. Select and copy the text manually.",
+    "downloadFailed": "Download couldn't start. Copy the text instead."
+  },
+  "guideActions": {
+    "generate": "Generate Keys",
+    "commands": "SSH Key Generation Commands",
+    "guides": "Platform Setup Guides",
+    "contents": "On this page",
+    "copyCode": "Copy"
+  },
+  "commandUx": {
+    "windowsShell": "Windows PowerShell",
+    "filenameHint": "Saved in ~/.ssh. Enter a file name, not a full path.",
+    "invalidFilename": "Use a single file name supported by this platform, without paths or control characters.",
+    "invalidComment": "Use a single-line comment without control characters.",
+    "windowsHint": "Run in PowerShell with OpenSSH Client installed.",
+    "agentSetup": "One-time ssh-agent setup (Administrator PowerShell)",
+    "agentHint": "Run these service commands as administrator once. Then use your normal PowerShell for the key commands below.",
+    "createDirectory": "Create the SSH directory",
+    "generateKey": "Generate SSH Key",
+    "startAgent": "Start SSH Agent",
+    "addKey": "Add Key to Agent",
+    "permissions": "Set Permissions",
+    "publicKey": "Public Key",
+    "source": "Official Docs"
+  },
+  "navigation": {
+    "toolLabel": "SSH tools",
+    "browser": "In your browser",
+    "computer": "On your computer",
+    "tasks": "Continue your SSH setup",
+    "install": "Install your public key",
+    "connect": "Connect and troubleshoot",
+    "safety": "Understand SSH keys",
+    "browseGuides": "Browse platform guides"
+  },
+  "workflow": {
+    "resultsTitle": "Your SSH keys are ready",
+    "success": "Save the private key, then install the public key.",
+    "errorTitle": "Could not generate the key",
+    "errorUnsupported": "Use an updated browser over HTTPS, or generate keys locally with {mode}.",
+    "errorGeneric": "Try again. If the problem continues, use {mode} to generate keys locally.",
+    "retry": "Try again",
+    "confirmRequired": "Confirm your passphrase to continue.",
+    "privacy": "Key handling and privacy",
+    "showPassphrase": "Show passphrase",
+    "hidePassphrase": "Hide passphrase",
+    "nextTitle": "Finish setting up SSH",
+    "saveTitle": "Save your private key",
+    "saveHint": "Download it to your device and keep it secret.",
+    "installTitle": "Install the public key",
+    "installHint": "Add only the public key to GitHub, GitLab, or your server.",
+    "serverGuide": "Server setup guide",
+    "testTitle": "Test the connection",
+    "testHint": "Follow your platform’s guide to verify access.",
+    "githubDocs": "GitHub SSH Docs",
+    "gitlabDocs": "GitLab SSH Docs"
   }
 }

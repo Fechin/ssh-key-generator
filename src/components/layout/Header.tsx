@@ -15,18 +15,18 @@ export function Header() {
         <Link
           to={getLanguagePathname(language)}
           aria-label={t('notFound.backHome')}
-          className="flex items-center gap-3 rounded-md transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+          className="me-2 flex min-w-0 flex-1 items-center gap-2 rounded-md transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 sm:gap-3"
         >
-          <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10">
+          <div className="flex shrink-0 items-center justify-center w-8 h-8 rounded-lg bg-primary/10">
             <Key className="h-4 w-4 text-primary" />
           </div>
-          <div>
-            <span className="font-semibold text-sm sm:text-base leading-none">{t('header.title')}</span>
-            <p className="text-xs text-muted-foreground">{t('header.subtitle')}</p>
+          <div className="min-w-0">
+            <span className="block truncate font-semibold text-sm sm:text-base leading-none" title={t('header.title')}>{t('header.title')}</span>
+            <p className="truncate text-xs text-muted-foreground">{t('header.subtitle')}</p>
           </div>
         </Link>
 
-        <div className="flex items-center gap-1">
+        <div className="flex shrink-0 items-center gap-1">
           <div className="hidden sm:flex items-center gap-1.5 px-2 py-1 rounded-full bg-success/10 text-success text-xs font-medium">
             <Shield className="h-3 w-3" />
             {t('header.clientSide')}

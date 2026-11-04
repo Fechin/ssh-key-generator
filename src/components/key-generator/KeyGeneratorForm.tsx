@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Key, Loader2, Shield, Info, Eye, EyeOff, AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -18,6 +19,7 @@ import {
 } from '@/components/ui/tooltip'
 import { useKeyGenerator } from '@/hooks/useKeyGenerator'
 import { useTranslation } from '@/i18n'
+import { getToolHref } from '@/lib/toolNavigation'
 import type { KeyAlgorithm, KeyPair } from '@/types/keys'
 
 interface KeyGeneratorFormProps {
@@ -30,11 +32,11 @@ export function KeyGeneratorForm({ onGenerated }: KeyGeneratorFormProps) {
   const [passphrase, setPassphrase] = useState('')
   const [confirmPassphrase, setConfirmPassphrase] = useState('')
   const [showPassphrase, setShowPassphrase] = useState(false)
-  const { generate, isGenerating } = useKeyGenerator()
-  const { t } = useTranslation()
+  const { generate, isGenerating, error } = useKeyGenerator()
+  const { t, language } = useTranslation()
 
-  const passphraseError = passphrase !== confirmPassphrase && confirmPassphrase.length > 0
   const hasPassphrase = passphrase.length > 0
+  const passphraseError = hasPassphrase && passphrase !== confirmPassphrase
 
   const algorithms: { value: KeyAlgorithm; label: string; description: string }[] = [
     {
@@ -70,7 +72,7 @@ export function KeyGeneratorForm({ onGenerated }: KeyGeneratorFormProps) {
   }
 
   return (
-    <div>
+    <div className="min-w-0">
       <div className="mb-4">
         <h2 className="flex items-center gap-2 text-base font-semibold">
           <Key className="h-4 w-4" />
@@ -97,8 +99,8 @@ export function KeyGeneratorForm({ onGenerated }: KeyGeneratorFormProps) {
             </TooltipProvider>
           </div>
           <Select value={algorithm} onValueChange={(v) => setAlgorithm(v as KeyAlgorithm)}>
-            <SelectTrigger id="algorithm">
-              <SelectValue placeholder="Select algorithm" />
+            <SelectTrigger id="algorithm" className="min-w-0 [&>span]:min-w-0">
+              <SelectValue>{algorithms.find((option) => option.value === algorithm)?.label}</SelectValue>
             </SelectTrigger>
             <SelectContent>
               {algorithms.map((algo) => (
@@ -165,7 +167,7 @@ export function KeyGeneratorForm({ onGenerated }: KeyGeneratorFormProps) {
               type="button"
               onClick={() => setShowPassphrase(!showPassphrase)}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground min-w-11 min-h-11 flex items-center justify-center"
-              aria-label={showPassphrase ? 'Hide passphrase' : 'Show passphrase'}
+              aria-label={showPassphrase ? t('workflow.hidePassphrase') : t('workflow.showPassphrase')}
             >
               {showPassphrase ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </button>
@@ -183,9 +185,13 @@ export function KeyGeneratorForm({ onGenerated }: KeyGeneratorFormProps) {
               value={confirmPassphrase}
               onChange={(e) => setConfirmPassphrase(e.target.value)}
               className={passphraseError ? 'border-destructive' : ''}
+              aria-invalid={passphraseError}
+              aria-describedby={passphraseError ? 'passphrase-confirmation-hint' : undefined}
             />
             {passphraseError && (
-              <p className="text-xs text-destructive">{t('generator.passphrasesMismatch')}</p>
+              <p id="passphrase-confirmation-hint" className="text-xs text-destructive">
+                {confirmPassphrase.length === 0 ? t('workflow.confirmRequired') : t('generator.passphrasesMismatch')}
+              </p>
             )}
           </div>
         )}
@@ -197,6 +203,20 @@ export function KeyGeneratorForm({ onGenerated }: KeyGeneratorFormProps) {
             <p className="text-xs text-muted-foreground">
               {t('generator.noPassphraseWarning')}
             </p>
+          </div>
+        )}
+
+        {error && (
+          <div role="alert" className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm">
+            <p className="font-medium">{t('workflow.errorTitle')}</p>
+            <p className="mt-1 text-muted-foreground">
+              {t(error === 'unsupported_browser' ? 'workflow.errorUnsupported' : 'workflow.errorGeneric', {
+                mode: t('navigation.computer'),
+              })}
+            </p>
+            <Link to={getToolHref(language, 'commands')} className="mt-2 inline-block text-primary underline underline-offset-2">
+              {t('navigation.computer')}
+            </Link>
           </div>
         )}
 
@@ -215,7 +235,7 @@ export function KeyGeneratorForm({ onGenerated }: KeyGeneratorFormProps) {
           ) : (
             <>
               <Key className="h-4 w-4" />
-              {t('generator.generateButton')}
+              {error ? t('workflow.retry') : t('generator.generateButton')}
             </>
           )}
         </Button>
@@ -228,6 +248,9 @@ export function KeyGeneratorForm({ onGenerated }: KeyGeneratorFormProps) {
             <p className="text-muted-foreground mt-0.5">
               {t('generator.securityDesc')}
             </p>
+            <a href="/privacy/" className="mt-1 inline-block text-primary underline underline-offset-2">
+              {t('workflow.privacy')}
+            </a>
           </div>
         </div>
       </div>

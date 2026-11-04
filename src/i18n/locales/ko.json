@@ -344,5 +344,64 @@
     "code": "404",
     "description": "찾고 계신 페이지가 존재하지 않거나 이동되었습니다.",
     "backHome": "홈으로 돌아가기"
+  },
+  "interaction": {
+    "copyFailed": "복사하지 못했습니다. 텍스트를 선택해 직접 복사해 주세요.",
+    "downloadFailed": "다운로드를 시작하지 못했습니다. 대신 텍스트를 복사해 주세요."
+  },
+  "guideActions": {
+    "generate": "키 생성",
+    "commands": "SSH 키 생성 명령어",
+    "guides": "플랫폼 설정 가이드",
+    "contents": "이 페이지의 목차",
+    "copyCode": "복사"
+  },
+  "commandUx": {
+    "windowsShell": "Windows PowerShell",
+    "filenameHint": "~/.ssh에 저장합니다. 전체 경로가 아닌 파일 이름을 입력하세요.",
+    "invalidFilename": "이 플랫폼에서 지원하는 단일 파일 이름을 입력하세요. 경로나 제어 문자는 사용할 수 없습니다.",
+    "invalidComment": "제어 문자 없이 한 줄로 주석을 입력하세요.",
+    "windowsHint": "OpenSSH 클라이언트가 설치된 PowerShell에서 실행하세요.",
+    "agentSetup": "최초 ssh-agent 설정(관리자 PowerShell)",
+    "agentHint": "이 서비스 명령을 관리자 권한으로 한 번 실행한 뒤, 일반 PowerShell에서 아래 키 명령을 실행하세요.",
+    "createDirectory": "SSH 디렉터리 생성",
+    "generateKey": "SSH 키 생성",
+    "startAgent": "SSH 에이전트 시작",
+    "addKey": "에이전트에 키 추가",
+    "permissions": "권한 설정",
+    "publicKey": "공개 키",
+    "source": "공식 문서"
+  },
+  "navigation": {
+    "toolLabel": "SSH 도구",
+    "browser": "브라우저에서 생성",
+    "computer": "내 컴퓨터에서 생성",
+    "tasks": "SSH 설정 계속하기",
+    "install": "공개 키 등록",
+    "connect": "연결 및 문제 해결",
+    "safety": "SSH 키 알아보기",
+    "browseGuides": "플랫폼별 가이드"
+  },
+  "workflow": {
+    "resultsTitle": "SSH 키가 준비되었습니다",
+    "success": "개인 키를 저장한 다음 공개 키를 등록하세요.",
+    "errorTitle": "키를 생성하지 못했습니다",
+    "errorUnsupported": "HTTPS에서 최신 브라우저를 사용하거나 {mode}로 로컬에서 키를 생성하세요.",
+    "errorGeneric": "다시 시도하세요. 계속 실패하면 {mode}로 로컬에서 키를 생성하세요.",
+    "retry": "다시 시도",
+    "confirmRequired": "계속하려면 암호문을 확인하세요.",
+    "privacy": "키 처리 및 개인정보 보호",
+    "showPassphrase": "암호문 표시",
+    "hidePassphrase": "암호문 숨기기",
+    "nextTitle": "SSH 설정 마치기",
+    "saveTitle": "개인 키 저장",
+    "saveHint": "기기에 다운로드하고 비밀로 보관하세요.",
+    "installTitle": "공개 키 등록",
+    "installHint": "GitHub, GitLab 또는 서버에는 공개 키만 추가하세요.",
+    "serverGuide": "서버 설정 가이드",
+    "testTitle": "연결 테스트",
+    "testHint": "사용 중인 플랫폼의 가이드에 따라 접근을 확인하세요.",
+    "githubDocs": "GitHub SSH 문서",
+    "gitlabDocs": "GitLab SSH 문서"
   }
 }

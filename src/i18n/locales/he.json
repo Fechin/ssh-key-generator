@@ -344,5 +344,64 @@
     "code": "404",
     "description": "הדף שאתם מחפשים לא קיים או הועבר.",
     "backHome": "חזרה לדף הבית"
+  },
+  "interaction": {
+    "copyFailed": "ההעתקה נכשלה. יש לסמן ולהעתיק את הטקסט ידנית.",
+    "downloadFailed": "לא ניתן להתחיל בהורדה. יש להעתיק את הטקסט במקום זאת."
+  },
+  "guideActions": {
+    "generate": "יצירת מפתחות",
+    "commands": "פקודות ליצירת מפתח SSH",
+    "guides": "מדריכי הגדרה לפלטפורמות",
+    "contents": "בעמוד הזה",
+    "copyCode": "העתק"
+  },
+  "commandUx": {
+    "windowsShell": "Windows PowerShell",
+    "filenameHint": "נשמר בתיקייה ~/.ssh. יש להזין שם קובץ ולא נתיב מלא.",
+    "invalidFilename": "יש להשתמש בשם קובץ יחיד שנתמך בפלטפורמה, ללא נתיב או תווי בקרה.",
+    "invalidComment": "יש להזין הערה בשורה אחת ללא תווי בקרה.",
+    "windowsHint": "יש להריץ ב־PowerShell עם לקוח OpenSSH מותקן.",
+    "agentSetup": "הגדרה ראשונית של ssh-agent (PowerShell כמנהל)",
+    "agentHint": "יש להריץ את פקודות השירות האלה פעם אחת כמנהל. לאחר מכן יש להשתמש ב־PowerShell רגיל לפקודות המפתחות שלמטה.",
+    "createDirectory": "יצירת תיקיית SSH",
+    "generateKey": "יצירת מפתח SSH",
+    "startAgent": "הפעלת סוכן SSH",
+    "addKey": "הוספת מפתח לסוכן",
+    "permissions": "הגדרת הרשאות",
+    "publicKey": "מפתח ציבורי",
+    "source": "תיעוד רשמי"
+  },
+  "navigation": {
+    "toolLabel": "כלי SSH",
+    "browser": "בדפדפן",
+    "computer": "במחשב שלך",
+    "tasks": "המשך הגדרת SSH",
+    "install": "התקנת המפתח הציבורי",
+    "connect": "חיבור ופתרון תקלות",
+    "safety": "הסבר על מפתחות SSH",
+    "browseGuides": "מדריכים לפי פלטפורמה"
+  },
+  "workflow": {
+    "resultsTitle": "מפתחות ה־SSH מוכנים",
+    "success": "שמרו את המפתח הפרטי ואז התקינו את המפתח הציבורי.",
+    "errorTitle": "לא ניתן ליצור את המפתח",
+    "errorUnsupported": "השתמשו בדפדפן מעודכן דרך HTTPS או צרו מפתחות מקומית {mode}.",
+    "errorGeneric": "נסו שוב. אם הבעיה נמשכת, צרו מפתחות מקומית {mode}.",
+    "retry": "ניסיון חוזר",
+    "confirmRequired": "אשרו את ביטוי הסיסמה כדי להמשיך.",
+    "privacy": "טיפול במפתחות ופרטיות",
+    "showPassphrase": "הצגת ביטוי הסיסמה",
+    "hidePassphrase": "הסתרת ביטוי הסיסמה",
+    "nextTitle": "השלימו את הגדרת SSH",
+    "saveTitle": "שמרו את המפתח הפרטי",
+    "saveHint": "הורידו אותו למכשיר ושמרו עליו בסוד.",
+    "installTitle": "התקינו את המפתח הציבורי",
+    "installHint": "הוסיפו רק את המפתח הציבורי ל־GitHub, ל־GitLab או לשרת.",
+    "serverGuide": "מדריך להגדרת שרת",
+    "testTitle": "בדקו את החיבור",
+    "testHint": "פעלו לפי מדריך הפלטפורמה כדי לאמת את הגישה.",
+    "githubDocs": "תיעוד SSH של GitHub",
+    "gitlabDocs": "תיעוד SSH של GitLab"
   }
 }

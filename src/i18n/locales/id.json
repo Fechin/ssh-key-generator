@@ -344,5 +344,64 @@
     "code": "404",
     "description": "Halaman yang Anda cari tidak ada atau telah dipindahkan.",
     "backHome": "Kembali ke Beranda"
+  },
+  "interaction": {
+    "copyFailed": "Tidak dapat menyalin. Pilih dan salin teks secara manual.",
+    "downloadFailed": "Unduhan tidak dapat dimulai. Salin teks sebagai gantinya."
+  },
+  "guideActions": {
+    "generate": "Buat Kunci",
+    "commands": "Perintah Pembuatan Kunci SSH",
+    "guides": "Panduan Pengaturan Platform",
+    "contents": "Di halaman ini",
+    "copyCode": "Salin"
+  },
+  "commandUx": {
+    "windowsShell": "Windows PowerShell",
+    "filenameHint": "Disimpan di ~/.ssh. Masukkan nama file, bukan jalur lengkap.",
+    "invalidFilename": "Gunakan satu nama file yang didukung platform ini, tanpa jalur atau karakter kontrol.",
+    "invalidComment": "Gunakan komentar satu baris tanpa karakter kontrol.",
+    "windowsHint": "Jalankan di PowerShell dengan klien OpenSSH terpasang.",
+    "agentSetup": "Penyiapan awal ssh-agent (PowerShell administrator)",
+    "agentHint": "Jalankan perintah layanan ini sekali sebagai administrator. Kemudian gunakan PowerShell biasa untuk perintah kunci di bawah.",
+    "createDirectory": "Buat direktori SSH",
+    "generateKey": "Buat Kunci SSH",
+    "startAgent": "Mulai SSH Agent",
+    "addKey": "Tambahkan Kunci ke Agent",
+    "permissions": "Atur Izin",
+    "publicKey": "Kunci Publik",
+    "source": "Dokumentasi Resmi"
+  },
+  "navigation": {
+    "toolLabel": "Alat SSH",
+    "browser": "Di browser",
+    "computer": "Di komputer Anda",
+    "tasks": "Lanjutkan pengaturan SSH",
+    "install": "Pasang kunci publik Anda",
+    "connect": "Hubungkan dan atasi masalah",
+    "safety": "Pahami kunci SSH",
+    "browseGuides": "Panduan per platform"
+  },
+  "workflow": {
+    "resultsTitle": "Kunci SSH Anda siap",
+    "success": "Simpan kunci privat, lalu pasang kunci publik.",
+    "errorTitle": "Kunci tidak dapat dibuat",
+    "errorUnsupported": "Gunakan browser terbaru melalui HTTPS atau buat kunci secara lokal dengan {mode}.",
+    "errorGeneric": "Coba lagi. Jika masalah berlanjut, buat kunci secara lokal dengan {mode}.",
+    "retry": "Coba lagi",
+    "confirmRequired": "Konfirmasi frasa sandi untuk melanjutkan.",
+    "privacy": "Penanganan kunci dan privasi",
+    "showPassphrase": "Tampilkan frasa sandi",
+    "hidePassphrase": "Sembunyikan frasa sandi",
+    "nextTitle": "Selesaikan pengaturan SSH",
+    "saveTitle": "Simpan kunci privat",
+    "saveHint": "Unduh ke perangkat Anda dan rahasiakan.",
+    "installTitle": "Pasang kunci publik",
+    "installHint": "Tambahkan hanya kunci publik ke GitHub, GitLab, atau server.",
+    "serverGuide": "Panduan pengaturan server",
+    "testTitle": "Uji koneksi",
+    "testHint": "Ikuti panduan platform Anda untuk memverifikasi akses.",
+    "githubDocs": "Dokumentasi SSH GitHub",
+    "gitlabDocs": "Dokumentasi SSH GitLab"
   }
 }

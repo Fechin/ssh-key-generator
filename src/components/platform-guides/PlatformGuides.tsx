@@ -231,9 +231,9 @@ export function PlatformGuides() {
       <Tabs defaultValue="github">
           <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6 gap-1 h-auto">
             {platforms.map((platform) => (
-              <TabsTrigger key={platform.id} value={platform.id} className="gap-1.5 text-xs px-2 py-1.5">
+              <TabsTrigger key={platform.id} value={platform.id} aria-label={platform.name} className="min-h-11 min-w-0 flex-col gap-1 whitespace-normal px-1 py-2 text-xs sm:flex-row sm:gap-1.5">
                 {platform.icon}
-                <span className="hidden sm:inline">{platform.name}</span>
+                <span>{platform.name}</span>
               </TabsTrigger>
             ))}
           </TabsList>
@@ -273,7 +273,7 @@ export function PlatformGuides() {
                             {step.command}
                           </pre>
                           <div className="absolute right-2 top-2">
-                            <CopyButton text={step.command} />
+                            <CopyButton text={step.command} analyticsContext={{ target: 'command', origin: 'home' }} />
                           </div>
                         </div>
                       )}

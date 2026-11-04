@@ -344,5 +344,64 @@
     "code": "404",
     "description": "お探しのページは存在しないか、移動されました。",
     "backHome": "ホームに戻る"
+  },
+  "interaction": {
+    "copyFailed": "コピーできませんでした。テキストを選択して手動でコピーしてください。",
+    "downloadFailed": "ダウンロードを開始できませんでした。代わりにテキストをコピーしてください。"
+  },
+  "guideActions": {
+    "generate": "鍵を生成",
+    "commands": "SSH鍵生成コマンド",
+    "guides": "プラットフォームセットアップガイド",
+    "contents": "このページの目次",
+    "copyCode": "コピー"
+  },
+  "commandUx": {
+    "windowsShell": "Windows PowerShell",
+    "filenameHint": "~/.ssh に保存します。パスではなくファイル名を入力してください。",
+    "invalidFilename": "この環境で使える単一のファイル名を入力してください。パスや制御文字は使えません。",
+    "invalidComment": "制御文字を含まない1行のコメントを入力してください。",
+    "windowsHint": "OpenSSHクライアントをインストールしたPowerShellで実行してください。",
+    "agentSetup": "初回のssh-agent設定（管理者PowerShell）",
+    "agentHint": "これらのサービス用コマンドを一度だけ管理者として実行し、その後は通常のPowerShellで以下の鍵用コマンドを実行してください。",
+    "createDirectory": "SSHディレクトリを作成",
+    "generateKey": "SSH鍵を生成",
+    "startAgent": "SSHエージェントを起動",
+    "addKey": "エージェントに鍵を追加",
+    "permissions": "権限を設定",
+    "publicKey": "公開鍵",
+    "source": "公式ドキュメント"
+  },
+  "navigation": {
+    "toolLabel": "SSH ツール",
+    "browser": "ブラウザーで生成",
+    "computer": "自分の端末で生成",
+    "tasks": "SSH の設定を続ける",
+    "install": "公開鍵を登録",
+    "connect": "接続とトラブル解決",
+    "safety": "SSH 鍵を理解する",
+    "browseGuides": "プラットフォーム別ガイド"
+  },
+  "workflow": {
+    "resultsTitle": "SSH キーを生成しました",
+    "success": "秘密キーを保存してから公開キーを登録してください。",
+    "errorTitle": "キーを生成できませんでした",
+    "errorUnsupported": "HTTPS で最新のブラウザーを使用するか、{mode}でローカル生成してください。",
+    "errorGeneric": "再試行してください。解決しない場合は{mode}でローカル生成してください。",
+    "retry": "再試行",
+    "confirmRequired": "パスフレーズを確認して続行してください。",
+    "privacy": "キーの取り扱いとプライバシー",
+    "showPassphrase": "パスフレーズを表示",
+    "hidePassphrase": "パスフレーズを隠す",
+    "nextTitle": "SSH の設定を完了する",
+    "saveTitle": "秘密キーを保存",
+    "saveHint": "デバイスにダウンロードし、秘密に保管してください。",
+    "installTitle": "公開キーを登録",
+    "installHint": "GitHub、GitLab、サーバーには公開キーだけを登録してください。",
+    "serverGuide": "サーバー設定ガイド",
+    "testTitle": "接続をテスト",
+    "testHint": "利用するプラットフォームのガイドでアクセスを確認してください。",
+    "githubDocs": "GitHub SSHドキュメント",
+    "gitlabDocs": "GitLab SSHドキュメント"
   }
 }

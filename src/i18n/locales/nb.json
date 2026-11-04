@@ -344,5 +344,64 @@
     "code": "404",
     "description": "Siden du leter etter finnes ikke eller har blitt flyttet.",
     "backHome": "Tilbake til forsiden"
+  },
+  "interaction": {
+    "copyFailed": "Kunne ikke kopiere. Merk og kopier teksten manuelt.",
+    "downloadFailed": "Nedlastingen kunne ikke starte. Kopier teksten i stedet."
+  },
+  "guideActions": {
+    "generate": "Generer nøkler",
+    "commands": "SSH-nøkkelgenereringskommandoer",
+    "guides": "Plattformoppsettguider",
+    "contents": "På denne siden",
+    "copyCode": "Kopier"
+  },
+  "commandUx": {
+    "windowsShell": "Windows PowerShell",
+    "filenameHint": "Lagres i ~/.ssh. Skriv et filnavn, ikke en fullstendig sti.",
+    "invalidFilename": "Bruk ett filnavn som støttes på denne plattformen, uten stier eller kontrolltegn.",
+    "invalidComment": "Bruk en kommentar på én linje uten kontrolltegn.",
+    "windowsHint": "Kjør i PowerShell med OpenSSH-klienten installert.",
+    "agentSetup": "Førstegangsoppsett av ssh-agent (administrator-PowerShell)",
+    "agentHint": "Kjør disse tjenestekommandoene én gang som administrator. Bruk deretter vanlig PowerShell til nøkkelkommandoene nedenfor.",
+    "createDirectory": "Opprett SSH-mappen",
+    "generateKey": "Generer SSH-nøkkel",
+    "startAgent": "Start SSH-agent",
+    "addKey": "Legg nøkkel til agent",
+    "permissions": "Angi tillatelser",
+    "publicKey": "Offentlig nøkkel",
+    "source": "Offisiell dokumentasjon"
+  },
+  "navigation": {
+    "toolLabel": "SSH-verktøy",
+    "browser": "I nettleseren",
+    "computer": "På datamaskinen din",
+    "tasks": "Fortsett SSH-oppsettet",
+    "install": "Installer den offentlige nøkkelen",
+    "connect": "Koble til og feilsøk",
+    "safety": "Forstå SSH-nøkler",
+    "browseGuides": "Veiledninger for plattformer"
+  },
+  "workflow": {
+    "resultsTitle": "SSH-nøklene dine er klare",
+    "success": "Lagre den private nøkkelen, og installer deretter den offentlige.",
+    "errorTitle": "Kunne ikke generere nøkkelen",
+    "errorUnsupported": "Bruk en oppdatert nettleser over HTTPS, eller lag nøkler lokalt i {mode}.",
+    "errorGeneric": "Prøv igjen. Hvis problemet fortsetter, kan du lage nøkler lokalt i {mode}.",
+    "retry": "Prøv igjen",
+    "confirmRequired": "Bekreft passfrasen for å fortsette.",
+    "privacy": "Nøkkelhåndtering og personvern",
+    "showPassphrase": "Vis passfrase",
+    "hidePassphrase": "Skjul passfrase",
+    "nextTitle": "Fullfør SSH-oppsettet",
+    "saveTitle": "Lagre den private nøkkelen",
+    "saveHint": "Last den ned til enheten, og hold den hemmelig.",
+    "installTitle": "Installer den offentlige nøkkelen",
+    "installHint": "Legg bare til den offentlige nøkkelen på GitHub, GitLab eller serveren.",
+    "serverGuide": "Veiledning for serveroppsett",
+    "testTitle": "Test tilkoblingen",
+    "testHint": "Følg plattformens veiledning for å bekrefte tilgangen.",
+    "githubDocs": "GitHub SSH-dokumentasjon",
+    "gitlabDocs": "GitLab SSH-dokumentasjon"
   }
 }

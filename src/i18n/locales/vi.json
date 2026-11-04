@@ -344,5 +344,64 @@
     "code": "404",
     "description": "Trang bạn đang tìm kiếm không tồn tại hoặc đã được chuyển đi.",
     "backHome": "Về trang chủ"
+  },
+  "interaction": {
+    "copyFailed": "Không thể sao chép. Hãy chọn và sao chép văn bản thủ công.",
+    "downloadFailed": "Không thể bắt đầu tải xuống. Hãy sao chép văn bản thay thế."
+  },
+  "guideActions": {
+    "generate": "Tạo khóa",
+    "commands": "Lệnh tạo khóa SSH",
+    "guides": "Hướng dẫn thiết lập theo nền tảng",
+    "contents": "Trên trang này",
+    "copyCode": "Sao chép"
+  },
+  "commandUx": {
+    "windowsShell": "Windows PowerShell",
+    "filenameHint": "Lưu trong ~/.ssh. Nhập tên tệp, không nhập đường dẫn đầy đủ.",
+    "invalidFilename": "Dùng một tên tệp được nền tảng hỗ trợ, không có đường dẫn hoặc ký tự điều khiển.",
+    "invalidComment": "Dùng chú thích một dòng, không có ký tự điều khiển.",
+    "windowsHint": "Chạy trong PowerShell đã cài máy khách OpenSSH.",
+    "agentSetup": "Thiết lập ssh-agent lần đầu (PowerShell quản trị viên)",
+    "agentHint": "Chạy các lệnh dịch vụ này một lần với quyền quản trị viên. Sau đó dùng PowerShell thông thường cho các lệnh khóa bên dưới.",
+    "createDirectory": "Tạo thư mục SSH",
+    "generateKey": "Tạo khóa SSH",
+    "startAgent": "Khởi động SSH Agent",
+    "addKey": "Thêm khóa vào Agent",
+    "permissions": "Đặt quyền truy cập",
+    "publicKey": "Khóa công khai",
+    "source": "Tài liệu chính thức"
+  },
+  "navigation": {
+    "toolLabel": "Công cụ SSH",
+    "browser": "Trong trình duyệt",
+    "computer": "Trên máy tính của bạn",
+    "tasks": "Tiếp tục thiết lập SSH",
+    "install": "Cài đặt khóa công khai",
+    "connect": "Kết nối và khắc phục sự cố",
+    "safety": "Tìm hiểu khóa SSH",
+    "browseGuides": "Hướng dẫn theo nền tảng"
+  },
+  "workflow": {
+    "resultsTitle": "Khóa SSH của bạn đã sẵn sàng",
+    "success": "Lưu khóa riêng rồi cài đặt khóa công khai.",
+    "errorTitle": "Không thể tạo khóa",
+    "errorUnsupported": "Dùng trình duyệt mới nhất qua HTTPS hoặc tạo khóa cục bộ bằng {mode}.",
+    "errorGeneric": "Hãy thử lại. Nếu vẫn lỗi, tạo khóa cục bộ bằng {mode}.",
+    "retry": "Thử lại",
+    "confirmRequired": "Xác nhận cụm mật khẩu để tiếp tục.",
+    "privacy": "Xử lý khóa và quyền riêng tư",
+    "showPassphrase": "Hiện cụm mật khẩu",
+    "hidePassphrase": "Ẩn cụm mật khẩu",
+    "nextTitle": "Hoàn tất thiết lập SSH",
+    "saveTitle": "Lưu khóa riêng",
+    "saveHint": "Tải xuống thiết bị và giữ bí mật.",
+    "installTitle": "Cài đặt khóa công khai",
+    "installHint": "Chỉ thêm khóa công khai vào GitHub, GitLab hoặc máy chủ.",
+    "serverGuide": "Hướng dẫn thiết lập máy chủ",
+    "testTitle": "Kiểm tra kết nối",
+    "testHint": "Làm theo hướng dẫn của nền tảng để xác minh quyền truy cập.",
+    "githubDocs": "Tài liệu SSH của GitHub",
+    "gitlabDocs": "Tài liệu SSH của GitLab"
   }
 }

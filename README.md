@@ -109,11 +109,13 @@ All key generation happens entirely in your browser using:
 - **Web Crypto API** for RSA key generation
 - **@noble/ed25519** for Ed25519 keys (audited cryptographic library)
 
-### No Server Communication
+### Local Key Processing
 
-- Private keys are never transmitted over the network
-- No analytics or tracking of generated keys
-- No server-side storage of any user data
+- The application does not upload generated private keys or passphrases.
+- Tool analytics contain fixed categories only, such as the algorithm and action type. They exclude key material, passphrases, comments, filenames, and hostnames.
+- Generated keys and passphrases are not stored on the server.
+
+The production website uses analytics and advertising services. See the [privacy policy](https://sshkeygenerator.com/privacy/) for details about website requests and browser storage.
 
 ### Open Source
 

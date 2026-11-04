@@ -344,5 +344,64 @@
     "code": "404",
     "description": "La page que vous recherchez n'existe pas ou a été déplacée.",
     "backHome": "Retour à l'Accueil"
+  },
+  "interaction": {
+    "copyFailed": "Impossible de copier. Sélectionnez et copiez le texte manuellement.",
+    "downloadFailed": "Impossible de lancer le téléchargement. Copiez le texte à la place."
+  },
+  "guideActions": {
+    "generate": "Générer les Clés",
+    "commands": "Commandes de Génération de Clés SSH",
+    "guides": "Guides de Configuration des Plateformes",
+    "contents": "Sur cette page",
+    "copyCode": "Copier"
+  },
+  "commandUx": {
+    "windowsShell": "Windows PowerShell",
+    "filenameHint": "Enregistré dans ~/.ssh. Saisissez un nom de fichier, pas un chemin complet.",
+    "invalidFilename": "Utilisez un seul nom de fichier compatible avec cette plateforme, sans chemin ni caractère de contrôle.",
+    "invalidComment": "Utilisez un commentaire sur une seule ligne, sans caractère de contrôle.",
+    "windowsHint": "Exécutez dans PowerShell avec le client OpenSSH installé.",
+    "agentSetup": "Configuration initiale de ssh-agent (PowerShell administrateur)",
+    "agentHint": "Exécutez une fois ces commandes de service en tant qu’administrateur. Utilisez ensuite votre PowerShell habituel pour les commandes de clés ci-dessous.",
+    "createDirectory": "Créer le répertoire SSH",
+    "generateKey": "Générer une Clé SSH",
+    "startAgent": "Démarrer l'Agent SSH",
+    "addKey": "Ajouter la Clé à l'Agent",
+    "permissions": "Définir les Permissions",
+    "publicKey": "Clé Publique",
+    "source": "Docs Officiels"
+  },
+  "navigation": {
+    "toolLabel": "Outils SSH",
+    "browser": "Dans le navigateur",
+    "computer": "Sur votre ordinateur",
+    "tasks": "Poursuivre la configuration SSH",
+    "install": "Installer votre clé publique",
+    "connect": "Connexion et dépannage",
+    "safety": "Comprendre les clés SSH",
+    "browseGuides": "Guides par plateforme"
+  },
+  "workflow": {
+    "resultsTitle": "Vos clés SSH sont prêtes",
+    "success": "Enregistrez la clé privée, puis installez la clé publique.",
+    "errorTitle": "Impossible de générer la clé",
+    "errorUnsupported": "Utilisez un navigateur à jour en HTTPS ou générez les clés localement avec {mode}.",
+    "errorGeneric": "Réessayez. Si le problème persiste, générez les clés localement avec {mode}.",
+    "retry": "Réessayer",
+    "confirmRequired": "Confirmez votre phrase secrète pour continuer.",
+    "privacy": "Gestion des clés et confidentialité",
+    "showPassphrase": "Afficher la phrase secrète",
+    "hidePassphrase": "Masquer la phrase secrète",
+    "nextTitle": "Terminer la configuration SSH",
+    "saveTitle": "Enregistrer votre clé privée",
+    "saveHint": "Téléchargez-la sur votre appareil et gardez-la secrète.",
+    "installTitle": "Installer la clé publique",
+    "installHint": "Ajoutez uniquement la clé publique à GitHub, GitLab ou votre serveur.",
+    "serverGuide": "Guide de configuration du serveur",
+    "testTitle": "Tester la connexion",
+    "testHint": "Suivez le guide de votre plateforme pour vérifier l’accès.",
+    "githubDocs": "Docs SSH GitHub",
+    "gitlabDocs": "Docs SSH GitLab"
   }
 }

@@ -344,5 +344,64 @@
     "code": "404",
     "description": "Etsimääsi sivua ei ole olemassa tai se on siirretty.",
     "backHome": "Takaisin etusivulle"
+  },
+  "interaction": {
+    "copyFailed": "Kopiointi epäonnistui. Valitse ja kopioi teksti käsin.",
+    "downloadFailed": "Latausta ei voitu aloittaa. Kopioi teksti sen sijaan."
+  },
+  "guideActions": {
+    "generate": "Luo avaimet",
+    "commands": "SSH-avaimen luontikomennot",
+    "guides": "Alustakohtaiset ohjeet",
+    "contents": "Tällä sivulla",
+    "copyCode": "Kopioi"
+  },
+  "commandUx": {
+    "windowsShell": "Windows PowerShell",
+    "filenameHint": "Tallennetaan kansioon ~/.ssh. Anna tiedostonimi, ei koko polkua.",
+    "invalidFilename": "Käytä yhtä tämän alustan tukemaa tiedostonimeä ilman polkua tai ohjausmerkkejä.",
+    "invalidComment": "Käytä yksirivistä kommenttia ilman ohjausmerkkejä.",
+    "windowsHint": "Suorita PowerShellissä, johon on asennettu OpenSSH-asiakas.",
+    "agentSetup": "ssh-agentin ensimmäinen määritys (järjestelmänvalvojan PowerShell)",
+    "agentHint": "Suorita nämä palvelukomennot kerran järjestelmänvalvojana. Käytä sen jälkeen tavallista PowerShelliä alla oleviin avainkomentoihin.",
+    "createDirectory": "Luo SSH-hakemisto",
+    "generateKey": "Luo SSH-avain",
+    "startAgent": "Käynnistä SSH Agent",
+    "addKey": "Lisää avain agentille",
+    "permissions": "Aseta oikeudet",
+    "publicKey": "Julkinen avain",
+    "source": "Viralliset ohjeet"
+  },
+  "navigation": {
+    "toolLabel": "SSH-työkalut",
+    "browser": "Selaimessa",
+    "computer": "Omalla tietokoneella",
+    "tasks": "Jatka SSH:n määritystä",
+    "install": "Asenna julkinen avain",
+    "connect": "Yhdistä ja ratkaise ongelmia",
+    "safety": "Tutustu SSH-avaimiin",
+    "browseGuides": "Alustakohtaiset oppaat"
+  },
+  "workflow": {
+    "resultsTitle": "SSH-avaimesi ovat valmiit",
+    "success": "Tallenna yksityinen avain ja asenna sitten julkinen avain.",
+    "errorTitle": "Avaimen luominen epäonnistui",
+    "errorUnsupported": "Käytä ajantasaista selainta HTTPS-yhteydellä tai luo avaimet paikallisesti {mode}.",
+    "errorGeneric": "Yritä uudelleen. Jos ongelma jatkuu, luo avaimet paikallisesti {mode}.",
+    "retry": "Yritä uudelleen",
+    "confirmRequired": "Vahvista tunnuslause jatkaaksesi.",
+    "privacy": "Avainten käsittely ja tietosuoja",
+    "showPassphrase": "Näytä tunnuslause",
+    "hidePassphrase": "Piilota tunnuslause",
+    "nextTitle": "Viimeistele SSH-asetukset",
+    "saveTitle": "Tallenna yksityinen avaimesi",
+    "saveHint": "Lataa se laitteellesi ja pidä se salassa.",
+    "installTitle": "Asenna julkinen avain",
+    "installHint": "Lisää vain julkinen avain GitHubiin, GitLabiin tai palvelimelle.",
+    "serverGuide": "Palvelimen asennusohje",
+    "testTitle": "Testaa yhteys",
+    "testHint": "Varmista käyttöoikeus alustasi ohjeiden mukaisesti.",
+    "githubDocs": "GitHub SSH -dokumentaatio",
+    "gitlabDocs": "GitLab SSH -dokumentaatio"
   }
 }

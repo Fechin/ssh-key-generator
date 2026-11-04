@@ -89,13 +89,32 @@
       })();
     </script>
 
-    <!-- Google Analytics (deferred to protect first paint and privacy tooling scores) -->
-    <script>
+    <!-- Google Analytics: bounded idle loading and categorical tool events only. -->
+    <script id="analytics-bootstrap">
       (function () {
+        if (window.location.hostname !== 'sshkeygenerator.com' || window.__sshAnalyticsBootstrap) return;
+        function privacyOptOut() {
+          return navigator.globalPrivacyControl === true ||
+            navigator.doNotTrack === '1' || navigator.doNotTrack === 'yes' ||
+            window.doNotTrack === '1' || window.doNotTrack === 'yes';
+        }
+        if (privacyOptOut()) return;
+        window.__sshAnalyticsBootstrap = true;
+
         var trackingId = 'G-WDT5Z7444Q';
         var loaded = false;
         var timer = null;
+        var idle = null;
         var interactionEvents = ['pointerdown', 'keydown', 'touchstart', 'scroll'];
+        var eventNames = ['generation_success', 'generation_error', 'key_copy', 'key_download', 'command_copy', 'article_code_copy', 'guide_to_tool', 'tool_mode_change'];
+        var parameterValues = {
+          algorithm: ['ed25519', 'rsa-2048', 'rsa-4096'],
+          language: ['en', 'zh', 'zh-Hant', 'ja', 'ko', 'es', 'pt', 'fr', 'de', 'ru', 'it', 'nl', 'pl', 'sv', 'he', 'da', 'nb', 'hi', 'vi', 'tr', 'id', 'fi', 'uk', 'ar', 'th', 'ro', 'cs', 'bn', 'el', 'hu'],
+          target: ['public_key', 'private_key', 'fingerprint', 'command', 'article_code', 'ssh_config'],
+          mode: ['generate', 'commands', 'config', 'guides'],
+          origin: ['home', 'article', 'result'],
+          error_code: ['unsupported_browser', 'generation_failed', 'clipboard_failed']
+        };
 
         function cleanup() {
           interactionEvents.forEach(function (eventName) {
@@ -105,22 +124,20 @@
             window.clearTimeout(timer);
             timer = null;
           }
+          if (idle !== null && window.cancelIdleCallback) {
+            window.cancelIdleCallback(idle);
+            idle = null;
+          }
+          document.removeEventListener('DOMContentLoaded', scheduleIdleLoad);
         }
 
         function loadAnalytics() {
-          if (loaded) return;
+          if (loaded || privacyOptOut()) return;
           loaded = true;
           cleanup();
 
           window.dataLayer = window.dataLayer || [];
-          window.gtag = function () {
-            window.dataLayer.push(arguments);
-          };
-
-          var script = document.createElement('script');
-          script.async = true;
-          script.src = 'https://www.googletagmanager.com/gtag/js?id=' + trackingId;
-          document.head.appendChild(script);
+          if (typeof window.gtag !== 'function') window.gtag = function () { window.dataLayer.push(arguments); };
 
           window.gtag('js', new Date());
           window.gtag('config', trackingId, {
@@ -129,17 +146,52 @@
             allow_ad_personalization_signals: false,
             transport_type: 'beacon'
           });
+
+          var script = document.createElement('script');
+          script.async = true;
+          script.src = 'https://www.googletagmanager.com/gtag/js?id=' + trackingId;
+          document.head.appendChild(script);
         }
 
-        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-          return;
+        function scheduleIdleLoad() {
+          if (loaded) return;
+          if (window.requestIdleCallback) {
+            idle = window.requestIdleCallback(loadAnalytics, { timeout: 1500 });
+          } else {
+            loadAnalytics();
+          }
         }
+
+        window.addEventListener('ssh-tool-event', function (event) {
+          try {
+            var detail = event.detail;
+            if (privacyOptOut() || !detail) return;
+            var name = detail.name;
+            if (eventNames.indexOf(name) === -1) return;
+            var source = detail.params;
+            var safe = {};
+            if (source && typeof source === 'object') {
+              Object.keys(parameterValues).forEach(function (key) {
+                if (!Object.prototype.hasOwnProperty.call(source, key)) return;
+                var value = source[key];
+                if (typeof value === 'string' && parameterValues[key].indexOf(value) !== -1) safe[key] = value;
+              });
+            }
+            // Config is queued first; early successful tool actions cannot be lost.
+            loadAnalytics();
+            if (loaded) window.gtag('event', name, safe);
+          } catch (_) { /* Analytics must never interrupt a tool action. */ }
+        });
 
         interactionEvents.forEach(function (eventName) {
           window.addEventListener(eventName, loadAnalytics, { passive: true, capture: true, once: true });
         });
-
-        timer = window.setTimeout(loadAnalytics, 20000);
+        timer = window.setTimeout(loadAnalytics, 2000);
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', scheduleIdleLoad, { once: true });
+        } else {
+          scheduleIdleLoad();
+        }
       })();
     </script>
 

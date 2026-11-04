@@ -344,5 +344,64 @@
     "code": "404",
     "description": "De pagina die je zoekt bestaat niet of is verplaatst.",
     "backHome": "Terug naar Home"
+  },
+  "interaction": {
+    "copyFailed": "Kopiëren mislukt. Selecteer en kopieer de tekst handmatig.",
+    "downloadFailed": "De download kon niet starten. Kopieer in plaats daarvan de tekst."
+  },
+  "guideActions": {
+    "generate": "Sleutels Genereren",
+    "commands": "SSH-sleutelgeneratie Commando's",
+    "guides": "Platform Setup Gidsen",
+    "contents": "Op deze pagina",
+    "copyCode": "Kopiëren"
+  },
+  "commandUx": {
+    "windowsShell": "Windows PowerShell",
+    "filenameHint": "Opgeslagen in ~/.ssh. Voer een bestandsnaam in, geen volledig pad.",
+    "invalidFilename": "Gebruik één bestandsnaam die dit platform ondersteunt, zonder paden of besturingstekens.",
+    "invalidComment": "Gebruik een opmerking van één regel zonder besturingstekens.",
+    "windowsHint": "Voer uit in PowerShell met de OpenSSH-client geïnstalleerd.",
+    "agentSetup": "Eenmalige ssh-agent-configuratie (PowerShell als administrator)",
+    "agentHint": "Voer deze serviceopdrachten eenmalig als administrator uit. Gebruik daarna je gewone PowerShell voor de sleutelopdrachten hieronder.",
+    "createDirectory": "De SSH-map maken",
+    "generateKey": "Genereer SSH-sleutel",
+    "startAgent": "Start SSH Agent",
+    "addKey": "Voeg Sleutel toe aan Agent",
+    "permissions": "Stel Machtigingen in",
+    "publicKey": "Publieke Sleutel",
+    "source": "Officiële Documentatie"
+  },
+  "navigation": {
+    "toolLabel": "SSH-hulpmiddelen",
+    "browser": "In je browser",
+    "computer": "Op je computer",
+    "tasks": "Ga verder met SSH instellen",
+    "install": "Je openbare sleutel installeren",
+    "connect": "Verbinden en problemen oplossen",
+    "safety": "SSH-sleutels begrijpen",
+    "browseGuides": "Handleidingen per platform"
+  },
+  "workflow": {
+    "resultsTitle": "Je SSH-sleutels zijn klaar",
+    "success": "Sla de privésleutel op en installeer daarna de publieke sleutel.",
+    "errorTitle": "De sleutel kon niet worden gegenereerd",
+    "errorUnsupported": "Gebruik een bijgewerkte browser via HTTPS of genereer sleutels lokaal in {mode}.",
+    "errorGeneric": "Probeer opnieuw. Blijft het probleem bestaan, genereer sleutels dan lokaal in {mode}.",
+    "retry": "Opnieuw proberen",
+    "confirmRequired": "Bevestig je wachtwoordzin om door te gaan.",
+    "privacy": "Sleutelverwerking en privacy",
+    "showPassphrase": "Wachtwoordzin tonen",
+    "hidePassphrase": "Wachtwoordzin verbergen",
+    "nextTitle": "Rond de SSH-configuratie af",
+    "saveTitle": "Sla je privésleutel op",
+    "saveHint": "Download deze naar je apparaat en houd deze geheim.",
+    "installTitle": "Installeer de publieke sleutel",
+    "installHint": "Voeg alleen de publieke sleutel toe aan GitHub, GitLab of je server.",
+    "serverGuide": "Handleiding voor serverconfiguratie",
+    "testTitle": "Test de verbinding",
+    "testHint": "Volg de handleiding van je platform om de toegang te controleren.",
+    "githubDocs": "GitHub SSH Documentatie",
+    "gitlabDocs": "GitLab SSH Documentatie"
   }
 }

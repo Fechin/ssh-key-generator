@@ -344,5 +344,64 @@
     "code": "404",
     "description": "您查找的頁面不存在或已被移動。",
     "backHome": "返回首頁"
+  },
+  "interaction": {
+    "copyFailed": "複製失敗，請選取文字後手動複製。",
+    "downloadFailed": "無法開始下載，請改為複製文字。"
+  },
+  "guideActions": {
+    "generate": "產生金鑰",
+    "commands": "SSH 金鑰產生指令",
+    "guides": "平台設定指南",
+    "contents": "本頁目錄",
+    "copyCode": "複製"
+  },
+  "commandUx": {
+    "windowsShell": "Windows PowerShell",
+    "filenameHint": "儲存至 ~/.ssh。請輸入檔案名稱，不要輸入完整路徑。",
+    "invalidFilename": "請輸入此平台支援的單一檔案名稱，不要包含路徑或控制字元。",
+    "invalidComment": "請輸入不含控制字元的單行註解。",
+    "windowsHint": "請在已安裝 OpenSSH 用戶端的 PowerShell 中執行。",
+    "agentSetup": "首次設定 ssh-agent（系統管理員 PowerShell）",
+    "agentHint": "首次使用時，以系統管理員身分執行這些服務命令，再回到一般 PowerShell 執行下方的金鑰命令。",
+    "createDirectory": "建立 SSH 目錄",
+    "generateKey": "產生 SSH 金鑰",
+    "startAgent": "啟動 SSH Agent",
+    "addKey": "新增金鑰到 Agent",
+    "permissions": "設定權限",
+    "publicKey": "公鑰",
+    "source": "官方文件"
+  },
+  "navigation": {
+    "toolLabel": "SSH 工具",
+    "browser": "在瀏覽器中產生",
+    "computer": "在本機終端機產生",
+    "tasks": "繼續設定 SSH",
+    "install": "安裝公開金鑰",
+    "connect": "連線與疑難排解",
+    "safety": "認識 SSH 金鑰",
+    "browseGuides": "查看平台指南"
+  },
+  "workflow": {
+    "resultsTitle": "SSH 金鑰已就緒",
+    "success": "先儲存私密金鑰，再安裝公開金鑰。",
+    "errorTitle": "金鑰產生失敗",
+    "errorUnsupported": "請透過 HTTPS 使用新版瀏覽器，或在{mode}中選擇本機產生。",
+    "errorGeneric": "請重試。如果仍然失敗，可使用{mode}在本機產生金鑰。",
+    "retry": "重試",
+    "confirmRequired": "請確認密碼短語後繼續。",
+    "privacy": "金鑰處理與隱私",
+    "showPassphrase": "顯示密碼短語",
+    "hidePassphrase": "隱藏密碼短語",
+    "nextTitle": "完成 SSH 設定",
+    "saveTitle": "儲存私密金鑰",
+    "saveHint": "下載到裝置並妥善保密。",
+    "installTitle": "安裝公開金鑰",
+    "installHint": "僅將公開金鑰新增到 GitHub、GitLab 或伺服器。",
+    "serverGuide": "伺服器設定指南",
+    "testTitle": "測試連線",
+    "testHint": "依照對應平台的指南驗證存取。",
+    "githubDocs": "GitHub SSH 文件",
+    "gitlabDocs": "GitLab SSH 文件"
   }
 }

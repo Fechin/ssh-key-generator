@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useMemo, type LazyExoticComponent, type ComponentType } from 'react'
+import { lazy, Suspense, useEffect, useMemo, useRef, type LazyExoticComponent, type ComponentType } from 'react'
 import { MDXProvider } from '@mdx-js/react'
 import { ArticleLayout } from './ArticleLayout'
 import { mdxComponents } from './MDXComponents'
@@ -6,6 +6,7 @@ import { getArticleLanguages, getArticleMeta, type ArticleSlug } from '@/content
 import { buildArticlePageMetadata, syncPageMetadata } from '@/lib/seo'
 import { getLanguagePathname, useLanguageStore } from '@/i18n'
 import type { Language } from '@/i18n'
+import { ArticleContext } from './articleContext'
 
 type LazyMDX = LazyExoticComponent<ComponentType<Record<string, unknown>>>
 
@@ -28,6 +29,7 @@ interface Props {
 
 export function ArticlePage({ slug, lang }: Props) {
   const setLanguage = useLanguageStore((state) => state.setLanguage)
+  const bodyRef = useRef<HTMLDivElement>(null)
   const meta = getArticleMeta(slug, lang)
   const alternateLanguages = useMemo(() => getArticleLanguages(slug), [slug])
   const basePath = getLanguagePathname(lang).replace(/\/$/, '')
@@ -49,12 +51,16 @@ export function ArticlePage({ slug, lang }: Props) {
       backLabel="SSH Key Generator"
       publication={{ language: lang, publishDate: meta.publishDate, modifiedDate: meta.modifiedDate }}
     >
-      <MDXProvider components={mdxComponents}>
-        <Suspense fallback={<div className="min-h-[400px]" />}>
-          {/* eslint-disable-next-line react-hooks/static-components -- MDX routes are registered once in lazyContentModules. */}
-          <Content />
-        </Suspense>
-      </MDXProvider>
+      <ArticleContext.Provider value={{ slug, language: lang, bodyRef }}>
+        <div ref={bodyRef} className="min-w-0" data-article-body>
+          <MDXProvider components={mdxComponents}>
+            <Suspense fallback={<div className="min-h-[400px]" />}>
+              {/* eslint-disable-next-line react-hooks/static-components -- MDX routes are registered once in lazyContentModules. */}
+              <Content />
+            </Suspense>
+          </MDXProvider>
+        </div>
+      </ArticleContext.Provider>
     </ArticleLayout>
   )
 }

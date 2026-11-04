@@ -344,5 +344,64 @@
     "code": "404",
     "description": "Strona, której szukasz, nie istnieje lub została przeniesiona.",
     "backHome": "Wróć do Strony Głównej"
+  },
+  "interaction": {
+    "copyFailed": "Nie udało się skopiować. Zaznacz i skopiuj tekst ręcznie.",
+    "downloadFailed": "Nie udało się rozpocząć pobierania. Zamiast tego skopiuj tekst."
+  },
+  "guideActions": {
+    "generate": "Generuj Klucze",
+    "commands": "Polecenia Generowania Kluczy SSH",
+    "guides": "Przewodniki Konfiguracji Platform",
+    "contents": "Na tej stronie",
+    "copyCode": "Kopiuj"
+  },
+  "commandUx": {
+    "windowsShell": "Windows PowerShell",
+    "filenameHint": "Zapis w ~/.ssh. Podaj nazwę pliku, nie pełną ścieżkę.",
+    "invalidFilename": "Użyj jednej nazwy pliku obsługiwanej przez tę platformę, bez ścieżki ani znaków sterujących.",
+    "invalidComment": "Użyj komentarza w jednym wierszu, bez znaków sterujących.",
+    "windowsHint": "Uruchom w PowerShell z zainstalowanym klientem OpenSSH.",
+    "agentSetup": "Pierwsza konfiguracja ssh-agent (PowerShell administratora)",
+    "agentHint": "Uruchom te polecenia usługi raz jako administrator. Następnie użyj zwykłego PowerShell do poniższych poleceń dotyczących kluczy.",
+    "createDirectory": "Utwórz katalog SSH",
+    "generateKey": "Wygeneruj Klucz SSH",
+    "startAgent": "Uruchom SSH Agent",
+    "addKey": "Dodaj Klucz do Agenta",
+    "permissions": "Ustaw Uprawnienia",
+    "publicKey": "Klucz Publiczny",
+    "source": "Oficjalna Dokumentacja"
+  },
+  "navigation": {
+    "toolLabel": "Narzędzia SSH",
+    "browser": "W przeglądarce",
+    "computer": "Na komputerze",
+    "tasks": "Kontynuuj konfigurację SSH",
+    "install": "Zainstaluj klucz publiczny",
+    "connect": "Łączenie i rozwiązywanie problemów",
+    "safety": "Poznaj klucze SSH",
+    "browseGuides": "Poradniki dla platform"
+  },
+  "workflow": {
+    "resultsTitle": "Twoje klucze SSH są gotowe",
+    "success": "Zapisz klucz prywatny, a następnie zainstaluj publiczny.",
+    "errorTitle": "Nie udało się wygenerować klucza",
+    "errorUnsupported": "Użyj aktualnej przeglądarki przez HTTPS albo wygeneruj klucze lokalnie w {mode}.",
+    "errorGeneric": "Spróbuj ponownie. Jeśli problem się powtarza, wygeneruj klucze lokalnie w {mode}.",
+    "retry": "Spróbuj ponownie",
+    "confirmRequired": "Potwierdź hasło klucza, aby kontynuować.",
+    "privacy": "Przetwarzanie kluczy i prywatność",
+    "showPassphrase": "Pokaż hasło klucza",
+    "hidePassphrase": "Ukryj hasło klucza",
+    "nextTitle": "Dokończ konfigurację SSH",
+    "saveTitle": "Zapisz klucz prywatny",
+    "saveHint": "Pobierz go na urządzenie i zachowaj w tajemnicy.",
+    "installTitle": "Zainstaluj klucz publiczny",
+    "installHint": "Dodaj wyłącznie klucz publiczny do GitHub, GitLab lub serwera.",
+    "serverGuide": "Instrukcja konfiguracji serwera",
+    "testTitle": "Przetestuj połączenie",
+    "testHint": "Zweryfikuj dostęp według instrukcji swojej platformy.",
+    "githubDocs": "Dokumentacja SSH GitHub",
+    "gitlabDocs": "Dokumentacja SSH GitLab"
   }
 }

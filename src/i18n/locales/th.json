@@ -344,5 +344,64 @@
     "code": "404",
     "description": "หน้าที่คุณกำลังมองหาไม่มีอยู่หรือถูกย้ายแล้ว",
     "backHome": "กลับหน้าหลัก"
+  },
+  "interaction": {
+    "copyFailed": "คัดลอกไม่สำเร็จ โปรดเลือกข้อความแล้วคัดลอกด้วยตนเอง",
+    "downloadFailed": "เริ่มดาวน์โหลดไม่ได้ โปรดคัดลอกข้อความแทน"
+  },
+  "guideActions": {
+    "generate": "สร้าง Key",
+    "commands": "คำสั่งสร้าง SSH Key",
+    "guides": "คู่มือตั้งค่าแพลตฟอร์ม",
+    "contents": "ในหน้านี้",
+    "copyCode": "คัดลอก"
+  },
+  "commandUx": {
+    "windowsShell": "Windows PowerShell",
+    "filenameHint": "บันทึกใน ~/.ssh ให้ป้อนชื่อไฟล์ ไม่ใช่เส้นทางเต็ม",
+    "invalidFilename": "ใช้ชื่อไฟล์เดียวที่แพลตฟอร์มนี้รองรับ โดยไม่มีเส้นทางหรืออักขระควบคุม",
+    "invalidComment": "ใช้หมายเหตุบรรทัดเดียวที่ไม่มีอักขระควบคุม",
+    "windowsHint": "เรียกใช้ใน PowerShell ที่ติดตั้งไคลเอนต์ OpenSSH แล้ว",
+    "agentSetup": "ตั้งค่า ssh-agent ครั้งแรก (PowerShell แบบผู้ดูแลระบบ)",
+    "agentHint": "เรียกใช้คำสั่งบริการเหล่านี้ครั้งเดียวในฐานะผู้ดูแลระบบ แล้วใช้ PowerShell ปกติสำหรับคำสั่งคีย์ด้านล่าง",
+    "createDirectory": "สร้างไดเรกทอรี SSH",
+    "generateKey": "สร้าง SSH Key",
+    "startAgent": "เริ่ม SSH Agent",
+    "addKey": "เพิ่ม Key ไปยัง Agent",
+    "permissions": "ตั้งค่า Permissions",
+    "publicKey": "Public Key",
+    "source": "เอกสารทางการ"
+  },
+  "navigation": {
+    "toolLabel": "เครื่องมือ SSH",
+    "browser": "ในเบราว์เซอร์",
+    "computer": "บนคอมพิวเตอร์ของคุณ",
+    "tasks": "ตั้งค่า SSH ต่อ",
+    "install": "ติดตั้งคีย์สาธารณะ",
+    "connect": "เชื่อมต่อและแก้ไขปัญหา",
+    "safety": "ทำความเข้าใจคีย์ SSH",
+    "browseGuides": "คู่มือตามแพลตฟอร์ม"
+  },
+  "workflow": {
+    "resultsTitle": "SSH key ของคุณพร้อมแล้ว",
+    "success": "บันทึก private key แล้วติดตั้ง public key",
+    "errorTitle": "สร้าง key ไม่สำเร็จ",
+    "errorUnsupported": "ใช้เบราว์เซอร์รุ่นล่าสุดผ่าน HTTPS หรือสร้าง key ในเครื่องด้วย{mode}",
+    "errorGeneric": "ลองอีกครั้ง หากยังมีปัญหา ให้สร้าง key ในเครื่องด้วย{mode}",
+    "retry": "ลองอีกครั้ง",
+    "confirmRequired": "ยืนยันวลีรหัสผ่านเพื่อดำเนินการต่อ",
+    "privacy": "การจัดการ key และความเป็นส่วนตัว",
+    "showPassphrase": "แสดงวลีรหัสผ่าน",
+    "hidePassphrase": "ซ่อนวลีรหัสผ่าน",
+    "nextTitle": "ตั้งค่า SSH ให้เสร็จ",
+    "saveTitle": "บันทึก private key",
+    "saveHint": "ดาวน์โหลดลงอุปกรณ์และเก็บเป็นความลับ",
+    "installTitle": "ติดตั้ง public key",
+    "installHint": "เพิ่มเฉพาะ public key ไปยัง GitHub, GitLab หรือเซิร์ฟเวอร์",
+    "serverGuide": "คู่มือตั้งค่าเซิร์ฟเวอร์",
+    "testTitle": "ทดสอบการเชื่อมต่อ",
+    "testHint": "ทำตามคู่มือของแพลตฟอร์มเพื่อตรวจสอบสิทธิ์การเข้าถึง",
+    "githubDocs": "เอกสาร SSH ของ GitHub",
+    "gitlabDocs": "เอกสาร SSH ของ GitLab"
   }
 }

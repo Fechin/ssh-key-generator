@@ -344,5 +344,64 @@
     "code": "404",
     "description": "Stránka, kterou hledáte, neexistuje nebo byla přesunuta.",
     "backHome": "Zpět na úvodní stránku"
+  },
+  "interaction": {
+    "copyFailed": "Kopírování se nezdařilo. Vyberte a zkopírujte text ručně.",
+    "downloadFailed": "Stahování se nepodařilo spustit. Místo toho zkopírujte text."
+  },
+  "guideActions": {
+    "generate": "Generovat klíče",
+    "commands": "Příkazy pro generování SSH klíčů",
+    "guides": "Návody pro nastavení na platformách",
+    "contents": "Na této stránce",
+    "copyCode": "Kopírovat"
+  },
+  "commandUx": {
+    "windowsShell": "Windows PowerShell",
+    "filenameHint": "Ukládá se do ~/.ssh. Zadejte název souboru, ne úplnou cestu.",
+    "invalidFilename": "Použijte jeden název souboru podporovaný touto platformou, bez cesty a řídicích znaků.",
+    "invalidComment": "Použijte jednořádkový komentář bez řídicích znaků.",
+    "windowsHint": "Spusťte v PowerShellu s nainstalovaným klientem OpenSSH.",
+    "agentSetup": "První nastavení ssh-agent (PowerShell správce)",
+    "agentHint": "Tyto příkazy služby spusťte jednou jako správce. Potom použijte běžný PowerShell pro níže uvedené příkazy klíčů.",
+    "createDirectory": "Vytvořit adresář SSH",
+    "generateKey": "Vygenerujte SSH klíč",
+    "startAgent": "Spusťte SSH Agent",
+    "addKey": "Přidejte klíč do agenta",
+    "permissions": "Nastavte oprávnění",
+    "publicKey": "Veřejný klíč",
+    "source": "Oficiální dokumentace"
+  },
+  "navigation": {
+    "toolLabel": "Nástroje SSH",
+    "browser": "V prohlížeči",
+    "computer": "Na vašem počítači",
+    "tasks": "Pokračovat v nastavení SSH",
+    "install": "Nainstalovat veřejný klíč",
+    "connect": "Připojení a řešení problémů",
+    "safety": "Porozumět klíčům SSH",
+    "browseGuides": "Průvodci pro platformy"
+  },
+  "workflow": {
+    "resultsTitle": "Vaše SSH klíče jsou připravené",
+    "success": "Uložte soukromý klíč a potom nainstalujte veřejný.",
+    "errorTitle": "Klíč se nepodařilo vygenerovat",
+    "errorUnsupported": "Použijte aktuální prohlížeč přes HTTPS nebo vytvořte klíče místně v {mode}.",
+    "errorGeneric": "Zkuste to znovu. Pokud problém trvá, vytvořte klíče místně v {mode}.",
+    "retry": "Zkusit znovu",
+    "confirmRequired": "Pro pokračování potvrďte heslovou frázi.",
+    "privacy": "Nakládání s klíči a soukromí",
+    "showPassphrase": "Zobrazit heslovou frázi",
+    "hidePassphrase": "Skrýt heslovou frázi",
+    "nextTitle": "Dokončete nastavení SSH",
+    "saveTitle": "Uložte soukromý klíč",
+    "saveHint": "Stáhněte jej do zařízení a uchovejte v tajnosti.",
+    "installTitle": "Nainstalujte veřejný klíč",
+    "installHint": "Do GitHubu, GitLabu nebo na server přidejte pouze veřejný klíč.",
+    "serverGuide": "Průvodce nastavením serveru",
+    "testTitle": "Otestujte připojení",
+    "testHint": "Ověřte přístup podle průvodce své platformy.",
+    "githubDocs": "GitHub SSH dokumentace",
+    "gitlabDocs": "GitLab SSH dokumentace"
   }
 }

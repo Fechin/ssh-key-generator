@@ -2,9 +2,14 @@ import { Shield, Zap, ThumbsUp, Heart, Github, Server, RefreshCw, Lock, BookOpen
 import { Link } from 'react-router-dom'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useTranslation, getLanguagePathname } from '@/i18n'
-import { ARTICLE_SLUGS, getArticleMeta, hasArticleTranslation } from '@/content/articles'
+import { getArticleMeta, hasArticleTranslation, type ArticleSlug } from '@/content/articles'
 import siteReview from '@/content/siteReview.json'
 import { FAQSection } from './FAQSection'
+
+const GUIDE_DISPLAY_ORDER: ArticleSlug[] = [
+  'generate-ssh-key', 'how-to-set-up-ssh', 'ssh-keygen', 'ssh-command',
+  'what-is-an-ssh-key', 'what-is-ssh', 'check-vps-ip',
+]
 
 const SECTION_TITLE: Partial<Record<string, string>> = {
   en: 'SSH Guides & Learning Resources',
@@ -244,7 +249,7 @@ export function SEOContent() {
           <h2 className="text-xl font-bold">{sectionTitle}</h2>
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
-          {ARTICLE_SLUGS.filter((slug) => hasArticleTranslation(slug, language)).map((slug) => {
+          {GUIDE_DISPLAY_ORDER.filter((slug) => hasArticleTranslation(slug, language)).map((slug) => {
             const meta = getArticleMeta(slug, language)
             return (
               <Link

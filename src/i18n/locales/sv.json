@@ -344,5 +344,64 @@
     "code": "404",
     "description": "Sidan du letar efter finns inte eller har flyttats.",
     "backHome": "Tillbaka till startsidan"
+  },
+  "interaction": {
+    "copyFailed": "Det gick inte att kopiera. Markera och kopiera texten manuellt.",
+    "downloadFailed": "Det gick inte att starta nedladdningen. Kopiera texten i stället."
+  },
+  "guideActions": {
+    "generate": "Generera Nycklar",
+    "commands": "Kommandon för SSH-nyckelgenerering",
+    "guides": "Plattformsguider",
+    "contents": "På den här sidan",
+    "copyCode": "Kopiera"
+  },
+  "commandUx": {
+    "windowsShell": "Windows PowerShell",
+    "filenameHint": "Sparas i ~/.ssh. Ange ett filnamn, inte en fullständig sökväg.",
+    "invalidFilename": "Använd ett enda filnamn som stöds på den här plattformen, utan sökvägar eller kontrolltecken.",
+    "invalidComment": "Använd en kommentar på en rad utan kontrolltecken.",
+    "windowsHint": "Kör i PowerShell med OpenSSH-klienten installerad.",
+    "agentSetup": "Första konfigurationen av ssh-agent (PowerShell som administratör)",
+    "agentHint": "Kör dessa tjänstkommandon en gång som administratör. Använd sedan din vanliga PowerShell för nyckelkommandona nedan.",
+    "createDirectory": "Skapa SSH-katalogen",
+    "generateKey": "Generera SSH-nyckel",
+    "startAgent": "Starta SSH-agent",
+    "addKey": "Lägg till nyckel i agenten",
+    "permissions": "Ange behörigheter",
+    "publicKey": "Publik Nyckel",
+    "source": "Officiell dokumentation"
+  },
+  "navigation": {
+    "toolLabel": "SSH-verktyg",
+    "browser": "I webbläsaren",
+    "computer": "På din dator",
+    "tasks": "Fortsätt konfigurera SSH",
+    "install": "Installera din publika nyckel",
+    "connect": "Anslut och felsök",
+    "safety": "Förstå SSH-nycklar",
+    "browseGuides": "Guider för olika plattformar"
+  },
+  "workflow": {
+    "resultsTitle": "Dina SSH-nycklar är klara",
+    "success": "Spara den privata nyckeln och installera sedan den publika.",
+    "errorTitle": "Det gick inte att generera nyckeln",
+    "errorUnsupported": "Använd en uppdaterad webbläsare via HTTPS eller skapa nycklar lokalt i {mode}.",
+    "errorGeneric": "Försök igen. Om problemet kvarstår kan du skapa nycklar lokalt i {mode}.",
+    "retry": "Försök igen",
+    "confirmRequired": "Bekräfta din lösenfras för att fortsätta.",
+    "privacy": "Nyckelhantering och integritet",
+    "showPassphrase": "Visa lösenfras",
+    "hidePassphrase": "Dölj lösenfras",
+    "nextTitle": "Slutför SSH-konfigurationen",
+    "saveTitle": "Spara din privata nyckel",
+    "saveHint": "Ladda ner den till din enhet och håll den hemlig.",
+    "installTitle": "Installera den publika nyckeln",
+    "installHint": "Lägg bara till den publika nyckeln i GitHub, GitLab eller din server.",
+    "serverGuide": "Guide för serverkonfiguration",
+    "testTitle": "Testa anslutningen",
+    "testHint": "Följ plattformens guide för att verifiera åtkomsten.",
+    "githubDocs": "GitHub SSH Dokumentation",
+    "gitlabDocs": "GitLab SSH Dokumentation"
   }
 }

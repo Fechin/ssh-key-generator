@@ -344,5 +344,64 @@
     "code": "404",
     "description": "La página que buscas no existe o ha sido movida.",
     "backHome": "Volver al Inicio"
+  },
+  "interaction": {
+    "copyFailed": "No se pudo copiar. Selecciona y copia el texto manualmente.",
+    "downloadFailed": "No se pudo iniciar la descarga. Copia el texto en su lugar."
+  },
+  "guideActions": {
+    "generate": "Generar Claves",
+    "commands": "Comandos de Generación de Claves SSH",
+    "guides": "Guías de Configuración de Plataformas",
+    "contents": "En esta página",
+    "copyCode": "Copiar"
+  },
+  "commandUx": {
+    "windowsShell": "Windows PowerShell",
+    "filenameHint": "Se guarda en ~/.ssh. Introduce un nombre de archivo, no una ruta completa.",
+    "invalidFilename": "Usa un único nombre de archivo compatible con esta plataforma, sin rutas ni caracteres de control.",
+    "invalidComment": "Usa un comentario de una sola línea sin caracteres de control.",
+    "windowsHint": "Ejecuta en PowerShell con el cliente OpenSSH instalado.",
+    "agentSetup": "Configuración inicial de ssh-agent (PowerShell de administrador)",
+    "agentHint": "Ejecuta estos comandos de servicio una vez como administrador. Después usa tu PowerShell habitual para los comandos de claves siguientes.",
+    "createDirectory": "Crear el directorio SSH",
+    "generateKey": "Generar Clave SSH",
+    "startAgent": "Iniciar el Agente SSH",
+    "addKey": "Añadir Clave al Agente",
+    "permissions": "Establecer Permisos",
+    "publicKey": "Clave Pública",
+    "source": "Docs Oficiales"
+  },
+  "navigation": {
+    "toolLabel": "Herramientas SSH",
+    "browser": "En tu navegador",
+    "computer": "En tu equipo",
+    "tasks": "Continúa la configuración SSH",
+    "install": "Instalar tu clave pública",
+    "connect": "Conectar y resolver problemas",
+    "safety": "Entender las claves SSH",
+    "browseGuides": "Ver guías por plataforma"
+  },
+  "workflow": {
+    "resultsTitle": "Tus claves SSH están listas",
+    "success": "Guarda la clave privada y después instala la pública.",
+    "errorTitle": "No se pudo generar la clave",
+    "errorUnsupported": "Usa un navegador actualizado con HTTPS o genera las claves localmente en {mode}.",
+    "errorGeneric": "Inténtalo de nuevo. Si el problema continúa, genera las claves localmente en {mode}.",
+    "retry": "Reintentar",
+    "confirmRequired": "Confirma tu frase de contraseña para continuar.",
+    "privacy": "Tratamiento de claves y privacidad",
+    "showPassphrase": "Mostrar frase de contraseña",
+    "hidePassphrase": "Ocultar frase de contraseña",
+    "nextTitle": "Completa la configuración de SSH",
+    "saveTitle": "Guarda tu clave privada",
+    "saveHint": "Descárgala en tu dispositivo y mantenla en secreto.",
+    "installTitle": "Instala la clave pública",
+    "installHint": "Añade solo la clave pública a GitHub, GitLab o tu servidor.",
+    "serverGuide": "Guía de configuración del servidor",
+    "testTitle": "Prueba la conexión",
+    "testHint": "Sigue la guía de tu plataforma para verificar el acceso.",
+    "githubDocs": "Docs SSH de GitHub",
+    "gitlabDocs": "Docs SSH de GitLab"
   }
 }

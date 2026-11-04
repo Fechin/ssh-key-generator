@@ -344,5 +344,64 @@
     "code": "404",
     "description": "Aradığınız sayfa mevcut değil veya taşınmış.",
     "backHome": "Ana Sayfaya Dön"
+  },
+  "interaction": {
+    "copyFailed": "Kopyalanamadı. Metni seçip elle kopyalayın.",
+    "downloadFailed": "İndirme başlatılamadı. Bunun yerine metni kopyalayın."
+  },
+  "guideActions": {
+    "generate": "Anahtar Oluştur",
+    "commands": "SSH Anahtar Oluşturma Komutları",
+    "guides": "Platform Kurulum Kılavuzları",
+    "contents": "Bu sayfada",
+    "copyCode": "Kopyala"
+  },
+  "commandUx": {
+    "windowsShell": "Windows PowerShell",
+    "filenameHint": "~/.ssh dizinine kaydedilir. Tam yol yerine bir dosya adı girin.",
+    "invalidFilename": "Bu platformun desteklediği tek bir dosya adı kullanın; yol veya denetim karakteri eklemeyin.",
+    "invalidComment": "Denetim karakteri içermeyen tek satırlık bir yorum kullanın.",
+    "windowsHint": "OpenSSH istemcisi kurulu PowerShell içinde çalıştırın.",
+    "agentSetup": "İlk ssh-agent kurulumu (Yönetici PowerShell)",
+    "agentHint": "Bu hizmet komutlarını bir kez yönetici olarak çalıştırın. Sonra aşağıdaki anahtar komutları için normal PowerShell kullanın.",
+    "createDirectory": "SSH dizinini oluşturun",
+    "generateKey": "SSH Anahtarı Oluştur",
+    "startAgent": "SSH Agent'ı Başlat",
+    "addKey": "Anahtarı Agent'a Ekle",
+    "permissions": "İzinleri Ayarla",
+    "publicKey": "Genel Anahtar",
+    "source": "Resmi Belgeler"
+  },
+  "navigation": {
+    "toolLabel": "SSH araçları",
+    "browser": "Tarayıcıda",
+    "computer": "Kendi bilgisayarında",
+    "tasks": "SSH kurulumuna devam et",
+    "install": "Açık anahtarını yükle",
+    "connect": "Bağlan ve sorunları gider",
+    "safety": "SSH anahtarlarını anla",
+    "browseGuides": "Platform kılavuzları"
+  },
+  "workflow": {
+    "resultsTitle": "SSH anahtarlarınız hazır",
+    "success": "Özel anahtarı kaydedin, ardından açık anahtarı yükleyin.",
+    "errorTitle": "Anahtar oluşturulamadı",
+    "errorUnsupported": "HTTPS üzerinden güncel bir tarayıcı kullanın veya {mode} yerel anahtar oluşturun.",
+    "errorGeneric": "Yeniden deneyin. Sorun sürerse {mode} yerel anahtar oluşturun.",
+    "retry": "Yeniden dene",
+    "confirmRequired": "Devam etmek için parolanızı doğrulayın.",
+    "privacy": "Anahtar işleme ve gizlilik",
+    "showPassphrase": "Parolayı göster",
+    "hidePassphrase": "Parolayı gizle",
+    "nextTitle": "SSH kurulumunu tamamlayın",
+    "saveTitle": "Özel anahtarınızı kaydedin",
+    "saveHint": "Cihazınıza indirin ve gizli tutun.",
+    "installTitle": "Açık anahtarı yükleyin",
+    "installHint": "GitHub, GitLab veya sunucunuza yalnızca açık anahtarı ekleyin.",
+    "serverGuide": "Sunucu kurulum kılavuzu",
+    "testTitle": "Bağlantıyı test edin",
+    "testHint": "Erişimi doğrulamak için platformunuzun kılavuzunu izleyin.",
+    "githubDocs": "GitHub SSH Belgeleri",
+    "gitlabDocs": "GitLab SSH Belgeleri"
   }
 }

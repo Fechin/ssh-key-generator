@@ -9,6 +9,7 @@
     "seo:verify": "python3 scripts/verify-seo.py",
     "build": "pnpm seo:sync && tsc -b && vite build && node scripts/generate-seo-assets.mjs --dist && node scripts/finalize-service-worker.mjs",
     "lint": "eslint .",
+    "test:product": "node --test scripts/test-analytics.mjs scripts/test-ssh-commands.mjs",
     "preview": "vite preview",
     "deploy": "pnpm build && wrangler pages deploy dist --project-name=ssh-key-generator"
   },

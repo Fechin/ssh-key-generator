@@ -344,5 +344,64 @@
     "code": "404",
     "description": "A keresett oldal nem létezik vagy áthelyezésre került.",
     "backHome": "Vissza a kezdőlapra"
+  },
+  "interaction": {
+    "copyFailed": "Nem sikerült másolni. Jelöld ki és másold ki a szöveget kézzel.",
+    "downloadFailed": "Nem sikerült elindítani a letöltést. Másold ki a szöveget helyette."
+  },
+  "guideActions": {
+    "generate": "Kulcsok generálása",
+    "commands": "SSH kulcsgenerálási parancsok",
+    "guides": "Platform beállítási útmutatók",
+    "contents": "Ezen az oldalon",
+    "copyCode": "Másolás"
+  },
+  "commandUx": {
+    "windowsShell": "Windows PowerShell",
+    "filenameHint": "Mentés a ~/.ssh mappába. Fájlnevet adjon meg, ne teljes elérési utat.",
+    "invalidFilename": "A platform által támogatott egyetlen fájlnevet használjon, elérési út és vezérlőkarakterek nélkül.",
+    "invalidComment": "Egysoros megjegyzést használjon vezérlőkarakterek nélkül.",
+    "windowsHint": "Telepített OpenSSH-ügyféllel rendelkező PowerShellben futtassa.",
+    "agentSetup": "Az ssh-agent első beállítása (rendszergazdai PowerShell)",
+    "agentHint": "Ezeket a szolgáltatásparancsokat egyszer rendszergazdaként futtassa. Ezután a szokásos PowerShellben futtassa az alábbi kulcsparancsokat.",
+    "createDirectory": "SSH-könyvtár létrehozása",
+    "generateKey": "SSH kulcs generálása",
+    "startAgent": "SSH Agent indítása",
+    "addKey": "Kulcs hozzáadása az Agenthez",
+    "permissions": "Jogosultságok beállítása",
+    "publicKey": "Publikus kulcs",
+    "source": "Hivatalos dokumentáció"
+  },
+  "navigation": {
+    "toolLabel": "SSH-eszközök",
+    "browser": "A böngészőben",
+    "computer": "A saját gépeden",
+    "tasks": "SSH-beállítás folytatása",
+    "install": "Nyilvános kulcs telepítése",
+    "connect": "Kapcsolódás és hibaelhárítás",
+    "safety": "Az SSH-kulcsok megértése",
+    "browseGuides": "Platformútmutatók"
+  },
+  "workflow": {
+    "resultsTitle": "Az SSH-kulcsok elkészültek",
+    "success": "Mentse a privát kulcsot, majd telepítse a nyilvános kulcsot.",
+    "errorTitle": "Nem sikerült létrehozni a kulcsot",
+    "errorUnsupported": "Használjon naprakész böngészőt HTTPS-en, vagy hozzon létre kulcsokat helyben a {mode}.",
+    "errorGeneric": "Próbálja újra. Ha a hiba megmarad, hozzon létre kulcsokat helyben a {mode}.",
+    "retry": "Újrapróbálás",
+    "confirmRequired": "A folytatáshoz erősítse meg a jelmondatot.",
+    "privacy": "Kulcskezelés és adatvédelem",
+    "showPassphrase": "Jelmondat megjelenítése",
+    "hidePassphrase": "Jelmondat elrejtése",
+    "nextTitle": "Fejezze be az SSH beállítását",
+    "saveTitle": "Mentse a privát kulcsot",
+    "saveHint": "Töltse le az eszközére, és tartsa titokban.",
+    "installTitle": "Telepítse a nyilvános kulcsot",
+    "installHint": "Csak a nyilvános kulcsot adja hozzá a GitHubhoz, a GitLabhoz vagy a kiszolgálóhoz.",
+    "serverGuide": "Kiszolgálóbeállítási útmutató",
+    "testTitle": "Tesztelje a kapcsolatot",
+    "testHint": "Ellenőrizze a hozzáférést a platform útmutatója alapján.",
+    "githubDocs": "GitHub SSH dokumentáció",
+    "gitlabDocs": "GitLab SSH dokumentáció"
   }
 }

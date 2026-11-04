@@ -1,8 +1,13 @@
 import type { ComponentPropsWithoutRef } from 'react'
+import { ArticleCodeBlock } from './ArticleCodeBlock'
+import { ArticleTools } from './ArticleTools'
 
 export const mdxComponents = {
   h1: (props: ComponentPropsWithoutRef<'h1'>) => (
-    <h1 className="text-3xl font-bold mb-6 mt-0" {...props} />
+    <>
+      <h1 className="text-3xl font-bold mb-6 mt-0" {...props} />
+      <ArticleTools />
+    </>
   ),
   h2: (props: ComponentPropsWithoutRef<'h2'>) => (
     <h2 className="text-2xl font-semibold mt-10 mb-4 scroll-mt-20" {...props} />
@@ -16,9 +21,7 @@ export const mdxComponents = {
   code: (props: ComponentPropsWithoutRef<'code'>) => (
     <code dir="ltr" className="bg-muted px-1.5 py-0.5 rounded text-sm font-mono" {...props} />
   ),
-  pre: (props: ComponentPropsWithoutRef<'pre'>) => (
-    <pre dir="ltr" className="bg-muted p-4 rounded-lg overflow-x-auto mb-4 text-sm text-left" {...props} />
-  ),
+  pre: ArticleCodeBlock,
   a: (props: ComponentPropsWithoutRef<'a'>) => (
     <a className="text-primary underline underline-offset-2 hover:text-primary/80" {...props} />
   ),

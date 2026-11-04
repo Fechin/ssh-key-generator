@@ -344,5 +344,64 @@
     "code": "404",
     "description": "Die gesuchte Seite existiert nicht oder wurde verschoben.",
     "backHome": "Zurück zur Startseite"
+  },
+  "interaction": {
+    "copyFailed": "Kopieren fehlgeschlagen. Wähle den Text aus und kopiere ihn manuell.",
+    "downloadFailed": "Der Download konnte nicht gestartet werden. Kopiere stattdessen den Text."
+  },
+  "guideActions": {
+    "generate": "Schlüssel generieren",
+    "commands": "SSH-Schlüsselgenerierungsbefehle",
+    "guides": "Plattform-Einrichtungsanleitungen",
+    "contents": "Auf dieser Seite",
+    "copyCode": "Kopieren"
+  },
+  "commandUx": {
+    "windowsShell": "Windows PowerShell",
+    "filenameHint": "Speicherung in ~/.ssh. Geben Sie einen Dateinamen statt eines vollständigen Pfads ein.",
+    "invalidFilename": "Verwenden Sie einen auf dieser Plattform gültigen einzelnen Dateinamen ohne Pfad oder Steuerzeichen.",
+    "invalidComment": "Verwenden Sie einen einzeiligen Kommentar ohne Steuerzeichen.",
+    "windowsHint": "In PowerShell mit installiertem OpenSSH-Client ausführen.",
+    "agentSetup": "Einmalige ssh-agent-Einrichtung (Administrator-PowerShell)",
+    "agentHint": "Führen Sie diese Dienstbefehle einmal als Administrator aus. Verwenden Sie danach Ihre normale PowerShell für die folgenden Schlüsselbefehle.",
+    "createDirectory": "SSH-Verzeichnis erstellen",
+    "generateKey": "SSH-Schlüssel generieren",
+    "startAgent": "SSH-Agent starten",
+    "addKey": "Schlüssel zum Agent hinzufügen",
+    "permissions": "Berechtigungen setzen",
+    "publicKey": "Öffentlicher Schlüssel",
+    "source": "Offizielle Docs"
+  },
+  "navigation": {
+    "toolLabel": "SSH-Werkzeuge",
+    "browser": "Im Browser",
+    "computer": "Auf deinem Computer",
+    "tasks": "SSH-Einrichtung fortsetzen",
+    "install": "Öffentlichen Schlüssel einrichten",
+    "connect": "Verbinden und Fehler beheben",
+    "safety": "SSH-Schlüssel verstehen",
+    "browseGuides": "Plattform-Anleitungen"
+  },
+  "workflow": {
+    "resultsTitle": "Ihre SSH-Schlüssel sind bereit",
+    "success": "Speichern Sie den privaten Schlüssel und installieren Sie dann den öffentlichen.",
+    "errorTitle": "Der Schlüssel konnte nicht erstellt werden",
+    "errorUnsupported": "Verwenden Sie einen aktuellen Browser über HTTPS oder erzeugen Sie Schlüssel lokal im {mode}.",
+    "errorGeneric": "Versuchen Sie es erneut. Nutzen Sie bei weiteren Problemen den {mode} zur lokalen Erzeugung.",
+    "retry": "Erneut versuchen",
+    "confirmRequired": "Bestätigen Sie Ihre Passphrase, um fortzufahren.",
+    "privacy": "Schlüsselverarbeitung und Datenschutz",
+    "showPassphrase": "Passphrase anzeigen",
+    "hidePassphrase": "Passphrase ausblenden",
+    "nextTitle": "SSH-Einrichtung abschließen",
+    "saveTitle": "Privaten Schlüssel speichern",
+    "saveHint": "Laden Sie ihn auf Ihr Gerät herunter und halten Sie ihn geheim.",
+    "installTitle": "Öffentlichen Schlüssel installieren",
+    "installHint": "Fügen Sie nur den öffentlichen Schlüssel bei GitHub, GitLab oder Ihrem Server hinzu.",
+    "serverGuide": "Anleitung zur Servereinrichtung",
+    "testTitle": "Verbindung testen",
+    "testHint": "Prüfen Sie den Zugriff anhand der Anleitung Ihrer Plattform.",
+    "githubDocs": "GitHub SSH-Docs",
+    "gitlabDocs": "GitLab SSH-Docs"
   }
 }

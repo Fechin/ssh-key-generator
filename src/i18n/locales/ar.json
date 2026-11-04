@@ -344,5 +344,64 @@
     "code": "404",
     "description": "الصفحة التي تبحث عنها غير موجودة أو تم نقلها.",
     "backHome": "العودة للرئيسية"
+  },
+  "interaction": {
+    "copyFailed": "تعذر النسخ. حدد النص وانسخه يدوياً.",
+    "downloadFailed": "تعذر بدء التنزيل. انسخ النص بدلاً من ذلك."
+  },
+  "guideActions": {
+    "generate": "إنشاء المفاتيح",
+    "commands": "أوامر إنشاء مفاتيح SSH",
+    "guides": "أدلة إعداد المنصات",
+    "contents": "في هذه الصفحة",
+    "copyCode": "نسخ"
+  },
+  "commandUx": {
+    "windowsShell": "Windows PowerShell",
+    "filenameHint": "يُحفظ في ~/.ssh. أدخل اسم ملف وليس مسارًا كاملًا.",
+    "invalidFilename": "استخدم اسم ملف واحدًا تدعمه هذه المنصة، دون مسارات أو محارف تحكم.",
+    "invalidComment": "استخدم تعليقًا من سطر واحد دون محارف تحكم.",
+    "windowsHint": "شغّل في PowerShell مع تثبيت عميل OpenSSH.",
+    "agentSetup": "إعداد ssh-agent لأول مرة (PowerShell كمسؤول)",
+    "agentHint": "شغّل أوامر الخدمة هذه مرة واحدة كمسؤول، ثم استخدم PowerShell العادي لأوامر المفاتيح أدناه.",
+    "createDirectory": "إنشاء مجلد SSH",
+    "generateKey": "إنشاء مفتاح SSH",
+    "startAgent": "تشغيل وكيل SSH",
+    "addKey": "إضافة المفتاح للوكيل",
+    "permissions": "تعيين الصلاحيات",
+    "publicKey": "المفتاح العام",
+    "source": "الوثائق الرسمية"
+  },
+  "navigation": {
+    "toolLabel": "أدوات SSH",
+    "browser": "في المتصفح",
+    "computer": "على جهازك",
+    "tasks": "متابعة إعداد SSH",
+    "install": "تثبيت مفتاحك العام",
+    "connect": "الاتصال واستكشاف الأخطاء",
+    "safety": "فهم مفاتيح SSH",
+    "browseGuides": "أدلة المنصات"
+  },
+  "workflow": {
+    "resultsTitle": "مفاتيح SSH جاهزة",
+    "success": "احفظ المفتاح الخاص ثم ثبّت المفتاح العام.",
+    "errorTitle": "تعذّر إنشاء المفتاح",
+    "errorUnsupported": "استخدم متصفحًا محدثًا عبر HTTPS أو أنشئ المفاتيح محليًا باستخدام {mode}.",
+    "errorGeneric": "حاول مجددًا. إذا استمرت المشكلة، أنشئ المفاتيح محليًا باستخدام {mode}.",
+    "retry": "حاول مجددًا",
+    "confirmRequired": "أكّد عبارة المرور للمتابعة.",
+    "privacy": "التعامل مع المفاتيح والخصوصية",
+    "showPassphrase": "إظهار عبارة المرور",
+    "hidePassphrase": "إخفاء عبارة المرور",
+    "nextTitle": "أكمل إعداد SSH",
+    "saveTitle": "احفظ مفتاحك الخاص",
+    "saveHint": "نزّله إلى جهازك واحتفظ به سريًا.",
+    "installTitle": "ثبّت المفتاح العام",
+    "installHint": "أضف المفتاح العام فقط إلى GitHub أو GitLab أو خادمك.",
+    "serverGuide": "دليل إعداد الخادم",
+    "testTitle": "اختبر الاتصال",
+    "testHint": "اتبع دليل منصتك للتحقق من الوصول.",
+    "githubDocs": "وثائق GitHub SSH",
+    "gitlabDocs": "وثائق GitLab SSH"
   }
 }

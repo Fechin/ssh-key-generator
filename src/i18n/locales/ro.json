@@ -344,5 +344,64 @@
     "code": "404",
     "description": "Pagina pe care o cauți nu există sau a fost mutată.",
     "backHome": "Înapoi la Pagina Principală"
+  },
+  "interaction": {
+    "copyFailed": "Copierea nu a reușit. Selectează și copiază textul manual.",
+    "downloadFailed": "Descărcarea nu a putut începe. Copiază textul în schimb."
+  },
+  "guideActions": {
+    "generate": "Generare Chei",
+    "commands": "Comenzi pentru Generarea Cheilor SSH",
+    "guides": "Ghiduri de Configurare pe Platforme",
+    "contents": "Pe această pagină",
+    "copyCode": "Copiază"
+  },
+  "commandUx": {
+    "windowsShell": "Windows PowerShell",
+    "filenameHint": "Se salvează în ~/.ssh. Introdu un nume de fișier, nu o cale completă.",
+    "invalidFilename": "Folosește un singur nume de fișier acceptat de platformă, fără căi sau caractere de control.",
+    "invalidComment": "Folosește un comentariu pe un singur rând, fără caractere de control.",
+    "windowsHint": "Rulează în PowerShell cu clientul OpenSSH instalat.",
+    "agentSetup": "Configurare inițială ssh-agent (PowerShell administrator)",
+    "agentHint": "Rulează aceste comenzi de serviciu o singură dată ca administrator. Apoi folosește PowerShell obișnuit pentru comenzile de chei de mai jos.",
+    "createDirectory": "Creează directorul SSH",
+    "generateKey": "Generează Cheia SSH",
+    "startAgent": "Pornește SSH Agent",
+    "addKey": "Adaugă Cheia în Agent",
+    "permissions": "Setează Permisiunile",
+    "publicKey": "Cheie Publică",
+    "source": "Documentație Oficială"
+  },
+  "navigation": {
+    "toolLabel": "Instrumente SSH",
+    "browser": "În browser",
+    "computer": "Pe calculatorul tău",
+    "tasks": "Continuă configurarea SSH",
+    "install": "Instalează cheia publică",
+    "connect": "Conectare și depanare",
+    "safety": "Înțelege cheile SSH",
+    "browseGuides": "Ghiduri pentru platforme"
+  },
+  "workflow": {
+    "resultsTitle": "Cheile SSH sunt gata",
+    "success": "Salvează cheia privată, apoi instalează cheia publică.",
+    "errorTitle": "Cheia nu a putut fi generată",
+    "errorUnsupported": "Folosește un browser actualizat prin HTTPS sau generează chei local în {mode}.",
+    "errorGeneric": "Încearcă din nou. Dacă problema continuă, generează chei local în {mode}.",
+    "retry": "Încearcă din nou",
+    "confirmRequired": "Confirmă fraza de acces pentru a continua.",
+    "privacy": "Gestionarea cheilor și confidențialitate",
+    "showPassphrase": "Arată fraza de acces",
+    "hidePassphrase": "Ascunde fraza de acces",
+    "nextTitle": "Finalizează configurarea SSH",
+    "saveTitle": "Salvează cheia privată",
+    "saveHint": "Descarc-o pe dispozitiv și păstreaz-o secretă.",
+    "installTitle": "Instalează cheia publică",
+    "installHint": "Adaugă doar cheia publică în GitHub, GitLab sau pe server.",
+    "serverGuide": "Ghid de configurare a serverului",
+    "testTitle": "Testează conexiunea",
+    "testHint": "Urmează ghidul platformei pentru a verifica accesul.",
+    "githubDocs": "Documentație SSH GitHub",
+    "gitlabDocs": "Documentație SSH GitLab"
   }
 }

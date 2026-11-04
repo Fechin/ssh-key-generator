@@ -344,5 +344,64 @@
     "code": "৪০৪",
     "description": "আপনি যে পেজটি খুঁজছেন সেটি বিদ্যমান নেই বা সরানো হয়েছে।",
     "backHome": "হোমে ফিরে যান"
+  },
+  "interaction": {
+    "copyFailed": "কপি করা যায়নি। লেখাটি নির্বাচন করে নিজে কপি করুন।",
+    "downloadFailed": "ডাউনলোড শুরু করা যায়নি। পরিবর্তে লেখাটি কপি করুন।"
+  },
+  "guideActions": {
+    "generate": "কী তৈরি করুন",
+    "commands": "SSH Key জেনারেশন কমান্ড",
+    "guides": "প্ল্যাটফর্ম সেটআপ গাইড",
+    "contents": "এই পৃষ্ঠায়",
+    "copyCode": "কপি"
+  },
+  "commandUx": {
+    "windowsShell": "Windows PowerShell",
+    "filenameHint": "~/.ssh-এ সংরক্ষিত হয়। পুরো পথ নয়, শুধু ফাইলের নাম দিন।",
+    "invalidFilename": "এই প্ল্যাটফর্মে সমর্থিত একটি ফাইলের নাম দিন, যাতে পথ বা নিয়ন্ত্রণ অক্ষর নেই।",
+    "invalidComment": "নিয়ন্ত্রণ অক্ষর ছাড়া এক লাইনের মন্তব্য দিন।",
+    "windowsHint": "OpenSSH ক্লায়েন্ট ইনস্টল করা PowerShell-এ চালান।",
+    "agentSetup": "প্রথমবার ssh-agent সেটআপ (প্রশাসক PowerShell)",
+    "agentHint": "এই সার্ভিস কমান্ডগুলো একবার প্রশাসক হিসেবে চালান। তারপর নিচের কী কমান্ডগুলো সাধারণ PowerShell-এ চালান।",
+    "createDirectory": "SSH ডিরেক্টরি তৈরি করুন",
+    "generateKey": "SSH Key তৈরি করুন",
+    "startAgent": "SSH Agent চালু করুন",
+    "addKey": "Agent এ কী যোগ করুন",
+    "permissions": "পারমিশন সেট করুন",
+    "publicKey": "পাবলিক কী",
+    "source": "অফিসিয়াল ডক্স"
+  },
+  "navigation": {
+    "toolLabel": "SSH টুল",
+    "browser": "ব্রাউজারে",
+    "computer": "নিজের কম্পিউটারে",
+    "tasks": "SSH সেটআপ চালিয়ে যান",
+    "install": "পাবলিক কী ইনস্টল করুন",
+    "connect": "সংযোগ ও সমস্যা সমাধান",
+    "safety": "SSH কী সম্পর্কে জানুন",
+    "browseGuides": "প্ল্যাটফর্মের নির্দেশিকা"
+  },
+  "workflow": {
+    "resultsTitle": "আপনার SSH কী প্রস্তুত",
+    "success": "প্রাইভেট কী সংরক্ষণ করুন, তারপর পাবলিক কী ইনস্টল করুন।",
+    "errorTitle": "কী তৈরি করা যায়নি",
+    "errorUnsupported": "HTTPS দিয়ে হালনাগাদ ব্রাউজার ব্যবহার করুন অথবা {mode} স্থানীয়ভাবে কী তৈরি করুন।",
+    "errorGeneric": "আবার চেষ্টা করুন। সমস্যা থাকলে {mode} স্থানীয়ভাবে কী তৈরি করুন।",
+    "retry": "আবার চেষ্টা করুন",
+    "confirmRequired": "এগোতে পাসফ্রেজ নিশ্চিত করুন।",
+    "privacy": "কী পরিচালনা ও গোপনীয়তা",
+    "showPassphrase": "পাসফ্রেজ দেখান",
+    "hidePassphrase": "পাসফ্রেজ লুকান",
+    "nextTitle": "SSH সেটআপ সম্পূর্ণ করুন",
+    "saveTitle": "প্রাইভেট কী সংরক্ষণ করুন",
+    "saveHint": "ডিভাইসে ডাউনলোড করুন এবং গোপন রাখুন।",
+    "installTitle": "পাবলিক কী ইনস্টল করুন",
+    "installHint": "GitHub, GitLab বা সার্ভারে শুধু পাবলিক কী যোগ করুন।",
+    "serverGuide": "সার্ভার সেটআপ গাইড",
+    "testTitle": "সংযোগ পরীক্ষা করুন",
+    "testHint": "অ্যাক্সেস যাচাই করতে আপনার প্ল্যাটফর্মের গাইড অনুসরণ করুন।",
+    "githubDocs": "GitHub SSH ডক্স",
+    "gitlabDocs": "GitLab SSH ডক্স"
   }
 }

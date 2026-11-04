@@ -13,99 +13,37 @@ import {
 import { CopyButton } from '@/components/common/CopyButton'
 import { useTranslation } from '@/i18n'
 import type { KeyAlgorithm } from '@/types/keys'
-
-type Platform = 'linux' | 'macos' | 'windows'
+import {
+  generateSSHCommand,
+  generateSSHSetupCommands,
+  generateWindowsAgentCommands,
+  validateSSHCommandOptions,
+  type SSHCommandPlatform,
+} from '@/lib/sshCommands'
 
 export function CommandGenerator() {
   const [algorithm, setAlgorithm] = useState<KeyAlgorithm>('ed25519')
   const [comment, setComment] = useState('user@example.com')
   const [filename, setFilename] = useState('')
+  const [platform, setPlatform] = useState<SSHCommandPlatform>('macos')
   const { t } = useTranslation()
+  const options = { algorithm, comment, filename }
+  const invalid = validateSSHCommandOptions(options, platform)
+  const command = invalid ? '' : generateSSHCommand(options, platform)
+  const setup = invalid ? '' : generateSSHSetupCommands(options, platform, {
+    createDirectory: t('commandUx.createDirectory'),
+    generateKey: t('commandUx.generateKey'),
+    startAgent: t('commandUx.startAgent'),
+    addKey: t('commandUx.addKey'),
+    permissions: t('commandUx.permissions'),
+    publicKey: t('commandUx.publicKey'),
+  })
 
   const algorithms: { value: KeyAlgorithm; label: string }[] = [
     { value: 'ed25519', label: t('algorithms.ed25519') },
     { value: 'rsa-4096', label: t('algorithms.rsa4096') },
     { value: 'rsa-2048', label: t('algorithms.rsa2048') },
   ]
-
-  const getFilename = () => {
-    if (filename) return filename
-    return algorithm === 'ed25519' ? 'id_ed25519' : 'id_rsa'
-  }
-
-  const generateCommand = (platform: Platform): string => {
-    const file = getFilename()
-    const algoFlag = algorithm === 'ed25519' ? 'ed25519' : 'rsa'
-    const bits = algorithm === 'rsa-4096' ? ' -b 4096' : algorithm === 'rsa-2048' ? ' -b 2048' : ''
-
-    const baseCommand = `ssh-keygen -t ${algoFlag}${bits} -C "${comment}" -f ~/.ssh/${file}`
-
-    switch (platform) {
-      case 'linux':
-        return baseCommand
-      case 'macos':
-        return baseCommand
-      case 'windows':
-        return baseCommand.replace('~/.ssh/', '%USERPROFILE%\\.ssh\\')
-      default:
-        return baseCommand
-    }
-  }
-
-  const generateSetupCommands = (platform: Platform): string[] => {
-    const file = getFilename()
-    const commands: string[] = []
-
-    if (platform === 'windows') {
-      commands.push('# Create .ssh directory if it doesn\'t exist')
-      commands.push('mkdir %USERPROFILE%\\.ssh 2>nul')
-      commands.push('')
-      commands.push('# Generate the key')
-      commands.push(generateCommand(platform))
-      commands.push('')
-      commands.push('# Start ssh-agent (PowerShell)')
-      commands.push('Get-Service ssh-agent | Set-Service -StartupType Automatic')
-      commands.push('Start-Service ssh-agent')
-      commands.push('')
-      commands.push('# Add key to ssh-agent')
-      commands.push(`ssh-add %USERPROFILE%\\.ssh\\${file}`)
-    } else {
-      commands.push('# Create .ssh directory if it doesn\'t exist')
-      commands.push('mkdir -p ~/.ssh && chmod 700 ~/.ssh')
-      commands.push('')
-      commands.push('# Generate the key')
-      commands.push(generateCommand(platform))
-      commands.push('')
-      commands.push('# Start ssh-agent and add key')
-      commands.push('eval "$(ssh-agent -s)"')
-
-      if (platform === 'macos') {
-        commands.push('')
-        commands.push('# Add key to macOS Keychain')
-        commands.push(`ssh-add --apple-use-keychain ~/.ssh/${file}`)
-      } else {
-        commands.push(`ssh-add ~/.ssh/${file}`)
-      }
-
-      commands.push('')
-      commands.push('# Set proper permissions on private key')
-      commands.push(`chmod 600 ~/.ssh/${file}`)
-    }
-
-    commands.push('')
-    commands.push('# Copy public key to clipboard')
-    if (platform === 'macos') {
-      commands.push(`pbcopy < ~/.ssh/${file}.pub`)
-    } else if (platform === 'linux') {
-      commands.push(`xclip -selection clipboard < ~/.ssh/${file}.pub`)
-      commands.push('# or')
-      commands.push(`cat ~/.ssh/${file}.pub`)
-    } else {
-      commands.push(`type %USERPROFILE%\\.ssh\\${file}.pub | clip`)
-    }
-
-    return commands
-  }
 
   return (
     <div>
@@ -145,6 +83,8 @@ export function CommandGenerator() {
               placeholder="user@example.com"
               value={comment}
               onChange={(e) => setComment(e.target.value)}
+              aria-invalid={invalid === 'comment'}
+              aria-describedby={invalid === 'comment' ? 'cmd-error' : undefined}
             />
           </div>
 
@@ -156,12 +96,20 @@ export function CommandGenerator() {
               placeholder={algorithm === 'ed25519' ? 'id_ed25519' : 'id_rsa'}
               value={filename}
               onChange={(e) => setFilename(e.target.value)}
+              aria-invalid={invalid === 'filename'}
+              aria-describedby={invalid === 'filename' ? 'cmd-error' : 'cmd-filename-hint'}
             />
+            <p id="cmd-filename-hint" className="text-xs text-muted-foreground">{t('commandUx.filenameHint')}</p>
           </div>
         </div>
+        {invalid && (
+          <p id="cmd-error" role="alert" className="text-sm text-destructive">
+            {t(invalid === 'filename' ? 'commandUx.invalidFilename' : 'commandUx.invalidComment')}
+          </p>
+        )}
 
         {/* Platform Commands */}
-        <Tabs defaultValue="macos">
+        <Tabs value={platform} onValueChange={(value) => setPlatform(value as SSHCommandPlatform)}>
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="macos" className="gap-2">
               <Apple className="h-4 w-4" />
@@ -177,36 +125,65 @@ export function CommandGenerator() {
             </TabsTrigger>
           </TabsList>
 
-          {(['macos', 'linux', 'windows'] as Platform[]).map((platform) => (
-            <TabsContent key={platform} value={platform} className="space-y-3">
-              {/* Quick Command */}
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <Label className="text-sm">{t('commands.quickCommand')}</Label>
-                  <CopyButton text={generateCommand(platform)} label={t('keyDisplay.copy')} size="sm" />
-                </div>
-                <pre className="p-2.5 bg-background rounded-md text-xs font-mono overflow-x-auto border border-border/50">
-                  {generateCommand(platform)}
-                </pre>
+          <TabsContent value={platform} className="space-y-4">
+            {platform === 'windows' && (
+              <div className="space-y-1 text-xs text-muted-foreground">
+                <p className="font-medium text-foreground">{t('commandUx.windowsShell')}</p>
+                <p>{t('commandUx.windowsHint')}</p>
               </div>
-
-
-              {/* Full Setup */}
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <Label className="text-sm">{t('commands.completeSetup')}</Label>
-                  <CopyButton
-                    text={generateSetupCommands(platform).join('\n')}
-                    label={t('commands.copyAll')}
-                    size="sm"
-                  />
+            )}
+            {!invalid && (
+              <>
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between gap-2">
+                    <Label className="text-sm">{t('commands.quickCommand')}</Label>
+                    <CopyButton
+                      text={command}
+                      label={t('keyDisplay.copy')}
+                      size="sm"
+                      analyticsContext={{ target: 'command', algorithm, origin: 'home' }}
+                    />
+                  </div>
+                  <pre dir="ltr" className="max-w-full p-2.5 bg-background rounded-md text-xs font-mono overflow-x-auto border border-border/50"><code>{command}</code></pre>
                 </div>
-                <pre className="p-2.5 bg-background rounded-md text-xs font-mono overflow-x-auto max-h-[280px] border border-border/50">
-                  {generateSetupCommands(platform).join('\n')}
-                </pre>
-              </div>
-            </TabsContent>
-          ))}
+                {platform === 'windows' && (
+                  <details className="rounded-md border border-border/50 p-3 text-xs">
+                    <summary className="cursor-pointer font-medium">{t('commandUx.agentSetup')}</summary>
+                    <p className="mt-2 text-muted-foreground">{t('commandUx.agentHint')}</p>
+                    <div className="mt-2 flex justify-end">
+                      <CopyButton
+                        text={generateWindowsAgentCommands()}
+                        label={t('keyDisplay.copy')}
+                        size="sm"
+                        analyticsContext={{ target: 'command', algorithm, origin: 'home' }}
+                      />
+                    </div>
+                    <pre dir="ltr" className="mt-2 max-w-full overflow-x-auto rounded-md bg-background p-2.5 font-mono"><code>{generateWindowsAgentCommands()}</code></pre>
+                  </details>
+                )}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between gap-2">
+                    <Label className="text-sm">{t('commands.completeSetup')}</Label>
+                    <CopyButton
+                      text={setup}
+                      label={t('commands.copyAll')}
+                      size="sm"
+                      analyticsContext={{ target: 'command', algorithm, origin: 'home' }}
+                    />
+                  </div>
+                  <pre dir="ltr" className="max-w-full p-2.5 bg-background rounded-md text-xs font-mono overflow-x-auto max-h-[280px] border border-border/50"><code>{setup}</code></pre>
+                </div>
+              </>
+            )}
+            <a
+              href={platform === 'windows'
+                ? 'https://learn.microsoft.com/en-us/windows-server/administration/openssh/openssh_keymanagement'
+                : 'https://man.openbsd.org/ssh-keygen'}
+              className="inline-flex text-xs text-primary underline underline-offset-2"
+            >
+              {t('commandUx.source')}
+            </a>
+          </TabsContent>
         </Tabs>
       </div>
     </div>

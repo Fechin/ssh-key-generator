@@ -9,26 +9,30 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { LANGUAGE_CONFIG, getLanguagePathname, useLanguageStore } from '@/i18n'
 import { ARTICLE_SLUGS, hasArticleTranslation } from '@/content/articles'
+import { getToolHref, parseToolMode } from '@/lib/toolNavigation'
 
 export function LanguageToggle() {
   const { language } = useLanguageStore()
   const navigate = useNavigate()
-  const { pathname } = useLocation()
+  const { pathname, hash } = useLocation()
   const current = LANGUAGE_CONFIG.find((candidate) => candidate.code === language)
 
   const handleLanguageChange = (nextLanguage: typeof LANGUAGE_CONFIG[number]) => {
     const currentSlug = pathname.split('/').filter(Boolean).at(-1)
     const slug = ARTICLE_SLUGS.find((candidate) => candidate === currentSlug)
     const basePath = getLanguagePathname(nextLanguage.code)
-    navigate(slug && hasArticleTranslation(slug, nextLanguage.code) ? `${basePath}${slug}/` : basePath)
+    const mode = parseToolMode(hash)
+    navigate(slug && hasArticleTranslation(slug, nextLanguage.code)
+      ? `${basePath}${slug}/`
+      : mode ? getToolHref(nextLanguage.code, mode) : basePath)
   }
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" className="gap-1.5">
-          <Globe className="h-4 w-4" />
-          <span className="text-xs">{current?.label}</span>
+        <Button variant="ghost" size="sm" className="gap-1.5 px-2 sm:px-3" title={current?.label}>
+          <Globe className="h-4 w-4 shrink-0" />
+          <span className="max-w-16 truncate text-xs">{current?.label}</span>
           <ChevronDown className="hidden sm:block h-3 w-3" />
         </Button>
       </DropdownMenuTrigger>

@@ -344,5 +344,64 @@
     "code": "404",
     "description": "您查找的页面不存在或已被移动。",
     "backHome": "返回首页"
+  },
+  "interaction": {
+    "copyFailed": "复制失败，请选中文本后手动复制。",
+    "downloadFailed": "无法开始下载，请改为复制文本。"
+  },
+  "guideActions": {
+    "generate": "生成密钥",
+    "commands": "SSH 密钥生成命令",
+    "guides": "平台设置指南",
+    "contents": "本页目录",
+    "copyCode": "复制"
+  },
+  "commandUx": {
+    "windowsShell": "Windows PowerShell",
+    "filenameHint": "保存到 ~/.ssh。请输入文件名，不要输入完整路径。",
+    "invalidFilename": "请输入此平台支持的单个文件名，不要包含路径或控制字符。",
+    "invalidComment": "请输入不含控制字符的单行注释。",
+    "windowsHint": "请在已安装 OpenSSH 客户端的 PowerShell 中运行。",
+    "agentSetup": "首次配置 ssh-agent（管理员 PowerShell）",
+    "agentHint": "首次使用时，以管理员身份运行这些服务命令，再回到普通 PowerShell 运行下方的密钥命令。",
+    "createDirectory": "创建 SSH 目录",
+    "generateKey": "生成 SSH 密钥",
+    "startAgent": "启动 SSH Agent",
+    "addKey": "添加密钥到 Agent",
+    "permissions": "设置权限",
+    "publicKey": "公钥",
+    "source": "官方文档"
+  },
+  "navigation": {
+    "toolLabel": "SSH 工具",
+    "browser": "在浏览器中生成",
+    "computer": "在本机终端生成",
+    "tasks": "继续配置 SSH",
+    "install": "安装公钥",
+    "connect": "连接与排错",
+    "safety": "了解 SSH 密钥",
+    "browseGuides": "查看平台指南"
+  },
+  "workflow": {
+    "resultsTitle": "SSH 密钥已就绪",
+    "success": "先保存私钥，再安装公钥。",
+    "errorTitle": "密钥生成失败",
+    "errorUnsupported": "请通过 HTTPS 使用新版浏览器，或在{mode}中选择本地生成。",
+    "errorGeneric": "请重试。如果仍然失败，可使用{mode}在本地生成密钥。",
+    "retry": "重试",
+    "confirmRequired": "请确认密码短语后继续。",
+    "privacy": "密钥处理与隐私",
+    "showPassphrase": "显示密码短语",
+    "hidePassphrase": "隐藏密码短语",
+    "nextTitle": "完成 SSH 配置",
+    "saveTitle": "保存私钥",
+    "saveHint": "下载到设备并妥善保密。",
+    "installTitle": "安装公钥",
+    "installHint": "仅将公钥添加到 GitHub、GitLab 或服务器。",
+    "serverGuide": "服务器配置指南",
+    "testTitle": "测试连接",
+    "testHint": "按照对应平台的指南验证访问。",
+    "githubDocs": "GitHub SSH 文档",
+    "gitlabDocs": "GitLab SSH 文档"
   }
 }
