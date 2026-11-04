@@ -103,7 +103,7 @@ test('all query parameters are ignored and visitor cookies/auth/conditional head
     calls++
     assert.equal(url, upstreamUrl)
     assert.equal(init.method, 'GET')
-    assert.equal(init.redirect, 'error')
+    assert.equal(init.redirect, 'manual')
     assert.equal(init.headers.get('Accept'), 'application/vnd.github+json')
     assert.equal(init.headers.get('User-Agent'), 'sshkeygenerator.com-stars')
     for (const name of ['Cookie', 'Authorization', 'If-None-Match']) assert.equal(init.headers.get(name), null)
@@ -114,6 +114,41 @@ test('all query parameters are ignored and visitor cookies/auth/conditional head
   assert.equal((await data(second)).stars, 20)
   assert.equal(calls, 1)
   for (const write of f.cache.writes) assert.ok(!write.url.includes('?'))
+})
+
+test('Workers-compatible fetch can retrieve the fixed upstream without unsupported redirect modes', async () => {
+  const f = fixture()
+  const calls = []
+  const response = await f.handler(request(), { ...f, fetcher: async (url, init) => {
+    calls.push({ url, redirect: init.redirect })
+    // Workers rejects error before sending a request; Node fetch accepts it.
+    if (!['manual', 'follow'].includes(init.redirect)) throw new TypeError('Unsupported redirect mode')
+    return github(20)
+  } })
+  // Assert outside fetcher: the handler deliberately sanitizes thrown errors.
+  assert.equal(response.status, 200)
+  assert.deepEqual(await data(response), { stars: 20, updatedAt: new Date(epoch).toISOString() })
+  assert.deepEqual(calls, [{ url: upstreamUrl, redirect: 'manual' }])
+})
+
+test('upstream redirects are returned manually, rejected and never cached or followed', async () => {
+  for (const status of [301, 302, 303, 307, 308]) {
+    const f = fixture()
+    const calls = []
+    const response = await f.handler(request(), { ...f, fetcher: async (url, init) => {
+      calls.push({ url, redirect: init.redirect })
+      return new Response(JSON.stringify({ stargazers_count: 999 }), {
+        status, headers: { Location: 'https://redirect.invalid/other-repository', ETag: '"redirect"' },
+      })
+    } })
+    assert.deepEqual(calls, [{ url: upstreamUrl, redirect: 'manual' }])
+    assert.equal(response.status, 503)
+    assert.deepEqual(await data(response), { error: 'unavailable' })
+    assert.equal(response.headers.get('Location'), null)
+    assert.equal(response.headers.get('Cache-Control'), 'no-store')
+    assert.equal(f.cache.writes.length, 0)
+    assert.equal(f.cache.entries.size, 0)
+  }
 })
 
 test('nonGET requests return405 without reading cache or upstream', async () => {

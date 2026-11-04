@@ -151,7 +151,8 @@ export async function handleGitHubStars(request: Request, options: GitHubStarsOp
     })
     if (previous?.etag) headers.set('If-None-Match', previous.etag)
     const response = await (options.fetcher ?? fetch)(REPOSITORY, {
-      method: 'GET', headers, signal: controller.signal, redirect: 'error',
+      // Workers supports manual/follow only; inspect status without following redirects.
+      method: 'GET', headers, signal: controller.signal, redirect: 'manual',
     })
     let stars: number
     if (response.status === 304 && previous?.etag) {
