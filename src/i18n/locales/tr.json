@@ -193,6 +193,12 @@
     "copyright": "© {year} SSH Anahtar Oluşturucu. MIT Lisansı altında açık kaynak."
   },
   "seo": {
+    "sources": {
+      "title": "Kaynaklar ve inceleme",
+      "reviewed": "Son inceleme",
+      "openssh": "OpenSSH ssh-keygen kılavuzu",
+      "github": "GitHub: Yeni SSH anahtarı oluşturma"
+    },
     "whatIs": {
       "title": "Çevrimiçi SSH Anahtar Oluşturucu Nedir?",
       "desc": "Çevrimiçi SSH anahtar oluşturucu anahtar çiftini tarayıcıda üretir. Açık anahtar GitHub, GitLab, Bitbucket veya sunucuya eklenir; özel anahtar bilgisayarınızda kalır."
@@ -245,10 +251,10 @@
       "rsaSigSize": "256-512 bayt",
       "ed25519Security": "~128-bit eşdeğeri",
       "rsaSecurity": "~112-128-bit (4096)",
-      "ed25519Performance": "Çok Hızlı (10 kat daha hızlı)",
+      "ed25519Performance": "Uygulamaya bağlıdır",
       "rsaPerformance": "Daha yavaş oluşturma",
       "ed25519Compat": "OpenSSH 6.5+ (2014)",
-      "rsaCompat": "Evrensel (tüm sistemler)",
+      "rsaCompat": "Geniş destek; sunucu politikasını kontrol edin",
       "ed25519Quantum": "Kuantum güvenli değil",
       "rsaQuantum": "Kuantum güvenli değil",
       "ed25519BestFor": "GitHub, GitLab, modern sunucular",

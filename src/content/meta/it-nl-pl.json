@@ -16,7 +16,7 @@
         "accesso remoto sicuro"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "what-is-an-ssh-key": {
       "title": "Cos'è una Chiave SSH? Chiavi Pubbliche, Private e Coppie di Chiavi Spiegate",
@@ -34,7 +34,7 @@
         "ssh-keygen"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-command": {
       "title": "Il Comando SSH: Riferimento Completo con Esempi per Linux, Mac e Windows",
@@ -52,7 +52,7 @@
         "OpenSSH"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "how-to-set-up-ssh": {
       "title": "Come Configurare SSH: Una Guida Completa Passo dopo Passo",
@@ -70,7 +70,7 @@
         "ssh-agent"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "generate-ssh-key": {
       "title": "Generare una chiave SSH: strumento online e comandi ssh-keygen",
@@ -85,7 +85,7 @@
         "chiave rsa ssh"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-keygen": {
       "title": "Comando ssh-keygen: creare chiavi SSH con esempi",
@@ -98,7 +98,7 @@
         "fingerprint chiave ssh"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     }
   },
   "nl": {
@@ -118,7 +118,7 @@
         "veilige externe toegang"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "what-is-an-ssh-key": {
       "title": "Wat Is een SSH-sleutel? Openbare Sleutels, Privésleutels en Sleutelparen Uitgelegd",
@@ -136,7 +136,7 @@
         "ssh-keygen"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-command": {
       "title": "Het SSH-commando: Volledige Referentie met Voorbeelden voor Linux, Mac en Windows",
@@ -154,7 +154,7 @@
         "OpenSSH"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "how-to-set-up-ssh": {
       "title": "SSH Instellen: Een Volledige Stapsgewijze Handleiding voor Linux, Mac en Windows",
@@ -172,7 +172,7 @@
         "ssh-agent"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "generate-ssh-key": {
       "title": "SSH-sleutel genereren: online tool en ssh-keygen-opdrachten",
@@ -187,7 +187,7 @@
         "rsa ssh sleutel"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-keygen": {
       "title": "ssh-keygen-opdracht: SSH-sleutels maken met voorbeelden",
@@ -201,7 +201,7 @@
         "ssh fingerprint"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     }
   },
   "pl": {
@@ -221,7 +221,7 @@
         "bezpieczny dostęp zdalny"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "what-is-an-ssh-key": {
       "title": "Czym Jest Klucz SSH? Klucze Publiczne, Prywatne i Pary Kluczy Wyjaśnione",
@@ -239,7 +239,7 @@
         "ssh-keygen"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-command": {
       "title": "Polecenie SSH: Kompletny Przewodnik z Przykładami dla Linux, Mac i Windows",
@@ -257,7 +257,7 @@
         "OpenSSH"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "how-to-set-up-ssh": {
       "title": "Jak Skonfigurować SSH: Kompletny Przewodnik Krok po Kroku dla Linux, Mac i Windows",
@@ -275,7 +275,7 @@
         "ssh-agent"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "generate-ssh-key": {
       "title": "Generowanie klucza SSH: narzędzie online i polecenia ssh-keygen",
@@ -290,7 +290,7 @@
         "rsa ssh"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-keygen": {
       "title": "Polecenie ssh-keygen: tworzenie kluczy SSH na przykładach",
@@ -303,7 +303,7 @@
         "fingerprint klucza ssh"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     }
   }
 }

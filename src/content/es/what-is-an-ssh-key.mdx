@@ -8,17 +8,15 @@ Para claves nuevas, Ed25519 suele ser la mejor opción. Usa RSA de 4096 bits cua
 
 ## Cómo funcionan las claves SSH
 
-Las claves SSH se basan en la **criptografía asimétrica**, también llamada criptografía de clave pública. A diferencia de la criptografía simétrica (donde una única clave secreta tanto cifra como descifra los datos), los sistemas asimétricos utilizan pares de claves matemáticamente vinculadas, donde los datos cifrados con una clave solo pueden descifrarse con la otra.
+La autenticación SSH por clave pública usa firmas digitales. La clave privada firma los datos de autenticación y la pública verifica la firma; no se cifra y descifra un desafío del servidor.
 
 Este es el flujo de autenticación cuando usas una clave SSH para iniciar sesión en un servidor:
 
 1. Ejecutas `ssh user@server.example.com`.
 2. El servidor busca tu clave pública en `~/.ssh/authorized_keys`.
-3. El servidor genera un desafío aleatorio y lo cifra con tu clave pública.
-4. Tu cliente SSH descifra el desafío usando tu clave privada.
-5. El cliente envía una prueba criptográfica (derivada del desafío descifrado y del ID de sesión) de vuelta al servidor.
-6. El servidor verifica la prueba. Solo el poseedor de la clave privada podría haberla producido.
-7. La autenticación es satisfactoria. Ninguna contraseña sale de tu máquina.
+3. El cliente firma la solicitud de autenticación, incluido el identificador de sesión, con su clave privada.
+4. El servidor verifica la firma con la clave pública autorizada.
+5. La autenticación es satisfactoria. Ninguna contraseña sale de tu máquina.
 
 Esta es la clave del asunto: **tu clave privada nunca viaja por la red**. El servidor solo ve tu clave pública y las pruebas criptográficas que produces. Aunque alguien intercepte todos los paquetes de tu sesión SSH, no obtiene nada que le ayude a suplantarte.
 
@@ -78,8 +76,8 @@ Ed25519 se introdujo en OpenSSH en la versión 6.5 (2014) y es ahora el valor pr
 **Ventajas de Ed25519:**
 - **Compacto** — las claves tienen solo 68 caracteres (clave pública) y los ficheros son pequeños
 - **Rápido** — la generación y verificación de firmas son extremadamente veloces
-- **Seguro por diseño** — no es vulnerable a ataques de canal lateral que afectan a algunas implementaciones RSA
-- **Tamaño de clave fijo** — nivel de seguridad de 256 bits, sin necesidad de elegir un tamaño de clave
+- **Seguro por diseño** — diseñado para facilitar implementaciones resistentes a ataques de canal lateral; la resistencia depende de la implementación
+- **Tamaño de clave fijo** — clave pública de 256 bits con aproximadamente 128 bits de seguridad clásica; no hay que elegir tamaño
 - **Determinista** — las firmas son deterministas, lo que elimina una clase de fallos del generador de números aleatorios
 
 ```bash
@@ -354,3 +352,9 @@ Si pierdes tu clave privada y no tienes una copia de seguridad, pierdes la capac
 - <a href="/es/what-is-ssh/">¿Qué es SSH? La guía completa sobre Secure Shell</a>
 - <a href="/es/ssh-command/">El comando SSH: referencia completa con ejemplos</a>
 - <a href="/es/how-to-set-up-ssh/">Cómo configurar SSH: guía completa paso a paso</a>
+
+## Fuentes y documentación oficial
+
+- [RFC 4252 §7 — SSH public-key authentication](https://www.rfc-editor.org/rfc/rfc4252.html#section-7)
+- [RFC 8032 — Ed25519 signatures and security considerations](https://www.rfc-editor.org/rfc/rfc8032.html)
+- [OpenSSH ssh-keygen(1)](https://man.openbsd.org/ssh-keygen)

@@ -11,7 +11,7 @@
         "protocol ssh"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "what-is-an-ssh-key": {
       "title": "Ce este o cheie SSH? Cheile publice, cheile private și perechile de chei explicate",
@@ -24,7 +24,7 @@
         "cheie github ssh"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-command": {
       "title": "Comanda SSH: Referință completă cu exemple pentru Linux, Mac și Windows",
@@ -37,7 +37,7 @@
         "comanda powershell ssh"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "how-to-set-up-ssh": {
       "title": "Cum să configurați SSH: un ghid complet pas cu pas pentru Linux, Mac și Windows",
@@ -50,7 +50,7 @@
         "permisiunea refuzată cheie publică"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "generate-ssh-key": {
       "title": "Generare cheie SSH: instrument online și comenzi ssh-keygen",
@@ -65,7 +65,7 @@
         "rsa ssh"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-keygen": {
       "title": "Comanda ssh-keygen: exemple pentru chei SSH",
@@ -78,7 +78,7 @@
         "fingerprint cheie ssh"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     }
   },
   "cs": {
@@ -93,7 +93,7 @@
         "ssh protokol"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "what-is-an-ssh-key": {
       "title": "Co je klíč SSH? Vysvětlení veřejných klíčů, soukromých klíčů a párů klíčů",
@@ -106,7 +106,7 @@
         "github ssh klíč"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-command": {
       "title": "Příkaz SSH: Kompletní reference s příklady pro Linux, Mac a Windows",
@@ -119,7 +119,7 @@
         "příkaz powershell ssh"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "how-to-set-up-ssh": {
       "title": "Jak nastavit SSH: Kompletní průvodce krok za krokem pro Linux, Mac a Windows",
@@ -132,7 +132,7 @@
         "povolení odepřeno veřejný klíč"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "generate-ssh-key": {
       "title": "Vygenerovat SSH klíč: online nástroj a příkazy ssh-keygen",
@@ -147,7 +147,7 @@
         "rsa ssh"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-keygen": {
       "title": "Příkaz ssh-keygen: tvorba SSH klíčů na příkladech",
@@ -160,7 +160,7 @@
         "fingerprint ssh klíče"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     }
   },
   "el": {
@@ -175,7 +175,7 @@
         "πρωτόκολλο ssh"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "what-is-an-ssh-key": {
       "title": "Τι είναι ένα κλειδί SSH; Επεξήγηση των δημόσιων κλειδιών, των ιδιωτικών κλειδιών και των ζευγών κλειδιών",
@@ -188,7 +188,7 @@
         "κλειδί github ssh"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-command": {
       "title": "Η εντολή SSH: Πλήρης αναφορά με παραδείγματα για Linux, Mac και Windows",
@@ -201,7 +201,7 @@
         "εντολή powershell ssh"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "how-to-set-up-ssh": {
       "title": "Πώς να ρυθμίσετε το SSH: Ένας πλήρης οδηγός βήμα προς βήμα για Linux, Mac και Windows",
@@ -214,7 +214,7 @@
         "δεν επιτρέπεται η άδεια δημόσιου κλειδιού"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "generate-ssh-key": {
       "title": "Δημιουργία SSH key: online εργαλείο και εντολές ssh-keygen",
@@ -228,7 +228,7 @@
         "rsa ssh"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-keygen": {
       "title": "Εντολή ssh-keygen: παραδείγματα δημιουργίας SSH keys",
@@ -241,7 +241,7 @@
         "fingerprint ssh key"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     }
   },
   "hu": {
@@ -256,7 +256,7 @@
         "ssh protokoll"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "what-is-an-ssh-key": {
       "title": "Mi az SSH kulcs? Nyilvános kulcsok, privát kulcsok és kulcspárok magyarázata",
@@ -269,7 +269,7 @@
         "github ssh kulcs"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-command": {
       "title": "Az SSH-parancs: Teljes referencia példákkal Linuxra, Macre és Windowsra",
@@ -282,7 +282,7 @@
         "powershell ssh parancs"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "how-to-set-up-ssh": {
       "title": "Az SSH beállítása: Teljes, lépésről lépésre útmutató Linux, Mac és Windows rendszerekhez",
@@ -295,7 +295,7 @@
         "engedély megtagadva nyilvános kulcs"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "generate-ssh-key": {
       "title": "SSH-kulcs létrehozása: online eszköz és ssh-keygen parancsok",
@@ -310,7 +310,7 @@
         "rsa ssh kulcs"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-keygen": {
       "title": "ssh-keygen parancs: SSH-kulcs készítése példákkal",
@@ -324,7 +324,7 @@
         "ssh fingerprint"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     }
   }
 }

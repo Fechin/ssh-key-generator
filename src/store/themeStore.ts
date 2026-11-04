@@ -27,6 +27,7 @@ const getStoredTheme = (): Theme => {
 
 const applyTheme = (theme: Theme): 'light' | 'dark' => {
   const resolved = theme === 'system' ? getSystemTheme() : theme
+  if (typeof document === 'undefined') return resolved
 
   // Use class-based dark mode
   if (resolved === 'dark') {

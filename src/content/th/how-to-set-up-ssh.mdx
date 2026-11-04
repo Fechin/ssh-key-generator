@@ -40,7 +40,7 @@ ssh -T git@github.com
 
 ### ตัวเลือก A: ใช้ตัวสร้างออนไลน์
 
-หากคุณต้องการอินเทอร์เฟซแบบกราฟิก <a href="/">ตัวสร้างคีย์ SSH ออนไลน์ฟรี</a>ของเราจะสร้างคู่คีย์ Ed25519 หรือ RSA ในเบราว์เซอร์ของคุณ รหัสส่วนตัวถูกสร้างขึ้นในเครื่องโดยใช้ Web Crypto API โดยไม่มีการส่งข้อมูลใดไปยังเซิร์ฟเวอร์ของเรา ดาวน์โหลดทั้งสองไฟล์และบันทึกไปที่ `~/.ssh/` (Linux/macOS) หรือ `C:\Users\YourName\.ssh\` (Windows)
+หากคุณต้องการอินเทอร์เฟซแบบกราฟิก <a href="/">ตัวสร้างคีย์ SSH ออนไลน์ฟรี</a>ของเราจะสร้างคู่คีย์ Ed25519 หรือ RSA ในเบราว์เซอร์ของคุณ คีย์ส่วนตัวที่สร้างและวลีรหัสผ่านจะไม่ถูกอัปโหลดไปยังเซิร์ฟเวอร์ของเรา ดาวน์โหลดทั้งสองไฟล์และบันทึกไปที่ `~/.ssh/` (Linux/macOS) หรือ `C:\Users\YourName\.ssh\` (Windows)
 
 ### ตัวเลือก B: ใช้ ssh-keygen บน Command Line
 
@@ -559,7 +559,7 @@ ssh-keygen -lf ~/.ssh/authorized_keys
 
 ## สร้างคีย์ SSH ของคุณฟรี
 
-หากคุณยังไม่ได้สร้างคู่คีย์ SSH โปรแกรมสร้างออนไลน์ฟรีของเราจะสร้างคีย์ Ed25519 หรือ RSA โดยตรงในเบราว์เซอร์ของคุณภายในไม่กี่วินาที ไม่จำเป็นต้องติดตั้ง ไม่มีการส่งข้อมูลใดๆ ไปยังเซิร์ฟเวอร์ของเรา — การสร้างเกิดขึ้นบนอุปกรณ์ของคุณทั้งหมด
+การสร้างคีย์ Ed25519 และ RSA ทำในเบราว์เซอร์ของคุณ คีย์ส่วนตัวที่สร้างและวลีรหัสผ่านจะไม่ถูกอัปโหลดไปยังเซิร์ฟเวอร์ของเรา
 
 <a href="/">สร้างคีย์ SSH ของคุณฟรี →</a>
 
@@ -569,3 +569,9 @@ ssh-keygen -lf ~/.ssh/authorized_keys
 - <a href="/th/what-is-ssh/">SSH คืออะไร? คู่มือฉบับสมบูรณ์เกี่ยวกับ Secure Shell</a>
 - <a href="/th/what-is-an-ssh-key/">คีย์ SSH คืออะไร อธิบายกุญแจสาธารณะ กุญแจส่วนตัว และคู่กุญแจ</a>
 - <a href="/th/ssh-command/">คำสั่ง SSH: การอ้างอิงที่สมบูรณ์พร้อมตัวอย่าง</a>
+
+## แหล่งอ้างอิงและเอกสารทางการ
+
+- [GitHub Docs — Generating a new SSH key and adding it to the ssh-agent](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+- [GitLab Docs — Use SSH keys to communicate with GitLab](https://docs.gitlab.com/user/ssh/)
+- [OpenSSH sshd_config(5)](https://man.openbsd.org/sshd_config)

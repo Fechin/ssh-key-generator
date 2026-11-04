@@ -94,6 +94,7 @@ const getStoredLanguage = (): Language => {
 }
 
 const applyLanguage = (language: Language) => {
+  if (typeof document === 'undefined') return
   document.documentElement.lang = LANGUAGE_BY_CODE[language].htmlLang
   document.documentElement.dir = getLanguageDirection(language)
 }
@@ -101,20 +102,24 @@ const applyLanguage = (language: Language) => {
 const initialLanguage = getStoredLanguage()
 applyLanguage(initialLanguage)
 
-export const useLanguageStore = create<LanguageState>((set) => ({
-  language: initialLanguage,
+export const useLanguageStore = create<LanguageState>((set, _get, api) => {
+  // Build-time routes change language in one process. Read that route's current
+  // state for SSR instead of Zustand's initial English snapshot.
+  if (typeof window === 'undefined') api.getInitialState = api.getState
+  return {
+    language: initialLanguage,
+    setLanguage: (language) => {
+      applyLanguage(language)
+      set({ language })
 
-  setLanguage: (language) => {
-    applyLanguage(language)
-    set({ language })
-
-    try {
-      localStorage.setItem('ssh-key-generator-language', language)
-    } catch {
-      // Ignore localStorage errors
-    }
+      try {
+        localStorage.setItem('ssh-key-generator-language', language)
+      } catch {
+        // Ignore localStorage errors
+      }
+    },
   }
-}))
+})
 
 // Function to sync language from URL path (called from App.tsx)
 export const syncLanguageFromPath = () => {

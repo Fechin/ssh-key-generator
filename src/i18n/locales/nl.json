@@ -193,6 +193,12 @@
     "copyright": "© {year} SSH Key Generator. Open source onder MIT-licentie."
   },
   "seo": {
+    "sources": {
+      "title": "Bronnen en controle",
+      "reviewed": "Laatst gecontroleerd",
+      "openssh": "OpenSSH ssh-keygen-handleiding",
+      "github": "GitHub: Een nieuwe SSH-sleutel genereren"
+    },
     "whatIs": {
       "title": "Wat is een Online SSH-sleutelgenerator?",
       "desc": "De online SSH-sleutelgenerator maakt het sleutelpaar in je browser. De publieke sleutel gaat naar GitHub, GitLab, Bitbucket of je server; de private sleutel blijft op je eigen machine."
@@ -245,10 +251,10 @@
       "rsaSigSize": "256-512 bytes",
       "ed25519Security": "~128-bit equivalent",
       "rsaSecurity": "~112-128-bit (4096)",
-      "ed25519Performance": "Zeer Snel (10x sneller)",
+      "ed25519Performance": "Afhankelijk van de implementatie",
       "rsaPerformance": "Tragere generatie",
       "ed25519Compat": "OpenSSH 6.5+ (2014)",
-      "rsaCompat": "Universeel (alle systemen)",
+      "rsaCompat": "Breed ondersteund; controleer het serverbeleid",
       "ed25519Quantum": "Niet kwantumveilig",
       "rsaQuantum": "Niet kwantumveilig",
       "ed25519BestFor": "GitHub, GitLab, moderne servers",

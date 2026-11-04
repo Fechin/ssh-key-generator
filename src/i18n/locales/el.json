@@ -193,6 +193,12 @@
     "copyright": "© {year} SSH Key Generator. Ανοιχτός κώδικας με άδεια MIT."
   },
   "seo": {
+    "sources": {
+      "title": "Πηγές και έλεγχος",
+      "reviewed": "Τελευταίος έλεγχος",
+      "openssh": "Εγχειρίδιο OpenSSH ssh-keygen",
+      "github": "GitHub: Δημιουργία νέου κλειδιού SSH"
+    },
     "whatIs": {
       "title": "Τι είναι ένας Online SSH Key Generator;",
       "desc": "Το online generator δημιουργεί το ζεύγος keys στον browser. Το public key μπαίνει σε GitHub, GitLab, Bitbucket ή server· το private key μένει στον υπολογιστή σας."
@@ -245,10 +251,10 @@
       "rsaSigSize": "256-512 bytes",
       "ed25519Security": "~128-bit ισοδύναμο",
       "rsaSecurity": "~112-128-bit (4096)",
-      "ed25519Performance": "Πολύ Γρήγορο (10x ταχύτερο)",
+      "ed25519Performance": "Εξαρτάται από την υλοποίηση",
       "rsaPerformance": "Πιο αργή δημιουργία",
       "ed25519Compat": "OpenSSH 6.5+ (2014)",
-      "rsaCompat": "Καθολική (όλα τα συστήματα)",
+      "rsaCompat": "Ευρεία υποστήριξη· ελέγξτε την πολιτική του διακομιστή",
       "ed25519Quantum": "Όχι quantum-safe",
       "rsaQuantum": "Όχι quantum-safe",
       "ed25519BestFor": "GitHub, GitLab, σύγχρονοι servers",

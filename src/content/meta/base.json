@@ -11,7 +11,7 @@
         "ssh protocol"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "what-is-an-ssh-key": {
       "title": "What Is an SSH Key? Public and Private Keys Explained",
@@ -24,7 +24,7 @@
         "github ssh key"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-command": {
       "title": "SSH Command Examples: Syntax, Flags, Tunnels, and Keys",
@@ -37,7 +37,7 @@
         "powershell ssh command"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "how-to-set-up-ssh": {
       "title": "How to Set Up SSH Keys for GitHub, Linux, Mac, and Windows",
@@ -50,7 +50,7 @@
         "permission denied publickey"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "generate-ssh-key": {
       "title": "Generate SSH Key: Online Tool and ssh-keygen Commands",
@@ -65,7 +65,7 @@
         "github ssh key"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-keygen": {
       "title": "ssh-keygen Command: Create SSH Keys with Examples",
@@ -79,7 +79,7 @@
         "ssh key fingerprint"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     }
   },
   "zh": {
@@ -93,7 +93,7 @@
         "ssh协议"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "what-is-an-ssh-key": {
       "title": "SSH 密钥是什么？公钥、私钥与密钥对完整说明",
@@ -105,7 +105,7 @@
         "github ssh密钥"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-command": {
       "title": "SSH 命令完整参考：Linux、Mac 和 Windows 示例",
@@ -118,7 +118,7 @@
         "powershell ssh"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "how-to-set-up-ssh": {
       "title": "如何设置 SSH：Linux、Mac 和 Windows 完整分步指南",
@@ -131,7 +131,7 @@
         "ssh密钥配置"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "generate-ssh-key": {
       "title": "生成 SSH 密钥：在线工具与 ssh-keygen 命令",
@@ -146,7 +146,7 @@
         "RSA SSH 密钥"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-keygen": {
       "title": "ssh-keygen 命令：生成 SSH 密钥的实用示例",
@@ -160,7 +160,7 @@
         "SSH 指纹"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     }
   }
 }

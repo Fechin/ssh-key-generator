@@ -193,6 +193,12 @@
     "copyright": "{year} מחולל מפתחות SSH. קוד פתוח תחת רישיון MIT."
   },
   "seo": {
+    "sources": {
+      "title": "מקורות ובדיקה",
+      "reviewed": "נבדק לאחרונה",
+      "openssh": "מדריך OpenSSH ssh-keygen",
+      "github": "GitHub: יצירת מפתח SSH חדש"
+    },
     "whatIs": {
       "title": "מהו מחולל מפתחות SSH מקוון?",
       "desc": "מחולל מפתחות SSH אונליין יוצר את זוג המפתחות בדפדפן. את המפתח הציבורי מוסיפים ל-GitHub, GitLab, Bitbucket או לשרת; המפתח הפרטי נשאר אצלכם במחשב."
@@ -245,10 +251,10 @@
       "rsaSigSize": "256-512 בתים",
       "ed25519Security": "שווה ערך ל-~128 סיביות",
       "rsaSecurity": "~112-128 סיביות (4096)",
-      "ed25519Performance": "מהיר מאוד (פי 10)",
+      "ed25519Performance": "תלוי במימוש",
       "rsaPerformance": "יצירה איטית יותר",
       "ed25519Compat": "OpenSSH 6.5+ (2014)",
-      "rsaCompat": "אוניברסלי (כל המערכות)",
+      "rsaCompat": "תמיכה רחבה; בדקו את מדיניות השרת",
       "ed25519Quantum": "לא עמיד קוונטית",
       "rsaQuantum": "לא עמיד קוונטית",
       "ed25519BestFor": "GitHub, GitLab, שרתים מודרניים",

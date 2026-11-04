@@ -77,7 +77,7 @@ SSH 支援兩種主要的驗證方式：密碼和 **SSH 金鑰**。SSH 金鑰是
 **私密金鑰**保存在您的本機，可選擇使用密碼短語加以保護。**公開金鑰**放置在您想要存取的任何伺服器上，存放在名為 `~/.ssh/authorized_keys` 的檔案中。連線時，伺服器發出加密挑戰，只有持有對應私密金鑰的人才能回答。不會有密碼透過網路傳送。
 
 這種方式有幾個優點：
-- **不受暴力破解影響** — 沒有什麼可以猜測的。一個 256 位元的 Ed25519 金鑰有 2²⁵⁶ 個可能值。
+- **Ed25519** — 256 位元公開金鑰提供約 128 位元傳統安全性，無需選擇金鑰大小.
 - **無密碼可竊取** — 即使有人攔截握手過程，也得不到任何有用的資訊。
 - **可自動化** — 腳本和 CI/CD 流水線可以在無人干預的情況下進行驗證。
 - **可撤銷** — 從 `authorized_keys` 中移除公開金鑰即可立即撤銷存取權限。
@@ -271,7 +271,7 @@ SSH 和 HTTPS 都加密網路流量，但設計用途不同。**HTTPS** 保護�
 
 ## 立即產生您的 SSH 金鑰
 
-基於 SSH 金鑰的驗證比密碼更安全、更便利。如果您還未設定 SSH 金鑰，我們的免費線上產生器可以在您的瀏覽器中即時建立 Ed25519 或 RSA 金鑰對——無需安裝，不會將任何內容傳送到我們的伺服器。
+Ed25519 與 RSA 金鑰產生在您的瀏覽器中進行，產生的私密金鑰與密碼短語不會上傳到我們的伺服器。
 
 <a href="/">立即產生您的 SSH 金鑰對 →</a>
 
@@ -281,3 +281,9 @@ SSH 和 HTTPS 都加密網路流量，但設計用途不同。**HTTPS** 保護�
 - <a href="/zh-Hant/what-is-an-ssh-key/">什麼是 SSH 金鑰？公開金鑰、私密金鑰與金鑰對詳解</a>
 - <a href="/zh-Hant/ssh-command/">SSH 指令：含範例的完整參考指南</a>
 - <a href="/zh-Hant/how-to-set-up-ssh/">如何設定 SSH：完整的逐步指南</a>
+
+## 來源與官方文件
+
+- [RFC 4251 — The Secure Shell (SSH) Protocol Architecture](https://www.rfc-editor.org/rfc/rfc4251.html)
+- [RFC 4252 §7 — SSH public-key authentication](https://www.rfc-editor.org/rfc/rfc4252.html#section-7)
+- [RFC 8032 — Ed25519 signatures and security considerations](https://www.rfc-editor.org/rfc/rfc8032.html)

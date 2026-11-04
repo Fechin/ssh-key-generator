@@ -40,7 +40,7 @@ Bạn cần cặp khóa trước khi có thể làm bất cứ điều gì khác
 
 ### Tùy Chọn A: Dùng Trình Tạo Trực Tuyến
 
-Nếu bạn thích giao diện đồ họa, <a href="/">trình tạo SSH key trực tuyến miễn phí</a> của chúng tôi tạo cặp khóa Ed25519 hoặc RSA trong trình duyệt của bạn. Khóa riêng tư được tạo cục bộ bằng Web Crypto API — không có gì được gửi đến server của chúng tôi. Tải xuống cả hai tệp và lưu vào `~/.ssh/` (Linux/macOS) hoặc `C:\Users\YourName\.ssh\` (Windows).
+Nếu bạn thích giao diện đồ họa, <a href="/">trình tạo SSH key trực tuyến miễn phí</a> của chúng tôi tạo cặp khóa Ed25519 hoặc RSA trong trình duyệt của bạn. Khóa riêng được tạo và cụm mật khẩu không được tải lên máy chủ của chúng tôi. Tải xuống cả hai tệp và lưu vào `~/.ssh/` (Linux/macOS) hoặc `C:\Users\YourName\.ssh\` (Windows).
 
 ### Tùy Chọn B: Dùng ssh-keygen trên Dòng Lệnh
 
@@ -559,7 +559,7 @@ Khớp dấu vân tay để xác định và xóa khóa đúng.
 
 ## Tạo SSH Key Của Bạn Miễn Phí
 
-Nếu bạn chưa tạo cặp SSH key, trình tạo trực tuyến miễn phí của chúng tôi tạo khóa Ed25519 hoặc RSA trực tiếp trong trình duyệt của bạn trong vài giây. Không cần cài đặt, không có gì được gửi đến server của chúng tôi — việc tạo hoàn toàn xảy ra trên thiết bị của bạn.
+Việc tạo khóa Ed25519 và RSA diễn ra trong trình duyệt của bạn. Khóa riêng được tạo và cụm mật khẩu không được tải lên máy chủ của chúng tôi.
 
 <a href="/">Tạo SSH key của bạn miễn phí →</a>
 
@@ -569,3 +569,9 @@ Nếu bạn chưa tạo cặp SSH key, trình tạo trực tuyến miễn phí c
 - <a href="/vi/what-is-ssh/">SSH Là Gì? Hướng Dẫn Đầy Đủ về Secure Shell</a>
 - <a href="/vi/what-is-an-ssh-key/">SSH Key Là Gì? Khóa Công Khai, Khóa Riêng Tư và Cặp Khóa Được Giải Thích</a>
 - <a href="/vi/ssh-command/">Lệnh SSH: Tài Liệu Tham Khảo Đầy Đủ với Ví Dụ</a>
+
+## Nguồn và tài liệu chính thức
+
+- [GitHub Docs — Generating a new SSH key and adding it to the ssh-agent](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+- [GitLab Docs — Use SSH keys to communicate with GitLab](https://docs.gitlab.com/user/ssh/)
+- [OpenSSH sshd_config(5)](https://man.openbsd.org/sshd_config)

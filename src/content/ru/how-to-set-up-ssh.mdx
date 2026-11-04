@@ -40,7 +40,7 @@ ssh -T git@github.com
 
 ### Вариант А: Используйте онлайн-генератор
 
-Если предпочитаете графический интерфейс, наш <a href="/">бесплатный онлайн-генератор SSH-ключей</a> создаёт пары ключей Ed25519 или RSA в браузере. Приватный ключ генерируется локально с помощью Web Crypto API — ничего не отправляется на наши серверы. Загрузите оба файла и сохраните их в `~/.ssh/` (Linux/macOS) или `C:\Users\YourName\.ssh\` (Windows).
+Если предпочитаете графический интерфейс, наш <a href="/">бесплатный онлайн-генератор SSH-ключей</a> создаёт пары ключей Ed25519 или RSA в браузере. Созданные закрытые ключи и парольные фразы не загружаются на наши серверы. Загрузите оба файла и сохраните их в `~/.ssh/` (Linux/macOS) или `C:\Users\YourName\.ssh\` (Windows).
 
 ### Вариант Б: Используйте ssh-keygen в командной строке
 
@@ -559,7 +559,7 @@ ssh-keygen -lf ~/.ssh/authorized_keys
 
 ## Создайте SSH-ключи бесплатно
 
-Если вы ещё не сгенерировали пару SSH-ключей, наш бесплатный онлайн-генератор создаёт ключи Ed25519 или RSA прямо в браузере за считанные секунды. Установка не требуется, ничего не отправляется на наши серверы — генерация происходит полностью на вашем устройстве.
+Генерация ключей Ed25519 и RSA выполняется в вашем браузере. Созданные закрытые ключи и парольные фразы не загружаются на наши серверы.
 
 <a href="/">Создать SSH-ключи бесплатно →</a>
 
@@ -569,3 +569,9 @@ ssh-keygen -lf ~/.ssh/authorized_keys
 - <a href="/ru/what-is-ssh/">Что такое SSH? Полное руководство по Secure Shell</a>
 - <a href="/ru/what-is-an-ssh-key/">Что такое SSH-ключ? Открытые ключи, приватные ключи и пары ключей</a>
 - <a href="/ru/ssh-command/">Команда SSH: полный справочник с примерами</a>
+
+## Источники и официальная документация
+
+- [GitHub Docs — Generating a new SSH key and adding it to the ssh-agent](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+- [GitLab Docs — Use SSH keys to communicate with GitLab](https://docs.gitlab.com/user/ssh/)
+- [OpenSSH sshd_config(5)](https://man.openbsd.org/sshd_config)

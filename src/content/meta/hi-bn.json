@@ -14,7 +14,7 @@
         "SSH key"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "what-is-an-ssh-key": {
       "title": "SSH Key क्या है? Public Keys, Private Keys, और Key Pairs की व्याख्या",
@@ -31,7 +31,7 @@
         "GitHub SSH key"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-command": {
       "title": "SSH Command: Linux, Mac और Windows के लिए उदाहरणों के साथ पूर्ण संदर्भ",
@@ -48,7 +48,7 @@
         "ssh config file"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "how-to-set-up-ssh": {
       "title": "SSH कैसे Set Up करें: Linux, Mac और Windows के लिए सम्पूर्ण Step-by-Step गाइड",
@@ -65,7 +65,7 @@
         "ssh-agent"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "generate-ssh-key": {
       "title": "SSH key कैसे generate करें: online tool और ssh-keygen",
@@ -79,7 +79,7 @@
         "rsa ssh key"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-keygen": {
       "title": "ssh-keygen command: SSH key बनाने के उदाहरण",
@@ -92,7 +92,7 @@
         "ssh key fingerprint"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     }
   },
   "bn": {
@@ -110,7 +110,7 @@
         "SSH key"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "what-is-an-ssh-key": {
       "title": "SSH Key কী? Public Key, Private Key, ও Key Pair ব্যাখ্যা",
@@ -127,7 +127,7 @@
         "GitHub SSH key"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-command": {
       "title": "SSH Command: Linux, Mac ও Windows-এর জন্য উদাহরণসহ সম্পূর্ণ রেফারেন্স",
@@ -144,7 +144,7 @@
         "ssh config file"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "how-to-set-up-ssh": {
       "title": "SSH কীভাবে সেট আপ করবেন: Linux, Mac ও Windows-এর জন্য সম্পূর্ণ ধাপে ধাপে গাইড",
@@ -161,7 +161,7 @@
         "ssh-agent"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "generate-ssh-key": {
       "title": "SSH key তৈরি করুন: online tool ও ssh-keygen command",
@@ -175,7 +175,7 @@
         "rsa ssh key"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-keygen": {
       "title": "ssh-keygen command: SSH key তৈরির উদাহরণ",
@@ -188,7 +188,7 @@
         "ssh key fingerprint"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     }
   }
 }

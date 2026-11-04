@@ -9,17 +9,15 @@ Vælg Ed25519 til de fleste nye nøgler. Brug RSA 4096, hvis en ældre SSH-serve
 
 ## Hvordan SSH-nøgler fungerer
 
-SSH-nøgler er baseret på **asymmetrisk kryptografi**, også kaldet offentlig-nøglekryptografi. I modsætning til symmetrisk kryptografi (hvor en enkelt hemmelig nøgle både krypterer og dekrypterer data), bruger asymmetriske systemer matematisk forbundne nøglepar, hvor data krypteret med én nøgle kun kan dekrypteres med den anden.
+SSH-godkendelse med offentlig nøgle bruger digitale signaturer. Den private nøgle signerer godkendelsesdata, og den offentlige verificerer signaturen; serverens udfordring krypteres og dekrypteres ikke.
 
 Her er godkendelsesflowet, når du bruger en SSH-nøgle til at logge ind på en server:
 
 1. Du kører `ssh user@server.example.com`.
 2. Serveren slår din offentlige nøgle op i `~/.ssh/authorized_keys`.
-3. Serveren genererer en tilfældig udfordring og krypterer den med din offentlige nøgle.
-4. Din SSH-klient dekrypterer udfordringen ved hjælp af din private nøgle.
-5. Klienten sender et kryptografisk bevis (afledt af den dekrypterede udfordring og sessions-ID'et) tilbage til serveren.
-6. Serveren verificerer beviset. Kun indehaveren af den private nøgle kunne have produceret det.
-7. Godkendelsen lykkes. Ingen adgangskode forlader din maskine.
+3. Klienten signerer godkendelsesanmodningen, inklusive sessions-id, med sin private nøgle.
+4. Serveren verificerer signaturen med den godkendte offentlige nøgle.
+5. Godkendelsen lykkes. Ingen adgangskode forlader din maskine.
 
 Dette er den vigtigste indsigt: **din private nøgle rejser aldrig over netværket**. Serveren ser kun din offentlige nøgle og de kryptografiske beviser, du producerer. Selv hvis nogen opfanger hvert eneste pakke i din SSH-session, opnår de intet, der hjælper dem med at udgive sig for at være dig.
 
@@ -79,8 +77,8 @@ Ed25519 blev introduceret i OpenSSH version 6.5 (2014) og er nu den anbefalede s
 **Fordele ved Ed25519:**
 - **Kompakt** — nøgler er kun 68 tegn (offentlig nøgle) og filer er minimale
 - **Hurtig** — signaturgenerering og -verifikation er ekstremt hurtig
-- **Sikker by design** — ikke sårbar over for sidekanal-angreb, der påvirker visse RSA-implementationer
-- **Fast nøglestørrelse** — 256-bit sikkerhedsniveau, intet behov for at vælge en nøglestørrelse
+- **Sikker by design** — udformet til implementeringer med modstand mod sidekanalangreb; modstanden afhænger af implementeringen
+- **Fast nøglestørrelse** — 256-bit offentlig nøgle med omtrent 128 bits klassisk sikkerhed; ingen valg af nøglestørrelse nødvendigt
 - **Deterministisk** — signaturer er deterministiske, hvilket eliminerer en klasse af tilfældigtalsgeneratorfejl
 
 ```bash
@@ -355,3 +353,9 @@ Klar til at oprette dine SSH-nøgler? Vores gratis onlinegenerator opretter Ed25
 - <a href="/da/what-is-ssh/">Hvad er SSH? Den komplette guide til Secure Shell</a>
 - <a href="/da/ssh-command/">SSH-kommandoen: Komplet reference med eksempler</a>
 - <a href="/da/how-to-set-up-ssh/">Sådan konfigurerer du SSH: En komplet trin-for-trin-guide</a>
+
+## Kilder og officiel dokumentation
+
+- [RFC 4252 §7 — SSH public-key authentication](https://www.rfc-editor.org/rfc/rfc4252.html#section-7)
+- [RFC 8032 — Ed25519 signatures and security considerations](https://www.rfc-editor.org/rfc/rfc8032.html)
+- [OpenSSH ssh-keygen(1)](https://man.openbsd.org/ssh-keygen)

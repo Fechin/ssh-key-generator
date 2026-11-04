@@ -11,7 +11,7 @@
         "ssh protokolü"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "what-is-an-ssh-key": {
       "title": "SSH Anahtarı Nedir? Genel Anahtarlar, Özel Anahtarlar ve Anahtar Çiftlerinin Açıklaması",
@@ -24,7 +24,7 @@
         "github ssh anahtarı"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-command": {
       "title": "SSH Komutu: Linux, Mac ve Windows Örnekleriyle Tam Referans",
@@ -37,7 +37,7 @@
         "powershell ssh komutu"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "how-to-set-up-ssh": {
       "title": "SSH Nasıl Kurulur: Linux, Mac ve Windows için Tam Adım Adım Kılavuz",
@@ -50,7 +50,7 @@
         "izin reddedildi genel anahtar"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "generate-ssh-key": {
       "title": "SSH anahtarı oluşturma: çevrimiçi araç ve ssh-keygen komutları",
@@ -65,7 +65,7 @@
         "rsa ssh"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-keygen": {
       "title": "ssh-keygen komutu: SSH anahtarı oluşturma örnekleri",
@@ -78,7 +78,7 @@
         "ssh fingerprint"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     }
   },
   "id": {
@@ -93,7 +93,7 @@
         "protokol ssh"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "what-is-an-ssh-key": {
       "title": "Apa Itu Kunci SSH? Penjelasan Kunci Publik, Kunci Pribadi, dan Pasangan Kunci",
@@ -106,7 +106,7 @@
         "kunci ssh github"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-command": {
       "title": "Perintah SSH: Referensi Lengkap dengan Contoh untuk Linux, Mac, dan Windows",
@@ -119,7 +119,7 @@
         "perintah PowerShell ssh"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "how-to-set-up-ssh": {
       "title": "Cara Mengatur SSH: Panduan Langkah-demi-Langkah Lengkap untuk Linux, Mac, dan Windows",
@@ -132,7 +132,7 @@
         "izin ditolak kunci publik"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "generate-ssh-key": {
       "title": "Buat kunci SSH: generator online dan perintah ssh-keygen",
@@ -147,7 +147,7 @@
         "rsa ssh"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-keygen": {
       "title": "Perintah ssh-keygen: contoh membuat kunci SSH",
@@ -160,7 +160,7 @@
         "fingerprint kunci ssh"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     }
   },
   "vi": {
@@ -175,7 +175,7 @@
         "giao thức ssh"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "what-is-an-ssh-key": {
       "title": "Khóa SSH là gì? Giải thích về khóa công khai, khóa riêng và cặp khóa",
@@ -188,7 +188,7 @@
         "khóa ssh của github"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-command": {
       "title": "Lệnh SSH: Tham khảo đầy đủ với các ví dụ cho Linux, Mac và Windows",
@@ -201,7 +201,7 @@
         "lệnh ssh powershell"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "how-to-set-up-ssh": {
       "title": "Cách thiết lập SSH: Hướng dẫn từng bước đầy đủ cho Linux, Mac và Windows",
@@ -214,7 +214,7 @@
         "quyền bị từ chối khóa công khai"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "generate-ssh-key": {
       "title": "Tạo SSH key: công cụ online và lệnh ssh-keygen",
@@ -228,7 +228,7 @@
         "rsa ssh key"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-keygen": {
       "title": "Lệnh ssh-keygen: ví dụ tạo SSH key",
@@ -241,7 +241,7 @@
         "fingerprint ssh key"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     }
   },
   "th": {
@@ -256,7 +256,7 @@
         "โปรโตคอล ssh"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "what-is-an-ssh-key": {
       "title": "คีย์ SSH คืออะไร? อธิบายกุญแจสาธารณะ กุญแจส่วนตัว และคู่กุญแจ",
@@ -269,7 +269,7 @@
         "คีย์ GitHub SSH"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-command": {
       "title": "คำสั่ง SSH: การอ้างอิงที่สมบูรณ์พร้อมตัวอย่างสำหรับ Linux, Mac และ Windows",
@@ -282,7 +282,7 @@
         "คำสั่ง PowerShell SSH"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "how-to-set-up-ssh": {
       "title": "วิธีการตั้งค่า SSH: คำแนะนำทีละขั้นตอนฉบับสมบูรณ์สำหรับ Linux, Mac และ Windows",
@@ -295,7 +295,7 @@
         "การอนุญาตถูกปฏิเสธกุญแจสาธารณะ"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "generate-ssh-key": {
       "title": "สร้าง SSH key: เครื่องมือออนไลน์และคำสั่ง ssh-keygen",
@@ -310,7 +310,7 @@
         "rsa ssh key"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-keygen": {
       "title": "คำสั่ง ssh-keygen: ตัวอย่างสร้าง SSH key",
@@ -323,7 +323,7 @@
         "fingerprint ssh key"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     }
   }
 }

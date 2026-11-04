@@ -40,7 +40,7 @@ Du behöver ett nyckelpar innan du kan göra något annat. Nyckelparet består a
 
 ### Alternativ A: Använd onlinegeneratorn
 
-Om du föredrar ett grafiskt gränssnitt skapar vår <a href="/">kostnadsfria SSH-nyckelgenerator online</a> Ed25519- eller RSA-nyckelpar i din webbläsare. Den privata nyckeln genereras lokalt med Web Crypto API — inget skickas till våra servrar. Ladda ner båda filerna och spara dem i `~/.ssh/` (Linux/macOS) eller `C:\Users\YourName\.ssh\` (Windows).
+Om du föredrar ett grafiskt gränssnitt skapar vår <a href="/">kostnadsfria SSH-nyckelgenerator online</a> Ed25519- eller RSA-nyckelpar i din webbläsare. Genererade privata nycklar och lösenfraser laddas inte upp till våra servrar. Ladda ner båda filerna och spara dem i `~/.ssh/` (Linux/macOS) eller `C:\Users\YourName\.ssh\` (Windows).
 
 ### Alternativ B: Använd ssh-keygen på kommandoraden
 
@@ -559,7 +559,7 @@ Matcha fingeravtrycken för att identifiera och ta bort rätt nyckel.
 
 ## Generera dina SSH-nycklar gratis
 
-Om du ännu inte har genererat ditt SSH-nyckelpar skapar vår kostnadsfria onlinegenerator Ed25519- eller RSA-nycklar direkt i din webbläsare på sekunder. Ingen installation krävs, inget skickas till våra servrar — generering sker helt på din enhet.
+Ed25519- och RSA-nycklar genereras i din webbläsare. Genererade privata nycklar och lösenfraser laddas inte upp till våra servrar.
 
 <a href="/">Generera dina SSH-nycklar gratis →</a>
 
@@ -569,3 +569,9 @@ Om du ännu inte har genererat ditt SSH-nyckelpar skapar vår kostnadsfria onlin
 - <a href="/sv/what-is-ssh/">Vad är SSH? Den kompletta guiden till Secure Shell</a>
 - <a href="/sv/what-is-an-ssh-key/">Vad är en SSH-nyckel? Publika nycklar, privata nycklar och nyckelpar förklarade</a>
 - <a href="/sv/ssh-command/">SSH-kommandot: Komplett referens med exempel</a>
+
+## Källor och officiell dokumentation
+
+- [GitHub Docs — Generating a new SSH key and adding it to the ssh-agent](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+- [GitLab Docs — Use SSH keys to communicate with GitLab](https://docs.gitlab.com/user/ssh/)
+- [OpenSSH sshd_config(5)](https://man.openbsd.org/sshd_config)

@@ -77,7 +77,7 @@ SSH obsługuje dwie podstawowe metody uwierzytelniania: hasła i **klucze SSH**.
 **Klucz prywatny** pozostaje na lokalnej maszynie, opcjonalnie chroniony hasłem. **Klucz publiczny** jest umieszczany na każdym serwerze, do którego chcesz mieć dostęp, w pliku o nazwie `~/.ssh/authorized_keys`. Podczas łączenia serwer wystawia wyzwanie kryptograficzne, na które może odpowiedzieć tylko posiadacz odpowiadającego klucza prywatnego. Żadne hasło nie jest przesyłane przez sieć.
 
 To podejście ma kilka zalet:
-- **Odporność na ataki brute-force** — nie ma nic do odgadnięcia. Klucz Ed25519 o długości 256 bitów ma 2²⁵⁶ możliwych wartości.
+- **Ed25519** — 256-bitowy klucz publiczny daje około 128 bitów bezpieczeństwa klasycznego; nie trzeba wybierać rozmiaru.
 - **Brak hasła do kradzieży** — nawet jeśli ktoś przechwyci uzgadnianie, nie uzyska niczego użytecznego.
 - **Automatyzowalność** — skrypty i potoki CI/CD mogą uwierzytelniać się bez udziału człowieka.
 - **Możliwość unieważnienia** — usunięcie klucza publicznego z `authorized_keys` natychmiast odbiera dostęp.
@@ -271,7 +271,7 @@ Zarówno SSH, jak i HTTPS szyfrują ruch sieciowy, ale są przeznaczone do róż
 
 ## Wygeneruj Swoje Klucze SSH Teraz
 
-Uwierzytelnianie SSH oparte na kluczach jest bezpieczniejsze i wygodniejsze niż hasła. Jeśli nie skonfigurowałeś jeszcze kluczy SSH, nasz bezpłatny generator online tworzy pary kluczy Ed25519 lub RSA natychmiast w przeglądarce — bez wymagania instalacji, nic nie jest wysyłane na nasze serwery.
+Generowanie kluczy Ed25519 i RSA odbywa się w przeglądarce. Wygenerowane klucze prywatne i hasła do nich nie są przesyłane na nasze serwery.
 
 <a href="/">Wygeneruj swoją parę kluczy SSH teraz →</a>
 
@@ -281,3 +281,9 @@ Uwierzytelnianie SSH oparte na kluczach jest bezpieczniejsze i wygodniejsze niż
 - <a href="/pl/what-is-an-ssh-key/">Czym Jest Klucz SSH? Klucze Publiczne, Prywatne i Pary Kluczy Wyjaśnione</a>
 - <a href="/pl/ssh-command/">Polecenie SSH: Kompletny Przewodnik z Przykładami</a>
 - <a href="/pl/how-to-set-up-ssh/">Jak Skonfigurować SSH: Kompletny Przewodnik Krok po Kroku</a>
+
+## Źródła i oficjalna dokumentacja
+
+- [RFC 4251 — The Secure Shell (SSH) Protocol Architecture](https://www.rfc-editor.org/rfc/rfc4251.html)
+- [RFC 4252 §7 — SSH public-key authentication](https://www.rfc-editor.org/rfc/rfc4252.html#section-7)
+- [RFC 8032 — Ed25519 signatures and security considerations](https://www.rfc-editor.org/rfc/rfc8032.html)

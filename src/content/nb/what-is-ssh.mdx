@@ -77,7 +77,7 @@ SSH støtter to primære autentiseringsmetoder: passord og **SSH-nøkler**. SSH-
 Den **private nøkkelen** forblir på din lokale maskin, beskyttet med en valgfri passfrase. Den **offentlige nøkkelen** plasseres på enhver server du ønsker å ha tilgang til, i en fil kalt `~/.ssh/authorized_keys`. Når du kobler til, utsteder serveren en kryptografisk utfordring som bare innehaveren av den tilsvarende private nøkkelen kan besvare. Ingen passord sendes over nettverket.
 
 Denne tilnærmingen har flere fordeler:
-- **Immun mot brute force** — det er ingenting å gjette. En 256-bits Ed25519-nøkkel har 2²⁵⁶ mulige verdier.
+- **Ed25519** — 256-bits offentlig nøkkel med omtrent 128 bits klassisk sikkerhet; ingen valg av nøkkelstørrelse nødvendig.
 - **Ingen passord å stjele** — selv om noen avlytter håndtrykket, oppnår de ingenting nyttig.
 - **Automatiserbar** — skript og CI/CD-pipelines kan autentisere uten menneskelig interaksjon.
 - **Tilbakekallbar** — å fjerne en offentlig nøkkel fra `authorized_keys` tilbakekaller umiddelbart tilgang.
@@ -271,7 +271,7 @@ Både SSH og HTTPS krypterer nettverkstrafikk, men de er designet for forskjelli
 
 ## Generer dine SSH-nøkler nå
 
-SSH-nøkkelbasert autentisering er sikrere og mer praktisk enn passord. Hvis du ikke allerede har konfigurert SSH-nøkler, oppretter vår gratis nettbaserte generator Ed25519- eller RSA-nøkkelpar umiddelbart i nettleseren din — ingen installasjon nødvendig, ingenting sendt til serverne våre.
+Ed25519- og RSA-nøkler genereres i nettleseren din. Genererte private nøkler og passordfraser lastes ikke opp til serverne våre.
 
 <a href="/">Generer ditt SSH-nøkkelpar nå →</a>
 
@@ -281,3 +281,9 @@ SSH-nøkkelbasert autentisering er sikrere og mer praktisk enn passord. Hvis du 
 - <a href="/nb/what-is-an-ssh-key/">Hva er en SSH-nøkkel? Offentlige nøkler, private nøkler og nøkkelpar forklart</a>
 - <a href="/nb/ssh-command/">SSH-kommandoen: Komplett referanse med eksempler</a>
 - <a href="/nb/how-to-set-up-ssh/">Slik setter du opp SSH: En komplett trinn-for-trinn-guide</a>
+
+## Kilder og offisiell dokumentasjon
+
+- [RFC 4251 — The Secure Shell (SSH) Protocol Architecture](https://www.rfc-editor.org/rfc/rfc4251.html)
+- [RFC 4252 §7 — SSH public-key authentication](https://www.rfc-editor.org/rfc/rfc4252.html#section-7)
+- [RFC 8032 — Ed25519 signatures and security considerations](https://www.rfc-editor.org/rfc/rfc8032.html)

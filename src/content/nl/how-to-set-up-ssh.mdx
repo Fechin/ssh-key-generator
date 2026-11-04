@@ -40,7 +40,7 @@ Je hebt een sleutelpaar nodig voordat je iets anders kunt doen. Het sleutelpaar 
 
 ### Optie A: Gebruik de Online Generator
 
-Als je de voorkeur geeft aan een grafische interface, maakt onze <a href="/">gratis online SSH-sleutelgenerator</a> Ed25519- of RSA-sleutelparen in je browser. De privésleutel wordt lokaal gegenereerd via de Web Crypto API — niets wordt naar onze servers gestuurd. Download beide bestanden en sla ze op in `~/.ssh/` (Linux/macOS) of `C:\Users\JouwNaam\.ssh\` (Windows).
+Als je de voorkeur geeft aan een grafische interface, maakt onze <a href="/">gratis online SSH-sleutelgenerator</a> Ed25519- of RSA-sleutelparen in je browser. Gegenereerde privésleutels en wachtwoordzinnen worden niet naar onze servers geüpload. Download beide bestanden en sla ze op in `~/.ssh/` (Linux/macOS) of `C:\Users\JouwNaam\.ssh\` (Windows).
 
 ### Optie B: Gebruik ssh-keygen op de Opdrachtregel
 
@@ -559,7 +559,7 @@ Vergelijk de vingerafdrukken om de juiste sleutel te identificeren en te verwijd
 
 ## Genereer Je SSH-sleutels Gratis
 
-Als je nog geen SSH-sleutelpaar hebt gegenereerd, maakt onze gratis online generator Ed25519- of RSA-sleutels direct in je browser binnen enkele seconden. Geen installatie vereist, niets naar onze servers gestuurd — generatie vindt volledig op je apparaat plaats.
+Ed25519- en RSA-sleutels worden in je browser gegenereerd. Gegenereerde privésleutels en wachtwoordzinnen worden niet naar onze servers geüpload.
 
 <a href="/">Genereer je SSH-sleutels gratis →</a>
 
@@ -569,3 +569,9 @@ Als je nog geen SSH-sleutelpaar hebt gegenereerd, maakt onze gratis online gener
 - <a href="/nl/what-is-ssh/">Wat Is SSH? De Volledige Gids voor Secure Shell</a>
 - <a href="/nl/what-is-an-ssh-key/">Wat Is een SSH-sleutel? Openbare Sleutels, Privésleutels en Sleutelparen Uitgelegd</a>
 - <a href="/nl/ssh-command/">Het SSH-commando: Volledige Referentie met Voorbeelden</a>
+
+## Bronnen en officiële documentatie
+
+- [GitHub Docs — Generating a new SSH key and adding it to the ssh-agent](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+- [GitLab Docs — Use SSH keys to communicate with GitLab](https://docs.gitlab.com/user/ssh/)
+- [OpenSSH sshd_config(5)](https://man.openbsd.org/sshd_config)

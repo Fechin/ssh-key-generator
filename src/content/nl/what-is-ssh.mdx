@@ -77,7 +77,7 @@ SSH ondersteunt twee primaire authenticatiemethoden: wachtwoorden en **SSH-sleut
 De **privésleutel** blijft op je lokale machine, optioneel beveiligd met een wachtwoordzin. De **openbare sleutel** wordt geplaatst op elke server waartoe je toegang wilt, in een bestand genaamd `~/.ssh/authorized_keys`. Wanneer je verbinding maakt, geeft de server een cryptografische uitdaging die alleen de houder van de corresponderende privésleutel kan beantwoorden. Er wordt geen wachtwoord over het netwerk verstuurd.
 
 Deze aanpak heeft verschillende voordelen:
-- **Immuun voor brute force** — er is niets te raden. Een 256-bits Ed25519-sleutel heeft 2²⁵⁶ mogelijke waarden.
+- **Ed25519** — 256-bits openbare sleutel met ongeveer 128 bits klassieke beveiliging; geen keuze van sleutelgrootte nodig.
 - **Geen wachtwoord om te stelen** — zelfs als iemand de handshake onderschept, krijgt hij niets bruikbaars.
 - **Automatiseerbaar** — scripts en CI/CD-pijplijnen kunnen authenticeren zonder menselijke tussenkomst.
 - **Intrekbaar** — het verwijderen van een openbare sleutel uit `authorized_keys` trekt onmiddellijk de toegang in.
@@ -271,7 +271,7 @@ Zowel SSH als HTTPS versleutelen netwerkverkeer, maar ze zijn ontworpen voor ver
 
 ## Genereer Nu Je SSH-sleutels
 
-SSH-authenticatie op basis van sleutels is veiliger en handiger dan wachtwoorden. Als je nog geen SSH-sleutels hebt ingesteld, maakt onze gratis online generator onmiddellijk Ed25519- of RSA-sleutelparen in je browser — geen installatie vereist, niets naar onze servers gestuurd.
+Ed25519- en RSA-sleutels worden in je browser gegenereerd. Gegenereerde privésleutels en wachtwoordzinnen worden niet naar onze servers geüpload.
 
 <a href="/">Genereer nu je SSH-sleutelpaar →</a>
 
@@ -281,3 +281,9 @@ SSH-authenticatie op basis van sleutels is veiliger en handiger dan wachtwoorden
 - <a href="/nl/what-is-an-ssh-key/">Wat Is een SSH-sleutel? Openbare Sleutels, Privésleutels en Sleutelparen Uitgelegd</a>
 - <a href="/nl/ssh-command/">Het SSH-commando: Volledige Referentie met Voorbeelden</a>
 - <a href="/nl/how-to-set-up-ssh/">SSH Instellen: Een Volledige Stapsgewijze Handleiding</a>
+
+## Bronnen en officiële documentatie
+
+- [RFC 4251 — The Secure Shell (SSH) Protocol Architecture](https://www.rfc-editor.org/rfc/rfc4251.html)
+- [RFC 4252 §7 — SSH public-key authentication](https://www.rfc-editor.org/rfc/rfc4252.html#section-7)
+- [RFC 8032 — Ed25519 signatures and security considerations](https://www.rfc-editor.org/rfc/rfc8032.html)

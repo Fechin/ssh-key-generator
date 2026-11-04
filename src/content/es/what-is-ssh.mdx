@@ -77,7 +77,7 @@ SSH admite dos métodos de autenticación principales: contraseñas y **claves S
 La **clave privada** permanece en tu máquina local, protegida con una frase de contraseña opcional. La **clave pública** se coloca en cualquier servidor al que quieras acceder, en un fichero llamado `~/.ssh/authorized_keys`. Cuando te conectas, el servidor emite un desafío criptográfico que solo el poseedor de la clave privada correspondiente puede responder. No se envía ninguna contraseña por la red.
 
 Este enfoque tiene varias ventajas:
-- **Inmune a la fuerza bruta** — no hay nada que adivinar. Una clave Ed25519 de 256 bits tiene 2²⁵⁶ valores posibles.
+- **Ed25519** — clave pública de 256 bits con aproximadamente 128 bits de seguridad clásica; no hay que elegir tamaño.
 - **Sin contraseña que robar** — aunque alguien intercepte el handshake, no obtiene nada útil.
 - **Automatizable** — los scripts y los pipelines de CI/CD pueden autenticarse sin intervención humana.
 - **Revocable** — eliminar una clave pública de `authorized_keys` revoca el acceso de inmediato.
@@ -271,7 +271,7 @@ Tanto SSH como HTTPS cifran el tráfico de red, pero están diseñados para prop
 
 ## Genera tus claves SSH ahora
 
-La autenticación SSH basada en claves es más segura y más cómoda que las contraseñas. Si aún no has configurado claves SSH, nuestro generador en línea gratuito crea pares de claves Ed25519 o RSA al instante en tu navegador — sin instalación, sin enviar nada a nuestros servidores.
+La generación de claves Ed25519 y RSA se realiza en tu navegador. Las claves privadas generadas y las frases de contraseña no se suben a nuestros servidores.
 
 <a href="/">Genera tu par de claves SSH ahora →</a>
 
@@ -281,3 +281,9 @@ La autenticación SSH basada en claves es más segura y más cómoda que las con
 - <a href="/es/what-is-an-ssh-key/">¿Qué es una clave SSH? Claves públicas, claves privadas y pares de claves explicados</a>
 - <a href="/es/ssh-command/">El comando SSH: referencia completa con ejemplos</a>
 - <a href="/es/how-to-set-up-ssh/">Cómo configurar SSH: guía completa paso a paso</a>
+
+## Fuentes y documentación oficial
+
+- [RFC 4251 — The Secure Shell (SSH) Protocol Architecture](https://www.rfc-editor.org/rfc/rfc4251.html)
+- [RFC 4252 §7 — SSH public-key authentication](https://www.rfc-editor.org/rfc/rfc4252.html#section-7)
+- [RFC 8032 — Ed25519 signatures and security considerations](https://www.rfc-editor.org/rfc/rfc8032.html)

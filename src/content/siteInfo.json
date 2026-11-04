@@ -1,0 +1,179 @@
+[
+  {
+    "slug": "about",
+    "title": "About SSH Key Generator",
+    "description": "Learn who maintains SSH Key Generator, how the browser tool works, and how its SSH guides are maintained.",
+    "heading": "About SSH Key Generator",
+    "navLabel": "About",
+    "dateModified": "2026-11-04",
+    "sections": [
+      {
+        "heading": "An open-source tool for SSH workflows",
+        "paragraphs": [
+          "SSH Key Generator is a free browser tool maintained through the Fechin/ssh-key-generator project on GitHub. It generates Ed25519 and RSA SSH key pairs, prepares ssh-keygen commands, and builds SSH client configuration files.",
+          "The source code is available under the MIT license. The repository records the project's contributors, changes, and issue discussions."
+        ],
+        "links": [
+          { "label": "Project source and contributors", "href": "https://github.com/Fechin/ssh-key-generator" },
+          { "label": "MIT license", "href": "https://github.com/Fechin/ssh-key-generator/blob/main/LICENSE" }
+        ]
+      },
+      {
+        "heading": "How key generation works",
+        "paragraphs": [
+          "The key-generation code runs in your browser. RSA generation uses the Web Crypto API; Ed25519 generation uses the @noble/ed25519 library. The application formats the results for OpenSSH and lets you copy or download them.",
+          "The application does not send generated private keys or passphrases to its server, and it does not save them in browser local storage. Downloaded files and clipboard copies remain your responsibility. The website also loads analytics and advertising services, as described in the privacy policy.",
+          "For sensitive environments, review the source and your security requirements, or generate keys locally with OpenSSH ssh-keygen. Browser execution alone is not a security audit or a guarantee against compromised devices, extensions, or third-party scripts."
+        ],
+        "links": [
+          { "label": "Privacy and browser storage", "href": "/privacy/" },
+          { "label": "OpenSSH ssh-keygen reference", "href": "https://man.openbsd.org/ssh-keygen" }
+        ]
+      },
+      {
+        "heading": "Guides and corrections",
+        "paragraphs": [
+          "Our SSH guides explain common key-generation, authentication, and server-setup tasks. Commands and platform requirements can change; consult the linked official documentation when applying them to your environment.",
+          "Report an incorrect command, broken link, translation problem, or tool issue through the project repository. Page review dates describe content updates; they do not imply an independent security certification."
+        ],
+        "links": [
+          { "label": "Contact and report a correction", "href": "/contact/" }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "contact",
+    "title": "Contact SSH Key Generator",
+    "description": "Contact the SSH Key Generator project through GitHub to report a bug, request a feature, or suggest a correction.",
+    "heading": "Contact SSH Key Generator",
+    "navLabel": "Contact",
+    "dateModified": "2026-11-04",
+    "sections": [
+      {
+        "heading": "Bugs, feedback, and content corrections",
+        "paragraphs": [
+          "Use the project's GitHub issue tracker to report a bug, request a feature, or suggest a correction to an SSH guide. The project is maintained through the Fechin/ssh-key-generator repository.",
+          "Include the page URL, browser and operating system, what you expected, and the steps needed to reproduce the problem. For guide corrections, identify the command or passage and link the official reference when available. A GitHub account is required to open an issue."
+        ],
+        "links": [
+          { "label": "GitHub issues", "href": "https://github.com/Fechin/ssh-key-generator/issues" },
+          { "label": "Project repository", "href": "https://github.com/Fechin/ssh-key-generator" }
+        ]
+      },
+      {
+        "heading": "Keep credentials out of reports",
+        "paragraphs": [
+          "GitHub issues are public. Never include private keys, passphrases, passwords, access tokens, or confidential host details. Use disposable test keys and redact screenshots before sharing them.",
+          "For a security concern, check the repository's Security tab for available reporting instructions before sharing technical details publicly."
+        ],
+        "links": [
+          { "label": "Repository security information", "href": "https://github.com/Fechin/ssh-key-generator/security" }
+        ]
+      },
+      {
+        "heading": "Privacy questions",
+        "paragraphs": [
+          "For questions about the website's privacy practices, review the privacy policy and raise a general question through the issue tracker without including personal or confidential information."
+        ],
+        "links": [
+          { "label": "Privacy policy", "href": "/privacy/" }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "privacy",
+    "title": "Privacy Policy | SSH Key Generator",
+    "description": "How SSH Key Generator handles keys, browser storage, analytics, advertising, and website requests.",
+    "heading": "Privacy Policy",
+    "navLabel": "Privacy",
+    "dateModified": "2026-11-04",
+    "sections": [
+      {
+        "heading": "Keys and passphrases",
+        "paragraphs": [
+          "SSH key generation runs in your browser. The application's key-generation code does not upload generated private keys or passphrases to a server or save them in local storage. Key material remains in the active page's memory until the page is closed, reloaded, or the relevant state is cleared.",
+          "Copying or downloading a key creates a clipboard entry or a file on your device. Those copies are controlled by your browser, operating system, and any software with access to them."
+        ]
+      },
+      {
+        "heading": "Browser storage and offline files",
+        "paragraphs": [
+          "The application uses local storage for preferences, including theme, language, default key algorithm, and default key comment. The SSH configuration builder also saves host entries in local storage, which may include hostnames, usernames, ports, identity-file paths, and other settings you enter.",
+          "The service worker may cache application files for offline use. Clear this site's cookies and site data in your browser to remove stored preferences, saved configuration, and cached files. This does not delete files you have downloaded or clipboard copies."
+        ]
+      },
+      {
+        "heading": "Analytics and advertising",
+        "paragraphs": [
+          "The website uses Google Analytics to measure visits and usage. The current configuration disables Google Signals and advertising-personalization signals for Analytics. That setting does not mean the website is free of analytics, cookies, or third-party requests.",
+          "On the production domain, the website loads Google Publisher Tag for Ad.Plus advertising placements. Analytics and advertising providers may receive information such as your IP address, page URL, browser information, and identifiers, and may use cookies or similar technologies under their own policies. The application does not intentionally send key material or passphrases as analytics events.",
+          "You can manage cookies and site permissions in your browser and use Google's advertising and Analytics controls. Blocking these services may affect measurement or advertisements."
+        ],
+        "links": [
+          { "label": "Google Privacy Policy", "href": "https://policies.google.com/privacy" },
+          { "label": "How Google uses data from partner sites", "href": "https://policies.google.com/technologies/partner-sites" },
+          { "label": "Google Analytics opt-out browser add-on", "href": "https://tools.google.com/dlpage/gaoptout" }
+        ]
+      },
+      {
+        "heading": "Hosting and external links",
+        "paragraphs": [
+          "The site is delivered through Cloudflare Pages. Visiting a web page sends connection information, including an IP address and request headers, to the hosting infrastructure. Client-side key generation does not prevent these ordinary website requests.",
+          "Following an external link, including a GitHub support link, sends you to another provider whose privacy practices apply there. Do not put private keys, passphrases, or other secrets in URLs, public issues, or feedback."
+        ],
+        "links": [
+          { "label": "Cloudflare Privacy Policy", "href": "https://www.cloudflare.com/privacypolicy/" }
+        ]
+      },
+      {
+        "heading": "Questions and updates",
+        "paragraphs": [
+          "This policy describes the application and integrations reviewed on the date shown above. It will need updating when those practices change. Send general questions or corrections through the project's contact page without including confidential information."
+        ],
+        "links": [
+          { "label": "Contact the project", "href": "/contact/" }
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "terms",
+    "title": "Terms of Use | SSH Key Generator",
+    "description": "Terms for using the free SSH Key Generator website, its generated keys, configuration tools, and documentation.",
+    "heading": "Terms of Use",
+    "navLabel": "Terms",
+    "dateModified": "2026-11-04",
+    "sections": [
+      {
+        "heading": "Using the tools and guides",
+        "paragraphs": [
+          "SSH Key Generator provides free key-generation tools, command examples, configuration helpers, and SSH documentation. Use them only with systems and accounts you are authorized to access.",
+          "You are responsible for checking that commands, key formats, algorithms, and configuration settings meet your platform and security requirements before using them. Keep private keys and passphrases confidential, retain necessary backups, and revoke a key if it is exposed."
+        ]
+      },
+      {
+        "heading": "Availability and limitations",
+        "paragraphs": [
+          "The website and documentation are provided as available, without a promise of uninterrupted availability or suitability for a particular use. Browser capabilities, platform behavior, and linked documentation can change.",
+          "The project's MIT license provides the source software as is, without warranty. Consult the full license for its copyright, permission, warranty, and liability terms. These website terms do not replace the permissions granted by that license."
+        ],
+        "links": [
+          { "label": "Full MIT license", "href": "https://github.com/Fechin/ssh-key-generator/blob/main/LICENSE" }
+        ]
+      },
+      {
+        "heading": "Third-party services and contact",
+        "paragraphs": [
+          "External documentation, hosting, analytics, advertising, and GitHub are operated by their respective providers. Their terms and privacy practices apply when you use those services.",
+          "Review the privacy policy for details about browser storage and third-party requests. Questions and corrections can be raised through the project's contact page."
+        ],
+        "links": [
+          { "label": "Privacy policy", "href": "/privacy/" },
+          { "label": "Contact the project", "href": "/contact/" }
+        ]
+      }
+    ]
+  }
+]

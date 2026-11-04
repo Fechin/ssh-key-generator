@@ -77,7 +77,7 @@ O SSH suporta dois métodos primários de autenticação: senhas e **chaves SSH*
 A **chave privada** fica na sua máquina local, protegida com uma frase secreta opcional. A **chave pública** é colocada em qualquer servidor que você queira acessar, em um arquivo chamado `~/.ssh/authorized_keys`. Quando você se conecta, o servidor emite um desafio criptográfico que apenas o portador da chave privada correspondente pode responder. Nenhuma senha é enviada pela rede.
 
 Essa abordagem tem várias vantagens:
-- **Imune a força bruta** — não há nada para adivinhar. Uma chave Ed25519 de 256 bits tem 2²⁵⁶ valores possíveis.
+- **Ed25519** — chave pública de 256 bits com aproximadamente 128 bits de segurança clássica; não é preciso escolher o tamanho.
 - **Sem senha para roubar** — mesmo que alguém intercepte o handshake, não obtém nada útil.
 - **Automatizável** — scripts e pipelines de CI/CD podem autenticar sem interação humana.
 - **Revogável** — remover uma chave pública do `authorized_keys` revoga o acesso imediatamente.
@@ -271,7 +271,7 @@ Tanto SSH quanto HTTPS criptografam o tráfego de rede, mas são projetados para
 
 ## Gere suas chaves SSH agora
 
-A autenticação SSH baseada em chaves é mais segura e mais conveniente do que senhas. Se você ainda não configurou chaves SSH, nosso gerador online gratuito cria pares de chaves Ed25519 ou RSA instantaneamente no seu navegador — sem instalação necessária, nada é enviado para nossos servidores.
+A geração de chaves Ed25519 e RSA ocorre no seu navegador. As chaves privadas geradas e as frases secretas não são enviadas aos nossos servidores.
 
 <a href="/">Gere seu par de chaves SSH agora →</a>
 
@@ -281,3 +281,9 @@ A autenticação SSH baseada em chaves é mais segura e mais conveniente do que 
 - <a href="/pt/what-is-an-ssh-key/">O que é uma chave SSH? Chaves públicas, privadas e pares de chaves explicados</a>
 - <a href="/pt/ssh-command/">Comando SSH: referência completa com exemplos</a>
 - <a href="/pt/how-to-set-up-ssh/">Como configurar SSH: guia completo passo a passo</a>
+
+## Fontes e documentação oficial
+
+- [RFC 4251 — The Secure Shell (SSH) Protocol Architecture](https://www.rfc-editor.org/rfc/rfc4251.html)
+- [RFC 4252 §7 — SSH public-key authentication](https://www.rfc-editor.org/rfc/rfc4252.html#section-7)
+- [RFC 8032 — Ed25519 signatures and security considerations](https://www.rfc-editor.org/rfc/rfc8032.html)

@@ -9,17 +9,15 @@ Untuk kunci baru, biasanya pilih Ed25519. Gunakan RSA 4096 jika server SSH lama 
 
 ## Cara Kerja Kunci SSH
 
-Kunci SSH didasarkan pada **kriptografi asimetris**, juga disebut kriptografi kunci publik. Berbeda dengan kriptografi simetris (di mana satu kunci rahasia mengenkripsi dan mendekripsi data), sistem asimetris menggunakan pasangan kunci yang terhubung secara matematis di mana data yang dienkripsi dengan satu kunci hanya dapat didekripsi dengan kunci lainnya.
+Autentikasi SSH dengan kunci publik menggunakan tanda tangan digital. Kunci privat menandatangani data autentikasi dan kunci publik memverifikasi tanda tangan; bukan mengenkripsi lalu mendekripsi tantangan server.
 
 Berikut alur autentikasi saat Anda menggunakan kunci SSH untuk login ke server:
 
 1. Anda menjalankan `ssh user@server.example.com`.
 2. Server mencari kunci publik Anda di `~/.ssh/authorized_keys`.
-3. Server menghasilkan tantangan acak dan mengenkripsinya dengan kunci publik Anda.
-4. Klien SSH Anda mendekripsi tantangan menggunakan kunci privat Anda.
-5. Klien mengirimkan bukti kriptografis (diturunkan dari tantangan yang didekripsi dan ID sesi) kembali ke server.
-6. Server memverifikasi bukti tersebut. Hanya pemegang kunci privat yang dapat menghasilkannya.
-7. Autentikasi berhasil. Tidak ada kata sandi yang meninggalkan mesin Anda.
+3. Klien menandatangani permintaan autentikasi, termasuk pengenal sesi, dengan kunci privatnya.
+4. Server memverifikasi tanda tangan dengan kunci publik yang diizinkan.
+5. Autentikasi berhasil. Tidak ada kata sandi yang meninggalkan mesin Anda.
 
 Inilah wawasan utamanya: **kunci privat Anda tidak pernah melewati jaringan**. Server hanya melihat kunci publik Anda dan bukti kriptografis yang Anda hasilkan. Bahkan jika seseorang mengintersep setiap paket dalam sesi SSH Anda, mereka tidak mendapatkan apa pun yang membantu mereka menyamar sebagai Anda.
 
@@ -79,8 +77,8 @@ Ed25519 diperkenalkan ke OpenSSH pada versi 6.5 (2014) dan sekarang menjadi defa
 **Keunggulan Ed25519:**
 - **Kompak** — kunci hanya 68 karakter (kunci publik) dan file sangat kecil
 - **Cepat** — pembuatan dan verifikasi tanda tangan sangat cepat
-- **Aman berdasarkan desain** — tidak rentan terhadap serangan side-channel yang memengaruhi beberapa implementasi RSA
-- **Ukuran kunci tetap** — tingkat keamanan 256-bit, tidak perlu memilih ukuran kunci
+- **Aman berdasarkan desain** — dirancang untuk mendukung implementasi tahan serangan kanal samping; ketahanannya bergantung pada implementasi
+- **Ukuran kunci tetap** — kunci publik 256 bit memberi sekitar 128 bit keamanan klasik; tidak perlu memilih ukuran
 - **Deterministik** — tanda tangan bersifat deterministik, menghilangkan kelas kegagalan generator bilangan acak
 
 ```bash
@@ -355,3 +353,9 @@ Siap membuat kunci SSH Anda? Generator online gratis kami membuat pasangan kunci
 - <a href="/id/what-is-ssh/">Apa Itu SSH? Panduan Lengkap Secure Shell</a>
 - <a href="/id/ssh-command/">Perintah SSH: Referensi Lengkap dengan Contoh</a>
 - <a href="/id/how-to-set-up-ssh/">Cara Mengatur SSH: Panduan Langkah demi Langkah yang Lengkap</a>
+
+## Sumber dan dokumentasi resmi
+
+- [RFC 4252 §7 — SSH public-key authentication](https://www.rfc-editor.org/rfc/rfc4252.html#section-7)
+- [RFC 8032 — Ed25519 signatures and security considerations](https://www.rfc-editor.org/rfc/rfc8032.html)
+- [OpenSSH ssh-keygen(1)](https://man.openbsd.org/ssh-keygen)

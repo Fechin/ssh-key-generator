@@ -9,17 +9,15 @@ Valitse uusille avaimille yleensä Ed25519. Käytä RSA 4096:ta, jos vanha SSH-p
 
 ## Kuinka SSH-avaimet toimivat
 
-SSH-avaimet perustuvat **epäsymmetriseen salaukseen**, jota kutsutaan myös julkisen avaimen salaukseksi. Toisin kuin symmetrinen salaus (jossa yksi salainen avain sekä salaa että purkaa tiedot), epäsymmetriset järjestelmät käyttävät matemaattisesti yhdistettyjä avainpareja, joissa yhdellä avaimella salatun tiedon salaus voidaan purkaa vain toisella.
+SSH:n julkisen avaimen todennus käyttää digitaalisia allekirjoituksia. Yksityinen avain allekirjoittaa todennustiedot ja julkinen avain tarkistaa allekirjoituksen; palvelimen haastetta ei salata ja pureta.
 
 Tässä on todennuskulku, kun käytät SSH-avainta kirjautuessasi palvelimelle:
 
 1. Käytät `ssh user@server.example.com`.
 2. Palvelin etsii julkisen avaimesi osoitteesta `~/.ssh/authorized_keys`.
-3. Palvelin luo satunnaisen haasteen ja salaa sen julkisella avaimellasi.
-4. SSH-asiakkaasi purkaa haasteen salauksen käyttämällä yksityistä avaimesi.
-5. Asiakas lähettää salaustodisteen (johdettu salauksesta puretusta haasteesta ja istuntotunnuksesta) takaisin palvelimelle.
-6. Palvelin tarkistaa todisteen. Vain yksityisen avaimen haltija olisi voinut tuottaa sen.
-7. Todennus onnistuu. Mikään salasana ei koskaan poistu koneeltasi.
+3. Asiakas allekirjoittaa todennuspyynnön, myös istuntotunnisteen, yksityisellä avaimellaan.
+4. Palvelin tarkistaa allekirjoituksen hyväksytyllä julkisella avaimella.
+5. Todennus onnistuu. Mikään salasana ei koskaan poistu koneeltasi.
 
 Tämä on keskeinen näkemys: **yksityinen avaimesi ei koskaan kulje verkon yli**. Palvelin näkee vain julkisen avaimesi ja tuottamasi kryptografiset todisteet. Vaikka joku sieppaisi jokaisen SSH-istunnon paketin, hän ei saa mitään, mikä auttaisi häntä matkimaan sinua.
 
@@ -79,8 +77,8 @@ Ed25519 otettiin käyttöön OpenSSH:n versiossa 6.5 (2014), ja se on nyt suosit
 **Ed25519:n edut:**
 - **Compact** — avaimet ovat vain 68 merkin pituisia (julkinen avain) ja tiedostot ovat pieniä
 - **Nopea** — allekirjoitusten luominen ja vahvistus ovat erittäin nopeita
-- **Suunniteltu suojattu** – ei ole alttiina sivukanavahyökkäyksille, jotka vaikuttavat joihinkin RSA-toteutuksiin
-- **Kiinteä avainkoko** — 256-bittinen suojaustaso, avaimen kokoa ei tarvitse valita
+- **Suunniteltu suojattu** — suunniteltu tukemaan sivukanavahyökkäyksiä kestäviä toteutuksia; kestävyys riippuu toteutuksesta
+- **Kiinteä avainkoko** — 256-bittinen julkinen avain tarjoaa noin 128 bitin klassisen turvallisuuden; avainkokoa ei tarvitse valita
 - **Deterministinen** — allekirjoitukset ovat deterministisiä, mikä eliminoi luokan satunnaislukugeneraattorin vikoja
 
 ```bash
@@ -355,3 +353,9 @@ Oletko valmis luomaan SSH-avaimet? Ilmainen online-generaattorimme luo Ed25519- 
 - <a href="/fi/what-is-ssh/">Mikä on SSH? Secure Shellin täydellinen opas</a>
 - <a href="/fi/ssh-command/">SSH-komento: täydellinen viite esimerkkeineen</a>
 - <a href="/fi/how-to-set-up-ssh/">SSH:n käyttöönotto: Täydellinen vaiheittainen opas</a>
+
+## Lähteet ja virallinen dokumentaatio
+
+- [RFC 4252 §7 — SSH public-key authentication](https://www.rfc-editor.org/rfc/rfc4252.html#section-7)
+- [RFC 8032 — Ed25519 signatures and security considerations](https://www.rfc-editor.org/rfc/rfc8032.html)
+- [OpenSSH ssh-keygen(1)](https://man.openbsd.org/ssh-keygen)

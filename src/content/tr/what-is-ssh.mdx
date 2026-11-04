@@ -77,7 +77,7 @@ SSH iki temel kimlik doğrulama yöntemini destekler: parolalar ve **SSH anahtar
 **Özel anahtar**, isteğe bağlı bir parola ifadesiyle korunan yerel makinenizde kalır. **Açık anahtar**, erişmek istediğiniz her sunucuya `~/.ssh/authorized_keys` adlı bir dosyaya yerleştirilir. Bağlandığınızda sunucu, yalnızca karşılık gelen özel anahtarın sahibinin yanıtlayabileceği kriptografik bir meydan okuma gönderir. Ağ üzerinden hiçbir parola iletilmez.
 
 Bu yaklaşımın çeşitli avantajları vardır:
-- **Kaba kuvvete karşı bağışık** — tahmin edilecek bir şey yoktur. 256-bit Ed25519 anahtarının 2²⁵⁶ olası değeri vardır.
+- **Ed25519** — 256 bit açık anahtar yaklaşık 128 bit klasik güvenlik sağlar; anahtar boyutu seçmek gerekmez.
 - **Çalınacak parola yok** — biri el sıkışmayı ele geçirse bile işe yarar bir şey elde edemez.
 - **Otomatize edilebilir** — betikler ve CI/CD hatları insan müdahalesi olmadan kimlik doğrulaması yapabilir.
 - **İptal edilebilir** — `authorized_keys` dosyasından açık anahtarın kaldırılması erişimi anında iptal eder.
@@ -271,7 +271,7 @@ Hem SSH hem de HTTPS ağ trafiğini şifreler, ancak farklı amaçlar için tasa
 
 ## SSH Anahtarlarınızı Hemen Oluşturun
 
-SSH anahtar tabanlı kimlik doğrulama, parolalara kıyasla daha güvenli ve daha kullanışlıdır. Henüz SSH anahtarı kurmadıysanız, ücretsiz çevrimiçi oluşturucumuz tarayıcınızda anında Ed25519 veya RSA anahtar çiftleri oluşturur — kurulum gerekmez, sunucularımıza hiçbir şey gönderilmez.
+Ed25519 ve RSA anahtar üretimi tarayıcınızda gerçekleşir. Üretilen özel anahtarlar ve parola ifadeleri sunucularımıza yüklenmez.
 
 <a href="/">SSH anahtar çiftinizi şimdi oluşturun →</a>
 
@@ -281,3 +281,9 @@ SSH anahtar tabanlı kimlik doğrulama, parolalara kıyasla daha güvenli ve dah
 - <a href="/tr/what-is-an-ssh-key/">SSH Anahtarı Nedir? Açık Anahtarlar, Özel Anahtarlar ve Anahtar Çiftleri Açıklandı</a>
 - <a href="/tr/ssh-command/">SSH Komutu: Örneklerle Tam Başvuru Kılavuzu</a>
 - <a href="/tr/how-to-set-up-ssh/">SSH Nasıl Kurulur: Eksiksiz Adım Adım Kılavuz</a>
+
+## Kaynaklar ve resmî belgeler
+
+- [RFC 4251 — The Secure Shell (SSH) Protocol Architecture](https://www.rfc-editor.org/rfc/rfc4251.html)
+- [RFC 4252 §7 — SSH public-key authentication](https://www.rfc-editor.org/rfc/rfc4252.html#section-7)
+- [RFC 8032 — Ed25519 signatures and security considerations](https://www.rfc-editor.org/rfc/rfc8032.html)

@@ -77,7 +77,7 @@ SSH mendukung dua metode autentikasi utama: kata sandi dan **kunci SSH**. Kunci 
 **Kunci privat** tetap ada di mesin lokal Anda, dilindungi dengan passphrase opsional. **Kunci publik** ditempatkan di server mana pun yang ingin Anda akses, dalam file bernama `~/.ssh/authorized_keys`. Saat Anda terhubung, server mengeluarkan tantangan kriptografi yang hanya dapat dijawab oleh pemegang kunci privat yang sesuai. Tidak ada kata sandi yang dikirim melalui jaringan.
 
 Pendekatan ini memiliki beberapa keunggulan:
-- **Kebal terhadap brute force** — tidak ada yang perlu ditebak. Kunci Ed25519 256-bit memiliki 2²⁵⁶ kemungkinan nilai.
+- **Ed25519** — kunci publik 256 bit memberi sekitar 128 bit keamanan klasik; tidak perlu memilih ukuran.
 - **Tidak ada kata sandi yang bisa dicuri** — bahkan jika seseorang mengintersep handshake, mereka tidak mendapatkan apa pun yang berguna.
 - **Dapat diotomasi** — skrip dan pipeline CI/CD dapat mengautentikasi tanpa interaksi manusia.
 - **Dapat dicabut** — menghapus kunci publik dari `authorized_keys` langsung mencabut akses.
@@ -271,7 +271,7 @@ Baik SSH maupun HTTPS mengenkripsi lalu lintas jaringan, tetapi dirancang untuk 
 
 ## Buat Kunci SSH Anda Sekarang
 
-Autentikasi berbasis kunci SSH lebih aman dan lebih nyaman daripada kata sandi. Jika Anda belum menyiapkan kunci SSH, generator online gratis kami membuat pasangan kunci Ed25519 atau RSA secara instan di browser Anda — tidak perlu instalasi, tidak ada yang dikirim ke server kami.
+Pembuatan kunci Ed25519 dan RSA berlangsung di browser Anda. Kunci privat yang dihasilkan dan frasa sandi tidak diunggah ke server kami.
 
 <a href="/">Buat pasangan kunci SSH Anda sekarang →</a>
 
@@ -281,3 +281,9 @@ Autentikasi berbasis kunci SSH lebih aman dan lebih nyaman daripada kata sandi. 
 - <a href="/id/what-is-an-ssh-key/">Apa Itu Kunci SSH? Kunci Publik, Kunci Privat, dan Pasangan Kunci Dijelaskan</a>
 - <a href="/id/ssh-command/">Perintah SSH: Referensi Lengkap dengan Contoh</a>
 - <a href="/id/how-to-set-up-ssh/">Cara Mengatur SSH: Panduan Langkah demi Langkah yang Lengkap</a>
+
+## Sumber dan dokumentasi resmi
+
+- [RFC 4251 — The Secure Shell (SSH) Protocol Architecture](https://www.rfc-editor.org/rfc/rfc4251.html)
+- [RFC 4252 §7 — SSH public-key authentication](https://www.rfc-editor.org/rfc/rfc4252.html#section-7)
+- [RFC 8032 — Ed25519 signatures and security considerations](https://www.rfc-editor.org/rfc/rfc8032.html)

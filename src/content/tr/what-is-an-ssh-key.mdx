@@ -9,17 +9,15 @@ Yeni anahtarlar için genellikle Ed25519 seçin. Eski bir SSH sunucusu veya ara�
 
 ## SSH Anahtarları Nasıl Çalışır?
 
-SSH anahtarları, açık anahtar kriptografisi olarak da adlandırılan **asimetrik kriptografi** temeline dayanır. Simetrik kriptografinin aksine (burada tek bir gizli anahtar hem şifreler hem de şifre çözer), asimetrik sistemler matematiksel olarak bağlantılı anahtar çiftleri kullanır; bir anahtarla şifrelenen veri yalnızca diğer anahtarla çözülebilir.
+SSH açık anahtar kimlik doğrulaması dijital imzalar kullanır. Özel anahtar kimlik doğrulama verisini imzalar, açık anahtar imzayı doğrular; sunucunun gönderdiği bir sorgu şifrelenip çözülmez.
 
 Bir sunucuya giriş yapmak için SSH anahtarı kullandığınızda kimlik doğrulama akışı şöyledir:
 
 1. `ssh user@server.example.com` komutunu çalıştırırsınız.
 2. Sunucu, açık anahtarınızı `~/.ssh/authorized_keys` dosyasında arar.
-3. Sunucu rastgele bir meydan okuma oluşturur ve açık anahtarınızla şifreler.
-4. SSH istemciniz, meydan okumayı özel anahtarınızı kullanarak çözer.
-5. İstemci, çözülmüş meydan okuma ve oturum kimliğinden türetilen bir kriptografik kanıt sunucuya gönderir.
-6. Sunucu kanıtı doğrular. Bunu yalnızca özel anahtarın sahibi üretebilirdi.
-7. Kimlik doğrulama başarılı olur. Makinenizden hiçbir parola çıkmaz.
+3. İstemci, oturum tanımlayıcısı dahil kimlik doğrulama isteğini özel anahtarıyla imzalar.
+4. Sunucu imzayı yetkilendirilmiş açık anahtarla doğrular.
+5. Kimlik doğrulama başarılı olur. Makinenizden hiçbir parola çıkmaz.
 
 İşte temel içgörü budur: **özel anahtarınız hiçbir zaman ağ üzerinden iletilmez**. Sunucu yalnızca açık anahtarınızı ve ürettiğiniz kriptografik kanıtları görür. Biri SSH oturumunuzdaki her paketi ele geçirse bile, sizi taklit etmelerine yardımcı olacak hiçbir şey elde edemez.
 
@@ -79,8 +77,8 @@ Ed25519, OpenSSH'in 6.5 sürümünde (2014) tanıtıldı ve artık önerilen var
 **Ed25519'un avantajları:**
 - **Kompakt** — anahtarlar yalnızca 68 karakterdir (açık anahtar) ve dosyalar küçüktür
 - **Hızlı** — imza oluşturma ve doğrulama son derece hızlıdır
-- **Tasarım gereği güvenli** — bazı RSA uygulamalarını etkileyen yan kanal saldırılarına karşı savunmasız değildir
-- **Sabit anahtar boyutu** — 256-bit güvenlik düzeyi, anahtar boyutu seçmeye gerek yoktur
+- **Tasarım gereği güvenli** — yan kanal saldırılarına dayanıklı uygulamaları destekleyen tasarım; dayanıklılık uygulamaya bağlıdır
+- **Sabit anahtar boyutu** — 256 bit açık anahtar yaklaşık 128 bit klasik güvenlik sağlar; anahtar boyutu seçmek gerekmez
 - **Deterministik** — imzalar deterministiktir, bu da bir sınıf rastgele sayı üreteci hatalarını ortadan kaldırır
 
 ```bash
@@ -355,3 +353,9 @@ SSH anahtarlarınızı oluşturmaya hazır mısınız? Ücretsiz çevrimiçi olu
 - <a href="/tr/what-is-ssh/">SSH Nedir? Güvenli Kabuk'a Tam Kılavuz</a>
 - <a href="/tr/ssh-command/">SSH Komutu: Örneklerle Tam Başvuru Kılavuzu</a>
 - <a href="/tr/how-to-set-up-ssh/">SSH Nasıl Kurulur: Eksiksiz Adım Adım Kılavuz</a>
+
+## Kaynaklar ve resmî belgeler
+
+- [RFC 4252 §7 — SSH public-key authentication](https://www.rfc-editor.org/rfc/rfc4252.html#section-7)
+- [RFC 8032 — Ed25519 signatures and security considerations](https://www.rfc-editor.org/rfc/rfc8032.html)
+- [OpenSSH ssh-keygen(1)](https://man.openbsd.org/ssh-keygen)

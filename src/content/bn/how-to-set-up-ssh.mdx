@@ -40,7 +40,7 @@ Linux বা macOS-এ কিছু ইনস্টল করার প্রয
 
 ### Option A: Online Generator ব্যবহার করুন
 
-Graphical interface পছন্দ করলে, আমাদের <a href="/">বিনামূল্যের online SSH key generator</a> আপনার browser-এ Ed25519 বা RSA key pair তৈরি করে। Private key Web Crypto API ব্যবহার করে locally তৈরি হয় — আমাদের সার্ভারে কিছু পাঠানো হয় না। উভয় ফাইল download করুন এবং `~/.ssh/` (Linux/macOS) বা `C:\Users\YourName\.ssh\` (Windows)-এ সংরক্ষণ করুন।
+Graphical interface পছন্দ করলে, আমাদের <a href="/">বিনামূল্যের online SSH key generator</a> আপনার browser-এ Ed25519 বা RSA key pair তৈরি করে। তৈরি করা প্রাইভেট কী ও পাসফ্রেজ আমাদের সার্ভারে আপলোড করা হয় না। উভয় ফাইল download করুন এবং `~/.ssh/` (Linux/macOS) বা `C:\Users\YourName\.ssh\` (Windows)-এ সংরক্ষণ করুন।
 
 ### Option B: Command Line-এ ssh-keygen ব্যবহার করুন
 
@@ -559,7 +559,7 @@ ssh-keygen -lf ~/.ssh/authorized_keys
 
 ## বিনামূল্যে আপনার SSH Key তৈরি করুন
 
-আপনি যদি এখনও SSH key pair তৈরি না করে থাকেন, আমাদের বিনামূল্যের online generator সেকেন্ডে সরাসরি আপনার browser-এ Ed25519 বা RSA key তৈরি করে। কোনো ইনস্টলেশন প্রয়োজন নেই, আমাদের সার্ভারে কিছু পাঠানো হয় না — তৈরি সম্পূর্ণভাবে আপনার ডিভাইসে হয়।
+Ed25519 ও RSA কী আপনার ব্রাউজারেই তৈরি হয়। তৈরি করা প্রাইভেট কী ও পাসফ্রেজ আমাদের সার্ভারে আপলোড করা হয় না।
 
 <a href="/">বিনামূল্যে আপনার SSH key তৈরি করুন →</a>
 
@@ -569,3 +569,9 @@ ssh-keygen -lf ~/.ssh/authorized_keys
 - <a href="/bn/what-is-ssh/">SSH কী? Secure Shell-এর সম্পূর্ণ গাইড</a>
 - <a href="/bn/what-is-an-ssh-key/">SSH Key কী? Public Key, Private Key, ও Key Pair ব্যাখ্যা</a>
 - <a href="/bn/ssh-command/">SSH Command: উদাহরণসহ সম্পূর্ণ রেফারেন্স</a>
+
+## তথ্যসূত্র ও সরকারি নথি
+
+- [GitHub Docs — Generating a new SSH key and adding it to the ssh-agent](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+- [GitLab Docs — Use SSH keys to communicate with GitLab](https://docs.gitlab.com/user/ssh/)
+- [OpenSSH sshd_config(5)](https://man.openbsd.org/sshd_config)

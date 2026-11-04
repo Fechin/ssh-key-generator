@@ -193,6 +193,12 @@
     "copyright": "© {year} SSH कुंजी जनरेटर। MIT लाइसेंस के तहत ओपन सोर्स।"
   },
   "seo": {
+    "sources": {
+      "title": "स्रोत और समीक्षा",
+      "reviewed": "अंतिम समीक्षा",
+      "openssh": "OpenSSH ssh-keygen मैन्युअल",
+      "github": "GitHub: नई SSH कुंजी बनाना"
+    },
     "whatIs": {
       "title": "ऑनलाइन SSH कुंजी जनरेटर क्या है?",
       "desc": "Online SSH key generator browser में key pair बनाता है। Public key GitHub, GitLab, Bitbucket या server पर जाती है; private key आपकी machine पर रहती है।"
@@ -245,10 +251,10 @@
       "rsaSigSize": "256-512 बाइट",
       "ed25519Security": "~128-बिट समतुल्य",
       "rsaSecurity": "~112-128-बिट (4096)",
-      "ed25519Performance": "बहुत तेज़ (10 गुना तेज़)",
+      "ed25519Performance": "इम्प्लीमेंटेशन पर निर्भर",
       "rsaPerformance": "धीमा निर्माण",
       "ed25519Compat": "OpenSSH 6.5+ (2014)",
-      "rsaCompat": "सार्वभौमिक (सभी सिस्टम)",
+      "rsaCompat": "व्यापक समर्थन; सर्वर की नीति जाँचें",
       "ed25519Quantum": "क्वांटम-सेफ नहीं",
       "rsaQuantum": "क्वांटम-सेफ नहीं",
       "ed25519BestFor": "GitHub, GitLab, आधुनिक सर्वर",

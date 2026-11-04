@@ -77,7 +77,7 @@ SSH stöder två primära autentiseringsmetoder: lösenord och **SSH-nycklar**. 
 Den **privata nyckeln** stannar på din lokala maskin, skyddad med en valfri lösenfras. Den **publika nyckeln** placeras på varje server du vill komma åt, i en fil som heter `~/.ssh/authorized_keys`. När du ansluter utfärdar servern en kryptografisk utmaning som bara innehavaren av motsvarande privata nyckel kan besvara. Inget lösenord skickas via nätverket.
 
 Detta tillvägagångssätt har flera fördelar:
-- **Immun mot brute force** — det finns inget att gissa. En 256-bitars Ed25519-nyckel har 2²⁵⁶ möjliga värden.
+- **Ed25519** — 256-bitars publik nyckel med ungefär 128 bitars klassisk säkerhet; inget storleksval behövs.
 - **Inget lösenord att stjäla** — även om någon avlyssnar handskakningen får de inget användbart.
 - **Automatiserbar** — skript och CI/CD-pipelines kan autentisera utan mänsklig interaktion.
 - **Återkallbar** — att ta bort en publik nyckel från `authorized_keys` återkallar omedelbart åtkomsten.
@@ -271,7 +271,7 @@ Både SSH och HTTPS krypterar nätverkstrafik, men de är utformade för olika s
 
 ## Generera dina SSH-nycklar nu
 
-Nyckelbaserad SSH-autentisering är säkrare och bekvämare än lösenord. Om du inte redan har konfigurerat SSH-nycklar skapar vår kostnadsfria onlinegenerator Ed25519- eller RSA-nyckelpar omedelbart i din webbläsare — ingen installation krävs, inget skickas till våra servrar.
+Ed25519- och RSA-nycklar genereras i din webbläsare. Genererade privata nycklar och lösenfraser laddas inte upp till våra servrar.
 
 <a href="/">Generera ditt SSH-nyckelpar nu →</a>
 
@@ -281,3 +281,9 @@ Nyckelbaserad SSH-autentisering är säkrare och bekvämare än lösenord. Om du
 - <a href="/sv/what-is-an-ssh-key/">Vad är en SSH-nyckel? Publika nycklar, privata nycklar och nyckelpar förklarade</a>
 - <a href="/sv/ssh-command/">SSH-kommandot: Komplett referens med exempel</a>
 - <a href="/sv/how-to-set-up-ssh/">Hur man konfigurerar SSH: En komplett steg-för-steg-guide</a>
+
+## Källor och officiell dokumentation
+
+- [RFC 4251 — The Secure Shell (SSH) Protocol Architecture](https://www.rfc-editor.org/rfc/rfc4251.html)
+- [RFC 4252 §7 — SSH public-key authentication](https://www.rfc-editor.org/rfc/rfc4252.html#section-7)
+- [RFC 8032 — Ed25519 signatures and security considerations](https://www.rfc-editor.org/rfc/rfc8032.html)

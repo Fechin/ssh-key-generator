@@ -193,6 +193,12 @@
     "copyright": "© {year} SSH Nøgle Generator. Open source under MIT licens."
   },
   "seo": {
+    "sources": {
+      "title": "Kilder og gennemgang",
+      "reviewed": "Senest gennemgået",
+      "openssh": "OpenSSH-manual til ssh-keygen",
+      "github": "GitHub: Generér en ny SSH-nøgle"
+    },
     "whatIs": {
       "title": "Hvad er en online SSH nøgle generator?",
       "desc": "Onlinegeneratoren opretter nøgleparret i browseren. Den offentlige nøgle lægges på GitHub, GitLab, Bitbucket eller serveren; den private nøgle bliver på din computer."
@@ -245,10 +251,10 @@
       "rsaSigSize": "256-512 bytes",
       "ed25519Security": "~128-bit ækvivalent",
       "rsaSecurity": "~112-128-bit (4096)",
-      "ed25519Performance": "Meget hurtig (10x hurtigere)",
+      "ed25519Performance": "Afhænger af implementeringen",
       "rsaPerformance": "Langsommere generering",
       "ed25519Compat": "OpenSSH 6.5+ (2014)",
-      "rsaCompat": "Universel (alle systemer)",
+      "rsaCompat": "Bred understøttelse; tjek serverens politik",
       "ed25519Quantum": "Ikke kvantesikker",
       "rsaQuantum": "Ikke kvantesikker",
       "ed25519BestFor": "GitHub, GitLab, moderne servere",

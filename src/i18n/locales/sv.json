@@ -193,6 +193,12 @@
     "copyright": "© {year} SSH Key Generator. Öppen källkod under MIT-licens."
   },
   "seo": {
+    "sources": {
+      "title": "Källor och granskning",
+      "reviewed": "Senast granskad",
+      "openssh": "OpenSSH-handbok för ssh-keygen",
+      "github": "GitHub: Generera en ny SSH-nyckel"
+    },
     "whatIs": {
       "title": "Vad är en SSH Nyckelgenerator Online?",
       "desc": "Onlinegeneratorn skapar nyckelparet i webbläsaren. Den publika nyckeln läggs i GitHub, GitLab, Bitbucket eller på servern; den privata nyckeln stannar på din dator."
@@ -245,10 +251,10 @@
       "rsaSigSize": "256-512 byte",
       "ed25519Security": "~128-bitars ekvivalent",
       "rsaSecurity": "~112-128-bitar (4096)",
-      "ed25519Performance": "Mycket snabb (10x snabbare)",
+      "ed25519Performance": "Beror på implementationen",
       "rsaPerformance": "Långsammare generering",
       "ed25519Compat": "OpenSSH 6.5+ (2014)",
-      "rsaCompat": "Universell (alla system)",
+      "rsaCompat": "Brett stöd; kontrollera serverns policy",
       "ed25519Quantum": "Inte kvantsäker",
       "rsaQuantum": "Inte kvantsäker",
       "ed25519BestFor": "GitHub, GitLab, moderna servrar",

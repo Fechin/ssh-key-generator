@@ -40,7 +40,7 @@ Tarvitset avainparin ennen kuin voit tehdä mitään muuta. Avainpari koostuu **
 
 ### Vaihtoehto A: Käytä online-generaattoria
 
-Jos haluat käyttää graafista käyttöliittymää, <a href="/">ilmainen online-SSH-avaingeneraattorimme</a> luo Ed25519- tai RSA-avainpareja selaimeesi. Yksityinen avain luodaan paikallisesti Web Crypto API:n avulla – mitään ei lähetetä palvelimillemme. Lataa molemmat tiedostot ja tallenna ne `~/.ssh/` (Linux/macOS) tai `C:\Users\YourName\.ssh\` (Windows).
+Jos haluat käyttää graafista käyttöliittymää, <a href="/">ilmainen online-SSH-avaingeneraattorimme</a> luo Ed25519- tai RSA-avainpareja selaimeesi. Luotuja yksityisiä avaimia ja salalauseita ei ladata palvelimillemme. Lataa molemmat tiedostot ja tallenna ne `~/.ssh/` (Linux/macOS) tai `C:\Users\YourName\.ssh\` (Windows).
 
 ### Vaihtoehto B: Käytä komentorivillä ssh-keygeniä
 
@@ -559,7 +559,7 @@ Yhdistä sormenjäljet oikean avaimen tunnistamiseksi ja poistamiseksi.
 
 ## Luo SSH-avaimesi ilmaiseksi
 
-Jos et ole vielä luonut SSH-avainpariasi, ilmainen online-generaattorimme luo Ed25519- tai RSA-avaimet suoraan selaimeesi sekunneissa. Asennusta ei tarvita, mitään ei lähetetä palvelimillemme – luonti tapahtuu kokonaan laitteellasi.
+Ed25519- ja RSA-avaimet luodaan selaimessasi. Luotuja yksityisiä avaimia ja salalauseita ei ladata palvelimillemme.
 
 <a href="/">Luo SSH-avaimesi ilmaiseksi →</a>
 
@@ -569,3 +569,9 @@ Jos et ole vielä luonut SSH-avainpariasi, ilmainen online-generaattorimme luo E
 - <a href="/fi/what-is-ssh/">Mikä on SSH? Secure Shellin täydellinen opas</a>
 - <a href="/fi/what-is-an-ssh-key/">Mikä on SSH-avain? Julkiset avaimet, yksityiset avaimet ja avainparit selitetty</a>
 - <a href="/fi/ssh-command/">SSH-komento: täydellinen viite esimerkkeineen</a>
+
+## Lähteet ja virallinen dokumentaatio
+
+- [GitHub Docs — Generating a new SSH key and adding it to the ssh-agent](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+- [GitLab Docs — Use SSH keys to communicate with GitLab](https://docs.gitlab.com/user/ssh/)
+- [OpenSSH sshd_config(5)](https://man.openbsd.org/sshd_config)

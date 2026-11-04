@@ -11,7 +11,7 @@
         "ssh-protokoll"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "what-is-an-ssh-key": {
       "title": "Vad är en SSH-nyckel? Offentliga nycklar, privata nycklar och nyckelpar förklaras",
@@ -24,7 +24,7 @@
         "github ssh-nyckel"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-command": {
       "title": "SSH-kommandot: Komplett referens med exempel för Linux, Mac och Windows",
@@ -37,7 +37,7 @@
         "powershell ssh kommando"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "how-to-set-up-ssh": {
       "title": "Hur man ställer in SSH: En komplett steg-för-steg-guide för Linux, Mac och Windows",
@@ -50,7 +50,7 @@
         "tillstånd nekad publickey"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "generate-ssh-key": {
       "title": "Skapa SSH-nyckel: onlineverktyg och ssh-keygen-kommandon",
@@ -65,7 +65,7 @@
         "rsa ssh nyckel"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-keygen": {
       "title": "ssh-keygen-kommando: skapa SSH-nycklar med exempel",
@@ -79,7 +79,7 @@
         "ssh fingerprint"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     }
   },
   "da": {
@@ -94,7 +94,7 @@
         "ssh protokol"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "what-is-an-ssh-key": {
       "title": "Hvad er en SSH-nøgle? Offentlige nøgler, private nøgler og nøglepar forklaret",
@@ -107,7 +107,7 @@
         "github ssh nøgle"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-command": {
       "title": "SSH-kommandoen: Fuldfør reference med eksempler til Linux, Mac og Windows",
@@ -120,7 +120,7 @@
         "powershell ssh kommando"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "how-to-set-up-ssh": {
       "title": "Sådan opsætter du SSH: En komplet trin-for-trin guide til Linux, Mac og Windows",
@@ -133,7 +133,7 @@
         "tilladelse nægtet offentlig nøgle"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "generate-ssh-key": {
       "title": "Opret SSH-nøgle: onlineværktøj og ssh-keygen-kommandoer",
@@ -148,7 +148,7 @@
         "rsa ssh nøgle"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-keygen": {
       "title": "ssh-keygen-kommando: opret SSH-nøgler med eksempler",
@@ -162,7 +162,7 @@
         "ssh fingerprint"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     }
   },
   "nb": {
@@ -177,7 +177,7 @@
         "ssh-protokoll"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "what-is-an-ssh-key": {
       "title": "Hva er en SSH-nøkkel? Offentlige nøkler, private nøkler og nøkkelpar forklart",
@@ -190,7 +190,7 @@
         "github ssh-nøkkel"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-command": {
       "title": "SSH-kommandoen: Komplett referanse med eksempler for Linux, Mac og Windows",
@@ -203,7 +203,7 @@
         "powershell ssh kommando"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "how-to-set-up-ssh": {
       "title": "Hvordan sette opp SSH: En komplett trinn-for-trinn-veiledning for Linux, Mac og Windows",
@@ -216,7 +216,7 @@
         "tillatelse nektet offentlig nøkkel"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "generate-ssh-key": {
       "title": "Opprett SSH-nøkkel: nettverktøy og ssh-keygen-kommandoer",
@@ -231,7 +231,7 @@
         "rsa ssh nøkkel"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-keygen": {
       "title": "ssh-keygen-kommando: lag SSH-nøkler med eksempler",
@@ -245,7 +245,7 @@
         "ssh fingerprint"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     }
   },
   "fi": {
@@ -260,7 +260,7 @@
         "ssh-protokolla"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "what-is-an-ssh-key": {
       "title": "Mikä on SSH-avain? Julkiset avaimet, yksityiset avaimet ja avainparit selitetty",
@@ -273,7 +273,7 @@
         "github ssh -avain"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-command": {
       "title": "SSH-komento: Täydellinen viite ja esimerkkejä Linuxille, Macille ja Windowsille",
@@ -286,7 +286,7 @@
         "powershell ssh -komento"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "how-to-set-up-ssh": {
       "title": "SSH:n määrittäminen: Täydellinen vaiheittainen opas Linuxille, Macille ja Windowsille",
@@ -299,7 +299,7 @@
         "lupa estetty julkinen avain"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "generate-ssh-key": {
       "title": "Luo SSH-avain: verkkotyökalu ja ssh-keygen-komennot",
@@ -314,7 +314,7 @@
         "rsa ssh avain"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-keygen": {
       "title": "ssh-keygen-komento: SSH-avainten luonti esimerkeillä",
@@ -328,7 +328,7 @@
         "ssh fingerprint"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     }
   }
 }

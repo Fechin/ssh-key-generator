@@ -40,7 +40,7 @@ Anda memerlukan pasangan kunci sebelum dapat melakukan hal lain. Pasangan kunci 
 
 ### Opsi A: Gunakan Generator Online
 
-Jika Anda lebih suka antarmuka grafis, <a href="/">generator kunci SSH online gratis</a> kami membuat pasangan kunci Ed25519 atau RSA di browser Anda. Kunci privat dibuat secara lokal menggunakan Web Crypto API — tidak ada yang dikirim ke server kami. Unduh kedua file dan simpan ke `~/.ssh/` (Linux/macOS) atau `C:\Users\YourName\.ssh\` (Windows).
+Jika Anda lebih suka antarmuka grafis, <a href="/">generator kunci SSH online gratis</a> kami membuat pasangan kunci Ed25519 atau RSA di browser Anda. Kunci privat yang dihasilkan dan frasa sandi tidak diunggah ke server kami. Unduh kedua file dan simpan ke `~/.ssh/` (Linux/macOS) atau `C:\Users\YourName\.ssh\` (Windows).
 
 ### Opsi B: Gunakan ssh-keygen di Baris Perintah
 
@@ -559,7 +559,7 @@ Cocokkan sidik jari untuk mengidentifikasi dan menghapus kunci yang tepat.
 
 ## Buat Kunci SSH Anda Secara Gratis
 
-Jika Anda belum membuat pasangan kunci SSH, generator online gratis kami membuat kunci Ed25519 atau RSA langsung di browser Anda dalam hitungan detik. Tidak perlu instalasi, tidak ada yang dikirim ke server kami — pembuatan sepenuhnya terjadi di perangkat Anda.
+Pembuatan kunci Ed25519 dan RSA berlangsung di browser Anda. Kunci privat yang dihasilkan dan frasa sandi tidak diunggah ke server kami.
 
 <a href="/">Buat kunci SSH Anda secara gratis →</a>
 
@@ -569,3 +569,9 @@ Jika Anda belum membuat pasangan kunci SSH, generator online gratis kami membuat
 - <a href="/id/what-is-ssh/">Apa Itu SSH? Panduan Lengkap Secure Shell</a>
 - <a href="/id/what-is-an-ssh-key/">Apa Itu Kunci SSH? Kunci Publik, Kunci Privat, dan Pasangan Kunci Dijelaskan</a>
 - <a href="/id/ssh-command/">Perintah SSH: Referensi Lengkap dengan Contoh</a>
+
+## Sumber dan dokumentasi resmi
+
+- [GitHub Docs — Generating a new SSH key and adding it to the ssh-agent](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+- [GitLab Docs — Use SSH keys to communicate with GitLab](https://docs.gitlab.com/user/ssh/)
+- [OpenSSH sshd_config(5)](https://man.openbsd.org/sshd_config)

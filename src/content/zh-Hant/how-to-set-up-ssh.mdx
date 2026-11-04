@@ -39,7 +39,7 @@ ssh -T git@github.com
 
 ### 選項 A：使用線上產生器
 
-如果您偏好圖形化介面，我們的<a href="/">免費線上 SSH 金鑰產生器</a>可在您的瀏覽器中建立 Ed25519 或 RSA 金鑰對。私密金鑰使用 Web Crypto API 在本地產生——不會有任何內容傳送到我們的伺服器。下載兩個檔案並將其儲存到 `~/.ssh/`（Linux/macOS）或 `C:\Users\YourName\.ssh\`（Windows）。
+如果您偏好圖形化介面，我們的<a href="/">免費線上 SSH 金鑰產生器</a>可在您的瀏覽器中建立 Ed25519 或 RSA 金鑰對。產生的私密金鑰與密碼短語不會上傳到我們的伺服器。下載兩個檔案並將其儲存到 `~/.ssh/`（Linux/macOS）或 `C:\Users\YourName\.ssh\`（Windows）。
 
 ### 選項 B：在指令列使用 ssh-keygen
 
@@ -558,7 +558,7 @@ ssh-keygen -lf ~/.ssh/authorized_keys
 
 ## 免費產生您的 SSH 金鑰
 
-如果您還未產生 SSH 金鑰對，我們的免費線上產生器可以在幾秒鐘內直接在您的瀏覽器中建立 Ed25519 或 RSA 金鑰。無需安裝，不會有任何內容傳送到我們的伺服器——產生完全在您的裝置上進行。
+Ed25519 與 RSA 金鑰產生在您的瀏覽器中進行，產生的私密金鑰與密碼短語不會上傳到我們的伺服器。
 
 <a href="/">免費產生您的 SSH 金鑰 →</a>
 
@@ -568,3 +568,9 @@ ssh-keygen -lf ~/.ssh/authorized_keys
 - <a href="/zh-Hant/what-is-ssh/">什麼是 SSH？安全外殼協定完整指南</a>
 - <a href="/zh-Hant/what-is-an-ssh-key/">什麼是 SSH 金鑰？公開金鑰、私密金鑰與金鑰對詳解</a>
 - <a href="/zh-Hant/ssh-command/">SSH 指令：含範例的完整參考指南</a>
+
+## 來源與官方文件
+
+- [GitHub Docs — Generating a new SSH key and adding it to the ssh-agent](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+- [GitLab Docs — Use SSH keys to communicate with GitLab](https://docs.gitlab.com/user/ssh/)
+- [OpenSSH sshd_config(5)](https://man.openbsd.org/sshd_config)

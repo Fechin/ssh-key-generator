@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useTranslation, getLanguagePathname } from '@/i18n'
 import { ARTICLE_SLUGS, getArticleMeta, hasArticleTranslation } from '@/content/articles'
+import siteReview from '@/content/siteReview.json'
 import { FAQSection } from './FAQSection'
 
 const SECTION_TITLE: Partial<Record<string, string>> = {
@@ -264,6 +265,25 @@ export function SEOContent() {
 
       {/* FAQ Section */}
       <FAQSection />
+
+      <section id="sources-and-review" className="space-y-3 border-t border-border pt-6">
+        <h2 className="text-lg font-semibold">{t('seo.sources.title')}</h2>
+        <ul className="space-y-2 text-sm">
+          <li>
+            <a href="https://man.openbsd.org/ssh-keygen" className="text-primary underline underline-offset-4 hover:opacity-80">
+              {t('seo.sources.openssh')}
+            </a>
+          </li>
+          <li>
+            <a href="https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent" className="text-primary underline underline-offset-4 hover:opacity-80">
+              {t('seo.sources.github')}
+            </a>
+          </li>
+        </ul>
+        <p className="text-xs text-muted-foreground">
+          {t('seo.sources.reviewed')}: <time dateTime={siteReview.dateModified}>{siteReview.dateModified}</time>
+        </p>
+      </section>
     </section>
   )
 }

@@ -16,7 +16,7 @@
         "удалённый доступ"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "what-is-an-ssh-key": {
       "title": "Что такое SSH-ключ? Открытые ключи, приватные ключи и пары ключей",
@@ -34,7 +34,7 @@
         "GitHub SSH ключ"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-command": {
       "title": "Команда SSH: полный справочник с примерами для Linux, Mac и Windows",
@@ -52,7 +52,7 @@
         "SSH Windows PowerShell"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "how-to-set-up-ssh": {
       "title": "Как настроить SSH: полное пошаговое руководство для Linux, Mac и Windows",
@@ -70,7 +70,7 @@
         "SSH macOS"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "generate-ssh-key": {
       "title": "Создать SSH-ключ: онлайн-генератор и команды ssh-keygen",
@@ -85,7 +85,7 @@
         "rsa ssh ключ"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-keygen": {
       "title": "Команда ssh-keygen: примеры создания SSH-ключей",
@@ -98,7 +98,7 @@
         "fingerprint ssh ключа"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     }
   },
   "uk": {
@@ -118,7 +118,7 @@
         "віддалений доступ"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "what-is-an-ssh-key": {
       "title": "Що таке SSH-ключ? Відкриті ключі, приватні ключі та пари ключів",
@@ -136,7 +136,7 @@
         "GitHub SSH ключ"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-command": {
       "title": "Команда SSH: повний довідник з прикладами для Linux, Mac і Windows",
@@ -154,7 +154,7 @@
         "SSH Windows PowerShell"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "how-to-set-up-ssh": {
       "title": "Як налаштувати SSH: повний покроковий посібник для Linux, Mac і Windows",
@@ -172,7 +172,7 @@
         "SSH macOS"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "generate-ssh-key": {
       "title": "Створити SSH-ключ: онлайн-генератор і команди ssh-keygen",
@@ -187,7 +187,7 @@
         "rsa ssh ключ"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-keygen": {
       "title": "Команда ssh-keygen: приклади створення SSH-ключів",
@@ -200,7 +200,7 @@
         "fingerprint ssh ключа"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     }
   }
 }

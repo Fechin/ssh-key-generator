@@ -77,7 +77,7 @@ SSH unterstützt zwei primäre Authentifizierungsmethoden: Passwörter und **SSH
 Der **private Schlüssel** verbleibt auf Ihrer lokalen Maschine, optional durch eine Passphrase geschützt. Der **öffentliche Schlüssel** wird auf jedem Server hinterlegt, auf den Sie zugreifen möchten, in einer Datei namens `~/.ssh/authorized_keys`. Bei der Verbindung stellt der Server eine kryptografische Herausforderung aus, die nur der Inhaber des entsprechenden privaten Schlüssels beantworten kann. Es wird kein Passwort über das Netzwerk gesendet.
 
 Dieser Ansatz bietet mehrere Vorteile:
-- **Immun gegen Brute-Force** — Es gibt nichts zu erraten. Ein 256-Bit-Ed25519-Schlüssel hat 2²⁵⁶ mögliche Werte.
+- **Ed25519** — 256-Bit-Public-Key mit ungefähr 128 Bit klassischer Sicherheit; keine Größenwahl nötig.
 - **Kein Passwort zum Stehlen** — Selbst wenn jemand den Handshake abfängt, erhält er nichts Verwertbares.
 - **Automatisierbar** — Skripte und CI/CD-Pipelines können sich ohne menschliche Interaktion authentifizieren.
 - **Widerrufbar** — Das Entfernen eines öffentlichen Schlüssels aus `authorized_keys` entzieht sofort den Zugriff.
@@ -271,7 +271,7 @@ Sowohl SSH als auch HTTPS verschlüsseln den Netzwerkdatenverkehr, sind jedoch f
 
 ## Generieren Sie jetzt Ihre SSH-Schlüssel
 
-Schlüsselbasierte SSH-Authentifizierung ist sicherer und komfortabler als Passwörter. Wenn Sie noch keine SSH-Schlüssel eingerichtet haben, erstellt unser kostenloser Online-Generator sofort Ed25519- oder RSA-Schlüsselpaare in Ihrem Browser — ohne Installation, ohne Übertragung an unsere Server.
+Die Erzeugung von Ed25519- und RSA-Schlüsseln erfolgt in Ihrem Browser. Generierte private Schlüssel und Passphrasen werden nicht auf unsere Server hochgeladen.
 
 <a href="/">Jetzt Ihr SSH-Schlüsselpaar generieren →</a>
 
@@ -281,3 +281,9 @@ Schlüsselbasierte SSH-Authentifizierung ist sicherer und komfortabler als Passw
 - <a href="/de/what-is-an-ssh-key/">Was ist ein SSH-Schlüssel? Öffentliche Schlüssel, private Schlüssel und Schlüsselpaare erklärt</a>
 - <a href="/de/ssh-command/">Der SSH-Befehl: Vollständige Referenz mit Beispielen</a>
 - <a href="/de/how-to-set-up-ssh/">SSH einrichten: Eine vollständige Schritt-für-Schritt-Anleitung</a>
+
+## Quellen und offizielle Dokumentation
+
+- [RFC 4251 — The Secure Shell (SSH) Protocol Architecture](https://www.rfc-editor.org/rfc/rfc4251.html)
+- [RFC 4252 §7 — SSH public-key authentication](https://www.rfc-editor.org/rfc/rfc4252.html#section-7)
+- [RFC 8032 — Ed25519 signatures and security considerations](https://www.rfc-editor.org/rfc/rfc8032.html)

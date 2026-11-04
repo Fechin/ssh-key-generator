@@ -9,17 +9,15 @@ Pro nové klíče většinou zvolte Ed25519. RSA 4096 použijte, pokud starší 
 
 ## Jak SSH klíče fungují
 
-SSH klíče jsou založeny na **asymetrické kryptografii**, také nazývané kryptografie s veřejným klíčem. Na rozdíl od symetrické kryptografie (kde jediný tajný klíč jak šifruje, tak dešifruje data) používají asymetrické systémy matematicky propojené páry klíčů, kde data zašifrovaná jedním klíčem lze dešifrovat pouze druhým.
+Ověřování SSH veřejným klíčem používá digitální podpisy. Soukromý klíč podepisuje ověřovací data a veřejný klíč ověřuje podpis; nejde o šifrování a dešifrování výzvy serveru.
 
 Zde je průběh autentizace při použití SSH klíče pro přihlášení na server:
 
 1. Spustíte `ssh user@server.example.com`.
 2. Server vyhledá váš veřejný klíč v `~/.ssh/authorized_keys`.
-3. Server vygeneruje náhodnou výzvu a zašifruje ji vaším veřejným klíčem.
-4. Váš SSH klient dešifruje výzvu pomocí vašeho soukromého klíče.
-5. Klient odešle kryptografický důkaz (odvozený z dešifrované výzvy a ID relace) zpět serveru.
-6. Server ověří důkaz. Pouze držitel soukromého klíče ho mohl vytvořit.
-7. Autentizace proběhne úspěšně. Žádné heslo nikdy neopustí váš stroj.
+3. Klient podepíše žádost o ověření včetně identifikátoru relace svým soukromým klíčem.
+4. Server ověří podpis pomocí schváleného veřejného klíče.
+5. Autentizace proběhne úspěšně. Žádné heslo nikdy neopustí váš stroj.
 
 Toto je klíčový poznatek: **váš soukromý klíč nikdy necestuje po síti**. Server vidí pouze váš veřejný klíč a kryptografické důkazy, které vytváříte. I když někdo zachytí každý paket ve vaší SSH relaci, nezíská nic, co by mu pomohlo vydávat se za vás.
 
@@ -79,8 +77,8 @@ Ed25519 byl představen v OpenSSH verze 6.5 (2014) a nyní je doporučeným výc
 **Výhody Ed25519:**
 - **Kompaktní** — klíče mají pouze 68 znaků (veřejný klíč) a soubory jsou malé
 - **Rychlý** — generování a ověřování podpisů je extrémně rychlé
-- **Bezpečný svým designem** — není zranitelný vůči útokům postranními kanály, které postihují některé RSA implementace
-- **Pevná velikost klíče** — úroveň zabezpečení 256 bitů, není třeba volit velikost klíče
+- **Bezpečný svým designem** — návrh podporuje implementace odolné vůči postranním kanálům; odolnost závisí na implementaci
+- **Pevná velikost klíče** — 256bitový veřejný klíč poskytuje přibližně 128 bitů klasického zabezpečení; velikost se nevolí
 - **Deterministický** — podpisy jsou deterministické, což eliminuje třídu selhání generátoru náhodných čísel
 
 ```bash
@@ -355,3 +353,9 @@ Jste připraveni vytvořit SSH klíče? Náš bezplatný online generátor vytv�
 - <a href="/cs/what-is-ssh/">Co je SSH? Kompletní průvodce protokolem Secure Shell</a>
 - <a href="/cs/ssh-command/">Příkaz SSH: Kompletní přehled s příklady</a>
 - <a href="/cs/how-to-set-up-ssh/">Jak nastavit SSH: Kompletní průvodce krok za krokem</a>
+
+## Zdroje a oficiální dokumentace
+
+- [RFC 4252 §7 — SSH public-key authentication](https://www.rfc-editor.org/rfc/rfc4252.html#section-7)
+- [RFC 8032 — Ed25519 signatures and security considerations](https://www.rfc-editor.org/rfc/rfc8032.html)
+- [OpenSSH ssh-keygen(1)](https://man.openbsd.org/ssh-keygen)

@@ -43,7 +43,7 @@ const translationCache: Partial<Record<Language, Translations>> = {
 }
 const loadingCache = new Map<Language, Promise<Translations>>()
 
-async function loadLanguage(language: Language): Promise<Translations> {
+export async function loadLanguage(language: Language): Promise<Translations> {
   const cached = translationCache[language]
   if (cached) return cached
 

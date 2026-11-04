@@ -193,6 +193,12 @@
     "copyright": "© {year} SSH Key Generator. مفتوح المصدر بموجب رخصة MIT."
   },
   "seo": {
+    "sources": {
+      "title": "المصادر والمراجعة",
+      "reviewed": "آخر مراجعة",
+      "openssh": "دليل OpenSSH ssh-keygen",
+      "github": "GitHub: إنشاء مفتاح SSH جديد"
+    },
     "whatIs": {
       "title": "ما هو SSH Key Generator عبر الإنترنت؟",
       "desc": "ينشئ مولّد مفاتيح SSH عبر الإنترنت زوج المفاتيح داخل المتصفح. يُضاف المفتاح العام إلى GitHub أو GitLab أو Bitbucket أو الخادم؛ ويبقى المفتاح الخاص على جهازك."
@@ -245,10 +251,10 @@
       "rsaSigSize": "256-512 bytes",
       "ed25519Security": "معادل ~128-bit",
       "rsaSecurity": "~112-128-bit (4096)",
-      "ed25519Performance": "سريع جداً (أسرع 10 مرات)",
+      "ed25519Performance": "يعتمد على التنفيذ",
       "rsaPerformance": "إنشاء أبطأ",
       "ed25519Compat": "OpenSSH 6.5+ (2014)",
-      "rsaCompat": "شامل (جميع الأنظمة)",
+      "rsaCompat": "دعم واسع؛ تحقق من سياسة الخادم",
       "ed25519Quantum": "غير مقاوم للكم",
       "rsaQuantum": "غير مقاوم للكم",
       "ed25519BestFor": "GitHub, GitLab, الخوادم الحديثة",

@@ -77,7 +77,7 @@ SSH hỗ trợ hai phương thức xác thực chính: mật khẩu và **SSH ke
 **Khóa riêng tư** lưu trên máy cục bộ của bạn, được bảo vệ bằng passphrase tùy chọn. **Khóa công khai** được đặt trên bất kỳ server nào bạn muốn truy cập, trong file `~/.ssh/authorized_keys`. Khi bạn kết nối, server đưa ra thách thức mật mã mà chỉ người sở hữu khóa riêng tư tương ứng mới có thể trả lời. Không có mật khẩu nào được gửi qua mạng.
 
 Cách tiếp cận này có một số ưu điểm:
-- **Miễn nhiễm với brute force** — không có gì để đoán. Khóa Ed25519 256-bit có 2²⁵⁶ giá trị có thể.
+- **Ed25519** — khóa công khai 256 bit cung cấp khoảng 128 bit bảo mật cổ điển; không cần chọn kích thước.
 - **Không có mật khẩu để đánh cắp** — ngay cả khi ai đó chặn bắt tay, họ không thu được gì hữu ích.
 - **Có thể tự động hóa** — script và pipeline CI/CD có thể xác thực mà không cần tương tác của con người.
 - **Có thể thu hồi** — xóa khóa công khai khỏi `authorized_keys` ngay lập tức thu hồi quyền truy cập.
@@ -271,7 +271,7 @@ Cả SSH và HTTPS đều mã hóa lưu lượng mạng, nhưng được thiết
 
 ## Tạo SSH Key Của Bạn Ngay Bây Giờ
 
-Xác thực dựa trên SSH key an toàn hơn và tiện lợi hơn mật khẩu. Nếu bạn chưa thiết lập SSH key, trình tạo trực tuyến miễn phí của chúng tôi tạo cặp khóa Ed25519 hoặc RSA ngay lập tức trong trình duyệt — không cần cài đặt, không có gì được gửi đến server của chúng tôi.
+Việc tạo khóa Ed25519 và RSA diễn ra trong trình duyệt của bạn. Khóa riêng được tạo và cụm mật khẩu không được tải lên máy chủ của chúng tôi.
 
 <a href="/">Tạo cặp SSH key của bạn ngay bây giờ →</a>
 
@@ -281,3 +281,9 @@ Xác thực dựa trên SSH key an toàn hơn và tiện lợi hơn mật khẩu
 - <a href="/vi/what-is-an-ssh-key/">SSH Key Là Gì? Khóa Công Khai, Khóa Riêng Tư và Cặp Khóa Được Giải Thích</a>
 - <a href="/vi/ssh-command/">Lệnh SSH: Tài Liệu Tham Khảo Đầy Đủ với Ví Dụ</a>
 - <a href="/vi/how-to-set-up-ssh/">Cách Thiết Lập SSH: Hướng Dẫn Từng Bước Đầy Đủ</a>
+
+## Nguồn và tài liệu chính thức
+
+- [RFC 4251 — The Secure Shell (SSH) Protocol Architecture](https://www.rfc-editor.org/rfc/rfc4251.html)
+- [RFC 4252 §7 — SSH public-key authentication](https://www.rfc-editor.org/rfc/rfc4252.html#section-7)
+- [RFC 8032 — Ed25519 signatures and security considerations](https://www.rfc-editor.org/rfc/rfc8032.html)

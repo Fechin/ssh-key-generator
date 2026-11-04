@@ -193,6 +193,12 @@
     "copyright": "© {year} SSH Key Generator. Nyílt forráskód MIT licenc alatt."
   },
   "seo": {
+    "sources": {
+      "title": "Források és ellenőrzés",
+      "reviewed": "Utolsó ellenőrzés",
+      "openssh": "OpenSSH ssh-keygen kézikönyv",
+      "github": "GitHub: Új SSH-kulcs létrehozása"
+    },
     "whatIs": {
       "title": "Mi az az online SSH Key Generator?",
       "desc": "Az online generátor a böngészőben hozza létre a kulcspárt. A publikus kulcs kerül GitHubra, GitLabra, Bitbucketre vagy szerverre; a privát kulcs a gépeden marad."
@@ -245,10 +251,10 @@
       "rsaSigSize": "256-512 byte",
       "ed25519Security": "~128-bit ekvivalens",
       "rsaSecurity": "~112-128-bit (4096)",
-      "ed25519Performance": "Nagyon gyors (10x gyorsabb)",
+      "ed25519Performance": "A megvalósítástól függ",
       "rsaPerformance": "Lassabb generálás",
       "ed25519Compat": "OpenSSH 6.5+ (2014)",
-      "rsaCompat": "Univerzális (minden rendszer)",
+      "rsaCompat": "Széles támogatás; ellenőrizze a kiszolgáló szabályzatát",
       "ed25519Quantum": "Nem kvantumbiztos",
       "rsaQuantum": "Nem kvantumbiztos",
       "ed25519BestFor": "GitHub, GitLab, modern szerverek",

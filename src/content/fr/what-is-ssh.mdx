@@ -77,7 +77,7 @@ SSH prend en charge deux méthodes d'authentification principales : les mots de 
 La **clé privée** reste sur votre machine locale, protégée par une phrase secrète optionnelle. La **clé publique** est placée sur tout serveur auquel vous souhaitez accéder, dans un fichier appelé `~/.ssh/authorized_keys`. Lors de la connexion, le serveur émet un défi cryptographique auquel seul le détenteur de la clé privée correspondante peut répondre. Aucun mot de passe n'est envoyé sur le réseau.
 
 Cette approche présente plusieurs avantages :
-- **Immunisée contre la force brute** — il n'y a rien à deviner. Une clé Ed25519 de 256 bits a 2²⁵⁶ valeurs possibles.
+- **Ed25519** — clé publique de 256 bits offrant environ 128 bits de sécurité classique ; aucun choix de taille nécessaire.
 - **Aucun mot de passe à voler** — même si quelqu'un intercepte la négociation, il n'obtient rien d'utile.
 - **Automatisable** — les scripts et les pipelines CI/CD peuvent s'authentifier sans interaction humaine.
 - **Révocable** — retirer une clé publique d'`authorized_keys` révoque immédiatement l'accès.
@@ -271,7 +271,7 @@ SSH et HTTPS chiffrent tous deux le trafic réseau, mais ils sont conçus à des
 
 ## Générez vos clés SSH maintenant
 
-L'authentification SSH par clé est plus sécurisée et plus pratique que les mots de passe. Si vous n'avez pas encore configuré vos clés SSH, notre générateur en ligne gratuit crée instantanément des paires de clés Ed25519 ou RSA dans votre navigateur — aucune installation requise, rien n'est envoyé à nos serveurs.
+La génération des clés Ed25519 et RSA s’effectue dans votre navigateur. Les clés privées générées et les phrases secrètes ne sont pas envoyées à nos serveurs.
 
 <a href="/">Générer votre paire de clés SSH maintenant →</a>
 
@@ -281,3 +281,9 @@ L'authentification SSH par clé est plus sécurisée et plus pratique que les mo
 - <a href="/fr/what-is-an-ssh-key/">Qu'est-ce qu'une clé SSH ? Clés publiques, clés privées et paires de clés expliquées</a>
 - <a href="/fr/ssh-command/">La commande SSH : référence complète avec exemples</a>
 - <a href="/fr/how-to-set-up-ssh/">Comment configurer SSH : un guide complet étape par étape</a>
+
+## Sources et documentation officielle
+
+- [RFC 4251 — The Secure Shell (SSH) Protocol Architecture](https://www.rfc-editor.org/rfc/rfc4251.html)
+- [RFC 4252 §7 — SSH public-key authentication](https://www.rfc-editor.org/rfc/rfc4252.html#section-7)
+- [RFC 8032 — Ed25519 signatures and security considerations](https://www.rfc-editor.org/rfc/rfc8032.html)

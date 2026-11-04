@@ -39,7 +39,7 @@ Sie benötigen ein Schlüsselpaar, bevor Sie irgendetwas anderes tun können. Da
 
 ### Option A: Den Online-Generator verwenden
 
-Wenn Sie eine grafische Oberfläche bevorzugen, erstellt unser <a href="/">kostenloser Online-SSH-Schlüsselgenerator</a> Ed25519- oder RSA-Schlüsselpaare in Ihrem Browser. Der private Schlüssel wird lokal mit der Web-Crypto-API generiert — nichts wird an unsere Server übertragen. Laden Sie beide Dateien herunter und speichern Sie sie in `~/.ssh/` (Linux/macOS) oder `C:\Users\IhrName\.ssh\` (Windows).
+Wenn Sie eine grafische Oberfläche bevorzugen, erstellt unser <a href="/">kostenloser Online-SSH-Schlüsselgenerator</a> Ed25519- oder RSA-Schlüsselpaare in Ihrem Browser. Generierte private Schlüssel und Passphrasen werden nicht auf unsere Server hochgeladen. Laden Sie beide Dateien herunter und speichern Sie sie in `~/.ssh/` (Linux/macOS) oder `C:\Users\IhrName\.ssh\` (Windows).
 
 ### Option B: ssh-keygen in der Kommandozeile verwenden
 
@@ -558,7 +558,7 @@ Fingerabdrücke vergleichen, um den richtigen Schlüssel zu identifizieren und z
 
 ## Ihre SSH-Schlüssel kostenlos generieren
 
-Wenn Sie noch kein SSH-Schlüsselpaar generiert haben, erstellt unser kostenloser Online-Generator in Sekunden Ed25519- oder RSA-Schlüssel direkt in Ihrem Browser. Keine Installation erforderlich, nichts wird an unsere Server gesendet — die Generierung erfolgt vollständig auf Ihrem Gerät.
+Die Erzeugung von Ed25519- und RSA-Schlüsseln erfolgt in Ihrem Browser. Generierte private Schlüssel und Passphrasen werden nicht auf unsere Server hochgeladen.
 
 <a href="/">Ihre SSH-Schlüssel kostenlos generieren →</a>
 
@@ -568,3 +568,9 @@ Wenn Sie noch kein SSH-Schlüsselpaar generiert haben, erstellt unser kostenlose
 - <a href="/de/what-is-ssh/">Was ist SSH? Der vollständige Leitfaden zur Secure Shell</a>
 - <a href="/de/what-is-an-ssh-key/">Was ist ein SSH-Schlüssel? Öffentliche Schlüssel, private Schlüssel und Schlüsselpaare erklärt</a>
 - <a href="/de/ssh-command/">Der SSH-Befehl: Vollständige Referenz mit Beispielen</a>
+
+## Quellen und offizielle Dokumentation
+
+- [GitHub Docs — Generating a new SSH key and adding it to the ssh-agent](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+- [GitLab Docs — Use SSH keys to communicate with GitLab](https://docs.gitlab.com/user/ssh/)
+- [OpenSSH sshd_config(5)](https://man.openbsd.org/sshd_config)

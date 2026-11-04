@@ -193,6 +193,12 @@
     "copyright": "© {year} SSH Key Generator. Sumber terbuka di bawah Lisensi MIT."
   },
   "seo": {
+    "sources": {
+      "title": "Sumber dan tinjauan",
+      "reviewed": "Terakhir ditinjau",
+      "openssh": "Panduan OpenSSH ssh-keygen",
+      "github": "GitHub: Membuat kunci SSH baru"
+    },
     "whatIs": {
       "title": "Apa itu Generator Kunci SSH Online?",
       "desc": "Generator online membuat pasangan kunci di browser. Kunci publik ditambahkan ke GitHub, GitLab, Bitbucket, atau server; kunci privat tetap di komputer Anda."
@@ -245,10 +251,10 @@
       "rsaSigSize": "256-512 byte",
       "ed25519Security": "Setara ~128-bit",
       "rsaSecurity": "~112-128-bit (4096)",
-      "ed25519Performance": "Sangat Cepat (10x lebih cepat)",
+      "ed25519Performance": "Bergantung pada implementasi",
       "rsaPerformance": "Pembuatan lebih lambat",
       "ed25519Compat": "OpenSSH 6.5+ (2014)",
-      "rsaCompat": "Universal (semua sistem)",
+      "rsaCompat": "Dukungan luas; periksa kebijakan server",
       "ed25519Quantum": "Tidak tahan kuantum",
       "rsaQuantum": "Tidak tahan kuantum",
       "ed25519BestFor": "GitHub, GitLab, server modern",

@@ -40,7 +40,7 @@ ssh -T git@github.com
 
 ### אפשרות א: שימוש במחולל המקוון
 
-אם אתה מעדיף ממשק גרפי, <a href="/">מחולל מפתחות SSH המקוון החינמי שלנו</a> יוצר זוגות מפתח Ed25519 או RSA בדפדפן שלך. המפתח הפרטי נוצר מקומית באמצעות Web Crypto API — שום דבר לא נשלח לשרתים שלנו. הורד את שני הקבצים ושמור אותם ב-`~/.ssh/` (Linux/macOS) או `C:\Users\YourName\.ssh\` (Windows).
+אם אתה מעדיף ממשק גרפי, <a href="/">מחולל מפתחות SSH המקוון החינמי שלנו</a> יוצר זוגות מפתח Ed25519 או RSA בדפדפן שלך. המפתחות הפרטיים שנוצרו וביטויי הסיסמה אינם מועלים לשרתים שלנו. הורד את שני הקבצים ושמור אותם ב-`~/.ssh/` (Linux/macOS) או `C:\Users\YourName\.ssh\` (Windows).
 
 ### אפשרות ב: שימוש ב-ssh-keygen בשורת הפקודה
 
@@ -559,7 +559,7 @@ ssh-keygen -lf ~/.ssh/authorized_keys
 
 ## צור את מפתחות ה-SSH שלך בחינם
 
-אם עדיין לא יצרת את זוג מפתח ה-SSH שלך, המחולל המקוון החינמי שלנו יוצר מפתחות Ed25519 או RSA ישירות בדפדפן שלך תוך שניות. ללא צורך בהתקנה, ללא שליחת דבר לשרתים שלנו — היצירה מתרחשת לחלוטין במכשיר שלך.
+יצירת מפתחות Ed25519 ו־RSA מתבצעת בדפדפן שלך. המפתחות הפרטיים שנוצרו וביטויי הסיסמה אינם מועלים לשרתים שלנו.
 
 <a href="/">צור את מפתחות ה-SSH שלך בחינם ←</a>
 
@@ -569,3 +569,9 @@ ssh-keygen -lf ~/.ssh/authorized_keys
 - <a href="/he/what-is-ssh/">מה זה SSH? המדריך המלא ל-Secure Shell</a>
 - <a href="/he/what-is-an-ssh-key/">מה זה מפתח SSH? מפתחות ציבוריים, פרטיים וזוגות מפתחות — הסבר</a>
 - <a href="/he/ssh-command/">פקודת SSH: עיון מלא עם דוגמאות</a>
+
+## מקורות ותיעוד רשמי
+
+- [GitHub Docs — Generating a new SSH key and adding it to the ssh-agent](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+- [GitLab Docs — Use SSH keys to communicate with GitLab](https://docs.gitlab.com/user/ssh/)
+- [OpenSSH sshd_config(5)](https://man.openbsd.org/sshd_config)

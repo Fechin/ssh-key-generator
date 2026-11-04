@@ -77,7 +77,7 @@ SSH understøtter to primære godkendelsesmetoder: adgangskoder og **SSH-nøgler
 Den **private nøgle** forbliver på din lokale maskine, beskyttet med en valgfri adgangssætning. Den **offentlige nøgle** placeres på enhver server, du ønsker at tilgå, i en fil kaldet `~/.ssh/authorized_keys`. Når du opretter forbindelse, udsteder serveren en kryptografisk udfordring, som kun indehaveren af den tilsvarende private nøgle kan besvare. Ingen adgangskode sendes over netværket.
 
 Denne tilgang har adskillige fordele:
-- **Immun over for brute force** — der er intet at gætte. En 256-bit Ed25519-nøgle har 2²⁵⁶ mulige værdier.
+- **Ed25519** — 256-bit offentlig nøgle med omtrent 128 bits klassisk sikkerhed; ingen valg af nøglestørrelse nødvendigt.
 - **Ingen adgangskode at stjæle** — selv hvis nogen opfanger håndtrykket, opnår de intet brugbart.
 - **Automatiserbar** — scripts og CI/CD-pipelines kan godkende uden menneskelig interaktion.
 - **Tilbagekaldelig** — fjernelse af en offentlig nøgle fra `authorized_keys` tilbagekalder øjeblikkeligt adgang.
@@ -271,7 +271,7 @@ Både SSH og HTTPS krypterer netværkstrafik, men de er designet til forskellige
 
 ## Generér dine SSH-nøgler nu
 
-SSH-nøglebaseret godkendelse er mere sikker og mere bekvem end adgangskoder. Hvis du ikke allerede har konfigureret SSH-nøgler, opretter vores gratis onlinegenerator Ed25519- eller RSA-nøglepar øjeblikkeligt i din browser — ingen installation krævet, intet sendt til vores servere.
+Ed25519- og RSA-nøgler genereres i din browser. Genererede private nøgler og adgangssætninger uploades ikke til vores servere.
 
 <a href="/">Generér dit SSH-nøglepar nu →</a>
 
@@ -281,3 +281,9 @@ SSH-nøglebaseret godkendelse er mere sikker og mere bekvem end adgangskoder. Hv
 - <a href="/da/what-is-an-ssh-key/">Hvad er en SSH-nøgle? Offentlige nøgler, private nøgler og nøglepar forklaret</a>
 - <a href="/da/ssh-command/">SSH-kommandoen: Komplet reference med eksempler</a>
 - <a href="/da/how-to-set-up-ssh/">Sådan konfigurerer du SSH: En komplet trin-for-trin-guide</a>
+
+## Kilder og officiel dokumentation
+
+- [RFC 4251 — The Secure Shell (SSH) Protocol Architecture](https://www.rfc-editor.org/rfc/rfc4251.html)
+- [RFC 4252 §7 — SSH public-key authentication](https://www.rfc-editor.org/rfc/rfc4252.html#section-7)
+- [RFC 8032 — Ed25519 signatures and security considerations](https://www.rfc-editor.org/rfc/rfc8032.html)

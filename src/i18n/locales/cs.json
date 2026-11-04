@@ -193,6 +193,12 @@
     "copyright": "© {year} SSH Key Generator. Open source pod licencí MIT."
   },
   "seo": {
+    "sources": {
+      "title": "Zdroje a kontrola",
+      "reviewed": "Poslední kontrola",
+      "openssh": "Manuál OpenSSH ssh-keygen",
+      "github": "GitHub: Vygenerování nového SSH klíče"
+    },
     "whatIs": {
       "title": "Co je online SSH Key Generator?",
       "desc": "Online generátor vytvoří pár klíčů v prohlížeči. Veřejný klíč přidáte do GitHubu, GitLabu, Bitbucketu nebo na server; soukromý klíč zůstane na vašem počítači."
@@ -245,10 +251,10 @@
       "rsaSigSize": "256-512 bajtů",
       "ed25519Security": "Ekvivalent ~128 bitů",
       "rsaSecurity": "~112-128 bitů (4096)",
-      "ed25519Performance": "Velmi rychlý (10x rychlejší)",
+      "ed25519Performance": "Závisí na implementaci",
       "rsaPerformance": "Pomalejší generování",
       "ed25519Compat": "OpenSSH 6.5+ (2014)",
-      "rsaCompat": "Univerzální (všechny systémy)",
+      "rsaCompat": "Široká podpora; ověřte zásady serveru",
       "ed25519Quantum": "Není odolný vůči kvantovým počítačům",
       "rsaQuantum": "Není odolný vůči kvantovým počítačům",
       "ed25519BestFor": "GitHub, GitLab, moderní servery",

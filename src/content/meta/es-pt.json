@@ -16,7 +16,7 @@
         "acceso remoto seguro"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "what-is-an-ssh-key": {
       "title": "¿Qué es una clave SSH? Claves públicas, privadas y pares de claves explicados",
@@ -34,7 +34,7 @@
         "ssh-keygen"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-command": {
       "title": "El comando SSH: referencia completa con ejemplos para Linux, Mac y Windows",
@@ -52,7 +52,7 @@
         "SSH Windows PowerShell"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "how-to-set-up-ssh": {
       "title": "Cómo configurar SSH: guía completa paso a paso para Linux, Mac y Windows",
@@ -70,7 +70,7 @@
         "configurar SSH Windows"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "generate-ssh-key": {
       "title": "Generar una clave SSH: herramienta online y comandos ssh-keygen",
@@ -85,7 +85,7 @@
         "clave rsa ssh"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-keygen": {
       "title": "Comando ssh-keygen: crear claves SSH con ejemplos",
@@ -98,7 +98,7 @@
         "huella clave ssh"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     }
   },
   "pt": {
@@ -118,7 +118,7 @@
         "acesso remoto seguro"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "what-is-an-ssh-key": {
       "title": "O que é uma chave SSH? Chaves públicas, privadas e pares de chaves explicados",
@@ -136,7 +136,7 @@
         "ssh-keygen"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-command": {
       "title": "Comando SSH: referência completa com exemplos para Linux, Mac e Windows",
@@ -154,7 +154,7 @@
         "SSH Windows PowerShell"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "how-to-set-up-ssh": {
       "title": "Como configurar SSH: guia completo passo a passo para Linux, Mac e Windows",
@@ -172,7 +172,7 @@
         "configurar SSH Windows"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "generate-ssh-key": {
       "title": "Gerar chave SSH: ferramenta online e comandos ssh-keygen",
@@ -187,7 +187,7 @@
         "chave rsa ssh"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-keygen": {
       "title": "Comando ssh-keygen: criar chaves SSH com exemplos",
@@ -200,7 +200,7 @@
         "fingerprint chave ssh"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     }
   }
 }

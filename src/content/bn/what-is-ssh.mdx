@@ -77,7 +77,7 @@ SSH দুটি প্রাথমিক authentication পদ্ধতি স�
 **Private key** আপনার local মেশিনে থাকে, একটি ঐচ্ছিক passphrase দিয়ে সুরক্ষিত। **Public key** আপনি যে সার্ভার অ্যাক্সেস করতে চান সেখানে রাখা হয়, `~/.ssh/authorized_keys` নামক ফাইলে। আপনি সংযোগ করলে, সার্ভার একটি ক্রিপ্টোগ্রাফিক challenge জারি করে যার উত্তর কেবল সংশ্লিষ্ট private key-এর ধারক দিতে পারেন। নেটওয়ার্কে কোনো পাসওয়ার্ড পাঠানো হয় না।
 
 এই পদ্ধতির বেশ কিছু সুবিধা আছে:
-- **Brute force-এর বিপরীতে প্রতিরোধী** — অনুমান করার কিছু নেই। একটি 256-bit Ed25519 key-এ 2²⁵⁶টি সম্ভাব্য মান থাকে।
+- **Ed25519** — ২৫৬-বিট পাবলিক কী প্রায় ১২৮-বিট ধ্রুপদি নিরাপত্তা দেয়; আকার বেছে নিতে হয় না.
 - **চুরি করার পাসওয়ার্ড নেই** — কেউ handshake ইন্টারসেপ্ট করলেও কিছু উপকারী পায় না।
 - **Automatable** — স্ক্রিপ্ট ও CI/CD pipeline মানুষের হস্তক্ষেপ ছাড়াই authenticate করতে পারে।
 - **Revocable** — `authorized_keys` থেকে একটি public key সরালে তাৎক্ষণিকভাবে অ্যাক্সেস বাতিল হয়।
@@ -271,7 +271,7 @@ Modern SSH with key authentication is strong against classical brute force, but 
 
 ## এখনই আপনার SSH Key তৈরি করুন
 
-SSH key-based authentication পাসওয়ার্ডের চেয়ে আরও নিরাপদ এবং আরও সুবিধাজনক। আপনি যদি এখনও SSH key সেট আপ না করে থাকেন, আমাদের বিনামূল্যের online generator আপনার browser-এ তাৎক্ষণিকভাবে Ed25519 বা RSA key pair তৈরি করে — কোনো ইনস্টলেশন প্রয়োজন নেই, আমাদের সার্ভারে কিছু পাঠানো হয় না।
+Ed25519 ও RSA কী আপনার ব্রাউজারেই তৈরি হয়। তৈরি করা প্রাইভেট কী ও পাসফ্রেজ আমাদের সার্ভারে আপলোড করা হয় না।
 
 <a href="/">এখনই আপনার SSH key pair তৈরি করুন →</a>
 
@@ -281,3 +281,9 @@ SSH key-based authentication পাসওয়ার্ডের চেয়�
 - <a href="/bn/what-is-an-ssh-key/">SSH Key কী? Public Key, Private Key, ও Key Pair ব্যাখ্যা</a>
 - <a href="/bn/ssh-command/">SSH Command: উদাহরণসহ সম্পূর্ণ রেফারেন্স</a>
 - <a href="/bn/how-to-set-up-ssh/">SSH কীভাবে সেট আপ করবেন: সম্পূর্ণ ধাপে ধাপে গাইড</a>
+
+## তথ্যসূত্র ও সরকারি নথি
+
+- [RFC 4251 — The Secure Shell (SSH) Protocol Architecture](https://www.rfc-editor.org/rfc/rfc4251.html)
+- [RFC 4252 §7 — SSH public-key authentication](https://www.rfc-editor.org/rfc/rfc4252.html#section-7)
+- [RFC 8032 — Ed25519 signatures and security considerations](https://www.rfc-editor.org/rfc/rfc8032.html)

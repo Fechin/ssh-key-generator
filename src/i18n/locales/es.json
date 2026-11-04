@@ -193,6 +193,12 @@
     "copyright": "© {year} SSH Key Generator. Código abierto bajo Licencia MIT."
   },
   "seo": {
+    "sources": {
+      "title": "Fuentes y revisión",
+      "reviewed": "Última revisión",
+      "openssh": "Manual de OpenSSH ssh-keygen",
+      "github": "GitHub: Generar una nueva clave SSH"
+    },
     "whatIs": {
       "title": "¿Qué es un Generador de Claves SSH en Línea?",
       "desc": "Un generador online de claves SSH crea el par en el navegador. La clave pública se registra en GitHub, GitLab, Bitbucket o servidores; la privada permanece en tu equipo."
@@ -245,10 +251,10 @@
       "rsaSigSize": "256-512 bytes",
       "ed25519Security": "Equivalente a ~128 bits",
       "rsaSecurity": "~112-128 bits (4096)",
-      "ed25519Performance": "Muy Rápido (10x más rápido)",
+      "ed25519Performance": "Depende de la implementación",
       "rsaPerformance": "Generación más lenta",
       "ed25519Compat": "OpenSSH 6.5+ (2014)",
-      "rsaCompat": "Universal (todos los sistemas)",
+      "rsaCompat": "Amplio soporte; consulta la política del servidor",
       "ed25519Quantum": "No resistente a cuántica",
       "rsaQuantum": "No resistente a cuántica",
       "ed25519BestFor": "GitHub, GitLab, servidores modernos",

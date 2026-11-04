@@ -193,6 +193,12 @@
     "copyright": "© {year} SSH Key Generator. Avoin lähdekoodi MIT-lisenssillä."
   },
   "seo": {
+    "sources": {
+      "title": "Lähteet ja tarkistus",
+      "reviewed": "Viimeksi tarkistettu",
+      "openssh": "OpenSSH ssh-keygen -ohje",
+      "github": "GitHub: Uuden SSH-avaimen luominen"
+    },
     "whatIs": {
       "title": "Mikä on SSH Key Generator?",
       "desc": "Verkkogeneraattori luo avainparin selaimessa. Julkinen avain lisätään GitHubiin, GitLabiin, Bitbucketiin tai palvelimelle; yksityinen avain jää omalle koneellesi."
@@ -245,10 +251,10 @@
       "rsaSigSize": "256–512 tavua",
       "ed25519Security": "~128-bittinen vastaava",
       "rsaSecurity": "~112–128-bittinen (4096)",
-      "ed25519Performance": "Erittäin nopea (10x nopeampi)",
+      "ed25519Performance": "Riippuu toteutuksesta",
       "rsaPerformance": "Hitaampi luonti",
       "ed25519Compat": "OpenSSH 6.5+ (2014)",
-      "rsaCompat": "Universaali (kaikki järjestelmät)",
+      "rsaCompat": "Laaja tuki; tarkista palvelimen käytännöt",
       "ed25519Quantum": "Ei kvanttiturvallinen",
       "rsaQuantum": "Ei kvanttiturvallinen",
       "ed25519BestFor": "GitHub, GitLab, modernit palvelimet",

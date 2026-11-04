@@ -1,3 +1,5 @@
+import siteInfo from '@/content/siteInfo.json'
+import { SiteInfoPage } from '@/components/pages/SiteInfoPage'
 import { useState, useEffect, lazy, Suspense } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { Key, Terminal, Settings, BookOpen } from 'lucide-react'
@@ -16,7 +18,7 @@ import {
   syncLanguageFromPath,
   type Language,
 } from '@/i18n'
-import { buildHomePageMetadata, syncPageMetadata } from '@/lib/seo'
+import { buildHomePageMetadata, buildSiteInfoPageMetadata, syncPageMetadata } from '@/lib/seo'
 import { ARTICLE_SLUGS, hasArticleTranslation, type ArticleSlug } from '@/content/articles'
 import { useThemeStore } from '@/store/themeStore'
 import type { KeyPair } from '@/types/keys'
@@ -189,6 +191,15 @@ function LanguageRoute({ lang }: { lang: Language }) {
   return <MainContent />
 }
 
+function SiteInfoRoute({ slug }: { slug: string }) {
+  const { setLanguage } = useLanguageStore()
+  useEffect(() => {
+    setLanguage('en')
+    syncPageMetadata('en', buildSiteInfoPageMetadata(slug))
+  }, [slug, setLanguage])
+  return <SiteInfoPage slug={slug} />
+}
+
 function App() {
   const location = useLocation()
 
@@ -199,6 +210,7 @@ function App() {
 
   return (
     <Routes>
+      {siteInfo.map((page) => <Route key={page.slug} path={`/${page.slug}`} element={<SiteInfoRoute slug={page.slug} />} />)}
       {/* English article routes */}
       {ARTICLE_SLUGS.map((slug: ArticleSlug) => (
         <Route

@@ -193,6 +193,12 @@
     "copyright": "© {year} SSH Key Generator。基于 MIT 许可证开源。"
   },
   "seo": {
+    "sources": {
+      "title": "参考来源与审阅",
+      "reviewed": "最近审阅",
+      "openssh": "OpenSSH ssh-keygen 手册",
+      "github": "GitHub：生成新的 SSH 密钥"
+    },
     "whatIs": {
       "title": "什么是在线 SSH 密钥生成器？",
       "desc": "在线 SSH 密钥生成器会在浏览器中创建密钥对。公钥添加到 GitHub、GitLab、Bitbucket 或服务器，私钥保存在您自己的设备上。"
@@ -245,10 +251,10 @@
       "rsaSigSize": "256-512 字节",
       "ed25519Security": "约 128 位等效",
       "rsaSecurity": "约 112-128 位 (4096)",
-      "ed25519Performance": "非常快（快 10 倍）",
+      "ed25519Performance": "取决于具体实现",
       "rsaPerformance": "生成较慢",
       "ed25519Compat": "OpenSSH 6.5+ (2014)",
-      "rsaCompat": "通用（所有系统）",
+      "rsaCompat": "广泛支持；请检查服务器策略",
       "ed25519Quantum": "非抗量子",
       "rsaQuantum": "非抗量子",
       "ed25519BestFor": "GitHub、GitLab、现代服务器",

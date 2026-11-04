@@ -40,7 +40,7 @@ Ai nevoie de o pereche de chei înainte de a putea face orice altceva. Perechea 
 
 ### Opțiunea A: Folosește generatorul online
 
-Dacă preferi o interfață grafică, <a href="/">generatorul nostru gratuit de chei SSH online</a> creează perechi de chei Ed25519 sau RSA în browserul tău. Cheia privată este generată local folosind Web Crypto API — nimic nu este trimis pe serverele noastre. Descarcă ambele fișiere și salvează-le în `~/.ssh/` (Linux/macOS) sau `C:\Users\YourName\.ssh\` (Windows).
+Dacă preferi o interfață grafică, <a href="/">generatorul nostru gratuit de chei SSH online</a> creează perechi de chei Ed25519 sau RSA în browserul tău. Cheile private generate și frazele de acces nu sunt încărcate pe serverele noastre. Descarcă ambele fișiere și salvează-le în `~/.ssh/` (Linux/macOS) sau `C:\Users\YourName\.ssh\` (Windows).
 
 ### Opțiunea B: Folosește ssh-keygen din linia de comandă
 
@@ -559,7 +559,7 @@ Potrivește amprentele pentru a identifica și șterge cheia corectă.
 
 ## Generează-ți cheile SSH gratuit
 
-Dacă nu ai generat încă perechea ta de chei SSH, generatorul nostru gratuit online creează chei Ed25519 sau RSA direct în browserul tău în câteva secunde. Nu este necesară instalarea, nimic nu este trimis pe serverele noastre — generarea are loc în totalitate pe dispozitivul tău.
+Generarea cheilor Ed25519 și RSA are loc în browserul tău. Cheile private generate și frazele de acces nu sunt încărcate pe serverele noastre.
 
 <a href="/">Generează-ți cheile SSH gratuit →</a>
 
@@ -569,3 +569,9 @@ Dacă nu ai generat încă perechea ta de chei SSH, generatorul nostru gratuit o
 - <a href="/ro/what-is-ssh/">Ce este SSH? Ghidul complet pentru Secure Shell</a>
 - <a href="/ro/what-is-an-ssh-key/">Ce este o cheie SSH? Chei publice, chei private și perechi de chei explicate</a>
 - <a href="/ro/ssh-command/">Comanda SSH: Referință completă cu exemple</a>
+
+## Surse și documentație oficială
+
+- [GitHub Docs — Generating a new SSH key and adding it to the ssh-agent](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+- [GitLab Docs — Use SSH keys to communicate with GitLab](https://docs.gitlab.com/user/ssh/)
+- [OpenSSH sshd_config(5)](https://man.openbsd.org/sshd_config)

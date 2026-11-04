@@ -39,7 +39,7 @@ Necesitas un par de claves antes de poder hacer cualquier otra cosa. El par de c
 
 ### Opción A: Usa el generador en línea
 
-Si prefieres una interfaz gráfica, nuestro <a href="/">generador de claves SSH en línea gratuito</a> crea pares de claves Ed25519 o RSA en tu navegador. La clave privada se genera localmente usando la Web Crypto API — nada se envía a nuestros servidores. Descarga ambos ficheros y guárdalos en `~/.ssh/` (Linux/macOS) o `C:\Users\TuNombre\.ssh\` (Windows).
+Si prefieres una interfaz gráfica, nuestro <a href="/">generador de claves SSH en línea gratuito</a> crea pares de claves Ed25519 o RSA en tu navegador. Las claves privadas generadas y las frases de contraseña no se suben a nuestros servidores. Descarga ambos ficheros y guárdalos en `~/.ssh/` (Linux/macOS) o `C:\Users\TuNombre\.ssh\` (Windows).
 
 ### Opción B: Usa ssh-keygen en la línea de comandos
 
@@ -558,7 +558,7 @@ Compara las huellas dactilares para identificar y eliminar la clave correcta.
 
 ## Genera tus claves SSH gratis
 
-Si aún no has generado tu par de claves SSH, nuestro generador en línea gratuito crea claves Ed25519 o RSA directamente en tu navegador en segundos. No requiere instalación, no se envía nada a nuestros servidores — la generación ocurre completamente en tu dispositivo.
+La generación de claves Ed25519 y RSA se realiza en tu navegador. Las claves privadas generadas y las frases de contraseña no se suben a nuestros servidores.
 
 <a href="/">Genera tus claves SSH gratis →</a>
 
@@ -568,3 +568,9 @@ Si aún no has generado tu par de claves SSH, nuestro generador en línea gratui
 - <a href="/es/what-is-ssh/">¿Qué es SSH? La guía completa sobre Secure Shell</a>
 - <a href="/es/what-is-an-ssh-key/">¿Qué es una clave SSH? Claves públicas, privadas y pares de claves explicados</a>
 - <a href="/es/ssh-command/">El comando SSH: referencia completa con ejemplos</a>
+
+## Fuentes y documentación oficial
+
+- [GitHub Docs — Generating a new SSH key and adding it to the ssh-agent](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+- [GitLab Docs — Use SSH keys to communicate with GitLab](https://docs.gitlab.com/user/ssh/)
+- [OpenSSH sshd_config(5)](https://man.openbsd.org/sshd_config)

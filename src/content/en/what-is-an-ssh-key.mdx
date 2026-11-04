@@ -10,17 +10,15 @@ Choose Ed25519 for most new keys. Use RSA 4096 when you must support an older SS
 
 ## How SSH Keys Work
 
-SSH keys are based on **asymmetric cryptography**, also called public-key cryptography. Unlike symmetric cryptography (where a single secret key both encrypts and decrypts data), asymmetric systems use mathematically linked key pairs where data encrypted with one key can only be decrypted with the other.
+SSH public-key authentication uses digital signatures. The private key signs authentication data, and the public key verifies the signature; it is not a process of encrypting and decrypting a server challenge.
 
 Here is the authentication flow when you use an SSH key to log into a server:
 
 1. You run `ssh user@server.example.com`.
 2. The server looks up your public key in `~/.ssh/authorized_keys`.
-3. The server generates a random challenge and encrypts it with your public key.
-4. Your SSH client decrypts the challenge using your private key.
-5. The client sends a cryptographic proof (derived from the decrypted challenge and the session ID) back to the server.
-6. The server verifies the proof. Only the holder of the private key could have produced it.
-7. Authentication succeeds. No password ever leaves your machine.
+3. The client signs the authentication request, including the session identifier, with its private key.
+4. The server verifies that signature using the authorized public key.
+5. Authentication succeeds. No password ever leaves your machine.
 
 This is the key insight: **your private key never travels over the network**. The server only ever sees your public key and the cryptographic proofs you produce. Even if someone intercepts every packet in your SSH session, they gain nothing that helps them impersonate you.
 
@@ -80,8 +78,8 @@ Ed25519 was introduced to OpenSSH in version 6.5 (2014) and is now the recommend
 **Advantages of Ed25519:**
 - **Compact** — keys are only 68 characters (public key) and files are tiny
 - **Fast** — signature generation and verification are extremely fast
-- **Secure by design** — not vulnerable to side-channel attacks that affect some RSA implementations
-- **Fixed key size** — 256-bit security level, no need to choose a key size
+- **Secure by design** — designed to support side-channel-resistant implementations; resistance still depends on the implementation
+- **Fixed key size** — 256-bit public key with approximately 128-bit classical security; no key-size choice is needed
 - **Deterministic** — signatures are deterministic, eliminating a class of random number generator failures
 
 ```bash
@@ -342,7 +340,7 @@ If you lose your private key and do not have a backup, you lose the ability to a
 
 ### Is Ed25519 or RSA better?
 
-**Ed25519 is better for all new key generation.** It is faster, produces smaller keys, is not vulnerable to certain implementation weaknesses that affect RSA, and provides equivalent or superior security with a 256-bit key compared to RSA-4096. The only reason to use RSA today is compatibility with very old SSH server software (OpenSSH before version 6.5, released in 2014) or legacy hardware security modules. If you are accessing any modern server or service like GitHub, use Ed25519.
+**Ed25519 is a practical choice for most new SSH keys.** It has compact public keys and approximately 128-bit classical security. Use RSA when required by your server, hardware, or security policy. Neither algorithm is quantum-safe; key size alone does not provide a direct security comparison between algorithms.
 
 ## Generate Your SSH Key Pair
 
@@ -356,3 +354,9 @@ Ready to create your SSH keys? Our free online generator creates Ed25519 or RSA 
 - <a href="/what-is-ssh/">What Is SSH? The Complete Guide to Secure Shell</a>
 - <a href="/ssh-command/">The SSH Command: Complete Reference with Examples</a>
 - <a href="/how-to-set-up-ssh/">How to Set Up SSH: A Complete Step-by-Step Guide</a>
+
+## Sources and official documentation
+
+- [RFC 4252 §7 — SSH public-key authentication](https://www.rfc-editor.org/rfc/rfc4252.html#section-7)
+- [RFC 8032 — Ed25519 signatures and security considerations](https://www.rfc-editor.org/rfc/rfc8032.html)
+- [OpenSSH ssh-keygen(1)](https://man.openbsd.org/ssh-keygen)

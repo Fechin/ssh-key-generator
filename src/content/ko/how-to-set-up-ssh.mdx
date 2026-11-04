@@ -39,7 +39,7 @@ Linux나 macOS에서는 아무것도 설치할 필요가 없습니다. Windows�
 
 ### 옵션 A: 온라인 생성기 사용
 
-그래픽 인터페이스를 선호한다면, <a href="/">무료 온라인 SSH 키 생성기</a>가 브라우저에서 Ed25519 또는 RSA 키 쌍을 생성합니다. 개인키는 Web Crypto API를 사용하여 로컬에서 생성됩니다—서버에는 아무것도 전송되지 않습니다. 두 파일을 다운로드하여 `~/.ssh/`(Linux/macOS) 또는 `C:\Users\YourName\.ssh\`(Windows)에 저장합니다.
+그래픽 인터페이스를 선호한다면, <a href="/">무료 온라인 SSH 키 생성기</a>가 브라우저에서 Ed25519 또는 RSA 키 쌍을 생성합니다. 생성한 개인키와 패스프레이즈는 저희 서버에 업로드되지 않습니다. 두 파일을 다운로드하여 `~/.ssh/`(Linux/macOS) 또는 `C:\Users\YourName\.ssh\`(Windows)에 저장합니다.
 
 ### 옵션 B: 커맨드라인에서 ssh-keygen 사용
 
@@ -558,7 +558,7 @@ ssh-keygen -lf ~/.ssh/authorized_keys
 
 ## SSH 키 무료로 생성하기
 
-아직 SSH 키 쌍을 생성하지 않았다면, 저희 무료 온라인 생성기가 몇 초 만에 브라우저에서 직접 Ed25519 또는 RSA 키를 생성합니다. 설치 불필요, 서버에 아무것도 전송되지 않음—생성이 전적으로 기기에서 이루어집니다.
+Ed25519 및 RSA 키 생성은 브라우저에서 진행되며, 생성한 개인키와 패스프레이즈는 저희 서버에 업로드되지 않습니다.
 
 <a href="/">SSH 키 무료로 생성하기 →</a>
 
@@ -568,3 +568,9 @@ ssh-keygen -lf ~/.ssh/authorized_keys
 - <a href="/ko/what-is-ssh/">SSH란 무엇인가? 시큐어 셸 완전 가이드</a>
 - <a href="/ko/what-is-an-ssh-key/">SSH 키란? 공개키, 개인키, 키 쌍 완전 해설</a>
 - <a href="/ko/ssh-command/">SSH 명령어: 예제가 포함된 완전 참조 가이드</a>
+
+## 출처 및 공식 문서
+
+- [GitHub Docs — Generating a new SSH key and adding it to the ssh-agent](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+- [GitLab Docs — Use SSH keys to communicate with GitLab](https://docs.gitlab.com/user/ssh/)
+- [OpenSSH sshd_config(5)](https://man.openbsd.org/sshd_config)

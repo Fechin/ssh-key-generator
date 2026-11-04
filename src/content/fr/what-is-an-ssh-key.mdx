@@ -8,17 +8,15 @@ Pour une nouvelle clé, choisissez Ed25519 dans la plupart des cas. Utilisez RSA
 
 ## Comment fonctionnent les clés SSH
 
-Les clés SSH sont basées sur la **cryptographie asymétrique**, également appelée cryptographie à clé publique. Contrairement à la cryptographie symétrique (où une seule clé secrète chiffre et déchiffre les données), les systèmes asymétriques utilisent des paires de clés mathématiquement liées où les données chiffrées avec une clé ne peuvent être déchiffrées qu'avec l'autre.
+L’authentification SSH par clé publique utilise des signatures numériques. La clé privée signe les données d’authentification et la clé publique vérifie la signature ; il ne s’agit pas de chiffrer puis déchiffrer un défi du serveur.
 
 Voici le flux d'authentification lorsque vous utilisez une clé SSH pour vous connecter à un serveur :
 
 1. Vous exécutez `ssh utilisateur@serveur.exemple.com`.
 2. Le serveur recherche votre clé publique dans `~/.ssh/authorized_keys`.
-3. Le serveur génère un défi aléatoire et le chiffre avec votre clé publique.
-4. Votre client SSH déchiffre le défi en utilisant votre clé privée.
-5. Le client envoie une preuve cryptographique (dérivée du défi déchiffré et de l'identifiant de session) au serveur.
-6. Le serveur vérifie la preuve. Seul le détenteur de la clé privée aurait pu la produire.
-7. L'authentification réussit. Aucun mot de passe ne quitte jamais votre machine.
+3. Le client signe la demande d’authentification, y compris l’identifiant de session, avec sa clé privée.
+4. Le serveur vérifie cette signature avec la clé publique autorisée.
+5. L'authentification réussit. Aucun mot de passe ne quitte jamais votre machine.
 
 L'insight fondamental est le suivant : **votre clé privée ne transite jamais sur le réseau**. Le serveur ne voit que votre clé publique et les preuves cryptographiques que vous produisez. Même si quelqu'un intercepte chaque paquet de votre session SSH, il n'obtient rien qui puisse l'aider à vous usurper l'identité.
 
@@ -78,8 +76,8 @@ Ed25519 a été introduit dans OpenSSH version 6.5 (2014) et est désormais le c
 **Avantages d'Ed25519 :**
 - **Compact** — les clés ne font que 68 caractères (clé publique) et les fichiers sont minuscules
 - **Rapide** — la génération et la vérification de signatures sont extrêmement rapides
-- **Sécurisé par conception** — non vulnérable aux attaques par canal auxiliaire qui affectent certaines implémentations RSA
-- **Taille de clé fixe** — niveau de sécurité 256 bits, pas besoin de choisir une taille de clé
+- **Sécurisé par conception** — conçu pour faciliter les implémentations résistantes aux canaux auxiliaires ; la résistance dépend de l’implémentation
+- **Taille de clé fixe** — clé publique de 256 bits offrant environ 128 bits de sécurité classique ; aucun choix de taille nécessaire
 - **Déterministe** — les signatures sont déterministes, éliminant une catégorie d'échecs du générateur de nombres aléatoires
 
 ```bash
@@ -354,3 +352,9 @@ Prêt à créer vos clés SSH ? Notre générateur gratuit en ligne crée des pa
 - <a href="/fr/what-is-ssh/">Qu'est-ce que SSH ? Le guide complet du Secure Shell</a>
 - <a href="/fr/ssh-command/">La commande SSH : référence complète avec exemples</a>
 - <a href="/fr/how-to-set-up-ssh/">Comment configurer SSH : un guide complet étape par étape</a>
+
+## Sources et documentation officielle
+
+- [RFC 4252 §7 — SSH public-key authentication](https://www.rfc-editor.org/rfc/rfc4252.html#section-7)
+- [RFC 8032 — Ed25519 signatures and security considerations](https://www.rfc-editor.org/rfc/rfc8032.html)
+- [OpenSSH ssh-keygen(1)](https://man.openbsd.org/ssh-keygen)

@@ -8,17 +8,15 @@ Für neue Schlüssel ist Ed25519 meistens die beste Wahl. RSA 4096 Bit verwenden
 
 ## Wie SSH-Schlüssel funktionieren
 
-SSH-Schlüssel basieren auf **asymmetrischer Kryptografie**, auch Public-Key-Kryptografie genannt. Anders als bei symmetrischer Kryptografie (bei der ein einziger geheimer Schlüssel sowohl verschlüsselt als auch entschlüsselt) verwenden asymmetrische Systeme mathematisch verknüpfte Schlüsselpaare, bei denen mit einem Schlüssel verschlüsselte Daten nur mit dem anderen entschlüsselt werden können.
+Die SSH-Authentifizierung mit öffentlichen Schlüsseln verwendet digitale Signaturen. Der private Schlüssel signiert die Authentifizierungsdaten, der öffentliche prüft die Signatur; eine Server-Challenge wird dabei nicht ver- und entschlüsselt.
 
 So läuft die Authentifizierung ab, wenn Sie sich mit einem SSH-Schlüssel bei einem Server anmelden:
 
 1. Sie führen `ssh benutzer@server.beispiel.com` aus.
 2. Der Server sucht Ihren öffentlichen Schlüssel in `~/.ssh/authorized_keys`.
-3. Der Server generiert eine zufällige Challenge und verschlüsselt sie mit Ihrem öffentlichen Schlüssel.
-4. Ihr SSH-Client entschlüsselt die Challenge mit Ihrem privaten Schlüssel.
-5. Der Client sendet einen kryptografischen Beweis (abgeleitet aus der entschlüsselten Challenge und der Session-ID) zurück an den Server.
-6. Der Server verifiziert den Beweis. Nur der Inhaber des privaten Schlüssels hätte ihn erzeugen können.
-7. Die Authentifizierung ist erfolgreich. Kein Passwort verlässt jemals Ihre Maschine.
+3. Der Client signiert die Authentifizierungsanfrage einschließlich der Sitzungskennung mit seinem privaten Schlüssel.
+4. Der Server prüft die Signatur mit dem autorisierten öffentlichen Schlüssel.
+5. Die Authentifizierung ist erfolgreich. Kein Passwort verlässt jemals Ihre Maschine.
 
 Die entscheidende Erkenntnis lautet: **Ihr privater Schlüssel überquert niemals das Netzwerk**. Der Server sieht ausschließlich Ihren öffentlichen Schlüssel und die kryptografischen Beweise, die Sie erzeugen. Selbst wenn jemand jedes Paket Ihrer SSH-Sitzung abfängt, erhält er nichts, das ihm helfen würde, Sie zu imitieren.
 
@@ -78,8 +76,8 @@ Ed25519 wurde in OpenSSH Version 6.5 (2014) eingeführt und ist heute die empfoh
 **Vorteile von Ed25519:**
 - **Kompakt** — Schlüssel sind nur 68 Zeichen lang (öffentlicher Schlüssel) und Dateien sind winzig
 - **Schnell** — Signaturerstellung und -verifizierung sind extrem schnell
-- **Sicher by design** — nicht anfällig für Seitenkanalangriffe, die einige RSA-Implementierungen betreffen
-- **Feste Schlüsselgröße** — 256-Bit-Sicherheitsniveau, keine Wahl der Schlüsselgröße erforderlich
+- **Sicher by design** — für seitenkanalresistente Implementierungen ausgelegt; die tatsächliche Resistenz hängt von der Implementierung ab
+- **Feste Schlüsselgröße** — 256-Bit-Public-Key mit ungefähr 128 Bit klassischer Sicherheit; keine Größenwahl nötig
 - **Deterministisch** — Signaturen sind deterministisch, was eine Klasse von Zufallsgenerator-Fehlern eliminiert
 
 ```bash
@@ -354,3 +352,9 @@ Bereit, Ihre SSH-Schlüssel zu erstellen? Unser kostenloser Online-Generator ers
 - <a href="/de/what-is-ssh/">Was ist SSH? Der vollständige Leitfaden zur Secure Shell</a>
 - <a href="/de/ssh-command/">Der SSH-Befehl: Vollständige Referenz mit Beispielen</a>
 - <a href="/de/how-to-set-up-ssh/">SSH einrichten: Eine vollständige Schritt-für-Schritt-Anleitung</a>
+
+## Quellen und offizielle Dokumentation
+
+- [RFC 4252 §7 — SSH public-key authentication](https://www.rfc-editor.org/rfc/rfc4252.html#section-7)
+- [RFC 8032 — Ed25519 signatures and security considerations](https://www.rfc-editor.org/rfc/rfc8032.html)
+- [OpenSSH ssh-keygen(1)](https://man.openbsd.org/ssh-keygen)

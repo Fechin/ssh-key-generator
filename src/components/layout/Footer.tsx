@@ -1,5 +1,6 @@
 import { Shield, Heart } from 'lucide-react'
 import { useTranslation } from '@/i18n'
+import siteInfo from '@/content/siteInfo.json'
 
 export function Footer() {
   const currentYear = new Date().getFullYear()
@@ -79,7 +80,15 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-6 pt-4 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
+        <nav aria-label="Project information" lang="en" className="mt-6 pt-4 border-t border-border flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
+          {siteInfo.map((page) => (
+            <a key={page.slug} href={`/${page.slug}/`} className="inline-block py-1.5 hover:text-primary transition-colors">
+              {page.navLabel}
+            </a>
+          ))}
+        </nav>
+
+        <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
           <p>
             {t('footer.madeWith')} <Heart className="h-3 w-3 inline text-destructive" /> {t('footer.forDevelopers')}
           </p>

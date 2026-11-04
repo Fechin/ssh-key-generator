@@ -9,17 +9,15 @@ Dla nowych kluczy najczęściej wybierz Ed25519. Użyj RSA 4096, jeśli starszy 
 
 ## Jak Działają Klucze SSH
 
-Klucze SSH opierają się na **kryptografii asymetrycznej**, zwanej również kryptografią klucza publicznego. W przeciwieństwie do kryptografii symetrycznej (gdzie jeden tajny klucz zarówno szyfruje, jak i deszyfruje dane), systemy asymetryczne używają matematycznie powiązanych par kluczy, w których dane zaszyfrowane jednym kluczem można odszyfrować tylko drugim.
+Uwierzytelnianie SSH kluczem publicznym używa podpisów cyfrowych. Klucz prywatny podpisuje dane uwierzytelniania, a publiczny weryfikuje podpis; nie polega to na szyfrowaniu i odszyfrowywaniu wyzwania serwera.
 
 Oto przebieg uwierzytelniania podczas logowania na serwer za pomocą klucza SSH:
 
 1. Uruchamiasz `ssh user@server.example.com`.
 2. Serwer wyszukuje Twój klucz publiczny w `~/.ssh/authorized_keys`.
-3. Serwer generuje losowe wyzwanie i szyfruje je Twoim kluczem publicznym.
-4. Klient SSH odszyfrowuje wyzwanie przy użyciu klucza prywatnego.
-5. Klient wysyła kryptograficzny dowód (wyprowadzony z odszyfrowanego wyzwania i identyfikatora sesji) z powrotem do serwera.
-6. Serwer weryfikuje dowód. Tylko posiadacz klucza prywatnego mógł go wytworzyć.
-7. Uwierzytelnianie kończy się powodzeniem. Żadne hasło nie opuszcza Twojej maszyny.
+3. Klient podpisuje żądanie uwierzytelniania, w tym identyfikator sesji, swoim kluczem prywatnym.
+4. Serwer weryfikuje podpis za pomocą autoryzowanego klucza publicznego.
+5. Uwierzytelnianie kończy się powodzeniem. Żadne hasło nie opuszcza Twojej maszyny.
 
 To jest kluczowa obserwacja: **klucz prywatny nigdy nie jest przesyłany przez sieć**. Serwer widzi tylko Twój klucz publiczny i wytwarzane przez Ciebie kryptograficzne dowody. Nawet jeśli ktoś przechwyci każdy pakiet Twojej sesji SSH, nie uzyska niczego, co pomogłoby mu się za Ciebie podać.
 
@@ -79,8 +77,8 @@ Ed25519 został wprowadzony do OpenSSH w wersji 6.5 (2014) i jest teraz zalecany
 **Zalety Ed25519:**
 - **Kompaktowy** — klucze mają tylko 68 znaków (klucz publiczny), a pliki są małe
 - **Szybki** — generowanie i weryfikacja podpisów są niezwykle szybkie
-- **Bezpieczny z założenia** — nie jest podatny na ataki bocznokanałowe wpływające na niektóre implementacje RSA
-- **Stały rozmiar klucza** — poziom bezpieczeństwa 256 bitów, bez potrzeby wyboru rozmiaru klucza
+- **Bezpieczny z założenia** — konstrukcja ułatwia implementacje odporne na kanały boczne; odporność zależy od implementacji
+- **Stały rozmiar klucza** — 256-bitowy klucz publiczny daje około 128 bitów bezpieczeństwa klasycznego; nie trzeba wybierać rozmiaru
 - **Deterministyczny** — podpisy są deterministyczne, eliminując klasę błędów generatora liczb losowych
 
 ```bash
@@ -355,3 +353,9 @@ Gotowy do stworzenia kluczy SSH? Nasz bezpłatny generator online tworzy pary kl
 - <a href="/pl/what-is-ssh/">Czym Jest SSH? Kompletny Przewodnik po Secure Shell</a>
 - <a href="/pl/ssh-command/">Polecenie SSH: Kompletny Przewodnik z Przykładami</a>
 - <a href="/pl/how-to-set-up-ssh/">Jak Skonfigurować SSH: Kompletny Przewodnik Krok po Kroku</a>
+
+## Źródła i oficjalna dokumentacja
+
+- [RFC 4252 §7 — SSH public-key authentication](https://www.rfc-editor.org/rfc/rfc4252.html#section-7)
+- [RFC 8032 — Ed25519 signatures and security considerations](https://www.rfc-editor.org/rfc/rfc8032.html)
+- [OpenSSH ssh-keygen(1)](https://man.openbsd.org/ssh-keygen)

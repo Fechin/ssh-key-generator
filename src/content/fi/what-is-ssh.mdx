@@ -77,7 +77,7 @@ SSH tukee kahta ensisijaista todennusmenetelmää: salasanoja ja **SSH-avaimia**
 **Yksityinen avain** pysyy paikallisella koneellasi, suojattuna valinnaisella salauslausekkeella. **Julkinen avain** sijoitetaan jokaiselle palvelimelle, jolle haluat pääsyn, tiedostoon nimeltä `~/.ssh/authorized_keys`. Kun muodostat yhteyden, palvelin antaa kryptografisen haasteen, johon vain vastaavan yksityisen avaimen haltija voi vastata. Verkossa ei lähetetä salasanaa.
 
 Tällä lähestymistavalla on useita etuja:
-- **Immuuni brute force -hyökkäyksille** — ei ole mitään arvattavaa. 256-bittisellä Ed25519-avaimella on 2²⁵⁶ mahdollista arvoa.
+- **Ed25519** — 256-bittinen julkinen avain tarjoaa noin 128 bitin klassisen turvallisuuden; avainkokoa ei tarvitse valita.
 - **Ei salasanaa varastettavaksi** — vaikka joku sieppaisi kättelyn, he eivät saa mitään hyödyllistä.
 - **Automatisoitavissa** — skriptit ja CI/CD-pipeline-linjat voivat todentaa ilman ihmisen vuorovaikutusta.
 - **Peruutettavissa** — julkisen avaimen poistaminen `authorized_keys`-tiedostosta peruuttaa pääsyn välittömästi.
@@ -271,7 +271,7 @@ Sekä SSH että HTTPS salaavat verkkoliikenteen, mutta ne on suunniteltu eri tar
 
 ## Luo SSH-avaimesi nyt
 
-SSH-avainpohjainen todennus on turvallisempaa ja kätevämpää kuin salasanat. Jos et ole vielä määrittänyt SSH-avaimia, ilmainen verkkovoimistemme luo Ed25519- tai RSA-avainparit välittömästi selaimessasi — ei asennusta tarvita, mitään ei lähetetä palvelimillemme.
+Ed25519- ja RSA-avaimet luodaan selaimessasi. Luotuja yksityisiä avaimia ja salalauseita ei ladata palvelimillemme.
 
 <a href="/">Luo SSH-avainparisi nyt →</a>
 
@@ -281,3 +281,9 @@ SSH-avainpohjainen todennus on turvallisempaa ja kätevämpää kuin salasanat. 
 - <a href="/fi/what-is-an-ssh-key/">Mikä on SSH-avain? Julkiset avaimet, yksityiset avaimet ja avainparit selitettynä</a>
 - <a href="/fi/ssh-command/">SSH-komento: Täydellinen viite esimerkkeineen</a>
 - <a href="/fi/how-to-set-up-ssh/">SSH:n määrittäminen: Täydellinen vaiheittainen opas</a>
+
+## Lähteet ja virallinen dokumentaatio
+
+- [RFC 4251 — The Secure Shell (SSH) Protocol Architecture](https://www.rfc-editor.org/rfc/rfc4251.html)
+- [RFC 4252 §7 — SSH public-key authentication](https://www.rfc-editor.org/rfc/rfc4252.html#section-7)
+- [RFC 8032 — Ed25519 signatures and security considerations](https://www.rfc-editor.org/rfc/rfc8032.html)

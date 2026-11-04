@@ -193,6 +193,12 @@
     "copyright": "© {year} SSH Key Generator. Open source sub Licența MIT."
   },
   "seo": {
+    "sources": {
+      "title": "Surse și revizuire",
+      "reviewed": "Ultima revizuire",
+      "openssh": "Manualul OpenSSH ssh-keygen",
+      "github": "GitHub: Generarea unei chei SSH noi"
+    },
     "whatIs": {
       "title": "Ce este un SSH Key Generator Online?",
       "desc": "Generatorul online creează perechea de chei în browser. Cheia publică se adaugă în GitHub, GitLab, Bitbucket sau pe server; cheia privată rămâne pe calculatorul tău."
@@ -245,10 +251,10 @@
       "rsaSigSize": "256-512 bytes",
       "ed25519Security": "Echivalent ~128-bit",
       "rsaSecurity": "~112-128-bit (4096)",
-      "ed25519Performance": "Foarte Rapid (de 10x mai rapid)",
+      "ed25519Performance": "Depinde de implementare",
       "rsaPerformance": "Generare mai lentă",
       "ed25519Compat": "OpenSSH 6.5+ (2014)",
-      "rsaCompat": "Universal (toate sistemele)",
+      "rsaCompat": "Suport larg; verifică politica serverului",
       "ed25519Quantum": "Nu este quantum-safe",
       "rsaQuantum": "Nu este quantum-safe",
       "ed25519BestFor": "GitHub, GitLab, servere moderne",

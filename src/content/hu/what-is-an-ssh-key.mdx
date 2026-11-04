@@ -9,17 +9,15 @@ SSH-kulcs létrehozásakor egy publikus és egy privát kulcspár jön létre. �
 
 ## Hogyan működnek az SSH-kulcsok
 
-Az SSH-kulcsok **aszimmetrikus titkosításon** alapulnak, amelyet nyilvános kulcsú titkosításnak is neveznek. A szimmetrikus kriptográfiától eltérően (ahol egyetlen titkos kulcs egyaránt titkosítja és visszafejti az adatokat), az aszimmetrikus rendszerek matematikailag összekapcsolt kulcspárokat használnak, ahol az egyik kulccsal titkosított adatok csak a másik kulccsal dekódolhatók.
+Az SSH nyilvános kulcsú hitelesítése digitális aláírásokat használ. A privát kulcs aláírja a hitelesítési adatokat, a nyilvános kulcs ellenőrzi az aláírást; a szerver kihívását nem titkosítják és fejtik vissza.
 
 Íme a hitelesítési folyamat, amikor SSH-kulcsot használ a szerverre való bejelentkezéshez:
 
 1. A `ssh user@server.example.com`-t futtatod.
 2. A szerver megkeresi az Ön nyilvános kulcsát `~/.ssh/authorized_keys`.
-3. A szerver véletlenszerű kihívást generál, és titkosítja azt a nyilvános kulccsal.
-4. Az SSH-ügyfél visszafejti a kihívást a privát kulcsával.
-5. A kliens kriptográfiai bizonyítékot küld vissza a szervernek (a dekódolt kihívásból és a munkamenet azonosítójából származik).
-6. A szerver ellenőrzi a bizonyítást. Csak a magánkulcs tulajdonosa tudta volna előállítani.
-7. A hitelesítés sikeres. Egyetlen jelszó sem hagyja el a gépet.
+3. Az ügyfél a privát kulcsával aláírja a hitelesítési kérelmet, beleértve a munkamenet azonosítóját.
+4. A szerver az engedélyezett nyilvános kulccsal ellenőrzi az aláírást.
+5. A hitelesítés sikeres. Egyetlen jelszó sem hagyja el a gépet.
 
 Ez a legfontosabb betekintés: **a privát kulcsa soha nem jut el a hálózaton**. A szerver mindig csak a nyilvános kulcsot és az általad készített kriptográfiai bizonyítékokat látja. Még ha valaki elfog is minden csomagot az SSH-munkamenetben, semmit sem nyer, ami segítene abban, hogy megszemélyesítse Önt.
 
@@ -79,8 +77,8 @@ Az Ed25519-et az OpenSSH 6.5-ös verziójában (2014) vezették be, és most az 
 **Az Ed25519 előnyei:**
 - **Kompakt** — a kulcsok csak 68 karakterből állnak (nyilvános kulcs), a fájlok pedig aprók
 - **Gyors** – az aláírás generálása és ellenőrzése rendkívül gyors
-- ** Tervezés szerint biztonságos** – nem kiszolgáltatott az oldalcsatornás támadásoknak, amelyek bizonyos RSA-megvalósításokat érintenek
-- **Rögzített kulcsméret** — 256 bites biztonsági szint, nem kell kulcsméretet választani
+- ** Tervezés szerint biztonságos** — a kialakítás támogatja az oldalcsatornás támadásoknak ellenálló megvalósításokat; az ellenállás a megvalósítástól függ
+- **Rögzített kulcsméret** — 256 bites nyilvános kulcs körülbelül 128 bites klasszikus biztonsággal; nem kell kulcsméretet választani
 - **Determinisztikus** – az aláírások determinisztikusak, kiküszöbölve a véletlenszám-generátor meghibásodásának egy osztályát
 
 ```bash
@@ -355,3 +353,9 @@ Készen áll az SSH-kulcsok létrehozására? Ingyenes online generátorunk Ed25
 - <a href="/hu/what-is-ssh/">Mi az SSH? A Secure Shell teljes útmutatója</a>
 - <a href="/hu/ssh-command/">Az SSH-parancs: teljes hivatkozás példákkal</a>
 - <a href="/hu/how-to-set-up-ssh/">Hogyan állítsuk be az SSH-t: teljes, lépésről lépésre szóló útmutató</a>
+
+## Források és hivatalos dokumentáció
+
+- [RFC 4252 §7 — SSH public-key authentication](https://www.rfc-editor.org/rfc/rfc4252.html#section-7)
+- [RFC 8032 — Ed25519 signatures and security considerations](https://www.rfc-editor.org/rfc/rfc8032.html)
+- [OpenSSH ssh-keygen(1)](https://man.openbsd.org/ssh-keygen)

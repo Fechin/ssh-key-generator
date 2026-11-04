@@ -9,17 +9,15 @@ För nya nycklar väljer du oftast Ed25519. Använd RSA 4096 när en äldre SSH-
 
 ## Hur SSH-nycklar fungerar
 
-SSH-nycklar baseras på **asymmetrisk kryptografi**, även kallad publik-nyckelkryptografi. Till skillnad från symmetrisk kryptografi (där en enda hemlig nyckel både krypterar och dekrypterar data), använder asymmetriska system matematiskt länkade nyckelpar där data krypterad med en nyckel bara kan dekrypteras med den andra.
+SSH-autentisering med publik nyckel använder digitala signaturer. Den privata nyckeln signerar autentiseringsdata och den publika verifierar signaturen; serverns utmaning krypteras och dekrypteras inte.
 
 Här är autentiseringsflödet när du använder en SSH-nyckel för att logga in på en server:
 
 1. Du kör `ssh user@server.example.com`.
 2. Servern söker upp din publika nyckel i `~/.ssh/authorized_keys`.
-3. Servern genererar en slumpmässig utmaning och krypterar den med din publika nyckel.
-4. Din SSH-klient dekrypterar utmaningen med din privata nyckel.
-5. Klienten skickar ett kryptografiskt bevis (härlett från den dekrypterade utmaningen och sessions-ID:t) tillbaka till servern.
-6. Servern verifierar beviset. Bara innehavaren av den privata nyckeln kunde ha producerat det.
-7. Autentiseringen lyckas. Inget lösenord lämnar din maskin.
+3. Klienten signerar autentiseringsbegäran, inklusive sessionsidentifieraren, med sin privata nyckel.
+4. Servern verifierar signaturen med den godkända publika nyckeln.
+5. Autentiseringen lyckas. Inget lösenord lämnar din maskin.
 
 Detta är den viktigaste insikten: **din privata nyckel reser aldrig via nätverket**. Servern ser bara din publika nyckel och de kryptografiska bevis du producerar. Även om någon avlyssnar varje paket i din SSH-session får de ingenting som hjälper dem att utge sig för att vara dig.
 
@@ -79,8 +77,8 @@ Ed25519 introducerades i OpenSSH version 6.5 (2014) och är nu den rekommenderad
 **Fördelar med Ed25519:**
 - **Kompakt** — nycklar är bara 68 tecken (publik nyckel) och filerna är minimala
 - **Snabb** — signaturgenerering och -verifiering är extremt snabb
-- **Säker by design** — inte sårbar för sidokanalattacker som påverkar vissa RSA-implementationer
-- **Fast nyckelstorlek** — 256-bitars säkerhetsnivå, inget behov av att välja en nyckelstorlek
+- **Säker by design** — utformad för sidokanalresistenta implementationer; motståndskraften beror på implementationen
+- **Fast nyckelstorlek** — 256-bitars publik nyckel med ungefär 128 bitars klassisk säkerhet; inget storleksval behövs
 - **Deterministisk** — signaturer är deterministiska, vilket eliminerar en klass av slumptalsgeneratorfel
 
 ```bash
@@ -355,3 +353,9 @@ Redo att skapa dina SSH-nycklar? Vår kostnadsfria onlinegenerator skapar Ed2551
 - <a href="/sv/what-is-ssh/">Vad är SSH? Den kompletta guiden till Secure Shell</a>
 - <a href="/sv/ssh-command/">SSH-kommandot: Komplett referens med exempel</a>
 - <a href="/sv/how-to-set-up-ssh/">Hur man konfigurerar SSH: En komplett steg-för-steg-guide</a>
+
+## Källor och officiell dokumentation
+
+- [RFC 4252 §7 — SSH public-key authentication](https://www.rfc-editor.org/rfc/rfc4252.html#section-7)
+- [RFC 8032 — Ed25519 signatures and security considerations](https://www.rfc-editor.org/rfc/rfc8032.html)
+- [OpenSSH ssh-keygen(1)](https://man.openbsd.org/ssh-keygen)

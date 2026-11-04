@@ -15,7 +15,8 @@ const siteUrl = rawConfig.siteUrl
 const defaultLanguageCode = rawConfig.defaultLanguage
 const languages = rawConfig.languages
 const defaultLanguage = languages.find((language) => language.code === defaultLanguageCode)
-const today = new Date().toISOString().slice(0, 10)
+const review = JSON.parse(await fs.readFile(path.join(projectRoot, 'src/content/siteReview.json'), 'utf8'))
+const siteInfo = JSON.parse(await fs.readFile(path.join(projectRoot, 'src/content/siteInfo.json'), 'utf8'))
 const mode = process.argv.includes('--dist') ? 'dist' : 'source'
 
 const defaultTitle = 'SSH Key Generator - Generate SSH Keys Online'
@@ -90,8 +91,6 @@ const englishTranslations = JSON.parse(
 )
 const articleMeta = await loadArticleMeta()
 
-const crawlableLinksStartMarker = '<!-- SEO_CRAWLABLE_LINKS_START -->'
-const crawlableLinksEndMarker = '<!-- SEO_CRAWLABLE_LINKS_END -->'
 
 function getPathname(language) {
   return language.basePath === '' ? '/' : `${language.basePath}/`
@@ -205,7 +204,7 @@ function buildSitemapXml() {
   const homeUrls = languages
     .map((language, index) => `  <url>
     <loc>${escapeHtml(getAbsoluteUrl(language))}</loc>
-    <lastmod>${today}</lastmod>
+    <lastmod>${review.dateModified}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>${index === 0 ? '1.0' : '0.8'}</priority>
 ${homeAlternateLinks}
@@ -216,7 +215,7 @@ ${homeAlternateLinks}
     .flatMap((slug) =>
       getArticleLanguages(slug).map((language) => `  <url>
     <loc>${escapeHtml(getArticleAbsoluteUrl(language, slug))}</loc>
-    <lastmod>${today}</lastmod>
+    <lastmod>${getArticleDateModified(getArticleMeta(slug, language))}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
 ${buildSitemapAlternateLinks(slug)}
@@ -224,7 +223,8 @@ ${buildSitemapAlternateLinks(slug)}
     )
     .join('\n\n')
 
-  const urls = [homeUrls, articleUrls].filter(Boolean).join('\n\n')
+  const infoUrls = siteInfo.map((page) => `  <url>\n    <loc>${siteUrl}/${page.slug}/</loc>\n    <lastmod>${page.dateModified}</lastmod>\n  </url>`).join('\n\n')
+  const urls = [homeUrls, articleUrls, infoUrls].filter(Boolean).join('\n\n')
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
@@ -341,6 +341,7 @@ function buildHomeMetadata(language, translations) {
         '@type': 'SoftwareApplication',
         '@id': `${canonicalUrl}#software-application`,
         name: 'SSH Key Generator',
+        dateModified: review.dateModified,
         alternateName: title,
         description,
         url: canonicalUrl,
@@ -401,6 +402,7 @@ function buildHomeMetadata(language, translations) {
         name: 'SSH Key Generator',
         url: siteUrl,
         logo: `${siteUrl}/favicon/android-chrome-512x512.png`,
+        contactPoint: { '@type': 'ContactPoint', contactType: 'support', url: `${siteUrl}/contact/` },
         sameAs: [
           'https://github.com/Fechin/ssh-key-generator',
         ],
@@ -487,258 +489,13 @@ function buildArticleMetadata(language, slug) {
         name: 'SSH Key Generator',
         url: siteUrl,
         logo: `${siteUrl}/favicon/android-chrome-512x512.png`,
+        contactPoint: { '@type': 'ContactPoint', contactType: 'support', url: `${siteUrl}/contact/` },
         sameAs: [
           'https://github.com/Fechin/ssh-key-generator',
         ],
       },
     },
   }
-}
-
-function buildGuideLinksMarkup(language) {
-  return articleSlugs
-    .filter((slug) => hasArticleTranslation(slug, language))
-    .map((slug) => {
-      const meta = getArticleMeta(slug, language)
-      return `<a href="${escapeAttribute(getArticlePathname(language, slug))}">${escapeHtml(meta.title)}</a>`
-    })
-    .join('\n        ')
-}
-
-function buildResourceLinksMarkup(translations) {
-  return [
-    {
-      href: 'https://docs.github.com/en/authentication/connecting-to-github-with-ssh',
-      label: translations.footer?.sshKeyGuide ?? 'GitHub SSH Docs',
-    },
-    {
-      href: 'https://docs.gitlab.com/ee/user/ssh.html',
-      label: translations.footer?.githubSetup ?? 'GitLab SSH Docs',
-    },
-    {
-      href: 'https://www.ssh.com/academy/ssh',
-      label: translations.footer?.bestPractices ?? 'SSH Academy',
-    },
-    {
-      href: 'https://cheatsheets.zip/ssh',
-      label: translations.footer?.sshCheatSheet ?? 'SSH Cheat Sheet',
-    },
-  ]
-    .map(
-      ({ href, label }) =>
-        `<a href="${escapeAttribute(href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(label)}</a>`,
-    )
-    .join('\n        ')
-}
-
-function buildFactListMarkup(items) {
-  return `<ul class="seo-crawlable-links__facts">
-        ${items.map((item) => `<li>${escapeHtml(item)}</li>`).join('\n        ')}
-      </ul>`
-}
-
-function buildHomeFacts(translations) {
-  return [
-    translations.generator?.securityDesc
-      ?? 'All key generation happens locally in the browser; private keys are not uploaded.',
-    'Supports Ed25519, RSA 4096-bit, and RSA 2048-bit SSH key pairs.',
-    'Outputs OpenSSH-compatible public and private keys for GitHub, GitLab, Bitbucket, servers, and CI/CD workflows.',
-    'Includes ssh-keygen command examples, SSH config helpers, fingerprints, copy buttons, and offline PWA support.',
-  ]
-}
-
-function buildArticleFacts(slug, meta) {
-  const factsBySlug = {
-    'generate-ssh-key': [
-      'Use Ed25519 for most new SSH keys and RSA 4096 only when legacy compatibility requires it.',
-      'A generated SSH key pair includes a private key that stays secret and a public key that can be shared with servers.',
-      'The public key can be added to GitHub, GitLab, Bitbucket, or ~/.ssh/authorized_keys.',
-    ],
-    'ssh-keygen': [
-      'ssh-keygen is the OpenSSH command-line utility for creating and managing SSH key pairs.',
-      'The recommended modern command is ssh-keygen -t ed25519 -C "you@example.com".',
-      'Use ssh-keygen -t rsa -b 4096 only for older systems that do not support Ed25519.',
-    ],
-    'what-is-an-ssh-key': [
-      'An SSH key is a cryptographic credential made of a public key and a private key.',
-      'The private key proves identity without being sent over the network.',
-      'SSH keys are commonly used for GitHub, GitLab, server login, automation, and CI/CD access.',
-    ],
-    'how-to-set-up-ssh': [
-      'Setting up SSH requires generating a key pair, installing the public key, and testing the connection.',
-      'Do not disable password authentication until key-based login has been verified.',
-      'Use ssh-agent or the macOS Keychain to manage passphrases for personal keys.',
-    ],
-    'ssh-command': [
-      'The ssh command connects to remote hosts and supports identity files, custom ports, tunnels, and jump hosts.',
-      'Use ssh -i to select a specific private key and ssh -v to debug authentication failures.',
-      'SSH config aliases reduce repeated command-line options for common servers.',
-    ],
-    'what-is-ssh': [
-      'SSH stands for Secure Shell and encrypts remote login, command execution, and file transfer.',
-      'Modern SSH uses an encrypted transport, server host keys, and user authentication.',
-      'SSH replaced insecure plaintext tools such as Telnet for remote administration.',
-    ],
-  }
-
-  return factsBySlug[slug] ?? [meta.description]
-}
-
-function buildHomeCrawlableLinksMarkup(language, translations) {
-  const languageLinks = languages
-    .map(
-      (candidate) =>
-        `<a href="${escapeAttribute(getPathname(candidate))}">${escapeHtml(candidate.label)}</a>`,
-    )
-    .join('\n        ')
-
-  return `  <div id="seo-crawlable-links">
-    <h1 class="seo-crawlable-links__title">${escapeHtml(translations.hero?.title ?? 'SSH Key Generator Online')}</h1>
-    <p class="seo-crawlable-links__summary">${escapeHtml(
-      translations.hero?.subtitle ?? 'Generate secure SSH keys in your browser.',
-    )}</p>
-    ${buildFactListMarkup(buildHomeFacts(translations))}
-    <nav aria-label="Language versions" class="seo-crawlable-links__group">
-      <strong>${escapeHtml(translations.header?.title ?? 'SSH Key Generator')}</strong>
-      <div class="seo-crawlable-links__list">
-        ${languageLinks}
-      </div>
-    </nav>
-    <nav aria-label="SSH guides" class="seo-crawlable-links__group">
-      <strong>${escapeHtml(translations.guides?.title ?? 'SSH Guides')}</strong>
-      <div class="seo-crawlable-links__list">
-        ${buildGuideLinksMarkup(language)}
-      </div>
-    </nav>
-    <nav aria-label="SSH resources" class="seo-crawlable-links__group">
-      <strong>${escapeHtml(translations.footer?.resources ?? 'Resources')}</strong>
-      <div class="seo-crawlable-links__list">
-        ${buildResourceLinksMarkup(translations)}
-      </div>
-    </nav>
-    <a class="seo-crawlable-links__canonical" href="${escapeAttribute(
-      getAbsoluteUrl(language),
-    )}">${escapeHtml(translations.hero?.title ?? 'SSH Key Generator Online')}</a>
-  </div>`
-}
-
-function buildArticleCrawlableLinksMarkup(language, slug, translations) {
-  const meta = getArticleMeta(slug, language)
-  const languageLinks = getArticleLanguages(slug)
-    .map(
-      (candidate) =>
-        `<a href="${escapeAttribute(getArticlePathname(candidate, slug))}">${escapeHtml(candidate.label)}</a>`,
-    )
-    .join('\n        ')
-
-  return `  <div id="seo-crawlable-links">
-    <h1 class="seo-crawlable-links__title">${escapeHtml(meta.title)}</h1>
-    <p class="seo-crawlable-links__summary">${escapeHtml(meta.description)}</p>
-    ${buildFactListMarkup(buildArticleFacts(slug, meta))}
-    <nav aria-label="SSH guides" class="seo-crawlable-links__group">
-      <strong>${escapeHtml(translations.guides?.title ?? 'SSH Guides')}</strong>
-      <div class="seo-crawlable-links__list">
-        ${buildGuideLinksMarkup(language)}
-      </div>
-    </nav>
-    <nav aria-label="Article languages" class="seo-crawlable-links__group">
-      <strong>${escapeHtml(translations.header?.title ?? 'Language versions')}</strong>
-      <div class="seo-crawlable-links__list">
-        ${languageLinks}
-      </div>
-    </nav>
-    <nav aria-label="SSH resources" class="seo-crawlable-links__group">
-      <strong>${escapeHtml(translations.footer?.resources ?? 'Resources')}</strong>
-      <div class="seo-crawlable-links__list">
-        ${buildResourceLinksMarkup(translations)}
-      </div>
-    </nav>
-    <a class="seo-crawlable-links__canonical" href="${escapeAttribute(
-      getArticleAbsoluteUrl(language, slug),
-    )}">${escapeHtml(meta.title)}</a>
-    <a class="seo-crawlable-links__home" href="${escapeAttribute(
-      getPathname(language),
-    )}">${escapeHtml(translations.hero?.title ?? 'SSH Key Generator Online')}</a>
-  </div>`
-}
-
-function injectCrawlableLinksHead(html) {
-  if (html.includes('id="seo-crawlable-links-style"')) {
-    return html
-  }
-
-  const snippet = `    <script id="seo-crawlable-links-script">document.documentElement.classList.add('js')</script>
-    <style id="seo-crawlable-links-style">
-      html.js #seo-crawlable-links { display: none; }
-      #seo-crawlable-links {
-        border-top: 1px solid #e5e7eb;
-        color: #0f172a;
-        font: 400 14px/1.6 system-ui, sans-serif;
-        margin: 2rem auto 0;
-        max-width: 960px;
-        padding: 1.5rem 1rem 2rem;
-      }
-      #seo-crawlable-links a {
-        color: #2563eb;
-        text-decoration: none;
-      }
-      #seo-crawlable-links a:hover {
-        text-decoration: underline;
-      }
-      .seo-crawlable-links__summary {
-        margin: 0 0 1rem;
-      }
-      .seo-crawlable-links__facts {
-        margin: 0 0 1rem 1.25rem;
-        padding: 0;
-      }
-      .seo-crawlable-links__title {
-        font-size: 1.5rem;
-        font-weight: 600;
-        line-height: 1.25;
-        margin: 0 0 0.75rem;
-      }
-      .seo-crawlable-links__group + .seo-crawlable-links__group {
-        margin-top: 1rem;
-      }
-      .seo-crawlable-links__list {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem 0.875rem;
-        margin-top: 0.375rem;
-      }
-      .seo-crawlable-links__canonical {
-        display: inline-block;
-        margin-top: 1rem;
-      }
-      .seo-crawlable-links__home {
-        display: inline-block;
-        margin-left: 1rem;
-        margin-top: 1rem;
-      }
-    </style>
-`
-
-  return html.replace('</head>', `${snippet}</head>`)
-}
-
-function upsertCrawlableLinksMarkup(html, markup) {
-  const wrappedMarkup = `${crawlableLinksStartMarker}
-${markup}
-${crawlableLinksEndMarker}`
-
-  if (html.includes(crawlableLinksStartMarker) && html.includes(crawlableLinksEndMarker)) {
-    return html.replace(
-      /<!-- SEO_CRAWLABLE_LINKS_START -->[\s\S]*?<!-- SEO_CRAWLABLE_LINKS_END -->/,
-      wrappedMarkup,
-    )
-  }
-
-  if (html.includes('id="seo-crawlable-links"')) {
-    return html.replace(/<div id="seo-crawlable-links">[\s\S]*?<\/body>/, `${wrappedMarkup}\n</body>`)
-  }
-
-  return html.replace('</body>', `${wrappedMarkup}\n</body>`)
 }
 
 function replaceTag(html, matcher, replacement) {
@@ -758,7 +515,7 @@ function replaceLinkHrefById(html, id, href) {
 function replaceScriptById(html, id, value) {
   const matcher = new RegExp(`\\s*<script[^>]*id="${id}"[^>]*>[\\s\\S]*?</script>`)
 
-  if (value === null) {
+  if (value == null) {
     return html.replace(matcher, '')
   }
 
@@ -776,7 +533,7 @@ function replaceScriptById(html, id, value) {
 }
 
 function normalizeHead(html, language, metadata) {
-  const alternateLinks = buildHtmlAlternateLinks(metadata.alternatePath)
+  const alternateLinks = metadata.alternatePath === null ? '' : buildHtmlAlternateLinks(metadata.alternatePath)
   let nextHtml = html
   nextHtml = replaceTag(
     nextHtml,
@@ -806,7 +563,7 @@ ${alternateLinks}
   nextHtml = replaceMetaContentById(nextHtml, 'meta-og-description', metadata.description)
   nextHtml = replaceMetaContentById(nextHtml, 'meta-og-image', metadata.imageUrl ?? socialImageUrl)
   nextHtml = replaceMetaContentById(nextHtml, 'meta-og-site-name', 'SSH Key Generator')
-  nextHtml = replaceMetaContentById(nextHtml, 'meta-og-locale', metadata.ogLocale)
+  nextHtml = replaceMetaContentById(nextHtml, 'meta-og-locale', metadata.ogLocale ?? getOpenGraphLocale(language))
   nextHtml = replaceMetaContentById(nextHtml, 'meta-twitter-url', metadata.canonicalUrl)
   nextHtml = replaceMetaContentById(nextHtml, 'meta-twitter-title', metadata.title)
   nextHtml = replaceMetaContentById(nextHtml, 'meta-twitter-description', metadata.description)
@@ -817,7 +574,7 @@ ${alternateLinks}
   nextHtml = replaceScriptById(nextHtml, 'structured-data-howto', metadata.structuredData.howTo)
   nextHtml = replaceScriptById(nextHtml, 'structured-data-breadcrumb', metadata.structuredData.breadcrumb)
   nextHtml = replaceScriptById(nextHtml, 'structured-data-organization', metadata.structuredData.organization)
-  return injectCrawlableLinksHead(nextHtml)
+  return nextHtml
 }
 
 async function writeSourceAssets() {
@@ -836,28 +593,39 @@ function getDistOutputPath(language, slug = '') {
 
 async function writeDistAssets() {
   const htmlTemplate = await fs.readFile(distIndexPath, 'utf8')
+  const { createServer } = await import('vite')
+  const server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom' })
 
-  for (const language of languages) {
-    const translations = await loadTranslations(language)
-    const localizedHtml = upsertCrawlableLinksMarkup(
-      normalizeHead(htmlTemplate, language, buildHomeMetadata(language, translations)),
-      buildHomeCrawlableLinksMarkup(language, translations),
-    )
-    const outputPath = getDistOutputPath(language)
-
-    await fs.mkdir(path.dirname(outputPath), { recursive: true })
-    await fs.writeFile(outputPath, localizedHtml, 'utf8')
-
-    for (const slug of articleSlugs.filter((candidate) => hasArticleTranslation(candidate, language))) {
-      const articleHtml = upsertCrawlableLinksMarkup(
-        normalizeHead(htmlTemplate, language, buildArticleMetadata(language, slug)),
-        buildArticleCrawlableLinksMarkup(language, slug, translations),
-      )
-      const articleOutputPath = getDistOutputPath(language, slug)
-
-      await fs.mkdir(path.dirname(articleOutputPath), { recursive: true })
-      await fs.writeFile(articleOutputPath, articleHtml, 'utf8')
+  try {
+    const { renderPage, getSiteInfoMetadata } = await server.ssrLoadModule('/src/entry-server.tsx')
+    const writePage = async (language, pathname, metadata, outputPath) => {
+      const markup = await renderPage(pathname, language.code)
+      const html = normalizeHead(htmlTemplate, language, metadata)
+        .replace('<div id="root"></div>', () => `<div id="root">${markup}</div>`)
+      if (!html.includes(markup) || !markup.includes('<h1')) throw new Error(`Missing static content: ${pathname}`)
+      await fs.mkdir(path.dirname(outputPath), { recursive: true })
+      await fs.writeFile(outputPath, html, 'utf8')
     }
+    for (const language of languages) {
+      const translations = await loadTranslations(language)
+      await writePage(language, getPathname(language), buildHomeMetadata(language, translations), getDistOutputPath(language))
+      for (const slug of articleSlugs.filter((candidate) => hasArticleTranslation(candidate, language))) {
+        await writePage(language, getArticlePathname(language, slug), buildArticleMetadata(language, slug), getDistOutputPath(language, slug))
+      }
+    }
+    for (const page of siteInfo) {
+      await writePage(defaultLanguage, `/${page.slug}/`, getSiteInfoMetadata(page.slug), getDistOutputPath(defaultLanguage, page.slug))
+    }
+    // A top-level 404 disables Cloudflare Pages' implicit indexable SPA fallback.
+    await writePage(defaultLanguage, '/404/', {
+      ...buildHomeMetadata(defaultLanguage, englishTranslations),
+      title: '404 | Page Not Found | SSH Key Generator',
+      description: 'The requested page could not be found.',
+      canonicalUrl: `${siteUrl}/404/`, alternatePath: null, robots: 'noindex, follow',
+      structuredData: {},
+    }, path.join(distDirectory, '404.html'))
+  } finally {
+    await server.close()
   }
 }
 

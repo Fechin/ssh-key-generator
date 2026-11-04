@@ -1,3 +1,5 @@
+import siteInfo from '@/content/siteInfo.json'
+import review from '@/content/siteReview.json'
 import {
   DEFAULT_LANGUAGE,
   LANGUAGE_BY_CODE,
@@ -196,6 +198,7 @@ function buildOrganizationSchema(): JsonLdValue {
     name: SITE_NAME,
     url: SITE_URL,
     logo: `${SITE_URL}/favicon/android-chrome-512x512.png`,
+    contactPoint: { '@type': 'ContactPoint', contactType: 'support', url: `${SITE_URL}/contact/` },
     sameAs: [
       'https://github.com/Fechin/ssh-key-generator',
     ],
@@ -214,6 +217,7 @@ function buildSoftwareApplicationSchema(
     '@type': 'SoftwareApplication',
     '@id': `${canonicalUrl}#software-application`,
     name: SITE_NAME,
+    dateModified: review.dateModified,
     alternateName: title,
     description,
     url: canonicalUrl,
@@ -396,6 +400,26 @@ export function buildArticlePageMetadata(
   }
 }
 
+export function buildSiteInfoPageMetadata(slug: string): PageMetadata {
+  const page = siteInfo.find((entry) => entry.slug === slug)
+  if (!page) throw new Error(`Unknown site information page: ${slug}`)
+  const canonicalUrl = `${SITE_URL}/${slug}/`
+  return {
+    title: page.title, description: page.description, canonicalUrl,
+    alternatePath: null, robots: 'index, follow', ogType: 'website',
+    structuredData: {
+      website: buildWebsiteSchema('en'),
+      page: {
+        ...buildWebPageSchema('en', page.title, page.description, canonicalUrl),
+        '@type': slug === 'about' ? 'AboutPage' : slug === 'contact' ? 'ContactPage' : 'WebPage',
+        dateModified: page.dateModified,
+        publisher: { '@id': ORGANIZATION_ID },
+      },
+      faq: null, howTo: null, breadcrumb: null, organization: buildOrganizationSchema(),
+    },
+  }
+}
+
 export function buildNotFoundPageMetadata(
   language: Language,
   pathname: string,
@@ -436,6 +460,8 @@ export function syncPageMetadata(language: Language, metadata: PageMetadata) {
     structuredData,
   } = metadata
 
+  document.documentElement.lang = LANGUAGE_BY_CODE[language].htmlLang
+  document.documentElement.dir = ['ar', 'he'].includes(language) ? 'rtl' : 'ltr'
   document.title = title
 
   upsertMetaByName('title', title)

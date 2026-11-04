@@ -44,7 +44,11 @@ export function ArticlePage({ slug, lang }: Props) {
   }, [slug, lang, meta, alternateLanguages, setLanguage])
 
   return (
-    <ArticleLayout backHref={`${basePath}/`} backLabel="SSH Key Generator">
+    <ArticleLayout
+      backHref={`${basePath}/`}
+      backLabel="SSH Key Generator"
+      publication={{ language: lang, publishDate: meta.publishDate, modifiedDate: meta.modifiedDate }}
+    >
       <MDXProvider components={mdxComponents}>
         <Suspense fallback={<div className="min-h-[400px]" />}>
           {/* eslint-disable-next-line react-hooks/static-components -- MDX routes are registered once in lazyContentModules. */}

@@ -41,7 +41,7 @@ You need a key pair before you can do anything else. The key pair consists of a 
 
 ### Option A: Use the Online Generator
 
-If you prefer a graphical interface, our <a href="/">free online SSH key generator</a> creates Ed25519 or RSA key pairs in your browser. The private key is generated locally using the Web Crypto API — nothing is sent to our servers. Download both files and save them to `~/.ssh/` (Linux/macOS) or `C:\Users\YourName\.ssh\` (Windows).
+If you prefer a graphical interface, our <a href="/">free online SSH key generator</a> creates Ed25519 or RSA key pairs in your browser. Generated private keys and passphrases are not uploaded to our servers. Download both files and save them to `~/.ssh/` (Linux/macOS) or `C:\Users\YourName\.ssh\` (Windows).
 
 ### Option B: Use ssh-keygen on the Command Line
 
@@ -560,7 +560,7 @@ Match the fingerprints to identify and delete the right key.
 
 ## Generate Your SSH Keys for Free
 
-If you have not yet generated your SSH key pair, our free online generator creates Ed25519 or RSA keys directly in your browser in seconds. No installation required, nothing sent to our servers — generation happens entirely on your device.
+Ed25519 and RSA key generation runs in your browser. Generated private keys and passphrases are not uploaded to our servers.
 
 <a href="/">Generate your SSH keys for free →</a>
 
@@ -570,3 +570,9 @@ If you have not yet generated your SSH key pair, our free online generator creat
 - <a href="/what-is-ssh/">What Is SSH? The Complete Guide to Secure Shell</a>
 - <a href="/what-is-an-ssh-key/">What Is an SSH Key? Public Keys, Private Keys, and Key Pairs Explained</a>
 - <a href="/ssh-command/">The SSH Command: Complete Reference with Examples</a>
+
+## Sources and official documentation
+
+- [GitHub Docs — Generating a new SSH key and adding it to the ssh-agent](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+- [GitLab Docs — Use SSH keys to communicate with GitLab](https://docs.gitlab.com/user/ssh/)
+- [OpenSSH sshd_config(5)](https://man.openbsd.org/sshd_config)

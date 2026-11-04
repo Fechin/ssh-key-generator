@@ -77,7 +77,7 @@ SSH supporta due metodi di autenticazione principali: password e **chiavi SSH**.
 La **chiave privata** rimane sulla macchina locale, protetta da una passphrase opzionale. La **chiave pubblica** viene inserita su qualsiasi server a cui si vuole accedere, in un file chiamato `~/.ssh/authorized_keys`. Quando ci si connette, il server emette una sfida crittografica a cui solo il possessore della chiave privata corrispondente può rispondere. Nessuna password viene inviata sulla rete.
 
 Questo approccio offre diversi vantaggi:
-- **Immune alla forza bruta** — non c'è nulla da indovinare. Una chiave Ed25519 a 256 bit ha 2²⁵⁶ valori possibili.
+- **Ed25519** — chiave pubblica di 256 bit con circa 128 bit di sicurezza classica; non serve scegliere una dimensione.
 - **Nessuna password da rubare** — anche se qualcuno intercetta l'handshake, non ottiene nulla di utile.
 - **Automatizzabile** — script e pipeline CI/CD possono autenticarsi senza interazione umana.
 - **Revocabile** — rimuovere una chiave pubblica da `authorized_keys` revoca immediatamente l'accesso.
@@ -271,7 +271,7 @@ Sia SSH che HTTPS cifrano il traffico di rete, ma sono progettati per scopi dive
 
 ## Genera le Tue Chiavi SSH Ora
 
-L'autenticazione SSH basata su chiavi è più sicura e più comoda delle password. Se non hai ancora configurato le chiavi SSH, il nostro generatore online gratuito crea coppie di chiavi Ed25519 o RSA istantaneamente nel browser — nessuna installazione richiesta, nulla inviato ai nostri server.
+La generazione delle chiavi Ed25519 e RSA avviene nel browser. Le chiavi private generate e le passphrase non vengono caricate sui nostri server.
 
 <a href="/">Genera la tua coppia di chiavi SSH ora →</a>
 
@@ -281,3 +281,9 @@ L'autenticazione SSH basata su chiavi è più sicura e più comoda delle passwor
 - <a href="/it/what-is-an-ssh-key/">Cos'è una Chiave SSH? Chiavi Pubbliche, Private e Coppie di Chiavi Spiegate</a>
 - <a href="/it/ssh-command/">Il Comando SSH: Riferimento Completo con Esempi</a>
 - <a href="/it/how-to-set-up-ssh/">Come Configurare SSH: Una Guida Completa Passo dopo Passo</a>
+
+## Fonti e documentazione ufficiale
+
+- [RFC 4251 — The Secure Shell (SSH) Protocol Architecture](https://www.rfc-editor.org/rfc/rfc4251.html)
+- [RFC 4252 §7 — SSH public-key authentication](https://www.rfc-editor.org/rfc/rfc4252.html#section-7)
+- [RFC 8032 — Ed25519 signatures and security considerations](https://www.rfc-editor.org/rfc/rfc8032.html)

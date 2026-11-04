@@ -39,7 +39,7 @@ Você precisa de um par de chaves antes de fazer qualquer outra coisa. O par de 
 
 ### Opção A: use o gerador online
 
-Se você preferir uma interface gráfica, nosso <a href="/">gerador de chaves SSH online gratuito</a> cria pares de chaves Ed25519 ou RSA no seu navegador. A chave privada é gerada localmente usando a Web Crypto API — nada é enviado para nossos servidores. Baixe ambos os arquivos e salve em `~/.ssh/` (Linux/macOS) ou `C:\Users\SeuNome\.ssh\` (Windows).
+Se você preferir uma interface gráfica, nosso <a href="/">gerador de chaves SSH online gratuito</a> cria pares de chaves Ed25519 ou RSA no seu navegador. As chaves privadas geradas e as frases secretas não são enviadas aos nossos servidores. Baixe ambos os arquivos e salve em `~/.ssh/` (Linux/macOS) ou `C:\Users\SeuNome\.ssh\` (Windows).
 
 ### Opção B: use o ssh-keygen pela linha de comando
 
@@ -558,7 +558,7 @@ Compare as impressões digitais para identificar e deletar a chave correta.
 
 ## Gere suas chaves SSH gratuitamente
 
-Se você ainda não gerou seu par de chaves SSH, nosso gerador online gratuito cria chaves Ed25519 ou RSA diretamente no seu navegador em segundos. Sem instalação necessária, nada enviado para nossos servidores — a geração acontece inteiramente no seu dispositivo.
+A geração de chaves Ed25519 e RSA ocorre no seu navegador. As chaves privadas geradas e as frases secretas não são enviadas aos nossos servidores.
 
 <a href="/">Gere suas chaves SSH gratuitamente →</a>
 
@@ -568,3 +568,9 @@ Se você ainda não gerou seu par de chaves SSH, nosso gerador online gratuito c
 - <a href="/pt/what-is-ssh/">O que é SSH? Guia completo sobre Secure Shell</a>
 - <a href="/pt/what-is-an-ssh-key/">O que é uma chave SSH? Chaves públicas, privadas e pares de chaves explicados</a>
 - <a href="/pt/ssh-command/">Comando SSH: referência completa com exemplos</a>
+
+## Fontes e documentação oficial
+
+- [GitHub Docs — Generating a new SSH key and adding it to the ssh-agent](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+- [GitLab Docs — Use SSH keys to communicate with GitLab](https://docs.gitlab.com/user/ssh/)
+- [OpenSSH sshd_config(5)](https://man.openbsd.org/sshd_config)

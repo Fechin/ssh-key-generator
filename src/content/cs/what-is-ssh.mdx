@@ -77,7 +77,7 @@ SSH podporuje dvě primární metody autentizace: hesla a **SSH klíče**. SSH k
 **Soukromý klíč** zůstává na vašem lokálním stroji, chráněn volitelným heslem (passphrase). **Veřejný klíč** je umístěn na libovolném serveru, ke kterému chcete přistupovat, do souboru `~/.ssh/authorized_keys`. Při připojení server vydá kryptografickou výzvu, na kterou může odpovědět pouze držitel odpovídajícího soukromého klíče. Žádné heslo není odesíláno po síti.
 
 Tento přístup má několik výhod:
-- **Imunní vůči útokům hrubou silou** — není co hádat. 256bitový Ed25519 klíč má 2²⁵⁶ možných hodnot.
+- **Ed25519** — 256bitový veřejný klíč poskytuje přibližně 128 bitů klasického zabezpečení; velikost se nevolí.
 - **Žádné heslo ke krádeži** — i když někdo zachytí handshake, nezíská nic užitečného.
 - **Automatizovatelné** — skripty a CI/CD pipeline se mohou autentizovat bez lidské interakce.
 - **Odvolatelné** — odebrání veřejného klíče z `authorized_keys` okamžitě odvolá přístup.
@@ -271,7 +271,7 @@ SSH i HTTPS šifrují síťový provoz, ale jsou navrženy pro různé účely. 
 
 ## Vygenerujte si SSH klíče nyní
 
-Autentizace SSH pomocí klíčů je bezpečnější a pohodlnější než hesla. Pokud jste si ještě nenastavili SSH klíče, náš bezplatný online generátor vytvoří páry klíčů Ed25519 nebo RSA okamžitě ve vašem prohlížeči — není nutná žádná instalace, nic se neodesílá na naše servery.
+Klíče Ed25519 a RSA se generují ve vašem prohlížeči. Vygenerované soukromé klíče a přístupové fráze se nenahrávají na naše servery.
 
 <a href="/">Vygenerujte si pár SSH klíčů nyní →</a>
 
@@ -281,3 +281,9 @@ Autentizace SSH pomocí klíčů je bezpečnější a pohodlnější než hesla.
 - <a href="/cs/what-is-an-ssh-key/">Co je SSH klíč? Veřejné klíče, soukromé klíče a páry klíčů vysvětleny</a>
 - <a href="/cs/ssh-command/">Příkaz SSH: Kompletní přehled s příklady</a>
 - <a href="/cs/how-to-set-up-ssh/">Jak nastavit SSH: Kompletní průvodce krok za krokem</a>
+
+## Zdroje a oficiální dokumentace
+
+- [RFC 4251 — The Secure Shell (SSH) Protocol Architecture](https://www.rfc-editor.org/rfc/rfc4251.html)
+- [RFC 4252 §7 — SSH public-key authentication](https://www.rfc-editor.org/rfc/rfc4252.html#section-7)
+- [RFC 8032 — Ed25519 signatures and security considerations](https://www.rfc-editor.org/rfc/rfc8032.html)

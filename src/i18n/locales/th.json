@@ -193,6 +193,12 @@
     "copyright": "© {year} SSH Key Generator. Open Source ภายใต้ MIT License"
   },
   "seo": {
+    "sources": {
+      "title": "แหล่งอ้างอิงและการตรวจทาน",
+      "reviewed": "ตรวจทานล่าสุด",
+      "openssh": "คู่มือ OpenSSH ssh-keygen",
+      "github": "GitHub: การสร้าง SSH key ใหม่"
+    },
     "whatIs": {
       "title": "SSH Key Generator ออนไลน์คืออะไร?",
       "desc": "เครื่องมือออนไลน์จะสร้าง key pair ในเบราว์เซอร์ Public key ใช้กับ GitHub, GitLab, Bitbucket หรือ server ส่วน private key อยู่ในเครื่องของคุณ"
@@ -245,10 +251,10 @@
       "rsaSigSize": "256-512 bytes",
       "ed25519Security": "เทียบเท่า ~128-bit",
       "rsaSecurity": "~112-128-bit (4096)",
-      "ed25519Performance": "เร็วมาก (เร็วกว่า 10 เท่า)",
+      "ed25519Performance": "ขึ้นอยู่กับการนำไปใช้",
       "rsaPerformance": "สร้างช้ากว่า",
       "ed25519Compat": "OpenSSH 6.5+ (2014)",
-      "rsaCompat": "รองรับทุกระบบ",
+      "rsaCompat": "รองรับอย่างแพร่หลาย; ตรวจสอบนโยบายเซิร์ฟเวอร์",
       "ed25519Quantum": "ไม่ทนทานต่อ Quantum",
       "rsaQuantum": "ไม่ทนทานต่อ Quantum",
       "ed25519BestFor": "GitHub, GitLab, เซิร์ฟเวอร์สมัยใหม่",

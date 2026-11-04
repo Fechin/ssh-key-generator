@@ -40,7 +40,7 @@ Anahtar çifti olmadan başka hiçbir şey yapamazsınız. Anahtar çifti bir **
 
 ### Seçenek A: Çevrimiçi Oluşturucuyu Kullan
 
-Grafik arayüz tercih ediyorsanız, <a href="/">ücretsiz çevrimiçi SSH anahtar oluşturucumuz</a> tarayıcınızda Ed25519 veya RSA anahtar çiftleri oluşturur. Özel anahtar, Web Crypto API kullanılarak yerel olarak oluşturulur — sunucularımıza hiçbir şey gönderilmez. Her iki dosyayı da indirip `~/.ssh/` (Linux/macOS) veya `C:\Users\YourName\.ssh\` (Windows) dizinine kaydedin.
+Grafik arayüz tercih ediyorsanız, <a href="/">ücretsiz çevrimiçi SSH anahtar oluşturucumuz</a> tarayıcınızda Ed25519 veya RSA anahtar çiftleri oluşturur. Üretilen özel anahtarlar ve parola ifadeleri sunucularımıza yüklenmez. Her iki dosyayı da indirip `~/.ssh/` (Linux/macOS) veya `C:\Users\YourName\.ssh\` (Windows) dizinine kaydedin.
 
 ### Seçenek B: Komut Satırında ssh-keygen Kullan
 
@@ -559,7 +559,7 @@ Doğru anahtarı tanımlamak ve silmek için parmak izlerini eşleştirin.
 
 ## SSH Anahtarlarınızı Ücretsiz Oluşturun
 
-Henüz SSH anahtar çiftinizi oluşturmadıysanız, ücretsiz çevrimiçi oluşturucumuz saniyeler içinde doğrudan tarayıcınızda Ed25519 veya RSA anahtarları oluşturur. Kurulum gerekmez, sunucularımıza hiçbir şey gönderilmez — oluşturma tamamen cihazınızda gerçekleşir.
+Ed25519 ve RSA anahtar üretimi tarayıcınızda gerçekleşir. Üretilen özel anahtarlar ve parola ifadeleri sunucularımıza yüklenmez.
 
 <a href="/">SSH anahtarlarınızı ücretsiz oluşturun →</a>
 
@@ -569,3 +569,9 @@ Henüz SSH anahtar çiftinizi oluşturmadıysanız, ücretsiz çevrimiçi oluşt
 - <a href="/tr/what-is-ssh/">SSH Nedir? Güvenli Kabuk'a Tam Kılavuz</a>
 - <a href="/tr/what-is-an-ssh-key/">SSH Anahtarı Nedir? Açık Anahtarlar, Özel Anahtarlar ve Anahtar Çiftleri Açıklandı</a>
 - <a href="/tr/ssh-command/">SSH Komutu: Örneklerle Tam Başvuru Kılavuzu</a>
+
+## Kaynaklar ve resmî belgeler
+
+- [GitHub Docs — Generating a new SSH key and adding it to the ssh-agent](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+- [GitLab Docs — Use SSH keys to communicate with GitLab](https://docs.gitlab.com/user/ssh/)
+- [OpenSSH sshd_config(5)](https://man.openbsd.org/sshd_config)

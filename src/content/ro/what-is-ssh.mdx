@@ -77,7 +77,7 @@ SSH suportă două metode principale de autentificare: parole și **chei SSH**. 
 **Cheia privată** rămâne pe mașina ta locală, protejată cu o parolă opțională. **Cheia publică** este plasată pe orice server pe care dorești să îl accesezi, într-un fișier numit `~/.ssh/authorized_keys`. Când te conectezi, serverul emite o provocare criptografică la care doar deținătorul cheii private corespunzătoare poate răspunde. Nicio parolă nu este trimisă prin rețea.
 
 Această abordare are mai multe avantaje:
-- **Imună la brute force** — nu există nimic de ghicit. O cheie Ed25519 de 256 de biți are 2²⁵⁶ valori posibile.
+- **Ed25519** — cheie publică de 256 biți cu aproximativ 128 biți de securitate clasică; nu trebuie aleasă dimensiunea.
 - **Nicio parolă de furat** — chiar dacă cineva interceptează handshake-ul, nu obține nimic util.
 - **Automatizabilă** — scripturile și pipeline-urile CI/CD se pot autentifica fără interacțiune umană.
 - **Revocabilă** — eliminarea unei chei publice din `authorized_keys` revocă imediat accesul.
@@ -271,7 +271,7 @@ Atât SSH, cât și HTTPS criptează traficul de rețea, dar sunt proiectate pen
 
 ## Generează-ți cheile SSH acum
 
-Autentificarea SSH bazată pe chei este mai sigură și mai convenabilă decât parolele. Dacă nu ai configurat încă cheile SSH, generatorul nostru online gratuit creează perechi de chei Ed25519 sau RSA instantaneu în browserul tău — fără instalare necesară, nimic trimis pe serverele noastre.
+Generarea cheilor Ed25519 și RSA are loc în browserul tău. Cheile private generate și frazele de acces nu sunt încărcate pe serverele noastre.
 
 <a href="/">Generează-ți perechea de chei SSH acum →</a>
 
@@ -281,3 +281,9 @@ Autentificarea SSH bazată pe chei este mai sigură și mai convenabilă decât 
 - <a href="/ro/what-is-an-ssh-key/">Ce este o cheie SSH? Chei publice, chei private și perechi de chei explicate</a>
 - <a href="/ro/ssh-command/">Comanda SSH: Referință completă cu exemple</a>
 - <a href="/ro/how-to-set-up-ssh/">Cum să configurezi SSH: Un ghid complet pas cu pas</a>
+
+## Surse și documentație oficială
+
+- [RFC 4251 — The Secure Shell (SSH) Protocol Architecture](https://www.rfc-editor.org/rfc/rfc4251.html)
+- [RFC 4252 §7 — SSH public-key authentication](https://www.rfc-editor.org/rfc/rfc4252.html#section-7)
+- [RFC 8032 — Ed25519 signatures and security considerations](https://www.rfc-editor.org/rfc/rfc8032.html)

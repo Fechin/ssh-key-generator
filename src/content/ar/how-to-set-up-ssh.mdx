@@ -40,7 +40,7 @@ ssh -T git@github.com
 
 ### الخيار أ: استخدام المولّد عبر الإنترنت
 
-إذا فضّلت واجهة رسومية، فإن <a href="/">مولّد مفاتيح SSH المجاني عبر الإنترنت</a> ينشئ أزواج مفاتيح Ed25519 أو RSA في متصفحك. يُولَّد المفتاح الخاص محليًا باستخدام Web Crypto API — لا يُرسَل شيء إلى خوادمنا. نزّل كلا الملفين واحفظهما في `~/.ssh/` (Linux/macOS) أو `C:\Users\YourName\.ssh\` (Windows).
+إذا فضّلت واجهة رسومية، فإن <a href="/">مولّد مفاتيح SSH المجاني عبر الإنترنت</a> ينشئ أزواج مفاتيح Ed25519 أو RSA في متصفحك. لا تُرفع المفاتيح الخاصة المُولّدة وعبارات المرور إلى خوادمنا. نزّل كلا الملفين واحفظهما في `~/.ssh/` (Linux/macOS) أو `C:\Users\YourName\.ssh\` (Windows).
 
 ### الخيار ب: استخدام ssh-keygen في سطر الأوامر
 
@@ -559,7 +559,7 @@ ssh-keygen -lf ~/.ssh/authorized_keys
 
 ## أنشئ مفاتيح SSH مجانًا
 
-إذا لم تولّد بعد زوج مفاتيح SSH، فإن مولّدنا المجاني عبر الإنترنت ينشئ مفاتيح Ed25519 أو RSA مباشرةً في متصفحك في ثوانٍ. لا يلزم أي تثبيت، ولا يُرسَل شيء إلى خوادمنا — يحدث التوليد بالكامل على جهازك.
+يتم توليد مفاتيح Ed25519 وRSA في متصفحك. لا تُرفع المفاتيح الخاصة المُولّدة وعبارات المرور إلى خوادمنا.
 
 <a href="/">أنشئ مفاتيح SSH مجانًا ←</a>
 
@@ -569,3 +569,9 @@ ssh-keygen -lf ~/.ssh/authorized_keys
 - <a href="/ar/what-is-ssh/">ما هو SSH؟ الدليل الشامل للـ Secure Shell</a>
 - <a href="/ar/what-is-an-ssh-key/">ما هو مفتاح SSH؟ المفاتيح العامة والخاصة وأزواج المفاتيح شرح</a>
 - <a href="/ar/ssh-command/">أمر SSH: المرجع الكامل مع أمثلة</a>
+
+## المصادر والوثائق الرسمية
+
+- [GitHub Docs — Generating a new SSH key and adding it to the ssh-agent](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+- [GitLab Docs — Use SSH keys to communicate with GitLab](https://docs.gitlab.com/user/ssh/)
+- [OpenSSH sshd_config(5)](https://man.openbsd.org/sshd_config)

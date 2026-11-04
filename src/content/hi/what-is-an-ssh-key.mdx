@@ -9,17 +9,15 @@ SSH key generate करने का मतलब public key और private key 
 
 ## SSH Keys कैसे काम करती हैं
 
-SSH keys **asymmetric cryptography** पर आधारित हैं, जिसे public-key cryptography भी कहा जाता है। Symmetric cryptography (जहाँ एक single secret key data को encrypt और decrypt दोनों करती है) के विपरीत, asymmetric systems गणितीय रूप से जुड़े key pairs का उपयोग करती हैं जहाँ एक key से encrypt किया गया data केवल दूसरी key से decrypt किया जा सकता है।
+SSH सार्वजनिक कुंजी प्रमाणीकरण डिजिटल हस्ताक्षर का उपयोग करता है। निजी कुंजी प्रमाणीकरण डेटा पर हस्ताक्षर करती है और सार्वजनिक कुंजी उसे सत्यापित करती है; इसमें सर्वर की चुनौती को एन्क्रिप्ट और डिक्रिप्ट नहीं किया जाता।
 
 यहाँ authentication flow है जब आप किसी सर्वर पर लॉग इन करने के लिए SSH key का उपयोग करते हैं:
 
 1. आप `ssh user@server.example.com` चलाते हैं।
 2. सर्वर `~/.ssh/authorized_keys` में आपकी public key देखता है।
-3. सर्वर एक random challenge generate करता है और उसे आपकी public key से encrypt करता है।
-4. आपका SSH client आपकी private key का उपयोग करके challenge decrypt करता है।
-5. Client एक क्रिप्टोग्राफ़िक proof (decrypted challenge और session ID से derived) सर्वर को वापस भेजता है।
-6. सर्वर proof verify करता है। केवल private key का धारक ही इसे produce कर सकता था।
-7. Authentication सफल होती है। आपकी मशीन से कोई password नहीं जाता।
+3. क्लाइंट सत्र पहचानकर्ता सहित प्रमाणीकरण अनुरोध पर अपनी निजी कुंजी से हस्ताक्षर करता है।
+4. सर्वर अधिकृत सार्वजनिक कुंजी से हस्ताक्षर सत्यापित करता है।
+5. Authentication सफल होती है। आपकी मशीन से कोई password नहीं जाता।
 
 यही मुख्य बात है: **आपकी private key कभी नेटवर्क पर नहीं जाती।** सर्वर केवल आपकी public key और आपके द्वारा produce किए गए क्रिप्टोग्राफ़िक proofs देखता है। यदि कोई आपके SSH session के हर packet को भी इंटरसेप्ट करे, तो उसे कुछ ऐसा नहीं मिलता जो आपका प्रतिरूपण करने में मदद करे।
 
@@ -79,8 +77,8 @@ Ed25519 को OpenSSH version 6.5 (2014) में introduce किया ग�
 **Ed25519 के फायदे:**
 - **Compact** — keys केवल 68 characters (public key) की होती हैं और files tiny होती हैं
 - **Fast** — signature generation और verification अत्यंत तेज़ हैं
-- **Secure by design** — side-channel attacks के प्रति संवेदनशील नहीं जो कुछ RSA implementations को प्रभावित करते हैं
-- **Fixed key size** — 256-bit security level, key size चुनने की ज़रूरत नहीं
+- **Secure by design** — डिज़ाइन साइड-चैनल प्रतिरोधी कार्यान्वयन में सहायता करता है; प्रतिरोध कार्यान्वयन पर निर्भर है
+- **Fixed key size** — 256-बिट सार्वजनिक कुंजी लगभग 128-बिट पारंपरिक सुरक्षा देती है; आकार चुनने की आवश्यकता नहीं
 - **Deterministic** — signatures deterministic हैं, जो random number generator failures की एक class को समाप्त करती है
 
 ```bash
@@ -355,3 +353,9 @@ SSH keys आपको बिना password के remote servers पर authent
 - <a href="/hi/what-is-ssh/">SSH क्या है? Secure Shell की सम्पूर्ण गाइड</a>
 - <a href="/hi/ssh-command/">SSH Command: उदाहरणों के साथ पूर्ण संदर्भ</a>
 - <a href="/hi/how-to-set-up-ssh/">SSH कैसे Set Up करें: एक सम्पूर्ण Step-by-Step गाइड</a>
+
+## स्रोत और आधिकारिक दस्तावेज़
+
+- [RFC 4252 §7 — SSH public-key authentication](https://www.rfc-editor.org/rfc/rfc4252.html#section-7)
+- [RFC 8032 — Ed25519 signatures and security considerations](https://www.rfc-editor.org/rfc/rfc8032.html)
+- [OpenSSH ssh-keygen(1)](https://man.openbsd.org/ssh-keygen)

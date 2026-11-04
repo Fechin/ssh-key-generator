@@ -193,6 +193,12 @@
     "copyright": "© {year} SSH Key Generator。MITライセンスのオープンソース。"
   },
   "seo": {
+    "sources": {
+      "title": "参考資料と確認日",
+      "reviewed": "最終確認日",
+      "openssh": "OpenSSH ssh-keygen マニュアル",
+      "github": "GitHub：新しい SSH キーの生成"
+    },
     "whatIs": {
       "title": "オンラインSSH鍵ジェネレーターとは？",
       "desc": "オンラインSSH鍵ジェネレーターはブラウザ内で鍵ペアを作成します。公開鍵はGitHub、GitLab、Bitbucket、サーバーに登録し、秘密鍵は自分の端末に保存します。"
@@ -245,10 +251,10 @@
       "rsaSigSize": "256-512バイト",
       "ed25519Security": "約128ビット相当",
       "rsaSecurity": "約112-128ビット (4096)",
-      "ed25519Performance": "非常に高速（10倍速い）",
+      "ed25519Performance": "実装により異なります",
       "rsaPerformance": "生成が遅い",
       "ed25519Compat": "OpenSSH 6.5+ (2014)",
-      "rsaCompat": "ユニバーサル（全システム）",
+      "rsaCompat": "幅広く対応；サーバーポリシーを確認",
       "ed25519Quantum": "耐量子性なし",
       "rsaQuantum": "耐量子性なし",
       "ed25519BestFor": "GitHub、GitLab、モダンサーバー",

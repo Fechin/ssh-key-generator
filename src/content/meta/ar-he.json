@@ -16,7 +16,7 @@
         "OpenSSH"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "what-is-an-ssh-key": {
       "title": "ما هو مفتاح SSH؟ المفاتيح العامة والخاصة وأزواج المفاتيح شرح",
@@ -34,7 +34,7 @@
         "عبارة مرور SSH"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-command": {
       "title": "أمر SSH: المرجع الكامل مع أمثلة لـ Linux وMac وWindows",
@@ -52,7 +52,7 @@
         "خيارات SSH"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "how-to-set-up-ssh": {
       "title": "كيفية إعداد SSH: دليل خطوة بخطوة شامل لـ Linux وMac وWindows",
@@ -70,7 +70,7 @@
         "مصادقة مفتاح SSH"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "generate-ssh-key": {
       "title": "إنشاء مفتاح SSH: مولّد عبر الإنترنت وأوامر ssh-keygen",
@@ -85,7 +85,7 @@
         "RSA SSH"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-keygen": {
       "title": "أمر ssh-keygen: أمثلة عملية لإنشاء مفاتيح SSH",
@@ -98,7 +98,7 @@
         "بصمة مفتاح SSH"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     }
   },
   "he": {
@@ -118,7 +118,7 @@
         "OpenSSH"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "what-is-an-ssh-key": {
       "title": "מה זה מפתח SSH? מפתחות ציבוריים, פרטיים וזוגות מפתחות — הסבר",
@@ -136,7 +136,7 @@
         "סיסמת SSH"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-command": {
       "title": "פקודת SSH: עיון מלא עם דוגמאות ל-Linux, Mac ו-Windows",
@@ -154,7 +154,7 @@
         "אפשרויות SSH"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "how-to-set-up-ssh": {
       "title": "כיצד להגדיר SSH: מדריך שלב-אחר-שלב מלא ל-Linux, Mac ו-Windows",
@@ -172,7 +172,7 @@
         "אימות מפתח SSH"
       ],
       "publishDate": "2026-03-14",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "generate-ssh-key": {
       "title": "יצירת מפתח SSH: כלי אונליין ופקודות ssh-keygen",
@@ -186,7 +186,7 @@
         "rsa ssh"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     },
     "ssh-keygen": {
       "title": "פקודת ssh-keygen: דוגמאות ליצירת מפתחות SSH",
@@ -199,7 +199,7 @@
         "fingerprint ssh"
       ],
       "publishDate": "2026-07-08",
-      "modifiedDate": "2026-07-08"
+      "modifiedDate": "2026-11-04"
     }
   }
 }

@@ -40,7 +40,7 @@ Szüksége van egy kulcspárra, mielőtt bármi mást tehetne. A kulcspár egy *
 
 ### A lehetőség: Használja az Online Generatort
 
-Ha inkább grafikus felületet szeretne, az <a href="/">ingyenes online SSH-kulcsgenerátorunk</a> Ed25519 vagy RSA kulcspárokat hoz létre a böngészőben. A privát kulcsot helyileg állítják elő a Web Crypto API segítségével – semmit sem küldenek el szervereinknek. Töltse le mindkét fájlt, és mentse el őket `~/.ssh/` (Linux/macOS) vagy `C:\Users\YourName\.ssh\` (Windows) címre.
+Ha inkább grafikus felületet szeretne, az <a href="/">ingyenes online SSH-kulcsgenerátorunk</a> Ed25519 vagy RSA kulcspárokat hoz létre a böngészőben. A létrehozott privát kulcsok és jelmondatok nem kerülnek feltöltésre a szervereinkre. Töltse le mindkét fájlt, és mentse el őket `~/.ssh/` (Linux/macOS) vagy `C:\Users\YourName\.ssh\` (Windows) címre.
 
 ### B lehetőség: Használja az ssh-keygen parancsot a parancssorban
 
@@ -559,7 +559,7 @@ Párosítsa az ujjlenyomatokat a megfelelő kulcs azonosításához és törlés
 
 ## Ingyenes SSH-kulcsok létrehozása
 
-Ha még nem hozta létre az SSH-kulcspárt, ingyenes online generátorunk másodpercek alatt létrehozza az Ed25519 vagy RSA kulcsokat közvetlenül a böngészőjében. Nincs szükség telepítésre, semmit sem küldünk szervereinkre – a generálás teljes egészében az Ön eszközén történik.
+Az Ed25519 és RSA kulcsok létrehozása a böngészőben történik. A létrehozott privát kulcsok és jelmondatok nem kerülnek feltöltésre a szervereinkre.
 
 <a href="/">SSH-kulcsok létrehozása ingyenes →</a>
 
@@ -569,3 +569,9 @@ Ha még nem hozta létre az SSH-kulcspárt, ingyenes online generátorunk másod
 - <a href="/hu/what-is-ssh/">Mi az az SSH? A Secure Shell teljes útmutatója</a>
 - <a href="/hu/what-is-an-ssh-key/">Mi az SSH-kulcs? Nyilvános kulcsok, privát kulcsok és kulcspárok magyarázata</a>
 - <a href="/hu/ssh-command/">Az SSH-parancs: Teljes hivatkozás példákkal</a>
+
+## Források és hivatalos dokumentáció
+
+- [GitHub Docs — Generating a new SSH key and adding it to the ssh-agent](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+- [GitLab Docs — Use SSH keys to communicate with GitLab](https://docs.gitlab.com/user/ssh/)
+- [OpenSSH sshd_config(5)](https://man.openbsd.org/sshd_config)

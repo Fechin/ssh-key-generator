@@ -193,6 +193,12 @@
     "copyright": "© {year} SSH Key Generator. Mã nguồn mở theo giấy phép MIT."
   },
   "seo": {
+    "sources": {
+      "title": "Nguồn và đánh giá",
+      "reviewed": "Đánh giá lần cuối",
+      "openssh": "Hướng dẫn OpenSSH ssh-keygen",
+      "github": "GitHub: Tạo khóa SSH mới"
+    },
     "whatIs": {
       "title": "Công cụ tạo khóa SSH trực tuyến là gì?",
       "desc": "Trình tạo SSH key online tạo cặp key ngay trong trình duyệt. Public key dùng cho GitHub, GitLab, Bitbucket hoặc server; private key nằm trên máy của bạn."
@@ -245,10 +251,10 @@
       "rsaSigSize": "256-512 byte",
       "ed25519Security": "Tương đương ~128-bit",
       "rsaSecurity": "~112-128-bit (4096)",
-      "ed25519Performance": "Rất nhanh (nhanh hơn 10 lần)",
+      "ed25519Performance": "Tùy thuộc vào cách triển khai",
       "rsaPerformance": "Tạo khóa chậm hơn",
       "ed25519Compat": "OpenSSH 6.5+ (2014)",
-      "rsaCompat": "Toàn cầu (mọi hệ thống)",
+      "rsaCompat": "Hỗ trợ rộng rãi; kiểm tra chính sách máy chủ",
       "ed25519Quantum": "Không chống lượng tử",
       "rsaQuantum": "Không chống lượng tử",
       "ed25519BestFor": "GitHub, GitLab, máy chủ hiện đại",

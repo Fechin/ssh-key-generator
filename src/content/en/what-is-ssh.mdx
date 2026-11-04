@@ -77,7 +77,7 @@ SSH supports two primary authentication methods: passwords and **SSH keys**. SSH
 The **private key** stays on your local machine, protected with an optional passphrase. The **public key** is placed on any server you want to access, in a file called `~/.ssh/authorized_keys`. When you connect, the server issues a cryptographic challenge that only the holder of the corresponding private key can answer. No password is sent over the network.
 
 This approach has several advantages:
-- **Immune to brute force** — there is nothing to guess. A 256-bit Ed25519 key has 2²⁵⁶ possible values.
+- **Ed25519** — 256-bit public key with approximately 128-bit classical security; no key-size choice is needed.
 - **No password to steal** — even if someone intercepts the handshake, they gain nothing useful.
 - **Automatable** — scripts and CI/CD pipelines can authenticate without human interaction.
 - **Revocable** — removing a public key from `authorized_keys` immediately revokes access.
@@ -263,7 +263,7 @@ SSH uses **TCP port 22** by default. This is a well-known port assigned by IANA.
 
 ### Can SSH be hacked?
 
-A properly configured SSH server with key-based authentication is extremely difficult to compromise. The cryptography — Ed25519 keys, AES-256 encryption, SHA-2 MACs — is considered quantum-resistant for key authentication and computationally infeasible to brute force. Real-world SSH compromises typically involve: stolen private key files, weak passphrases, misconfigured servers allowing password authentication with weak passwords, vulnerable software versions with unpatched CVEs, or social engineering rather than cryptographic attacks. Keep your server updated, disable password authentication, and protect your private key file.
+A properly configured SSH server with key-based authentication is extremely difficult to compromise. Modern SSH cryptography is strong against classical brute-force attacks, but Ed25519 and RSA authentication keys are not quantum-safe. Real-world SSH compromises typically involve: stolen private key files, weak passphrases, misconfigured servers allowing password authentication with weak passwords, vulnerable software versions with unpatched CVEs, or social engineering rather than cryptographic attacks. Keep your server updated, disable password authentication, and protect your private key file.
 
 ### What is the difference between SSH and HTTPS?
 
@@ -271,7 +271,7 @@ Both SSH and HTTPS encrypt network traffic, but they are designed for different 
 
 ## Generate Your SSH Keys Now
 
-SSH key-based authentication is more secure and more convenient than passwords. If you have not already set up SSH keys, our free online generator creates Ed25519 or RSA key pairs instantly in your browser — no installation required, nothing sent to our servers.
+Ed25519 and RSA key generation runs in your browser. Generated private keys and passphrases are not uploaded to our servers.
 
 <a href="/">Generate your SSH key pair now →</a>
 
@@ -281,3 +281,9 @@ SSH key-based authentication is more secure and more convenient than passwords. 
 - <a href="/what-is-an-ssh-key/">What Is an SSH Key? Public Keys, Private Keys, and Key Pairs Explained</a>
 - <a href="/ssh-command/">The SSH Command: Complete Reference with Examples</a>
 - <a href="/how-to-set-up-ssh/">How to Set Up SSH: A Complete Step-by-Step Guide</a>
+
+## Sources and official documentation
+
+- [RFC 4251 — The Secure Shell (SSH) Protocol Architecture](https://www.rfc-editor.org/rfc/rfc4251.html)
+- [RFC 4252 §7 — SSH public-key authentication](https://www.rfc-editor.org/rfc/rfc4252.html#section-7)
+- [RFC 8032 — Ed25519 signatures and security considerations](https://www.rfc-editor.org/rfc/rfc8032.html)

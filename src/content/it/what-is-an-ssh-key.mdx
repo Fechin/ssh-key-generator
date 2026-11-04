@@ -9,17 +9,15 @@ Per nuove chiavi scegli Ed25519 nella maggior parte dei casi. Usa RSA 4096 bit s
 
 ## Come Funzionano le Chiavi SSH
 
-Le chiavi SSH si basano sulla **crittografia asimmetrica**, detta anche crittografia a chiave pubblica. A differenza della crittografia simmetrica (dove una singola chiave segreta cifra e decifra i dati), i sistemi asimmetrici usano coppie di chiavi matematicamente collegate dove i dati cifrati con una chiave possono essere decifrati solo con l'altra.
+L’autenticazione SSH con chiave pubblica usa firme digitali. La chiave privata firma i dati di autenticazione e quella pubblica verifica la firma; non si cifra e decifra una sfida del server.
 
 Ecco il flusso di autenticazione quando si usa una chiave SSH per accedere a un server:
 
 1. Si esegue `ssh user@server.example.com`.
 2. Il server cerca la chiave pubblica in `~/.ssh/authorized_keys`.
-3. Il server genera una sfida casuale e la cifra con la chiave pubblica.
-4. Il client SSH decifra la sfida usando la chiave privata.
-5. Il client invia una prova crittografica (derivata dalla sfida decifrata e dall'ID di sessione) al server.
-6. Il server verifica la prova. Solo il possessore della chiave privata potrebbe averla prodotta.
-7. L'autenticazione ha successo. Nessuna password lascia mai la propria macchina.
+3. Il client firma la richiesta di autenticazione, incluso l’identificatore della sessione, con la propria chiave privata.
+4. Il server verifica la firma con la chiave pubblica autorizzata.
+5. L'autenticazione ha successo. Nessuna password lascia mai la propria macchina.
 
 Questo è il punto chiave: **la chiave privata non viaggia mai sulla rete**. Il server vede solo la chiave pubblica e le prove crittografiche prodotte. Anche se qualcuno intercetta ogni pacchetto della sessione SSH, non ottiene nulla che gli consenta di impersonare l'utente.
 
@@ -79,8 +77,8 @@ Ed25519 è stato introdotto in OpenSSH nella versione 6.5 (2014) ed è ora il va
 **Vantaggi di Ed25519:**
 - **Compatto** — le chiavi sono di soli 68 caratteri (chiave pubblica) e i file sono minuscoli
 - **Veloce** — la generazione e la verifica delle firme sono estremamente rapide
-- **Sicuro per design** — non vulnerabile agli attacchi side-channel che colpiscono alcune implementazioni RSA
-- **Dimensione fissa della chiave** — livello di sicurezza a 256 bit, nessuna necessità di scegliere una dimensione della chiave
+- **Sicuro per design** — progettato per facilitare implementazioni resistenti ai canali laterali; la resistenza dipende dall’implementazione
+- **Dimensione fissa della chiave** — chiave pubblica di 256 bit con circa 128 bit di sicurezza classica; non serve scegliere una dimensione
 - **Deterministico** — le firme sono deterministiche, eliminando una classe di fallimenti del generatore di numeri casuali
 
 ```bash
@@ -355,3 +353,9 @@ Pronto a creare le tue chiavi SSH? Il nostro generatore online gratuito crea cop
 - <a href="/it/what-is-ssh/">Cos'è SSH? La Guida Completa al Secure Shell</a>
 - <a href="/it/ssh-command/">Il Comando SSH: Riferimento Completo con Esempi</a>
 - <a href="/it/how-to-set-up-ssh/">Come Configurare SSH: Una Guida Completa Passo dopo Passo</a>
+
+## Fonti e documentazione ufficiale
+
+- [RFC 4252 §7 — SSH public-key authentication](https://www.rfc-editor.org/rfc/rfc4252.html#section-7)
+- [RFC 8032 — Ed25519 signatures and security considerations](https://www.rfc-editor.org/rfc/rfc8032.html)
+- [OpenSSH ssh-keygen(1)](https://man.openbsd.org/ssh-keygen)

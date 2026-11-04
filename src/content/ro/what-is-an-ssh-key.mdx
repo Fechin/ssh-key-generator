@@ -9,17 +9,15 @@ Pentru chei noi, alege de obicei Ed25519. Folosește RSA 4096 dacă un server SS
 
 ## Cum funcționează cheile SSH
 
-Cheile SSH sunt bazate pe **criptografia asimetrică**, numită și criptografia cu cheie publică. Spre deosebire de criptografia simetrică (unde o singură cheie secretă atât criptează, cât și decriptează datele), sistemele asimetrice utilizează perechi de chei legate matematic, unde datele criptate cu o cheie pot fi decriptate doar cu cealaltă.
+Autentificarea SSH cu cheie publică folosește semnături digitale. Cheia privată semnează datele de autentificare, iar cea publică verifică semnătura; nu este vorba despre criptarea și decriptarea unei provocări a serverului.
 
 Iată fluxul de autentificare când folosești o cheie SSH pentru a te autentifica pe un server:
 
 1. Rulezi `ssh user@server.example.com`.
 2. Serverul caută cheia ta publică în `~/.ssh/authorized_keys`.
-3. Serverul generează o provocare aleatorie și o criptează cu cheia ta publică.
-4. Clientul tău SSH decriptează provocarea folosind cheia ta privată.
-5. Clientul trimite o dovadă criptografică (derivată din provocarea decriptată și ID-ul sesiunii) înapoi la server.
-6. Serverul verifică dovada. Doar deținătorul cheii private ar fi putut-o produce.
-7. Autentificarea reușește. Nicio parolă nu părăsește niciodată mașina ta.
+3. Clientul semnează cererea de autentificare, inclusiv identificatorul sesiunii, cu cheia privată.
+4. Serverul verifică semnătura folosind cheia publică autorizată.
+5. Autentificarea reușește. Nicio parolă nu părăsește niciodată mașina ta.
 
 Aceasta este perspectiva cheie: **cheia ta privată nu circulă niciodată prin rețea**. Serverul vede doar cheia ta publică și dovezile criptografice pe care le produci. Chiar dacă cineva interceptează fiecare pachet din sesiunea ta SSH, nu obține nimic care să îi ajute să te impersoneze.
 
@@ -79,8 +77,8 @@ Ed25519 a fost introdus în OpenSSH în versiunea 6.5 (2014) și este acum impli
 **Avantajele Ed25519:**
 - **Compact** — cheile au doar 68 de caractere (cheie publică) și fișierele sunt mici
 - **Rapid** — generarea și verificarea semnăturilor sunt extrem de rapide
-- **Sigur prin design** — nu este vulnerabil la atacurile de tip side-channel care afectează unele implementări RSA
-- **Dimensiune fixă a cheii** — nivel de securitate de 256 de biți, nu este necesară alegerea unei dimensiuni de cheie
+- **Sigur prin design** — proiectat pentru implementări rezistente la canale laterale; rezistența depinde de implementare
+- **Dimensiune fixă a cheii** — cheie publică de 256 biți cu aproximativ 128 biți de securitate clasică; nu trebuie aleasă dimensiunea
 - **Determinist** — semnăturile sunt deterministe, eliminând o clasă de eșecuri ale generatorului de numere aleatoare
 
 ```bash
@@ -355,3 +353,9 @@ Ești pregătit să creezi cheile SSH? Generatorul nostru gratuit online creeaz�
 - <a href="/ro/what-is-ssh/">Ce este SSH? Ghidul complet pentru Secure Shell</a>
 - <a href="/ro/ssh-command/">Comanda SSH: Referință completă cu exemple</a>
 - <a href="/ro/how-to-set-up-ssh/">Cum să configurezi SSH: Un ghid complet pas cu pas</a>
+
+## Surse și documentație oficială
+
+- [RFC 4252 §7 — SSH public-key authentication](https://www.rfc-editor.org/rfc/rfc4252.html#section-7)
+- [RFC 8032 — Ed25519 signatures and security considerations](https://www.rfc-editor.org/rfc/rfc8032.html)
+- [OpenSSH ssh-keygen(1)](https://man.openbsd.org/ssh-keygen)

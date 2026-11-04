@@ -9,17 +9,15 @@ Với key mới, thường chọn Ed25519. Chỉ dùng RSA 4096 khi server SSH c
 
 ## SSH Key Hoạt Động Như Thế Nào
 
-SSH key dựa trên **mật mã học bất đối xứng**, còn gọi là mật mã học khóa công khai. Khác với mật mã học đối xứng (nơi một khóa bí mật duy nhất vừa mã hóa vừa giải mã dữ liệu), các hệ thống bất đối xứng dùng cặp khóa liên kết về mặt toán học trong đó dữ liệu được mã hóa bằng một khóa chỉ có thể giải mã bằng khóa kia.
+Xác thực SSH bằng khóa công khai sử dụng chữ ký số. Khóa riêng ký dữ liệu xác thực và khóa công khai xác minh chữ ký; đây không phải quá trình mã hóa rồi giải mã một thách thức từ máy chủ.
 
 Đây là luồng xác thực khi bạn dùng SSH key để đăng nhập vào server:
 
 1. Bạn chạy `ssh user@server.example.com`.
 2. Server tra cứu khóa công khai của bạn trong `~/.ssh/authorized_keys`.
-3. Server tạo một thử thách ngẫu nhiên và mã hóa nó bằng khóa công khai của bạn.
-4. SSH client của bạn giải mã thử thách bằng khóa riêng tư của bạn.
-5. Client gửi bằng chứng mật mã (được tạo từ thử thách đã giải mã và ID phiên) trở lại server.
-6. Server xác minh bằng chứng. Chỉ người sở hữu khóa riêng tư mới có thể tạo ra nó.
-7. Xác thực thành công. Không có mật khẩu nào rời khỏi máy của bạn.
+3. Máy khách ký yêu cầu xác thực, bao gồm mã định danh phiên, bằng khóa riêng.
+4. Máy chủ xác minh chữ ký bằng khóa công khai đã được cho phép.
+5. Xác thực thành công. Không có mật khẩu nào rời khỏi máy của bạn.
 
 Đây là điểm mấu chốt: **khóa riêng tư của bạn không bao giờ đi qua mạng**. Server chỉ thấy khóa công khai của bạn và các bằng chứng mật mã bạn tạo ra. Ngay cả khi ai đó chặn mọi gói tin trong phiên SSH của bạn, họ không thu được gì giúp họ mạo danh bạn.
 
@@ -79,8 +77,8 @@ Ed25519 được giới thiệu vào OpenSSH phiên bản 6.5 (2014) và hiện 
 **Ưu điểm của Ed25519:**
 - **Nhỏ gọn** — khóa chỉ 68 ký tự (khóa công khai) và tệp rất nhỏ
 - **Nhanh** — tạo và xác minh chữ ký cực kỳ nhanh
-- **Bảo mật theo thiết kế** — không dễ bị tấn công side-channel ảnh hưởng đến một số triển khai RSA
-- **Kích thước khóa cố định** — mức bảo mật 256-bit, không cần chọn kích thước khóa
+- **Bảo mật theo thiết kế** — được thiết kế để hỗ trợ triển khai chống tấn công kênh bên; khả năng chống chịu phụ thuộc vào triển khai
+- **Kích thước khóa cố định** — khóa công khai 256 bit cung cấp khoảng 128 bit bảo mật cổ điển; không cần chọn kích thước
 - **Xác định** — chữ ký mang tính xác định, loại bỏ một lớp lỗi của bộ tạo số ngẫu nhiên
 
 ```bash
@@ -355,3 +353,9 @@ Sẵn sàng tạo SSH key của bạn? Trình tạo trực tuyến miễn phí c
 - <a href="/vi/what-is-ssh/">SSH Là Gì? Hướng Dẫn Đầy Đủ về Secure Shell</a>
 - <a href="/vi/ssh-command/">Lệnh SSH: Tài Liệu Tham Khảo Đầy Đủ với Ví Dụ</a>
 - <a href="/vi/how-to-set-up-ssh/">Cách Thiết Lập SSH: Hướng Dẫn Từng Bước Đầy Đủ</a>
+
+## Nguồn và tài liệu chính thức
+
+- [RFC 4252 §7 — SSH public-key authentication](https://www.rfc-editor.org/rfc/rfc4252.html#section-7)
+- [RFC 8032 — Ed25519 signatures and security considerations](https://www.rfc-editor.org/rfc/rfc8032.html)
+- [OpenSSH ssh-keygen(1)](https://man.openbsd.org/ssh-keygen)

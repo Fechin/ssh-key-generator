@@ -9,17 +9,15 @@ Velg Ed25519 for de fleste nye nøkler. Bruk RSA 4096 hvis en eldre SSH-server e
 
 ## Hvordan SSH-nøkler fungerer
 
-SSH-nøkler er basert på **asymmetrisk kryptografi**, også kalt offentlig-nøkkelkryptografi. I motsetning til symmetrisk kryptografi (der en enkelt hemmelig nøkkel både krypterer og dekrypterer data), bruker asymmetriske systemer matematisk koblede nøkkelpar der data kryptert med én nøkkel bare kan dekrypteres med den andre.
+SSH-autentisering med offentlig nøkkel bruker digitale signaturer. Den private nøkkelen signerer autentiseringsdata, og den offentlige verifiserer signaturen; en serverutfordring krypteres og dekrypteres ikke.
 
 Her er autentiseringsflytene når du bruker en SSH-nøkkel til å logge inn på en server:
 
 1. Du kjører `ssh user@server.example.com`.
 2. Serveren slår opp din offentlige nøkkel i `~/.ssh/authorized_keys`.
-3. Serveren genererer en tilfeldig utfordring og krypterer den med din offentlige nøkkel.
-4. SSH-klienten din dekrypterer utfordringen ved hjelp av din private nøkkel.
-5. Klienten sender et kryptografisk bevis (utledet fra den dekrypterte utfordringen og sesjons-ID-en) tilbake til serveren.
-6. Serveren verifiserer beviset. Bare innehaveren av den private nøkkelen kunne ha produsert det.
-7. Autentiseringen lykkes. Ingen passord forlater maskinen din.
+3. Klienten signerer autentiseringsforespørselen, inkludert sesjonsidentifikatoren, med sin private nøkkel.
+4. Serveren verifiserer signaturen med den godkjente offentlige nøkkelen.
+5. Autentiseringen lykkes. Ingen passord forlater maskinen din.
 
 Dette er den viktigste innsikten: **din private nøkkel reiser aldri over nettverket**. Serveren ser bare din offentlige nøkkel og de kryptografiske bevisene du produserer. Selv om noen avlytter hvert eneste pakke i SSH-sesjonen din, oppnår de ingenting som hjelper dem med å utgi seg for å være deg.
 
@@ -79,8 +77,8 @@ Ed25519 ble introdusert i OpenSSH versjon 6.5 (2014) og er nå den anbefalte sta
 **Fordeler med Ed25519:**
 - **Kompakt** — nøkler er bare 68 tegn (offentlig nøkkel) og filer er minimale
 - **Rask** — signaturgenerering og -verifisering er ekstremt rask
-- **Sikker by design** — ikke sårbar for sidekanalangrep som påvirker visse RSA-implementasjoner
-- **Fast nøkkelstørrelse** — 256-bits sikkerhetsnivå, ingen grunn til å velge en nøkkelstørrelse
+- **Sikker by design** — utformet for implementasjoner som motstår sidekanalangrep; motstanden avhenger av implementasjonen
+- **Fast nøkkelstørrelse** — 256-bits offentlig nøkkel med omtrent 128 bits klassisk sikkerhet; ingen valg av nøkkelstørrelse nødvendig
 - **Deterministisk** — signaturer er deterministiske, noe som eliminerer en klasse av tilfeldige tallgeneratorfeil
 
 ```bash
@@ -355,3 +353,9 @@ Klar til å opprette SSH-nøklene dine? Vår gratis nettbaserte generator oppret
 - <a href="/nb/what-is-ssh/">Hva er SSH? Den komplette guiden til Secure Shell</a>
 - <a href="/nb/ssh-command/">SSH-kommandoen: Komplett referanse med eksempler</a>
 - <a href="/nb/how-to-set-up-ssh/">Slik setter du opp SSH: En komplett trinn-for-trinn-guide</a>
+
+## Kilder og offisiell dokumentasjon
+
+- [RFC 4252 §7 — SSH public-key authentication](https://www.rfc-editor.org/rfc/rfc4252.html#section-7)
+- [RFC 8032 — Ed25519 signatures and security considerations](https://www.rfc-editor.org/rfc/rfc8032.html)
+- [OpenSSH ssh-keygen(1)](https://man.openbsd.org/ssh-keygen)

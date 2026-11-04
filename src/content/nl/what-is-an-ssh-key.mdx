@@ -9,17 +9,15 @@ Kies voor nieuwe sleutels meestal Ed25519. Gebruik RSA 4096 als een oudere SSH-s
 
 ## Hoe Werken SSH-sleutels
 
-SSH-sleutels zijn gebaseerd op **asymmetrische cryptografie**, ook wel cryptografie met openbare sleutels genoemd. In tegenstelling tot symmetrische cryptografie (waarbij één geheime sleutel zowel versleutelt als ontsleutelt), gebruiken asymmetrische systemen wiskundig gekoppelde sleutelparen waarbij gegevens die met de ene sleutel zijn versleuteld, alleen met de andere kunnen worden ontsleuteld.
+SSH-authenticatie met openbare sleutels gebruikt digitale handtekeningen. De privésleutel ondertekent de authenticatiegegevens en de openbare sleutel controleert de handtekening; er wordt geen serveruitdaging versleuteld en ontsleuteld.
 
 Dit is de authenticatiestroom wanneer je een SSH-sleutel gebruikt om in te loggen op een server:
 
 1. Je voert `ssh user@server.example.com` uit.
 2. De server zoekt je openbare sleutel op in `~/.ssh/authorized_keys`.
-3. De server genereert een willekeurige uitdaging en versleutelt deze met je openbare sleutel.
-4. Je SSH-client ontsleutelt de uitdaging met je privésleutel.
-5. De client stuurt een cryptografisch bewijs (afgeleid van de ontsleutelde uitdaging en de sessie-ID) terug naar de server.
-6. De server verifieert het bewijs. Alleen de houder van de privésleutel kon dit hebben geproduceerd.
-7. Authenticatie slaagt. Er verlaat nooit een wachtwoord je machine.
+3. De client ondertekent het authenticatieverzoek, inclusief de sessie-identificatie, met de privésleutel.
+4. De server controleert de handtekening met de toegestane openbare sleutel.
+5. Authenticatie slaagt. Er verlaat nooit een wachtwoord je machine.
 
 Dit is het kernpunt: **je privésleutel reist nooit over het netwerk**. De server ziet alleen je openbare sleutel en de cryptografische bewijzen die je produceert. Zelfs als iemand elk pakket in je SSH-sessie onderschept, krijgt hij niets dat hem helpt jou na te bootsen.
 
@@ -79,8 +77,8 @@ Ed25519 werd geïntroduceerd in OpenSSH versie 6.5 (2014) en is nu de aanbevolen
 **Voordelen van Ed25519:**
 - **Compact** — sleutels zijn slechts 68 tekens (openbare sleutel) en bestanden zijn klein
 - **Snel** — het genereren en verifiëren van handtekeningen is extreem snel
-- **Veilig by design** — niet kwetsbaar voor side-channel-aanvallen die sommige RSA-implementaties treffen
-- **Vaste sleutelgrootte** — 256-bits beveiligingsniveau, geen keuze van sleutelgrootte nodig
+- **Veilig by design** — ontworpen voor implementaties die weerstand bieden aan zijkanaalaanvallen; de weerstand hangt af van de implementatie
+- **Vaste sleutelgrootte** — 256-bits openbare sleutel met ongeveer 128 bits klassieke beveiliging; geen keuze van sleutelgrootte nodig
 - **Deterministisch** — handtekeningen zijn deterministisch, waardoor een klasse van willekeurig-getallengenerator-fouten wordt geëlimineerd
 
 ```bash
@@ -355,3 +353,9 @@ Klaar om je SSH-sleutels te maken? Onze gratis online generator maakt Ed25519- o
 - <a href="/nl/what-is-ssh/">Wat Is SSH? De Volledige Gids voor Secure Shell</a>
 - <a href="/nl/ssh-command/">Het SSH-commando: Volledige Referentie met Voorbeelden</a>
 - <a href="/nl/how-to-set-up-ssh/">SSH Instellen: Een Volledige Stapsgewijze Handleiding</a>
+
+## Bronnen en officiële documentatie
+
+- [RFC 4252 §7 — SSH public-key authentication](https://www.rfc-editor.org/rfc/rfc4252.html#section-7)
+- [RFC 8032 — Ed25519 signatures and security considerations](https://www.rfc-editor.org/rfc/rfc8032.html)
+- [OpenSSH ssh-keygen(1)](https://man.openbsd.org/ssh-keygen)

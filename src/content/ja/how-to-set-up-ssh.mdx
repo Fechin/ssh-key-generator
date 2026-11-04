@@ -39,7 +39,7 @@ LinuxとmacOSでは何もインストールする必要はありません。Wind
 
 ### オプションA：オンラインジェネレーターを使用する
 
-グラフィカルインターフェースを好む場合、<a href="/">無料のオンラインSSH鍵ジェネレーター</a>がブラウザ上でEd25519またはRSA鍵ペアを作成します。秘密鍵はWeb Crypto APIを使用してローカルで生成されます――サーバーには何も送信されません。両方のファイルをダウンロードして `~/.ssh/`（Linux/macOS）または `C:\Users\YourName\.ssh\`（Windows）に保存します。
+グラフィカルインターフェースを好む場合、<a href="/">無料のオンラインSSH鍵ジェネレーター</a>がブラウザ上でEd25519またはRSA鍵ペアを作成します。生成した秘密鍵やパスフレーズが当サイトのサーバーにアップロードされることはありません。両方のファイルをダウンロードして `~/.ssh/`（Linux/macOS）または `C:\Users\YourName\.ssh\`（Windows）に保存します。
 
 ### オプションB：コマンドラインでssh-keygenを使用する
 
@@ -558,7 +558,7 @@ ssh-keygen -lf ~/.ssh/authorized_keys
 
 ## SSH鍵を無料で生成する
 
-まだSSH鍵ペアを生成していない場合、無料のオンラインジェネレーターがブラウザ上で数秒以内にEd25519またはRSA鍵を直接作成します。インストール不要で、サーバーには何も送信されません――生成はすべてデバイス上で行われます。
+Ed25519とRSAの鍵の生成はブラウザ内で行われ、生成した秘密鍵やパスフレーズが当サイトのサーバーにアップロードされることはありません。
 
 <a href="/">SSH鍵を無料で生成する →</a>
 
@@ -568,3 +568,9 @@ ssh-keygen -lf ~/.ssh/authorized_keys
 - <a href="/ja/what-is-ssh/">SSHとは何か？セキュアシェル完全ガイド</a>
 - <a href="/ja/what-is-an-ssh-key/">SSH鍵とは？公開鍵・秘密鍵・鍵ペアを解説</a>
 - <a href="/ja/ssh-command/">SSHコマンド：実例付き完全リファレンス</a>
+
+## 出典と公式ドキュメント
+
+- [GitHub Docs — Generating a new SSH key and adding it to the ssh-agent](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+- [GitLab Docs — Use SSH keys to communicate with GitLab](https://docs.gitlab.com/user/ssh/)
+- [OpenSSH sshd_config(5)](https://man.openbsd.org/sshd_config)
