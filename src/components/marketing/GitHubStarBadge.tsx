@@ -10,8 +10,8 @@ interface GitHubStarBadgeProps {
 const badgePartVariants = cva('inline-flex min-w-0 items-center justify-center', {
   variants: {
     part: {
-      label: 'h-full gap-1.5 px-3',
-      count: 'h-full gap-1.5 border-s border-primary/20 bg-primary/10 px-2.5 text-foreground tabular-nums [&_svg]:text-primary',
+      label: 'h-full gap-1.5 px-2 sm:px-3',
+      count: 'h-full gap-1.5 border-s border-primary/20 bg-primary/10 px-2 sm:px-2.5 text-foreground tabular-nums [&_svg]:text-primary',
     },
   },
 })
@@ -42,7 +42,7 @@ export function GitHubStarBadge({ stars }: GitHubStarBadgeProps) {
       <Badge variant="star" size="action">
         <span className={badgePartVariants({ part: 'label' })}>
           <GitHubMark />
-          <span>Star on GitHub</span>
+          <span className="hidden sm:inline">Star on GitHub</span>
         </span>
         {count !== undefined && (
           <span className={badgePartVariants({ part: 'count' })}>
