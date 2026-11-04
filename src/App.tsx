@@ -9,6 +9,8 @@ import { Footer } from '@/components/layout/Footer'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent } from '@/components/ui/card'
 import { KeyGeneratorForm } from '@/components/key-generator/KeyGeneratorForm'
+import { GitHubStarBadge } from '@/components/marketing/GitHubStarBadge'
+import { useGitHubStars } from '@/hooks/useGitHubStars'
 import { useTranslation } from '@/i18n'
 import {
   DEFAULT_LANGUAGE,
@@ -72,6 +74,7 @@ function MainContent() {
   const [generatedKeyPair, setGeneratedKeyPair] = useState<KeyPair | null>(null)
   const { t, language } = useTranslation()
   const { resolvedTheme } = useThemeStore()
+  const { stars } = useGitHubStars()
   const location = useLocation()
   const navigate = useNavigate()
   const mode = parseToolMode(location.hash) ?? 'generate'
@@ -103,6 +106,9 @@ function MainContent() {
       <main className="flex-1 min-w-0 max-w-4xl mx-auto px-4 py-6 sm:py-10 w-full">
         {/* Hero Section */}
         <div className="text-center mb-6 sm:mb-10">
+          <div className="-mt-2 sm:-mt-6 mb-1 flex min-h-11 justify-center">
+            <GitHubStarBadge stars={stars} />
+          </div>
           <h1 className="text-2xl sm:text-3xl font-bold mb-3">
             {t('hero.title')}
           </h1>

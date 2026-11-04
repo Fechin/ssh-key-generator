@@ -22,4 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+# Local audits, design previews, and editorial drafts
 .seo-cache/
+output/
+/GEO-ANALYSIS.md

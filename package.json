@@ -11,7 +11,8 @@
     "lint": "eslint .",
     "test:product": "node --test scripts/test-analytics.mjs scripts/test-ssh-commands.mjs",
     "test:crypto": "node --test scripts/test-crypto.mjs",
-    "test": "pnpm test:product && pnpm test:crypto",
+    "test:stars": "node --test scripts/test-github-stars.mjs",
+    "test": "pnpm test:product && pnpm test:crypto && pnpm test:stars",
     "preview": "vite preview",
     "deploy": "pnpm build && wrangler pages deploy dist --project-name=ssh-key-generator"
   },
